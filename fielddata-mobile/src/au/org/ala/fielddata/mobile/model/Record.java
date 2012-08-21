@@ -70,17 +70,29 @@ public class Record extends Persistent{
 			
 			switch (attributeType) {
 			case SPECIES_P:
-				return Integer.toString(taxon_id);
+				if (taxon_id != null) {
+					return Integer.toString(taxon_id);
+				}
+				return "";
 			case POINT:
 				return "";
 			case ACCURACY:
-				return Double.toString(accuracy);
+				if (accuracy != null) {
+					return Double.toString(accuracy);	
+				}
+				return "";
 			case NUMBER:
-				return Integer.toString(number);
+				if (number != null) {
+					return Integer.toString(number);
+				}
+				return "";
 			case NOTES:
 				return notes;
 			case WHEN:
-				return Long.toString(when);
+				if (when != null) {
+					return Long.toString(when);
+				}
+				return "";
 			default:
 				return "";
 			}

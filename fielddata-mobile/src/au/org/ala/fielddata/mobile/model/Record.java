@@ -145,8 +145,9 @@ public class Record extends Persistent{
 		else {
 			value = new AttributeValue();
 			value.attribute_id = id;
+			attributeValues.add(value);
 		}
-		attributeValues.add(value);
+		
 		return value;
 	}
 

@@ -16,11 +16,11 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android" >
     
 <header
-    android:fragment="au.org.ala.fielddata.mobile.PreferenceFragment"
-    android:summary="This is the summary for header 1"
-    android:title="Header 1">
+    android:fragment="au.org.ala.fielddata.mobile.pref.PreferenceFragment"
+    android:summary="Advanced preferences"
+    android:title="Advanced">
     <extra
         android:name="resource"
-        android:value="preferences"/>
+        android:value="preference1"/>
 </header>
 </preference-headers>

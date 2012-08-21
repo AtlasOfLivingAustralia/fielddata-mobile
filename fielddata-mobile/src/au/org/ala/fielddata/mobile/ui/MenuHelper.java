@@ -17,7 +17,9 @@ package au.org.ala.fielddata.mobile.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.pref.EditPreferences;
 
 import com.actionbarsherlock.view.MenuItem;
 
@@ -31,11 +33,13 @@ public class MenuHelper {
 	
 	public boolean handleMenuItemSelection(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.about:
-			
+		case R.id.about:	
 			new AlertDialog.Builder(ctx).setMessage(R.string.aboutMessage).setPositiveButton(R.string.ok, null).create().show();
 			return true;
-		
+		case R.id.menu_settings:
+			Intent editPreferencesIntent = new Intent(ctx, EditPreferences.class);
+			ctx.startActivity(editPreferencesIntent);
+			return true;
 		}
 		return false;
 	}

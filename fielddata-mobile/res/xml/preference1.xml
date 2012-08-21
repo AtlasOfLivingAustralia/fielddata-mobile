@@ -13,7 +13,8 @@
   implied. See the License for the specific language governing
   rights and limitations under the License.
 -->
-<Preference xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <EditTextPreference android:key="serverHostName" android:title="Field Data Server Host Name" android:summary="The host name of the server running the field data software."/>
     
 
-</Preference>
+</PreferenceScreen>

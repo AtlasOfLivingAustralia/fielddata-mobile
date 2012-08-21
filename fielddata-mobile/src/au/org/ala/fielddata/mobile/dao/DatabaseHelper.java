@@ -64,7 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 							"created INTEGER, updated INTEGER, last_sync INTEGER" +
 							"name TEXT, json TEXT)");
 			}
-			populateSpecies(db);
+			//populateSpecies(db);
 
 			
 			db.setTransactionSuccessful();

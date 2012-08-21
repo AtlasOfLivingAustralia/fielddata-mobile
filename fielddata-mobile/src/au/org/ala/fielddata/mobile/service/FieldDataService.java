@@ -14,6 +14,11 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,66 +28,123 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import android.content.Context;
+import android.util.Log;
+import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
+import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 
 import com.google.gson.Gson;
 
-
 public class FieldDataService extends WebServiceClient {
 
 	private String syncUrl = "/webservice/application/clientSync.htm";
-	
+
 	private String surveyUrl = "/webservice/survey/surveysForUser.htm?ident=";
-	
+
 	private String surveyDetails = "/webservice/application/survey.htm?ident=%s&sid=%d";
-	
+
 	private String ident;
-	
+
 	public FieldDataService(Context ctx) {
 		super(ctx);
 		this.ident = new Preferences(ctx).getFieldDataSessionKey();
 	}
-	
+
 	public void sync(List<Record> records) throws Exception {
-		
-		
+
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
 		params.set("ident", ident);
-		params.set("inFrame", "false"); // Setting this parameter prevents the server from assuming a jsonp request.
+		params.set("inFrame", "false"); // Setting this parameter prevents the
+										// server from assuming a jsonp request.
 		params.set("syncData", new Gson().toJson(records));
-		
-		
+
 		String url = serverUrl + syncUrl;
-		
+
 		RestTemplate restTemplate = getRestTemplate();
-		restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-		SyncRecordsResponse result = restTemplate.postForObject(url, params, SyncRecordsResponse.class);
+		restTemplate.getMessageConverters().add(
+				new StringHttpMessageConverter());
+		SyncRecordsResponse result = restTemplate.postForObject(url, params,
+				SyncRecordsResponse.class);
 		System.out.println(result);
 	}
-		
+
 	public List<Survey> downloadSurveys() {
-		
+
 		String url = serverUrl + surveyUrl + ident;
-		
+
 		RestTemplate restTemplate = getRestTemplate();
-		restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-		UserSurveyResponse[] result = restTemplate.getForObject(url, UserSurveyResponse[].class);
-		
+		restTemplate.getMessageConverters().add(
+				new StringHttpMessageConverter());
+		UserSurveyResponse[] result = restTemplate.getForObject(url,
+				UserSurveyResponse[].class);
+
 		url = serverUrl + surveyDetails;
 		List<Survey> surveys = new ArrayList<Survey>();
+		List<Species> speciesList;
 		for (UserSurveyResponse userSurvey : result) {
-			Survey survey = restTemplate.getForObject(String.format(url, ident, userSurvey.id), Survey.class);
-			survey.server_id = survey.details.id;
+			DownloadSurveyResponse surveyResponse = restTemplate.getForObject(
+					String.format(url, ident, userSurvey.id),
+					DownloadSurveyResponse.class);
+			Survey survey = new Survey();
+
+			survey.server_id = surveyResponse.details.id;
 			survey.lastSync = System.currentTimeMillis();
-			survey.name = survey.details.name;
-			
+			survey.name = surveyResponse.details.name;
+			survey.attributes = surveyResponse.attributes;
+			survey.recordProperties = surveyResponse.recordProperties;
+
 			surveys.add(survey);
+
+			speciesList = surveyResponse.indicatorSpecies;
+			GenericDAO<Species> dao = new GenericDAO<Species>(ctx);
+			CacheManager manager = new CacheManager(ctx);
+			for (Species species : speciesList) {
+				dao.save(species);
+				try {
+					// Instruct the cache manager to download and cache the file
+					manager.getProfileImage(species);
+				} catch (Exception e) {
+					Log.e("Service", "Error downloading profile image", e);
+				}
+
+			}
 		}
-		
+
 		return surveys;
 	}
-	
-	
+
+	public void downloadSpeciesProfileImage(String uuid, File destinationFile) {
+		String downloadUrl = "/files/downloadByUUID.htm?uuid=" + uuid;
+		InputStream in = null;
+		OutputStream out = null;
+		final int BUFFER_SIZE = 8192;
+		byte[] buffer = new byte[BUFFER_SIZE];
+		try {
+			URL url = new URL(serverUrl + downloadUrl);
+			in = url.openConnection().getInputStream();
+			out = new FileOutputStream(destinationFile);
+			int count = in.read(buffer);
+			while (count >= 0) {
+				out.write(buffer, 0, count);
+				count = in.read(buffer);
+			}
+		} catch (Exception e) {
+			throw new ServiceException(e);
+		} finally {
+			try {
+
+				if (out != null) {
+					out.close();
+				}
+				if (in != null) {
+					in.close();
+				}
+			} catch (Exception e) {
+				throw new ServiceException(e);
+			}
+		}
+	}
+
 }

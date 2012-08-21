@@ -14,6 +14,9 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -21,13 +24,33 @@ public class Species extends Persistent implements Parcelable {
 
 	public String scientificName;
 	public String commonName;
-
+	public String imageFileName;
+	
 	public int profileImagePath;
 
+	private List<ProfileElement> infoItems;
+	
+	public static class ProfileElement {
+		String content;
+		String type;
+	}
+	
 	public Species(String scientificName, String commonName, int fileName) {
 		this.scientificName = scientificName;
 		this.commonName = commonName;
 		this.profileImagePath = fileName;
+		infoItems = new ArrayList<Species.ProfileElement>();
+	}
+	
+	public String getImageFileName() {
+		if (infoItems != null) {
+			for (ProfileElement element : infoItems) {
+				if ("thumb".equals(element.type)) {
+					return element.content;
+				}
+			}
+		}
+		return null;
 	}
 
 	public int describeContents() {

@@ -41,6 +41,7 @@ import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 /**
  * This class is the main activity for the Mobile Field Data application.
@@ -202,9 +203,17 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		new MenuInflater(this).inflate(R.menu.dashboard_menu, menu);
-
 		return super.onCreateOptionsMenu(menu);
 	}
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.sync) {
+			new InitTask().execute();
+			return true;
+		}
+		return false;
+    }
 
 	private void updateSurveyList(List<Survey> surveys) {
 		final Survey[] surveyArray = surveys

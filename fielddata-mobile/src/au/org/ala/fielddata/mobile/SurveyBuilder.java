@@ -36,7 +36,9 @@ import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Record.AttributeValue;
+import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.ui.DatePickerFragment;
+import au.org.ala.fielddata.mobile.ui.SpeciesViewHolder;
 import au.org.ala.fielddata.mobile.validation.Binder;
 import au.org.ala.fielddata.mobile.validation.RequiredValidator;
 import au.org.ala.fielddata.mobile.validation.SpinnerBinder;
@@ -95,6 +97,9 @@ public class SurveyBuilder {
 			break;
 		case WHEN:
 			view = buildDatePicker(attribute, value);
+			break;
+		case SPECIES_P:
+			view = buildSpeciesPicker(attribute, record);
 			break;
 		default:
 		    view = buildEditText(attribute, value, InputType.TYPE_CLASS_TEXT);
@@ -159,6 +164,17 @@ public class SurveyBuilder {
 		layout.addView(changeButton);
 		
 		return layout;
+	}
+	
+	public View buildSpeciesPicker(Attribute attribute, Record record) {
+		
+		Species species = new Species("test", "another test", R.drawable.nassella_neesiana_thumb); //record.getSpecies();
+		
+		View row = viewContext.getLayoutInflater().inflate(R.layout.species_row, null);
+		new SpeciesViewHolder(row).populate(species);
+		
+		
+		return row;
 	}
 	
 	private Validator validatorFor(Attribute attribute) {

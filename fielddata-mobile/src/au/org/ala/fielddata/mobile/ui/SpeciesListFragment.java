@@ -23,9 +23,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Species;
@@ -56,18 +54,6 @@ public class SpeciesListFragment extends SherlockListFragment {
     	new GetSpeciesTask().execute();
     }
 	
-	class ViewHolder {
-    	ImageView icon = null;
-    	TextView scientificName = null;
-    	TextView commonName = null;
-    	
-    	public ViewHolder(View row) {
-    		this.icon = (ImageView)row.findViewById(R.id.imageView1);
-    		this.scientificName = (TextView)row.findViewById(R.id.scientificName);
-			this.commonName = (TextView)row.findViewById(R.id.commonName);
-    	}
-    }
-
 	class GetSpeciesTask extends AsyncTask<Void, Void, List<Species>> {
 		
     	protected List<Species> doInBackground(Void... ignored) {
@@ -100,16 +86,13 @@ public class SpeciesListFragment extends SherlockListFragment {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
 			View row = super.getView(position, convertView, parent);
-			ViewHolder viewHolder = (ViewHolder)row.getTag();
+			SpeciesViewHolder viewHolder = (SpeciesViewHolder)row.getTag();
 			if (viewHolder == null) {
-				viewHolder = new ViewHolder(row);
+				viewHolder = new SpeciesViewHolder(row);
 				row.setTag(viewHolder);
 			}
 			
-			
-			viewHolder.icon.setImageResource(getItem(position).profileImagePath);
-			viewHolder.scientificName.setText(getItem(position).scientificName);
-			viewHolder.commonName.setText(getItem(position).commonName);
+			viewHolder.populate(getItem(position));
 			return row;
 		}
     	

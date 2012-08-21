@@ -53,13 +53,13 @@ public class Preferences {
 	}
 
 	public String getFieldDataServerUrl() {
-		return "http://"+getFieldDataServerHostName()+"/bdrs-core/koalacount";
+		return "http://"+getFieldDataServerHostName()+":8080/BDRS/koalacount";
 	}
 	
 	public String getFieldDataServerHostName() {
-		//return "152.83.195.62";
+		return "152.83.195.62";
 		//return "192.168.0.8";
-		return "root-uat.ala.org.au";
+		//return "root-uat.ala.org.au";
 	}
 	
 	public String getFieldDataSessionKey() {

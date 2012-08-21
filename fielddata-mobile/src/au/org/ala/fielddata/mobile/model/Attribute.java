@@ -56,7 +56,7 @@ public class Attribute extends SurveyProperty {
 		SPECIES_P("Species", "Species"),
 		NUMBER("Number", "Number"),
 		POINT("Point", "Point"),
-		ACCURACY("Accuracy", "Accuracy"),
+		ACCURACY("AccuracyInMeters", "AccuracyInMeters"),
 		WHEN("When", "When"),
 		NOTES("Notes", "Notes");
 		

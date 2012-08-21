@@ -82,10 +82,12 @@ public class SurveyBuilder {
 			view = buildEditText(attribute, value, InputType.TYPE_CLASS_TEXT);
 			break;
 		case INTEGER:
-		case ACCURACY:
+		case NUMBER:
 			view = buildEditText(attribute, value, InputType.TYPE_CLASS_NUMBER);
 			break;
 		case DECIMAL:
+		case ACCURACY:
+			
 			view = buildEditText(attribute, value, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 			break;
 		case MULTI_SELECT:
@@ -126,7 +128,7 @@ public class SurveyBuilder {
 
 	private View buildEditText(Attribute attribute, AttributeValue value, int inputType) {
 		EditText view = new EditText(viewContext);
-		
+		view.setInputType(inputType);
 		view.setText(value.nullSafeValue());
 		TextViewBinder binder = new TextViewBinder(viewContext, view, value, validatorFor(attribute));
 		binders.add(binder);

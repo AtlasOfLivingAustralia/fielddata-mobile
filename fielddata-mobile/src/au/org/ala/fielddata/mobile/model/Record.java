@@ -108,18 +108,53 @@ public class Record extends Persistent{
 			case POINT:
 				break;
 			case ACCURACY:
+				accuracy = toDouble(value);
 				break;
 			case NUMBER:
+				number = toInteger(value);
 				break;
 			case NOTES:
 				notes = value;
 				break;
 			case WHEN:
-				when = Long.parseLong(value);
+				when = toLong(value);
 				break;
 			default:
 				;
 			}
+		}
+		
+		private Long toLong(String value) {
+			if (value != null) {
+				try {
+					return Long.parseLong(value);
+				}
+				catch (Exception e) {}
+					
+			}
+			return null;
+		}
+		
+		private Integer toInteger(String value) {
+			if (value != null) {
+				try {
+					return Integer.parseInt(value);
+				}
+				catch (Exception e) {}
+					
+			}
+			return null;
+		}
+		
+		private Double toDouble(String value) {
+			if (value != null) {
+				try {
+					return Double.parseDouble(value);
+				}
+				catch (Exception e) {}
+					
+			}
+			return null;
 		}
 	}
 	

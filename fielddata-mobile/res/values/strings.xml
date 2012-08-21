@@ -1,0 +1,45 @@
+<resources>
+
+    <string name="app_name">Condamine Alliance</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_mobile_field_data">Condamine Alliance</string>
+    <string name="submitButtonText">Save</string>
+    <string name="title_activity_mobile_data_dashboard">MobileDataDashboard</string>
+    <string name="species_label">Species</string>
+    <string name="date_label">Date</string>
+    <string name="comments_label">Comments</string>
+    <string name="title_activity_select_location">SelectLocationActivity</string>
+    <string name="title_activity_location_selection">LocationSelectionActivity</string>
+    <string name="title_species_selection">Select a species</string>
+    <string name="title_species_list">Species List</string>
+    <string name="saveButtonText">Save</string>
+
+    <!-- Dashboard -->
+    <string name="new_record">New recording</string>
+    <string name="view_field_guide">Species List</string>
+
+    <!-- Menu Text -->
+    <string name="menu_about">About</string>
+    <string name="menu_settings">Settings</string>
+
+    <!-- Validation Errors -->
+    <string name="requiredMessage">Please enter a value</string>
+    <string name="no_saved_records_message">No saved records</string>
+    <string name="saved_records_message">%s saved records</string>
+    <string name="saved_record_message">1 saved record</string>
+    <string name="initialisationErrorTitle">Initialisation error</string>
+    <string name="initialisationError">Please ensure you have network access and the field data server at %s is running.</string>
+    <string name="title_activity_view_saved_records">ViewSavedRecordsActivity</string>
+    <string name="ok">OK</string>
+    <string name="close">Close</string>
+    <string name="aboutMessage">Field Data mobile client 1.0\nAltas of Living Australia</string>
+    <string name="title_activity_edit_preferences">EditPreferences</string>
+    
+    <!-- Location selection -->
+    <string name="latitudeLabel">Latitude</string>
+    <string name="longitudeLabel">Longitude</string>
+    <string name="accuracyLabel">Accuracy</string>
+    <string name="currentLocationLabel">GPS location</string>
+    <string name="mapLabel">Select from map</string>
+    
+</resources>

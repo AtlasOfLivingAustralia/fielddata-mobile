@@ -1,0 +1,103 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerVertical="true" >
+
+    <ImageButton
+        android:id="@+id/viewSavedRecordsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dip"
+        android:layout_marginBottom="25dip"       
+        android:layout_marginRight="14dip"
+        android:layout_marginLeft="15dip"
+        android:clickable="false"
+        android:contentDescription="@string/new_record"
+        android:src="@android:drawable/ic_input_get" />
+    
+    <TextView
+        android:id="@+id/noSavedRecords"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/viewSavedRecordsButton"
+        android:layout_alignBottom="@id/viewSavedRecordsButton"
+        android:layout_marginBottom="15dip"
+        android:text="@string/no_saved_records_message"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <View
+        android:id="@+id/hr1"
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_below="@id/viewSavedRecordsButton"
+        android:background="#66000000"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip" />
+
+    <ImageButton
+        android:id="@+id/newRecordButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dip"
+        android:layout_marginBottom="25dip"       
+        android:layout_marginRight="14dp"
+        android:layout_marginLeft="15dip"
+        android:layout_below="@id/hr1"
+        android:contentDescription="@string/new_record"
+        android:src="@android:drawable/ic_input_get" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="26dp"
+       
+        android:layout_toRightOf="@id/newRecordButton"
+        android:layout_alignBottom="@id/newRecordButton"    
+        android:layout_centerInParent="true"
+        android:layout_marginTop="15dip"
+        android:layout_marginBottom="15dip"       
+        android:text="@string/new_record"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    <View
+        android:id="@+id/hr2"
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        
+        android:layout_below="@id/newRecordButton"
+        android:background="#66000000" />
+    
+    <ImageButton
+        android:id="@+id/viewFieldGuideButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dip"
+        android:layout_marginBottom="25dip"   
+        android:layout_marginRight="14dp"
+        android:layout_marginLeft="15dip"
+        android:layout_below="@id/hr2"
+        android:contentDescription="@string/new_record"
+        android:src="@android:drawable/ic_input_get" />
+
+    <TextView
+        android:id="@+id/viewFieldGuideText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="26dp"
+       
+        android:layout_toRightOf="@id/viewFieldGuideButton"
+        android:layout_alignBottom="@id/viewFieldGuideButton"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="25dip"
+        android:layout_marginBottom="15dip"   
+        android:text="@string/view_field_guide"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+    <include layout="@layout/menu_items"/>
+    
+</RelativeLayout>

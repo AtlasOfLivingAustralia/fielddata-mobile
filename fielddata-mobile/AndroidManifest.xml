@@ -1,0 +1,55 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="au.org.ala.fielddata.mobile"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="16" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <uses-library android:name="com.google.android.maps" />
+
+        <activity
+            android:name=".MobileFieldDataDashboard"
+            android:label="@string/title_activity_mobile_data_dashboard" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".CollectSurveyData"
+            android:label="@string/title_activity_mobile_field_data" >
+        </activity>
+        <activity
+            android:name=".SpeciesSelectionActivity"
+            android:label="@string/title_species_selection" >
+        </activity>
+        <activity
+            android:name=".SpeciesListActivity"
+            android:label="@string/title_species_list" >
+        </activity>
+        <activity
+            android:name=".LocationSelectionActivity"
+            android:label="@string/title_activity_location_selection" >
+
+        </activity>
+        <activity
+            android:name=".ViewSavedRecordsActivity"
+            android:label="@string/title_activity_view_saved_records" >
+        </activity>
+        <activity
+            android:name=".pref.EditPreferences"
+            android:label="@string/title_activity_edit_preferences" >
+         </activity>
+    </application>
+
+</manifest>

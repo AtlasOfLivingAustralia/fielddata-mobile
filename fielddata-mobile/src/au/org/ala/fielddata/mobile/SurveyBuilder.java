@@ -19,11 +19,13 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.view.View.OnClickListener;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -82,6 +84,9 @@ public class SurveyBuilder {
 		case SPECIES_P:
 			view = buildSpeciesPicker(attribute);
 			break;
+		case POINT:
+			view = buildLocationPicker(attribute);
+			break;
 		default:
 		    view = buildEditText(attribute, record, InputType.TYPE_CLASS_TEXT);
 		    break;
@@ -139,7 +144,7 @@ public class SurveyBuilder {
 			public void onClick(View v) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(viewContext);
 				final SpeciesListAdapter adapter = new SpeciesListAdapter(viewContext);
-				builder.setAdapter(adapter, new OnClickListener() {
+				builder.setAdapter(adapter, new android.content.DialogInterface.OnClickListener() {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -159,6 +164,22 @@ public class SurveyBuilder {
 			new SpeciesViewHolder(row).populate(species);
 		}
 		return row;
+	}
+	
+	public View buildLocationPicker(Attribute attribute) {
+		View view = viewContext.getLayoutInflater().inflate(R.layout.location_layout, null);
+		Button gpsButton = (Button)view.findViewById(R.id.gpsButton);
+		gpsButton.setEnabled(false);
+		
+		Button showOnMapButton = (Button)view.findViewById(R.id.showMapButton);
+		showOnMapButton.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				Intent intent = new Intent(viewContext, LocationSelectionActivity.class);
+				viewContext.startActivityForResult(intent, -1 );
+			}
+		});
+		return view;
 	}
 	
 	private Validator validatorFor(Attribute attribute) {

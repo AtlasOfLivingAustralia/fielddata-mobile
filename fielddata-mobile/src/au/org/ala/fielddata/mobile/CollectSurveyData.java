@@ -17,7 +17,6 @@ package au.org.ala.fielddata.mobile;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,7 +43,6 @@ import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
 import au.org.ala.fielddata.mobile.service.LoginService;
-import au.org.ala.fielddata.mobile.ui.SpeciesListFragment;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -202,15 +200,10 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
     	
 		@Override
 		public Fragment getItem(int page) {
-			if (page == 0) {
-				return new SpeciesListFragment();
-			}
-			else if (page == 1) {
-				return new LocationPage();
-			}
+	
 			SurveyPage surveyPage = new SurveyPage();
 			Bundle args = new Bundle();
-			args.putInt("pageNum", page-2);
+			args.putInt("pageNum", page);
 			surveyPage.setArguments(args);
 			return surveyPage;
 		}
@@ -220,26 +213,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
 			return surveyView.getPageCount();
 		}
     	
-    }
-    
-    public static class LocationPage extends Fragment {
-    	@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View view = inflater.inflate(R.layout.location_layout, container, false);
-			Button gpsButton = (Button)view.findViewById(R.id.gpsButton);
-			gpsButton.setEnabled(false);
-			
-			Button showOnMapButton = (Button)view.findViewById(R.id.showMapButton);
-			showOnMapButton.setOnClickListener(new OnClickListener() {
-				
-				public void onClick(View v) {
-					Intent intent = new Intent(getActivity(), LocationSelectionActivity.class);
-					startActivityForResult(intent, -1 );
-				}
-			});
-			return view;
-		}
     }
     
     public static class SurveyPage extends Fragment {

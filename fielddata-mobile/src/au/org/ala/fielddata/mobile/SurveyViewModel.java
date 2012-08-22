@@ -60,7 +60,7 @@ public class SurveyViewModel {
 	}
 	
 	public int getPageCount() {
-		return attributes.size()+2;
+		return attributes.size();
 	}
 	
 	public List<Attribute> getPage(int pageNum) {

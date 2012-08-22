@@ -182,9 +182,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		boolean success = false;
 		String fieldDataServer = preferences.getFieldDataServerHostName();
 		try {
-
-			InetAddress address = InetAddress.getByName(fieldDataServer);
-			success = address.isReachable(1000);
+			FieldDataService service = new FieldDataService(this);
+			success = service.ping(5000);
 			if (!success) {
 				Log.i("Status", "Field data server at: " + fieldDataServer
 						+ " is not reachable");

@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,6 +114,34 @@ public class FieldDataService extends WebServiceClient {
 		}
 
 		return surveys;
+	}
+	
+	public boolean ping(int timeoutInMillis) {
+		String pingUrl = "/webservice/application/ping.htm";
+		InputStream in = null;
+		
+		try {
+			URL url = new URL(serverUrl + pingUrl);
+			URLConnection conn = url.openConnection();
+			conn.setConnectTimeout(timeoutInMillis);
+			conn.setReadTimeout(timeoutInMillis);
+			in = conn.getInputStream();
+			while (in.read() != -1) {}
+			
+		} catch (Exception e) {
+			return false;
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+				
+			} catch (Exception e) {
+				return false;
+			}
+		}
+		return true;
+		
 	}
 
 	public void downloadSpeciesProfileImage(String uuid, File destinationFile) {

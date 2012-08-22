@@ -38,7 +38,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dip"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="italic" />
+            android:textStyle="italic" 
+            android:hint="@string/touch_to_select"/>
 
         <TextView
             android:id="@+id/commonName"

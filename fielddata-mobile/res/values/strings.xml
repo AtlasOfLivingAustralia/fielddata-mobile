@@ -30,7 +30,8 @@
     
     <string name="species_profile_image">Spcies profile image</string>
     <string name="change_date_button_text">Change</string>
-
+	<string name="touch_to_select">Touch to select</string>
+	
     <!-- Dashboard -->
     <string name="new_record">New recording</string>
     <string name="view_field_guide">Species List</string>

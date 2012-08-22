@@ -31,6 +31,7 @@
     <string name="species_profile_image">Spcies profile image</string>
     <string name="change_date_button_text">Change</string>
 	<string name="touch_to_select">Touch to select</string>
+	<string name="no_location_supplied">No location supplied</string>
 	
     <!-- Dashboard -->
     <string name="new_record">New recording</string>
@@ -57,7 +58,7 @@
     <string name="latitudeLabel">Latitude</string>
     <string name="longitudeLabel">Longitude</string>
     <string name="accuracyLabel">Accuracy</string>
-    <string name="currentLocationLabel">GPS location</string>
-    <string name="mapLabel">Select from map</string>
+    <string name="currentLocationLabel">GPS</string>
+    <string name="mapLabel">Map</string>
     
 </resources>

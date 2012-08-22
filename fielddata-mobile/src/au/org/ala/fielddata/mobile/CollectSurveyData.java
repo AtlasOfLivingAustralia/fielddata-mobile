@@ -34,8 +34,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Attribute;
@@ -45,6 +47,13 @@ import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
 import au.org.ala.fielddata.mobile.service.LoginService;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
+import au.org.ala.fielddata.mobile.validation.Binder;
+import au.org.ala.fielddata.mobile.validation.DateBinder;
+import au.org.ala.fielddata.mobile.validation.LocationBinder;
+import au.org.ala.fielddata.mobile.validation.RequiredValidator;
+import au.org.ala.fielddata.mobile.validation.SpinnerBinder;
+import au.org.ala.fielddata.mobile.validation.TextViewBinder;
+import au.org.ala.fielddata.mobile.validation.Validator;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -55,8 +64,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
 	public static final String SURVEY_BUNDLE_KEY = "SurveyIdKey";
 	public static final String RECORD_BUNDLE_KEY = "RecordIdKey";
     
-	private SurveyViewModel surveyView;
-	
+	private SurveyViewModel surveyViewModel;
+	private BinderManager binder;
 	private SurveyBuilder builder;
 	private SurveyPagerAdapter pagerAdapter;
 	private ViewPager pager;
@@ -65,7 +74,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        binder = new BinderManager();
+		
         int surveyId = getIntent().getIntExtra(SURVEY_BUNDLE_KEY, 0);
         int recordId = getIntent().getIntExtra(RECORD_BUNDLE_KEY, 0);
         
@@ -95,8 +105,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
         if (recordId <= 0) {
         	record = initRecord(recordId, surveyId);
         }
-        surveyView = new SurveyViewModel(survey, record);
-        builder = new SurveyBuilder(this, surveyView);
+        surveyViewModel = new SurveyViewModel(survey, record);
+        builder = new SurveyBuilder(this, surveyViewModel);
         
         pagerAdapter = new SurveyPagerAdapter(getSupportFragmentManager());
         pager = (ViewPager)findViewById(R.id.surveyPager);
@@ -117,7 +127,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
 	
 	public void onSpeciesSelected(Species selectedSpecies) {
 		
-		surveyView.speciesSelected(selectedSpecies);
+		surveyViewModel.speciesSelected(selectedSpecies);
 		pager.setCurrentItem(1);
 		SpannableString title = new SpannableString(selectedSpecies.scientificName);
         title.setSpan(new StyleSpan(Typeface.ITALIC), 0, title.length(), 0);
@@ -127,16 +137,15 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
 	}
 	
 	public void onLocationSelected(Location location) {
-		surveyView.locationSelected(location);
+		binder.locationChanged(location);
 	}
 	private Record initRecord(int recordId, int surveyId) {
 		Record record;
 		if (recordId <= 0) {
 			record = new Record();
 			record.survey_id = surveyId;
-			record.latitude = -27.561777;
-			record.longitude = 151.493591;
 			record.when = System.currentTimeMillis();
+		
 		}
 		else {
 			GenericDAO<Record> recordDAO = new GenericDAO<Record>(this);
@@ -168,7 +177,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
     		tableLayout.setColumnStretchable(0, true);
     	}
     	
-    	List<Attribute> pageAttributes = surveyView.getPage(pageNum);;
+    	List<Attribute> pageAttributes = surveyViewModel.getPage(pageNum);;
     	int rowCount = pageAttributes.size();
     	for (int i=0; i<rowCount; i++) {
     		TableRow row = new TableRow(this);
@@ -180,7 +189,9 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
     			tableLayout.addView(row);
     			row = new TableRow(this);
     		}
-    		row.addView(builder.buildInput(attribute));
+    		View inputView = builder.buildInput(attribute);
+    		binder.configureBindings(inputView, attribute);
+    		row.addView(inputView);
     	
     		tableLayout.addView(row);
     	}
@@ -189,11 +200,84 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
         saveButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				builder.bindAll();
-				new SaveRecordTask().execute(surveyView.getRecord());
+				binder.bindAll();
+				new SaveRecordTask().execute(surveyViewModel.getRecord());
 				
 			}
 		});
+    }
+    
+    class BinderManager {
+    	private List<Binder> binders;
+    	private LocationBinder locationBinder;
+    	
+    	public BinderManager() {
+    		binders = new ArrayList<Binder>();
+    	}
+    	
+    	public void configureBindings(View view, Attribute attribute) {
+    		
+    		Record record = surveyViewModel.getRecord();
+    		
+    		Binder binder = null;
+    		// Some attribute types require special bindings.
+    		switch(attribute.getType()) {
+    		case WHEN:
+    		case TIME:
+    			binder = new DateBinder(CollectSurveyData.this, view, attribute, record, validatorFor(attribute));
+    			break;
+    		case POINT:
+    			locationBinder = new LocationBinder(view, record);
+    			binder = locationBinder;
+    			break;
+    		default:
+    			binder = bindByViewClass(view, attribute);
+    			break;
+    		}
+    		
+    		
+    		if (binder != null) {
+    			binders.add(binder);
+    		}
+    	}
+    	
+    	public void locationChanged(Location location) {
+    		if (locationBinder != null) {
+    			locationBinder.locationChanged(location);
+    		}
+    	}
+    	
+    	private Binder bindByViewClass(View view, Attribute attribute) {
+    		Record record = surveyViewModel.getRecord();
+    		Binder binder = null;
+    		if (view instanceof TextView) {
+    			binder = new TextViewBinder(CollectSurveyData.this, (TextView)view, attribute, record,  validatorFor(attribute));
+    			
+    		}
+    		else if (view instanceof Spinner) {
+    			binder = new SpinnerBinder(CollectSurveyData.this, (Spinner)view, attribute, record, validatorFor(attribute));
+    			
+    		}
+    		return binder;
+    	}
+    	
+    	public void bindAll() {
+    		for (Binder binder : binders) {
+    			binder.bind();
+    		}
+    	}
+    	
+    	private Validator validatorFor(Attribute attribute) {
+    		
+    		Validator validator = null;
+    		if (attribute.required != null && attribute.required) {
+    			validator = new RequiredValidator();
+    		}
+    		return validator;
+    		
+    	}
+    	
+    	
     }
     
     
@@ -215,7 +299,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
 
 		@Override
 		public int getCount() {
-			return surveyView.getPageCount();
+			return surveyViewModel.getPageCount();
 		}
     	
     }
@@ -251,7 +335,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
 			try {
 				
 				GenericDAO<Record> recordDao = new GenericDAO<Record>(getApplicationContext());
-				recordDao.save(surveyView.getRecord());
+				recordDao.save(surveyViewModel.getRecord());
 				
 				
 				LoginService loginService = new LoginService(CollectSurveyData.this);
@@ -259,7 +343,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
 				
 				FieldDataService recordService = new FieldDataService(CollectSurveyData.this);
 				List<Record> records = new ArrayList<Record>();
-				records.add(surveyView.getRecord());
+				records.add(surveyViewModel.getRecord());
 				
 				recordService.sync(records);
 				

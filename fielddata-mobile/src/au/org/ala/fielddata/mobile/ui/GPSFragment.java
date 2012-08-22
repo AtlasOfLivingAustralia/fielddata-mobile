@@ -1,6 +1,7 @@
 package au.org.ala.fielddata.mobile.ui;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -26,7 +27,7 @@ public class GPSFragment extends DialogFragment implements LocationListener, Dia
 	private LocationManager locationManager;
 	private Location bestLocation;
 	
-	@SuppressLint("NewApi")
+	@TargetApi(8)
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		
@@ -106,7 +107,7 @@ public class GPSFragment extends DialogFragment implements LocationListener, Dia
 
 	@Override
 	public void onClick(DialogInterface dialog, int which) {
-		if (which == AlertDialog.BUTTON_POSITIVE && bestLocation != null) {
+		if (bestLocation != null) {
 			CollectSurveyData activity = (CollectSurveyData)getActivity();
 			activity.onLocationSelected(bestLocation);
 		}

@@ -34,6 +34,7 @@ public class TextViewBinder implements Binder, TextWatcher {
 		this.view = view;
 		this.record = record;
 		this.attribute = attribute;
+		view.setText(record.getValue(attribute));
 		view.addTextChangedListener(this);
 	}
 

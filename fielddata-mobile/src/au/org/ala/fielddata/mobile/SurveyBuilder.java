@@ -14,16 +14,13 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.view.View.OnClickListener;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,23 +33,15 @@ import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.ui.GPSFragment;
 import au.org.ala.fielddata.mobile.ui.SpeciesListAdapter;
 import au.org.ala.fielddata.mobile.ui.SpeciesViewHolder;
-import au.org.ala.fielddata.mobile.validation.Binder;
-import au.org.ala.fielddata.mobile.validation.DateBinder;
-import au.org.ala.fielddata.mobile.validation.RequiredValidator;
-import au.org.ala.fielddata.mobile.validation.SpinnerBinder;
-import au.org.ala.fielddata.mobile.validation.TextViewBinder;
-import au.org.ala.fielddata.mobile.validation.Validator;
 
 public class SurveyBuilder {
 	
 	private FragmentActivity viewContext;
-	private List<Binder> binders;
 	private SurveyViewModel model;
 	
 	public SurveyBuilder(FragmentActivity viewContext, SurveyViewModel model) {
 		this.viewContext = viewContext;
 		this.model = model;
-		binders = new ArrayList<Binder>();
 		
 	}
 	
@@ -61,23 +50,23 @@ public class SurveyBuilder {
 		View view;
 		switch (attribute.getType()) {
 		case STRING:
-			view = buildEditText(attribute, record, InputType.TYPE_CLASS_TEXT);
+			view = buildEditText(InputType.TYPE_CLASS_TEXT);
 			break;
 		case INTEGER:
 		case NUMBER:
-			view = buildEditText(attribute, record, InputType.TYPE_CLASS_NUMBER);
+			view = buildEditText(InputType.TYPE_CLASS_NUMBER);
 			break;
 		case DECIMAL:
 		case ACCURACY:
 			
-			view = buildEditText(attribute, record, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+			view = buildEditText(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 			break;
 		case MULTI_SELECT:
 		case STRING_WITH_VALID_VALUES:
-			view = buildSpinner(attribute, record);
+			view = buildSpinner(attribute);
 			break;
 		case NOTES:
-			view = buildEditText(attribute, record, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+			view = buildEditText(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
 			break;
 		case WHEN:
 			view = buildDatePicker(attribute, record);
@@ -92,34 +81,25 @@ public class SurveyBuilder {
 			view = buildLocationPicker(attribute);
 			break;
 		default:
-		    view = buildEditText(attribute, record, InputType.TYPE_CLASS_TEXT);
+		    view = buildEditText(InputType.TYPE_CLASS_TEXT);
 		    break;
 		}
 		return view;
 	}
 	
-	public void bindAll() {
-		for (Binder binder : binders) {
-			binder.bind();
-		}
-	}
 	
-	private Spinner buildSpinner(Attribute attribute, Record record) {
+	
+	private Spinner buildSpinner(Attribute attribute) {
 		Spinner spinner = new Spinner(viewContext);
 		spinner.setPrompt("Select "+attribute.description);
 		ArrayAdapter<AttributeOption> adapter = new ArrayAdapter<AttributeOption>(viewContext, android.R.layout.simple_list_item_1, attribute.options);
 		spinner.setAdapter(adapter);
-		Binder binder = new SpinnerBinder(viewContext, spinner, attribute, record, validatorFor(attribute));
-		binders.add(binder);
 		return spinner;
 	}
 
-	private View buildEditText(Attribute attribute, Record record, int inputType) {
+	private View buildEditText(int inputType) {
 		EditText view = new EditText(viewContext);
 		view.setInputType(inputType);
-		view.setText(record.getValue(attribute));
-		TextViewBinder binder = new TextViewBinder(viewContext, view, attribute, record,  validatorFor(attribute));
-		binders.add(binder);
 		return view;
 	}
 	
@@ -132,16 +112,12 @@ public class SurveyBuilder {
 	public View buildDatePicker(Attribute attribute, Record record) {
 		
 		View row = viewContext.getLayoutInflater().inflate(R.layout.date_field, null);
-		Binder binder = new DateBinder(viewContext, row, attribute, record, validatorFor(attribute));
-		binders.add(binder);
 		return row;
 	}
 	
 	public View buildTimePicker(Attribute attribute, Record record) {
 		
 		View row = viewContext.getLayoutInflater().inflate(R.layout.date_field, null);
-		Binder binder = new DateBinder(viewContext, row, attribute, record, validatorFor(attribute));
-		binders.add(binder);
 		return row;
 	}
 	
@@ -179,7 +155,7 @@ public class SurveyBuilder {
 	}
 	
 	public View buildLocationPicker(Attribute attribute) {
-		View view = viewContext.getLayoutInflater().inflate(R.layout.location_layout, null);
+		View view = viewContext.getLayoutInflater().inflate(R.layout.read_only_location, null);
 		Button gpsButton = (Button)view.findViewById(R.id.gpsButton);
 		gpsButton.setOnClickListener(new OnClickListener() {
 			
@@ -201,13 +177,4 @@ public class SurveyBuilder {
 		return view;
 	}
 	
-	private Validator validatorFor(Attribute attribute) {
-		
-		Validator validator = null;
-		if (attribute.required != null && attribute.required) {
-			validator = new RequiredValidator();
-		}
-		return validator;
-		
-	}
 }

@@ -19,18 +19,21 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.R;
-import au.org.ala.fielddata.mobile.model.Record.AttributeValue;
+import au.org.ala.fielddata.mobile.model.Attribute;
+import au.org.ala.fielddata.mobile.model.Record;
 
 public class TextViewBinder implements Binder, TextWatcher {
 
 	private TextView view;
-	private AttributeValue value;
+	private Record record;
 	private Context ctx;
 	private Validator validator;
+	private Attribute attribute;
 	
-	public TextViewBinder(Context ctx, TextView view, AttributeValue value, Validator validator) {
+	public TextViewBinder(Context ctx, TextView view, Attribute attribute, Record record, Validator validator) {
 		this.view = view;
-		this.value = value;
+		this.record = record;
+		this.attribute = attribute;
 		view.addTextChangedListener(this);
 	}
 
@@ -57,7 +60,7 @@ public class TextViewBinder implements Binder, TextWatcher {
 	}
 	
 	public void bind() {
-		value.setValue(nullSafeText());
+		record.setValue(attribute, nullSafeText());
 	}
 	
 	private String nullSafeText() {

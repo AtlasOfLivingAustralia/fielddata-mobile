@@ -21,7 +21,7 @@ import java.util.List;
 
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 
-public class Record extends Persistent{
+public class Record extends Persistent {
 
 	
 	public Double latitude;
@@ -38,7 +38,7 @@ public class Record extends Persistent{
 	
 	private List<AttributeValue> attributeValues;
 	
-	public static class AttributeValue {
+	static class AttributeValue {
 		public Integer id = 1;
 		public Integer server_id;
 		
@@ -59,7 +59,7 @@ public class Record extends Persistent{
 		}
 	}
 	
-	public class PropertyAttributeValue extends AttributeValue {
+	class PropertyAttributeValue extends AttributeValue {
 		
 		private AttributeType attributeType;
 		public PropertyAttributeValue(Attribute attribute) {
@@ -164,7 +164,7 @@ public class Record extends Persistent{
 		
 	}
 
-	public AttributeValue valueOf(Attribute attribute) {
+	protected AttributeValue valueOf(Attribute attribute) {
 		int id = attribute.getServerId();
 		for (AttributeValue value : attributeValues) {
 			if (id == value.attribute_id) {
@@ -185,23 +185,44 @@ public class Record extends Persistent{
 		
 		return value;
 	}
+	
+	
+	public String getValue(Attribute attribute) {
+		AttributeValue attributeVal = valueOf(attribute);
+		
+		return attributeVal.nullSafeValue();
+
+	}
 
 	public void setValue(Attribute attribute, String value) {
+	
+		AttributeValue attrValue = valueOf(attribute);
+		attrValue.setValue(value);
 		
-		int id = attribute.server_id;
-		for (AttributeValue attributeValue : attributeValues) {
-			if (id == attributeValue.attribute_id) {
-				attributeValue.value = value;
-				return;
-			}
-		}
-		
-		AttributeValue attributeValue = new AttributeValue();
-		attributeValue.attribute_id = id;
-		attributeValue.value = value;
-		attributeValues.add(attributeValue);
 	}
 	
-	
+	public void setValue(Attribute attribute, Date value) {
+		if (attribute.getType() != AttributeType.WHEN) {
+			throw new IllegalArgumentException("Attribute is not a date attribute");
+		}
+		valueOf(attribute).setValue(Long.toString(value.getTime()));
+	}
+
+	public Date getDate(Attribute attribute) {
+		if (attribute.getType() != AttributeType.WHEN) {
+			throw new IllegalArgumentException("Attribute is not a date attribute");
+		}
+		String dateStr = valueOf(attribute).nullSafeValue();
+		Date date = new Date();
+		if (date != null) {
+			try {
+				date = new Date(Long.parseLong(dateStr));
+			}
+			catch (NumberFormatException e) {
+				
+			}
+		}
+		return date;
+	}
 	
 }

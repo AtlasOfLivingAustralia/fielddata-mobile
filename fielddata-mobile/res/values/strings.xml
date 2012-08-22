@@ -27,6 +27,9 @@
     <string name="title_species_selection">Select a species</string>
     <string name="title_species_list">Species List</string>
     <string name="saveButtonText">Save</string>
+    
+    <string name="species_profile_image">Spcies profile image</string>
+    <string name="change_date_button_text">Change</string>
 
     <!-- Dashboard -->
     <string name="new_record">New recording</string>

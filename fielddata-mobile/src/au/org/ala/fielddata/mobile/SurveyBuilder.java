@@ -17,29 +17,22 @@ package au.org.ala.fielddata.mobile;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.model.Record;
-import au.org.ala.fielddata.mobile.model.Record.AttributeValue;
 import au.org.ala.fielddata.mobile.model.Species;
-import au.org.ala.fielddata.mobile.ui.DatePickerFragment;
 import au.org.ala.fielddata.mobile.ui.SpeciesViewHolder;
 import au.org.ala.fielddata.mobile.validation.Binder;
+import au.org.ala.fielddata.mobile.validation.DateBinder;
 import au.org.ala.fielddata.mobile.validation.RequiredValidator;
 import au.org.ala.fielddata.mobile.validation.SpinnerBinder;
 import au.org.ala.fielddata.mobile.validation.TextViewBinder;
@@ -75,36 +68,35 @@ public class SurveyBuilder {
 	}
 
 	public View buildInput(Attribute attribute, Record record) {
-		AttributeValue value = record.valueOf(attribute);
 		View view;
 		switch (attribute.getType()) {
 		case STRING:
-			view = buildEditText(attribute, value, InputType.TYPE_CLASS_TEXT);
+			view = buildEditText(attribute, record, InputType.TYPE_CLASS_TEXT);
 			break;
 		case INTEGER:
 		case NUMBER:
-			view = buildEditText(attribute, value, InputType.TYPE_CLASS_NUMBER);
+			view = buildEditText(attribute, record, InputType.TYPE_CLASS_NUMBER);
 			break;
 		case DECIMAL:
 		case ACCURACY:
 			
-			view = buildEditText(attribute, value, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+			view = buildEditText(attribute, record, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 			break;
 		case MULTI_SELECT:
 		case STRING_WITH_VALID_VALUES:
-			view = buildSpinner(attribute, value);
+			view = buildSpinner(attribute, record);
 			break;
 		case NOTES:
-			view = buildEditText(attribute, value, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+			view = buildEditText(attribute, record, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
 			break;
 		case WHEN:
-			view = buildDatePicker(attribute, value);
+			view = buildDatePicker(attribute, record);
 			break;
 		case SPECIES_P:
 			view = buildSpeciesPicker(attribute, record);
 			break;
 		default:
-		    view = buildEditText(attribute, value, InputType.TYPE_CLASS_TEXT);
+		    view = buildEditText(attribute, record, InputType.TYPE_CLASS_TEXT);
 		    break;
 		}
 		return view;
@@ -116,21 +108,21 @@ public class SurveyBuilder {
 		}
 	}
 	
-	private Spinner buildSpinner(Attribute attribute, AttributeValue value) {
+	private Spinner buildSpinner(Attribute attribute, Record record) {
 		Spinner spinner = new Spinner(viewContext);
 		spinner.setPrompt("Select "+attribute.description);
 		ArrayAdapter<AttributeOption> adapter = new ArrayAdapter<AttributeOption>(viewContext, android.R.layout.simple_list_item_1, attribute.options);
 		spinner.setAdapter(adapter);
-		Binder binder = new SpinnerBinder(viewContext, spinner, value, validatorFor(attribute));
+		Binder binder = new SpinnerBinder(viewContext, spinner, attribute, record, validatorFor(attribute));
 		binders.add(binder);
 		return spinner;
 	}
 
-	private View buildEditText(Attribute attribute, AttributeValue value, int inputType) {
+	private View buildEditText(Attribute attribute, Record record, int inputType) {
 		EditText view = new EditText(viewContext);
 		view.setInputType(inputType);
-		view.setText(value.nullSafeValue());
-		TextViewBinder binder = new TextViewBinder(viewContext, view, value, validatorFor(attribute));
+		view.setText(record.getValue(attribute));
+		TextViewBinder binder = new TextViewBinder(viewContext, view, attribute, record,  validatorFor(attribute));
 		binders.add(binder);
 		return view;
 	}
@@ -141,31 +133,12 @@ public class SurveyBuilder {
 		return view;
 	}
 	
-	public View buildDatePicker(Attribute attribute, AttributeValue value) {
+	public View buildDatePicker(Attribute attribute, Record record) {
 		
-		// Probably should inflate this layout from a file
-		String date = DateFormat.getMediumDateFormat(viewContext).format(System.currentTimeMillis());
-		LinearLayout layout = new LinearLayout(viewContext);
-		layout.setOrientation(LinearLayout.HORIZONTAL);
-		
-		TextView label = new TextView(viewContext);
-		label.setText(date);
-		
-		Button changeButton = new Button(viewContext);
-		changeButton.setText("Edit");
-		changeButton.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				DialogFragment picker = new DatePickerFragment();
-				picker.show(viewContext.getSupportFragmentManager(), "datePicker");
-			}
-		});
-		// We want the label to fill most of the horizontal space.
-		LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1f);
-		layout.addView(label, params);
-		layout.addView(changeButton);
-		
-		return layout;
+		View row = viewContext.getLayoutInflater().inflate(R.layout.date_field, null);
+		Binder binder = new DateBinder(viewContext, row, attribute, record, validatorFor(attribute));
+		binders.add(binder);
+		return row;
 	}
 	
 	public View buildSpeciesPicker(Attribute attribute, Record record) {

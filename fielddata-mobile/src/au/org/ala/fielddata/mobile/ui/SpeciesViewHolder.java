@@ -30,6 +30,7 @@ public class SpeciesViewHolder {
 		if (profileImage != null) {
 			
 			Drawable d = Drawable.createFromPath(profileImage.getAbsolutePath());
+			
 			icon.setImageDrawable(d);
 			
 		}

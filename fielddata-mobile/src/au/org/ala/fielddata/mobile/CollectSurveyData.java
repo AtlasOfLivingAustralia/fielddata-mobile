@@ -288,6 +288,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
 			}
 			catch (Exception e) {
 				success = false;
+				Log.e("SurveyUpload", "Upload failed", e);
 			}
 			return success;
 		}

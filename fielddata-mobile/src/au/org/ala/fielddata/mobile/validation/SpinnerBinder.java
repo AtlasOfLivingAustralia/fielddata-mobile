@@ -20,19 +20,22 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
 import android.widget.TextView;
-import au.org.ala.fielddata.mobile.model.Record.AttributeValue;
+import au.org.ala.fielddata.mobile.model.Attribute;
+import au.org.ala.fielddata.mobile.model.Record;
 
 public class SpinnerBinder implements Binder, OnItemSelectedListener {
 
 	private Spinner view;
-	private AttributeValue value;
+	private Attribute attribute;
+	private Record record;
 	private Validator validator;
 
-	public SpinnerBinder(Context ctx, Spinner view, AttributeValue value,
+	public SpinnerBinder(Context ctx, Spinner view, Attribute attribute, Record record,
 			Validator validator) {
 		this.view = view;
-		this.value = value;
+		this.attribute = attribute;
 		this.validator = validator;
+		this.record = record;
 		view.setOnItemSelectedListener(this);
 
 	}
@@ -63,7 +66,7 @@ public class SpinnerBinder implements Binder, OnItemSelectedListener {
 	}
 
 	public void bind() {
-		value.value = nullSafeText();
+		record.setValue(attribute, nullSafeText());
 	}
 
 	private String nullSafeText() {

@@ -14,26 +14,16 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import au.org.ala.fielddata.mobile.R;
-import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Species;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 
 public class SpeciesListFragment extends SherlockListFragment {
 	
-	private List<Species> species;
-		
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,51 +41,10 @@ public class SpeciesListFragment extends SherlockListFragment {
 	}
 	
     private void init() {
-    	new GetSpeciesTask().execute();
+    	SpeciesListAdapter adapter = new SpeciesListAdapter(getActivity());
+    	setListAdapter(adapter);
+    	
     }
 	
-	class GetSpeciesTask extends AsyncTask<Void, Void, List<Species>> {
-		
-    	protected List<Species> doInBackground(Void... ignored) {
-    		GenericDAO<Species> dao = new GenericDAO<Species>(getActivity());
-    		
-    		List<Species> species = new ArrayList<Species>();
-    		try {
-    			species.addAll(dao.loadAll(Species.class));
-    		}
-    		catch (Exception e) {
-    			e.printStackTrace();
-    		}
-    		return species;
-    	}
-    	
-    	protected void onPostExecute(List<Species> speciesList) {
-    		species = speciesList;
-    		IconAndTextAdapter adapter = new IconAndTextAdapter();
-    		
-    		setListAdapter(adapter);
-    	}
-	}
-    
-    class IconAndTextAdapter extends ArrayAdapter<Species> {
-    	public IconAndTextAdapter() {
-    		super(getActivity(), R.layout.species_row, R.id.scientificName, species);
-    	}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			
-			View row = super.getView(position, convertView, parent);
-			SpeciesViewHolder viewHolder = (SpeciesViewHolder)row.getTag();
-			if (viewHolder == null) {
-				viewHolder = new SpeciesViewHolder(row);
-				row.setTag(viewHolder);
-			}
-			
-			viewHolder.populate(getItem(position));
-			return row;
-		}
-    	
-    	
-    }
+	
 }

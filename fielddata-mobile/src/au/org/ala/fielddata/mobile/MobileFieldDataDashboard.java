@@ -14,7 +14,6 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile;
 
-import java.net.InetAddress;
 import java.util.List;
 
 import android.app.AlertDialog;

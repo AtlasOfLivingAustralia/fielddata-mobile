@@ -79,7 +79,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
             }
         }
         
-        builder = new SurveyBuilder(this);
         
         setContentView(R.layout.activity_collect_survey_data);
         Record record = null;
@@ -98,6 +97,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
         	record = initRecord(recordId, surveyId);
         }
         surveyView = new SurveyViewModel(survey, record);
+        builder = new SurveyBuilder(this, surveyView);
         
         pagerAdapter = new SurveyPagerAdapter(getSupportFragmentManager());
         pager = (ViewPager)findViewById(R.id.surveyPager);
@@ -177,7 +177,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
     			tableLayout.addView(row);
     			row = new TableRow(this);
     		}
-    		row.addView(builder.buildInput(attribute, surveyView.getRecord()));
+    		row.addView(builder.buildInput(attribute));
     	
     		tableLayout.addView(row);
     	}

@@ -17,9 +17,11 @@ package au.org.ala.fielddata.mobile;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -27,9 +29,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
-import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
+import au.org.ala.fielddata.mobile.ui.SpeciesListAdapter;
 import au.org.ala.fielddata.mobile.ui.SpeciesViewHolder;
 import au.org.ala.fielddata.mobile.validation.Binder;
 import au.org.ala.fielddata.mobile.validation.DateBinder;
@@ -42,32 +44,17 @@ public class SurveyBuilder {
 	
 	private FragmentActivity viewContext;
 	private List<Binder> binders;
+	private SurveyViewModel model;
 	
-	public SurveyBuilder(FragmentActivity viewContext) {
+	public SurveyBuilder(FragmentActivity viewContext, SurveyViewModel model) {
 		this.viewContext = viewContext;
+		this.model = model;
 		binders = new ArrayList<Binder>();
+		
 	}
 	
-	public boolean accepts(Attribute attribute) {
-		AttributeType type = attribute.getType();
-		if (type == null) {
-			return false;
-		}
-		if (attribute.isModeratorAttribute()) {
-			return false;
-		}
-		switch (type) {
-		case HTML:
-		case HTML_COMMENT:
-		case HTML_HORIZONTAL_RULE:
-		case HTML_NO_VALIDATION:
-			return false;
-		}
-		Log.d("SurveyBuilder", attribute.scope);
-		return true;
-	}
-
-	public View buildInput(Attribute attribute, Record record) {
+	public View buildInput(Attribute attribute) {
+		Record record = model.getRecord();
 		View view;
 		switch (attribute.getType()) {
 		case STRING:
@@ -93,7 +80,7 @@ public class SurveyBuilder {
 			view = buildDatePicker(attribute, record);
 			break;
 		case SPECIES_P:
-			view = buildSpeciesPicker(attribute, record);
+			view = buildSpeciesPicker(attribute);
 			break;
 		default:
 		    view = buildEditText(attribute, record, InputType.TYPE_CLASS_TEXT);
@@ -141,14 +128,36 @@ public class SurveyBuilder {
 		return row;
 	}
 	
-	public View buildSpeciesPicker(Attribute attribute, Record record) {
+	public View buildSpeciesPicker(Attribute attribute) {
 		
-		Species species = new Species("test", "another test", R.drawable.nassella_neesiana_thumb); //record.getSpecies();
+		Species species = model.getSelectedSpecies();
+		final View row = viewContext.getLayoutInflater().inflate(R.layout.species_row, null);
 		
-		View row = viewContext.getLayoutInflater().inflate(R.layout.species_row, null);
-		new SpeciesViewHolder(row).populate(species);
-		
-		
+		row.setOnClickListener(new android.view.View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(viewContext);
+				final SpeciesListAdapter adapter = new SpeciesListAdapter(viewContext);
+				builder.setAdapter(adapter, new OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+						Species selected = adapter.getItem(which);
+						model.speciesSelected(selected);
+						new SpeciesViewHolder(row).populate(selected);
+					}
+				});
+				builder.setTitle("Select a species");
+				builder.show();
+				
+			}
+		});
+			
+		if (species != null) {
+			new SpeciesViewHolder(row).populate(species);
+		}
 		return row;
 	}
 	

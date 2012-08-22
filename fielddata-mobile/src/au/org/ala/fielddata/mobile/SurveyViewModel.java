@@ -36,6 +36,9 @@ public class SurveyViewModel {
 	/** The data collected for the Survey */
 	private Record record;
 	
+	/** The currently selected Species - cached here to avoid database access */
+	private Species species;
+	
 	/**
 	 * Compares two Attributes by their weight.
 	 * Not null safe!
@@ -65,9 +68,14 @@ public class SurveyViewModel {
 	}
 	
 	public void speciesSelected(Species species) {
+		this.species = species;
 		record.taxon_id = species.server_id;
 		record.scientificName = species.scientificName;
 		
+	}
+	
+	public Species getSelectedSpecies() {
+		return species;
 	}
 	
 	public Record getRecord(){ 

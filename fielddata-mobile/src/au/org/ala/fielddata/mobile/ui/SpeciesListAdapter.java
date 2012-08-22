@@ -58,7 +58,11 @@ public class SpeciesListAdapter extends ArrayAdapter<Species> {
 		}
 
 		protected void onPostExecute(List<Species> speciesList) {
-			adapter.addAll(speciesList);
+			adapter.setNotifyOnChange(false);
+			for (Species species : speciesList) {
+				adapter.add(species);
+			}
+			adapter.notifyDataSetChanged();
 		}
 	}
 

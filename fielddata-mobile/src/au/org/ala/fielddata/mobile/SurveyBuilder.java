@@ -33,6 +33,7 @@ import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
+import au.org.ala.fielddata.mobile.ui.GPSFragment;
 import au.org.ala.fielddata.mobile.ui.SpeciesListAdapter;
 import au.org.ala.fielddata.mobile.ui.SpeciesViewHolder;
 import au.org.ala.fielddata.mobile.validation.Binder;
@@ -80,6 +81,9 @@ public class SurveyBuilder {
 			break;
 		case WHEN:
 			view = buildDatePicker(attribute, record);
+			break;
+		case DWC_TIME:
+			view = buildTimePicker(attribute, record);
 			break;
 		case SPECIES_P:
 			view = buildSpeciesPicker(attribute);
@@ -133,6 +137,14 @@ public class SurveyBuilder {
 		return row;
 	}
 	
+	public View buildTimePicker(Attribute attribute, Record record) {
+		
+		View row = viewContext.getLayoutInflater().inflate(R.layout.date_field, null);
+		Binder binder = new DateBinder(viewContext, row, attribute, record, validatorFor(attribute));
+		binders.add(binder);
+		return row;
+	}
+	
 	public View buildSpeciesPicker(Attribute attribute) {
 		
 		Species species = model.getSelectedSpecies();
@@ -169,7 +181,14 @@ public class SurveyBuilder {
 	public View buildLocationPicker(Attribute attribute) {
 		View view = viewContext.getLayoutInflater().inflate(R.layout.location_layout, null);
 		Button gpsButton = (Button)view.findViewById(R.id.gpsButton);
-		gpsButton.setEnabled(false);
+		gpsButton.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				GPSFragment fragment = new GPSFragment();
+				fragment.show(viewContext.getSupportFragmentManager(), "gpsDialog");
+				
+			}
+		});
 		
 		Button showOnMapButton = (Button)view.findViewById(R.id.showMapButton);
 		showOnMapButton.setOnClickListener(new OnClickListener() {

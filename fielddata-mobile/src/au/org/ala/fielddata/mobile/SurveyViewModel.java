@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import android.location.Location;
 import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
@@ -124,5 +125,11 @@ public class SurveyViewModel {
 		}
 		Log.d("SurveyBuilder", attribute.scope);
 		return true;
+	}
+
+	public void locationSelected(Location location) {
+		getRecord().longitude = location.getLongitude();
+		getRecord().latitude = location.getLatitude();
+		getRecord().accuracy = Double.valueOf(location.getAccuracy());
 	}
 }

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Typeface;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -101,7 +102,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
         pager = (ViewPager)findViewById(R.id.surveyPager);
         pager.setAdapter(pagerAdapter);
         
-        getSupportActionBar().setTitle("Select a species");
+        getSupportActionBar().setTitle(survey.name);
+        getSupportActionBar().setSubtitle(survey.description);
        
         
         
@@ -121,8 +123,11 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
         title.setSpan(new StyleSpan(Typeface.ITALIC), 0, title.length(), 0);
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setSubtitle(selectedSpecies.commonName);
-        
-		
+       
+	}
+	
+	public void onLocationSelected(Location location) {
+		surveyView.locationSelected(location);
 	}
 	private Record initRecord(int recordId, int surveyId) {
 		Record record;

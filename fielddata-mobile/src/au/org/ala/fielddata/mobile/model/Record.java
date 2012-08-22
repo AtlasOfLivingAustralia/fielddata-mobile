@@ -202,14 +202,14 @@ public class Record extends Persistent {
 	}
 	
 	public void setValue(Attribute attribute, Date value) {
-		if (attribute.getType() != AttributeType.WHEN) {
+		if (!attribute.getType().isDateType()) {
 			throw new IllegalArgumentException("Attribute is not a date attribute");
 		}
 		valueOf(attribute).setValue(Long.toString(value.getTime()));
 	}
 
 	public Date getDate(Attribute attribute) {
-		if (attribute.getType() != AttributeType.WHEN) {
+		if (!attribute.getType().isDateType()) {
 			throw new IllegalArgumentException("Attribute is not a date attribute");
 		}
 		String dateStr = valueOf(attribute).nullSafeValue();

@@ -58,6 +58,7 @@ public class Attribute extends SurveyProperty {
 		POINT("Point", "Point"),
 		ACCURACY("AccuracyInMeters", "AccuracyInMeters"),
 		WHEN("When", "When"),
+		DWC_TIME("Time", "Time"),
 		NOTES("Notes", "Notes");
 		
 		private String code;
@@ -82,6 +83,10 @@ public class Attribute extends SurveyProperty {
 				}
 			}
 			return null;
+		}
+		
+		public boolean isDateType() {
+			return (this == DWC_TIME || this == WHEN || this == DATE || this == TIME);
 		}
 	}
 	

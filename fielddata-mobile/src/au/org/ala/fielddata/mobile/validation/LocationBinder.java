@@ -18,6 +18,15 @@ public class LocationBinder implements Binder {
 		locationTextView = (TextView)locationView.findViewById(R.id.latlong);
 		this.record = record;
 		
+		if (record.latitude != null && record.longitude != null) {
+			location = new Location("");
+			location.setLatitude(record.latitude);
+			location.setLongitude(record.longitude);
+			if (record.accuracy != null) {
+				location.setAccuracy(record.accuracy.floatValue());
+			}
+		}
+		
 		updateText();
 		
 	}
@@ -25,13 +34,13 @@ public class LocationBinder implements Binder {
 	private void updateText() {
 		
 		String locationText = "";
-		if (record.latitude != null && record.longitude != null) {
+		if (location != null) {
 			DecimalFormat format = new DecimalFormat("###.000000");
 			StringBuilder builder = new StringBuilder();
 			
-			builder.append(format.format(record.latitude));
+			builder.append(format.format(location.getLatitude()));
 			builder.append("\u00B0 N ");
-			builder.append(format.format(record.longitude));
+			builder.append(format.format(location.getLongitude()));
 			builder.append("\u00B0 W ");
 			
 			locationText = builder.toString();

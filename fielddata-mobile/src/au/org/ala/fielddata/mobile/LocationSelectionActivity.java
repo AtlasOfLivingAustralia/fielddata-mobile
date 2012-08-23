@@ -44,6 +44,7 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 	private MapView mapView;
 	private MyLocationOverlay overlay;
 	private SingleSelectionOverlay selectionOverlay;
+	private Location selectedLocation;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -55,13 +56,13 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		mapView.getController().setZoom(7);
 		mapView.getController().setCenter(new GeoPoint(-27561777, 151493591));
 
-		Drawable marker=getResources().getDrawable(R.drawable.marker);
-	    
-	    marker.setBounds(0, 0, marker.getIntrinsicWidth(),
-	                            marker.getIntrinsicHeight());
-	    
-	    ImageView dragImage = (ImageView)findViewById(R.id.drag);
-		selectionOverlay = new SingleSelectionOverlay(marker, dragImage);
+		Drawable marker = getResources().getDrawable(R.drawable.marker);
+
+		marker.setBounds(0, 0, marker.getIntrinsicWidth(),
+				marker.getIntrinsicHeight());
+
+		ImageView dragImage = (ImageView) findViewById(R.id.drag);
+		selectionOverlay = new SingleSelectionOverlay(marker, dragImage, this);
 		mapView.getOverlays().add(selectionOverlay);
 		addEventHandlers();
 
@@ -96,15 +97,12 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		return new MenuHelper(this).handleMenuItemSelection(item);
 	}
 
+	
 	private void addEventHandlers() {
 		Button button = (Button) findViewById(R.id.mapNext);
 		button.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				GeoPoint selectedPoint = selectionOverlay.getSelectedPoint();
-				Location selectedLocation = new Location("Map");
-				selectedLocation.setLatitude(selectedPoint.getLatitudeE6()/1000000d);
-				selectedLocation.setLongitude(selectedPoint.getLongitudeE6()/1000000d);
 				Intent result = new Intent();
 				result.putExtra(LOCATION_BUNDLE_KEY, selectedLocation);
 				setResult(RESULT_OK, result);
@@ -130,7 +128,9 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 	}
 
 	public void onLocationChanged(Location location) {
-		// updateLocation(location);
+		selectedLocation = location;
+		Button button = (Button) findViewById(R.id.mapNext);
+		button.setEnabled(location != null);
 
 	}
 
@@ -153,9 +153,9 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		final MyLocationOverlay overlay = new MyLocationOverlay(this, mapView);
 		overlay.enableMyLocation();
 		mapView.getOverlays().add(overlay);
-		
+
 		overlay.runOnFirstFix(new Runnable() {
-			
+
 			public void run() {
 				GeoPoint point = overlay.getMyLocation();
 				if (point != null) {
@@ -167,12 +167,11 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 							button.setEnabled(true);
 						}
 					});
-					
+
 				}
 			}
 		});
-		
-		
+
 	}
 
 }

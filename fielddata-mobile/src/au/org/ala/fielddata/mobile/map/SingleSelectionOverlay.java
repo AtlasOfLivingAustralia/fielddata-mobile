@@ -6,6 +6,8 @@ import java.util.List;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +20,7 @@ import com.google.android.maps.OverlayItem;
 
 public class SingleSelectionOverlay extends ItemizedOverlay<OverlayItem> {
 
+	private LocationListener listener;
 	private List<OverlayItem> items = new ArrayList<OverlayItem>();
 	private Drawable marker = null;
 	private OverlayItem inDrag = null;
@@ -27,10 +30,10 @@ public class SingleSelectionOverlay extends ItemizedOverlay<OverlayItem> {
 	private int xDragTouchOffset = 0;
 	private int yDragTouchOffset = 0;
 
-	public SingleSelectionOverlay(Drawable marker, ImageView dragImage) {
+	public SingleSelectionOverlay(Drawable marker, ImageView dragImage, LocationListener listener) {
 		super(marker);
 		this.marker = marker;
-
+		this.listener = listener;
 		this.dragImage = dragImage;
 		xDragImageOffset = dragImage.getDrawable().getIntrinsicWidth() / 2;
 		yDragImageOffset = dragImage.getDrawable().getIntrinsicHeight();
@@ -67,7 +70,7 @@ public class SingleSelectionOverlay extends ItemizedOverlay<OverlayItem> {
 	@Override
 	public boolean onTap(GeoPoint arg0, MapView arg1) {
 		if (size() == 0) {
-			addItem(new OverlayItem(arg0, "", ""));
+			updateSelection(new OverlayItem(arg0, "", ""));
 		}
 		else {
 			return super.onTap(arg0, arg1);
@@ -118,14 +121,26 @@ public class SingleSelectionOverlay extends ItemizedOverlay<OverlayItem> {
 			OverlayItem toDrop = new OverlayItem(pt, inDrag.getTitle(),
 					inDrag.getSnippet());
 
-			items.add(toDrop);
-			populate();
-
+			updateSelection(toDrop);
 			inDrag = null;
 			result = true;
 		}
 
 		return (result || super.onTouchEvent(event, mapView));
+	}
+	
+	private void updateSelection(OverlayItem point) {
+		addItem(point);
+		listener.onLocationChanged(pointToLocation(point.getPoint()));
+		
+	}
+	
+	private Location pointToLocation(GeoPoint point) {
+		Location selectedLocation = new Location("User Selection");
+		selectedLocation.setLatitude(point.getLatitudeE6()/1000000d);
+		selectedLocation.setLongitude(point.getLongitudeE6()/1000000d);
+		
+		return selectedLocation;
 	}
 
 	private void setDragImagePosition(int x, int y) {

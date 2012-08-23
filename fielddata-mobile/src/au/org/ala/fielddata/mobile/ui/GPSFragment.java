@@ -1,6 +1,5 @@
 package au.org.ala.fielddata.mobile.ui;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -53,7 +52,6 @@ public class GPSFragment extends DialogFragment implements LocationListener, Dia
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 	        dialog.setOnShowListener(new OnShowListener() {
 			
-			@Override
 			public void onShow(DialogInterface dialog) {
 				((AlertDialog)getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 				
@@ -105,7 +103,6 @@ public class GPSFragment extends DialogFragment implements LocationListener, Dia
 		System.out.println(provider+" disabled");
 	}
 
-	@Override
 	public void onClick(DialogInterface dialog, int which) {
 		if (bestLocation != null) {
 			CollectSurveyData activity = (CollectSurveyData)getActivity();

@@ -39,7 +39,7 @@ public class LocationBinder implements Binder {
 			StringBuilder builder = new StringBuilder();
 			
 			builder.append(format.format(location.getLatitude()));
-			builder.append("\u00B0 N ");
+			builder.append("\u00B0 N\n");
 			builder.append(format.format(location.getLongitude()));
 			builder.append("\u00B0 W ");
 			
@@ -53,11 +53,12 @@ public class LocationBinder implements Binder {
 		updateText();
 	}
 	
-	@Override
 	public void bind() {
-		record.longitude = location.getLongitude();
-		record.latitude = location.getLatitude();
-		record.accuracy = Double.valueOf(location.getAccuracy());
+		if (location != null) {
+			record.longitude = location.getLongitude();
+			record.latitude = location.getLatitude();
+			record.accuracy = Double.valueOf(location.getAccuracy());
+		}
 	}
 
 }

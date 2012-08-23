@@ -44,6 +44,4 @@
         android:layout_weight="0"
         android:text="@string/saveButtonText" />
 
-    <include layout="@layout/menu_items" />
-
 </LinearLayout>

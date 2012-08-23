@@ -98,7 +98,7 @@ public class SurveyBuilder {
 	}
 
 	private View buildEditText(int inputType) {
-		EditText view = new EditText(viewContext);
+		EditText view = (EditText)viewContext.getLayoutInflater().inflate(R.layout.input_text_view, null);
 		view.setInputType(inputType);
 		return view;
 	}
@@ -128,13 +128,11 @@ public class SurveyBuilder {
 		
 		row.setOnClickListener(new android.view.View.OnClickListener() {
 			
-			@Override
 			public void onClick(View v) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(viewContext);
 				final SpeciesListAdapter adapter = new SpeciesListAdapter(viewContext);
 				builder.setAdapter(adapter, new android.content.DialogInterface.OnClickListener() {
 					
-					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						
 						Species selected = adapter.getItem(which);

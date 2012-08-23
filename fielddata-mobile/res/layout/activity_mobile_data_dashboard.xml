@@ -112,6 +112,4 @@
         android:text="@string/view_field_guide"
         android:textAppearance="?android:attr/textAppearanceMedium" />
     
-    <include layout="@layout/menu_items"/>
-    
 </RelativeLayout>

@@ -33,14 +33,14 @@ public class LoginService extends WebServiceClient {
 	
 	public LoginResponse login() {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-//		params.set("portalName", "Condamine NRM");
-//		params.set("username", "admin");
-//		params.set("password", "cambia401FD");
-//		
-		params.set("portalName", "Koala Count");
+		params.set("portalName", "Condamine NRM");
 		params.set("username", "admin");
-		params.set("password", "password");
+		params.set("password", "cambia401FD");
 		
+//		params.set("portalName", "Koala Count");
+//		params.set("username", "admin");
+//		params.set("password", "password");
+//		
 		
 		String url = serverUrl + loginUrl;
 		

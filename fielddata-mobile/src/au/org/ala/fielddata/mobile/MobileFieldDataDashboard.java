@@ -34,6 +34,7 @@ import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
 import au.org.ala.fielddata.mobile.service.LoginService;
+import au.org.ala.fielddata.mobile.ui.MenuHelper;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
@@ -60,9 +61,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
 		addEventHandlers();
-
-		new InitTask().execute();
-
 	}
 
 	private void addEventHandlers() {
@@ -107,6 +105,14 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			}
 		}
 
+	}
+	
+	
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		new InitTask().execute();
 	}
 
 	class InitialisationResults {
@@ -196,11 +202,12 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		}
 		return success;
 	}
-
+    
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-
-		new MenuInflater(this).inflate(R.menu.dashboard_menu, menu);
+		MenuInflater inflater = new MenuInflater(this);
+    	inflater.inflate(R.menu.common_menu_items, menu);
+    	inflater.inflate(R.menu.dashboard_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -210,7 +217,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			new InitTask().execute();
 			return true;
 		}
-		return false;
+		return new MenuHelper(this).handleMenuItemSelection(item);
     }
 
 	private void updateSurveyList(List<Survey> surveys) {

@@ -11,6 +11,7 @@
         android:layout_weight="1"
         android:gravity="left|center_vertical"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:singleLine="false"
         android:hint="@string/no_location_supplied" />
 
     <Button

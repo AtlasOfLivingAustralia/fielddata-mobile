@@ -53,7 +53,7 @@ public class Preferences {
 	}
 
 	public String getFieldDataServerUrl() {
-		return "http://"+getFieldDataServerHostName()+":8080/BDRS/koalacount";
+		return "http://"+getFieldDataServerHostName()+":8080/BDRS/condamine";
 		//return "http://"+getFieldDataServerHostName()+"/bdrs-core/koalacount";
 		
 	}

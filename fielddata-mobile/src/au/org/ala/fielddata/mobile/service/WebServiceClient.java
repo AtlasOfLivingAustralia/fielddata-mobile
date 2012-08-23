@@ -14,11 +14,15 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.service;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import android.content.Context;
+import android.util.Log;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 
 import com.google.gson.FieldNamingPolicy;
@@ -32,6 +36,10 @@ public class WebServiceClient {
 	public WebServiceClient(Context ctx) {
 		this.ctx = ctx;
 		serverUrl = new Preferences(ctx).getFieldDataServerUrl();
+		// This shouldn't be necessary however I am seeing frequent failures
+		// due to recycled closed connections (possibly something I am doing
+		// wrong).  This is working around that.
+		System.setProperty("http.keepAlive", "false");
 	}
 	
 	/**
@@ -49,5 +57,27 @@ public class WebServiceClient {
 	
 	protected Gson getGson() {
 		return new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
+	}
+	
+	protected void close(InputStream in) {
+		if (in != null) {
+			try {
+				in.close();
+			}
+			catch (Exception e) {
+				Log.e("WebServiceClient", "Error closing input stream: ", e);
+			}
+		}
+	}
+	
+	protected void close(HttpURLConnection connection) {
+		if (connection != null) {
+			try {
+				connection.disconnect();
+			}
+			catch (Exception e) {
+				Log.e("WebServiceClient", "Error closing connection: ", e);
+			}
+		}	
 	}
 }

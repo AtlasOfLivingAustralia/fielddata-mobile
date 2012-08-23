@@ -18,8 +18,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,10 +119,11 @@ public class FieldDataService extends WebServiceClient {
 	public boolean ping(int timeoutInMillis) {
 		String pingUrl = "/webservice/application/ping.htm";
 		InputStream in = null;
+		HttpURLConnection conn = null;
 		
 		try {
 			URL url = new URL(serverUrl + pingUrl);
-			URLConnection conn = url.openConnection();
+			conn = (HttpURLConnection)url.openConnection();
 			conn.setConnectTimeout(timeoutInMillis);
 			conn.setReadTimeout(timeoutInMillis);
 			in = conn.getInputStream();
@@ -132,10 +133,8 @@ public class FieldDataService extends WebServiceClient {
 			return false;
 		} finally {
 			try {
-				if (in != null) {
-					in.close();
-				}
-				
+				close(in);
+				close(conn);
 			} catch (Exception e) {
 				return false;
 			}
@@ -148,11 +147,14 @@ public class FieldDataService extends WebServiceClient {
 		String downloadUrl = "/files/downloadByUUID.htm?uuid=" + uuid;
 		InputStream in = null;
 		OutputStream out = null;
+		HttpURLConnection conn = null;
+		
 		final int BUFFER_SIZE = 8192;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		try {
 			URL url = new URL(serverUrl + downloadUrl);
-			in = url.openConnection().getInputStream();
+			conn = (HttpURLConnection)url.openConnection();
+			in = conn.getInputStream();
 			out = new FileOutputStream(destinationFile);
 			int count = in.read(buffer);
 			while (count >= 0) {
@@ -164,12 +166,10 @@ public class FieldDataService extends WebServiceClient {
 		} finally {
 			try {
 
-				if (out != null) {
-					out.close();
-				}
-				if (in != null) {
-					in.close();
-				}
+				
+				close(in);
+				close(conn);
+				
 			} catch (Exception e) {
 				throw new ServiceException(e);
 			}

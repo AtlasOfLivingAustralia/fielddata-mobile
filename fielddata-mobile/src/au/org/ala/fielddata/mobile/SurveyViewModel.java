@@ -82,6 +82,10 @@ public class SurveyViewModel {
 	public Record getRecord(){ 
 		return record;
 	}
+	
+	public Survey getSurvey() {
+		return survey;
+	}
 
 	private void sortAttributes() {
 		List<Attribute> allAttributes = new ArrayList<Attribute>(survey.attributes);

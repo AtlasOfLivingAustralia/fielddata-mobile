@@ -17,6 +17,7 @@ package au.org.ala.fielddata.mobile;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -64,6 +65,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
 	public static final String SURVEY_BUNDLE_KEY = "SurveyIdKey";
 	public static final String RECORD_BUNDLE_KEY = "RecordIdKey";
     
+	public static final int SELECT_LOCATION_REQUEST = 1;
+	
 	private SurveyViewModel surveyViewModel;
 	private BinderManager binder;
 	private SurveyBuilder builder;
@@ -302,6 +305,15 @@ public class CollectSurveyData extends SherlockFragmentActivity implements Speci
 			return surveyViewModel.getPageCount();
 		}
     	
+    }
+    
+    protected void onActivityResult(int requestCode, int resultCode,
+            Intent data) {
+        if (requestCode == SELECT_LOCATION_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                onLocationSelected((Location)data.getExtras().get(LocationSelectionActivity.LOCATION_BUNDLE_KEY));
+            }
+        }
     }
     
     public static class SurveyPage extends Fragment {

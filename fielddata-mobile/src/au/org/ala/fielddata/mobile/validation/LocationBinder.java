@@ -41,6 +41,7 @@ public class LocationBinder implements Binder {
 	
 	public void locationChanged(Location location) {
 		this.location = location;
+		updateText();
 	}
 	
 	@Override

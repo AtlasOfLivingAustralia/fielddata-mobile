@@ -12,40 +12,39 @@
   implied. See the License for the specific language governing
   rights and limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-    
+    android:layout_height="match_parent" >
 
     <com.google.android.maps.MapView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/mapview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-       
         android:apiKey="0NauErRk5QyvVskuCQOspHRai_Nwj_KclqQLuRw"
-        android:clickable="true"
-        android:layout_weight="1" />
-    
-    <LinearLayout android:orientation="horizontal"
+        android:clickable="true" />
+
+    <ImageView
+        android:id="@+id/drag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        >
-    <Button
-        android:id="@+id/mapCurrentLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="Use Current Location" />
+        android:src="@drawable/marker"
+        android:visibility="gone" />
+
     <Button
         android:id="@+id/mapNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:text="Done" />
-    </LinearLayout>
 
-</LinearLayout>
+    <Button
+        android:id="@+id/mapCurrentLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/mapNext"
+        android:text="Use Current Location" />
+
+</RelativeLayout>

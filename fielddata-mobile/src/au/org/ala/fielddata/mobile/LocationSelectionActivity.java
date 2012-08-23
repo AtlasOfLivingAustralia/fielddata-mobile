@@ -14,6 +14,8 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile;
 
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -22,6 +24,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
+import au.org.ala.fielddata.mobile.map.SingleSelectionOverlay;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
@@ -35,9 +39,11 @@ import com.google.android.maps.MyLocationOverlay;
 public class LocationSelectionActivity extends SherlockMapActivity implements
 		LocationListener {
 
+	public static final String LOCATION_BUNDLE_KEY = "Location";
 	private LocationManager locationManager;
 	private MapView mapView;
 	private MyLocationOverlay overlay;
+	private SingleSelectionOverlay selectionOverlay;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +55,14 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		mapView.getController().setZoom(7);
 		mapView.getController().setCenter(new GeoPoint(-27561777, 151493591));
 
+		Drawable marker=getResources().getDrawable(R.drawable.marker);
+	    
+	    marker.setBounds(0, 0, marker.getIntrinsicWidth(),
+	                            marker.getIntrinsicHeight());
+	    
+	    ImageView dragImage = (ImageView)findViewById(R.id.drag);
+		selectionOverlay = new SingleSelectionOverlay(marker, dragImage);
+		mapView.getOverlays().add(selectionOverlay);
 		addEventHandlers();
 
 		// getCurrentLocation();
@@ -87,12 +101,13 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		button.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-//				Species species = (Species) getIntent().getExtras().get(
-//						CollectSurveyData.SPECIES_BUNDLE_KEY);
-//				Intent intent = new Intent(LocationSelectionActivity.this,
-//						CollectSurveyData.class);
-//				intent.putExtra(CollectSurveyData.SPECIES_BUNDLE_KEY, species);
-//				startActivity(intent);
+				GeoPoint selectedPoint = selectionOverlay.getSelectedPoint();
+				Location selectedLocation = new Location("Map");
+				selectedLocation.setLatitude(selectedPoint.getLatitudeE6()/1000000d);
+				selectedLocation.setLongitude(selectedPoint.getLongitudeE6()/1000000d);
+				Intent result = new Intent();
+				result.putExtra(LOCATION_BUNDLE_KEY, selectedLocation);
+				setResult(RESULT_OK, result);
 				finish();
 
 			}

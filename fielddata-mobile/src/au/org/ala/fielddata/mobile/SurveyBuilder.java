@@ -171,7 +171,7 @@ public class SurveyBuilder {
 			
 			public void onClick(View v) {
 				Intent intent = new Intent(viewContext, LocationSelectionActivity.class);
-				viewContext.startActivityForResult(intent, -1 );
+				viewContext.startActivityForResult(intent, CollectSurveyData.SELECT_LOCATION_REQUEST );
 			}
 		});
 		return view;

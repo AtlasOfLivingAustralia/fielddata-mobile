@@ -66,6 +66,18 @@ public class ImageBinder implements Binder {
 			}
 		});
 		
+		thumb.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				if (thumbUri == null || "".equals(thumbUri)) {
+					return;
+				}
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setData(Uri.parse(thumbUri));
+				ctx.startActivity(intent);
+			}
+		});
+		
 	}
 	
 	private void updateThumbnail() {

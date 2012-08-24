@@ -133,5 +133,9 @@ public class ImageBinder implements Binder {
 	public void bind() {
 		ctx.getViewModel().getRecord().setValue(attribute, thumbUri);
 	}
+	
+	public boolean validate() {
+		return true;
+	}
 
 }

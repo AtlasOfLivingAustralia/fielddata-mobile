@@ -31,6 +31,11 @@ public class LocationBinder implements Binder {
 		
 	}
 	
+	public boolean validate() {
+		locationTextView.setError("Please select a point");
+		return false;
+	}
+	
 	private void updateText() {
 		
 		String locationText = "";

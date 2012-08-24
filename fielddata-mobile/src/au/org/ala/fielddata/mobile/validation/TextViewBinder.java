@@ -51,13 +51,15 @@ public class TextViewBinder implements Binder, TextWatcher {
 		
 	}
 	
-	public void validate() {
+	public boolean validate() {
+		boolean valid = true;
 		if (validator != null) {
-			boolean valid = validator.validate(nullSafeText());
+			valid = validator.validate(nullSafeText());
 			if (!valid) {
 				view.setError(ctx.getText(R.string.requiredMessage));
 			}
 		}
+		return valid;
 	}
 	
 	public void bind() {

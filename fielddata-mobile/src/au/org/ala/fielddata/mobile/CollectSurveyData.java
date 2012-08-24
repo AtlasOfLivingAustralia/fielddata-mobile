@@ -51,6 +51,7 @@ import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
+import au.org.ala.fielddata.mobile.ui.ValidatingViewPager;
 import au.org.ala.fielddata.mobile.validation.Binder;
 import au.org.ala.fielddata.mobile.validation.DateBinder;
 import au.org.ala.fielddata.mobile.validation.ImageBinder;
@@ -67,7 +68,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.TitlePageIndicator;
 
 public class CollectSurveyData extends SherlockFragmentActivity implements
-		SpeciesSelectionListener, OnPageChangeListener {
+		SpeciesSelectionListener {
 
 	public static final String SURVEY_BUNDLE_KEY = "SurveyIdKey";
 	public static final String RECORD_BUNDLE_KEY = "RecordIdKey";
@@ -89,7 +90,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	private SurveyViewModel surveyViewModel;
 
 	private SurveyPagerAdapter pagerAdapter;
-	private ViewPager pager;
+	private ValidatingViewPager pager;
 	private LocationBinder locationBinder;
 	private List<ImageBinder> imageBinders;
 
@@ -136,10 +137,10 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		}
 
 		pagerAdapter = new SurveyPagerAdapter(getSupportFragmentManager());
-		pager = (ViewPager) findViewById(R.id.surveyPager);
+		pager = (ValidatingViewPager) findViewById(R.id.surveyPager);
 		pager.setAdapter(pagerAdapter);
-		pager.setOnPageChangeListener(this);
-
+		
+		
 	}
 
 	public void setViewModel(SurveyViewModel model) {
@@ -150,6 +151,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		if (surveyViewModel.getPageCount() > 1) {
 			TitlePageIndicator titleIndicator = (TitlePageIndicator) findViewById(R.id.titles);
 			titleIndicator.setViewPager(pager);
+			titleIndicator.setOnPageChangeListener(pagerAdapter);
 			titleIndicator.setVisibility(View.VISIBLE);
 		}
 	}
@@ -181,16 +183,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		}
 	}
 
-	public void onPageScrollStateChanged(int arg0) {
-	}
-
-	public void onPageScrolled(int arg0, float arg1, int arg2) {
-	}
-
-	public void onPageSelected(int arg0) {
-
-	}
-
+	
 	private Record initRecord(int recordId, int surveyId) {
 		Record record;
 		if (recordId <= 0) {
@@ -287,6 +280,15 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				binder.bind();
 			}
 		}
+		
+		public boolean validateAll() {
+			boolean valid = true;
+			for (Binder binder: binders) {
+				valid = valid && binder.validate();
+			}
+			
+			return valid;
+		}
 
 		public void clearBindings() {
 			binders.clear();
@@ -302,12 +304,17 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 		}
 
+
 	}
 
-	class SurveyPagerAdapter extends FragmentPagerAdapter {
+	class SurveyPagerAdapter extends FragmentPagerAdapter implements OnPageChangeListener {
 
+		private BinderManager[] binders;
+		
 		public SurveyPagerAdapter(FragmentManager manager) {
 			super(manager);
+			
+			//binders = new BinderManager[getCount()];
 		}
 
 		@Override
@@ -328,6 +335,29 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		@Override
 		public String getPageTitle(int page) {
 			return "Page " + (page + 1);
+		}
+
+		public void onPageScrollStateChanged(int arg0) {
+			Log.d("Paging", "Scroll state changed, page: "+arg0);
+			
+			if (arg0 == ViewPager.SCROLL_STATE_DRAGGING) {
+				int page = pager.getCurrentItem();
+				//boolean valid = binders[page].validateAll(); 
+				//Log.d("Paging", "Validating page: "+page+", result: "+valid);
+				
+				
+			}
+		}
+
+		public void onPageScrolled(int arg0, float arg1, int arg2) {
+			Log.d("Paging", "Page Scrolled: "+arg0);
+			
+		}
+
+		public void onPageSelected(int arg0) {
+			Log.d("Paging", "Page selected, page: "+arg0);
+			//pager.setPagingEnabled(false);
+			
 		}
 
 	}
@@ -369,6 +399,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		private BinderManager binder;
 		private CollectSurveyData ctx;
 
+		
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
@@ -385,6 +416,12 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 					+ pageNum);
 
 			ctx = (CollectSurveyData) activity;
+			
+		}
+		
+		@Override
+		public void onActivityCreated(Bundle bundle) {
+			super.onActivityCreated(bundle);
 
 		}
 
@@ -401,12 +438,12 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		}
 
 		@Override
-		public void onDestroyView() {
-			Log.d("SurveyDataCollection", "Destroying view for page: "
+		public void onPause() {
+			Log.d("SurveyDataCollection", "Pausing view for page: "
 					+ pageNum);
 			binder.bindAll();
 			binder.clearBindings();
-			super.onDestroyView();
+			super.onPause();
 		}
 
 		private void buildSurveyForm(View page) {

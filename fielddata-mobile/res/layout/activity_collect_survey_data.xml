@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
-    <android.support.v4.view.ViewPager
+    <au.org.ala.fielddata.mobile.ui.ValidatingViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/surveyPager"
         android:layout_width="match_parent"

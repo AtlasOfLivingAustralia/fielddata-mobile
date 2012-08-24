@@ -12,14 +12,7 @@
   implied. See the License for the specific language governing
   rights and limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="fill_vertical|fill_horizontal"
-    android:orientation="vertical" >
-
-    <ScrollView
+  <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/tableScroller"
         android:layout_width="match_parent"
@@ -36,12 +29,4 @@
         </TableLayout>
     </ScrollView>
 
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="0"
-        android:text="@string/saveButtonText" />
-
-</LinearLayout>
+   

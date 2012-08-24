@@ -97,7 +97,7 @@ public class SurveyBuilder {
 	
 	
 	private Spinner buildSpinner(Attribute attribute) {
-		Spinner spinner = new Spinner(viewContext);
+		Spinner spinner = (Spinner)viewContext.getLayoutInflater().inflate(R.layout.input_spinner_view, null);
 		spinner.setPrompt("Select "+attribute.description);
 		ArrayAdapter<AttributeOption> adapter = new ArrayAdapter<AttributeOption>(viewContext, android.R.layout.simple_list_item_1, attribute.options);
 		spinner.setAdapter(adapter);

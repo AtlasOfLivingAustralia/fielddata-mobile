@@ -35,9 +35,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -67,6 +65,10 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.TitlePageIndicator;
 
+/**
+ * The CollectSurveyData activity presents a survey form to the user to
+ * fill out.
+ */
 public class CollectSurveyData extends SherlockFragmentActivity implements
 		SpeciesSelectionListener {
 
@@ -208,6 +210,10 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		if (item.getItemId() == R.id.save) {
+			new SaveRecordTask(this).execute(surveyViewModel.getRecord());
+			return true;
+		}
 		return new MenuHelper(this).handleMenuItemSelection(item);
 	}
 	
@@ -350,7 +356,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		}
 
 		public void onPageScrolled(int arg0, float arg1, int arg2) {
-			Log.d("Paging", "Page Scrolled: "+arg0);
 			
 		}
 
@@ -486,16 +491,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				tableLayout.addView(row, params);
 			}
 
-			Button saveButton = (Button) page.findViewById(R.id.saveButton);
-			saveButton.setOnClickListener(new OnClickListener() {
-
-				public void onClick(View v) {
-					binder.bindAll();
-					new SaveRecordTask((CollectSurveyData) getActivity())
-							.execute(viewModel.getRecord());
-
-				}
-			});
 		}
 
 	}

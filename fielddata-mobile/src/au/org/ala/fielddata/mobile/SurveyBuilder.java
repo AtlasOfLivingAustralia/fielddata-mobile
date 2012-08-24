@@ -17,6 +17,8 @@ package au.org.ala.fielddata.mobile;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.view.View;
@@ -24,12 +26,14 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
+import au.org.ala.fielddata.mobile.service.StorageManager;
 import au.org.ala.fielddata.mobile.ui.GPSFragment;
 import au.org.ala.fielddata.mobile.ui.SpeciesListAdapter;
 import au.org.ala.fielddata.mobile.ui.SpeciesViewHolder;
@@ -79,6 +83,9 @@ public class SurveyBuilder {
 			break;
 		case POINT:
 			view = buildLocationPicker(attribute);
+			break;
+		case IMAGE:
+			view = buildImagePicker(attribute);
 			break;
 		default:
 		    view = buildEditText(InputType.TYPE_CLASS_TEXT);
@@ -172,6 +179,13 @@ public class SurveyBuilder {
 				viewContext.startActivityForResult(intent, CollectSurveyData.SELECT_LOCATION_REQUEST );
 			}
 		});
+		return view;
+	}
+	
+	public View buildImagePicker(Attribute attribute) {
+		View view = viewContext.getLayoutInflater().inflate(R.layout.image_selection, null);
+		
+		
 		return view;
 	}
 	

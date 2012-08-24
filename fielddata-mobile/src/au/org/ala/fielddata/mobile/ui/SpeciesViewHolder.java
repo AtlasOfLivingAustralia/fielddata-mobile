@@ -8,10 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Species;
-import au.org.ala.fielddata.mobile.service.CacheManager;
+import au.org.ala.fielddata.mobile.service.StorageManager;
 
 public class SpeciesViewHolder {
-	CacheManager cacheManager;
+	StorageManager cacheManager;
 	ImageView icon = null;
 	TextView scientificName = null;
 	TextView commonName = null;
@@ -20,7 +20,7 @@ public class SpeciesViewHolder {
 		this.icon = (ImageView)row.findViewById(R.id.imageView1);
 		this.scientificName = (TextView)row.findViewById(R.id.scientificName);
 		this.commonName = (TextView)row.findViewById(R.id.commonName);
-		cacheManager = new CacheManager(row.getContext());
+		cacheManager = new StorageManager(row.getContext());
 	}
 	
 	public void populate(Species species) {

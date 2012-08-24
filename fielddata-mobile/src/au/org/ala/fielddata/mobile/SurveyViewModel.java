@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Attribute;
@@ -40,6 +41,8 @@ public class SurveyViewModel {
 	/** The currently selected Species - cached here to avoid database access */
 	private Species species;
 	
+	private PackageManager packageManager;
+	
 	/**
 	 * Compares two Attributes by their weight.
 	 * Not null safe!
@@ -52,9 +55,10 @@ public class SurveyViewModel {
 		
 	}
 	
-	public SurveyViewModel(Survey survey, Record record) {
+	public SurveyViewModel(Survey survey, Record record, PackageManager packageManager) {
 		this.survey = survey;
 		this.record = record;
+		this.packageManager = packageManager;
 		attributes = new ArrayList<List<Attribute>>();
 		
 		sortAttributes();
@@ -126,9 +130,15 @@ public class SurveyViewModel {
 		case HTML_HORIZONTAL_RULE:
 		case HTML_NO_VALIDATION:
 			return false;
+		case IMAGE:
+			return deviceHasCamera();
 		}
 		Log.d("SurveyBuilder", attribute.scope);
 		return true;
+	}
+	
+	private boolean deviceHasCamera() {
+		return packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA);
 	}
 
 	public void locationSelected(Location location) {

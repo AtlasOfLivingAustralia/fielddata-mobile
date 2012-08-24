@@ -100,7 +100,7 @@ public class FieldDataService extends WebServiceClient {
 
 			speciesList = surveyResponse.indicatorSpecies;
 			GenericDAO<Species> dao = new GenericDAO<Species>(ctx);
-			CacheManager manager = new CacheManager(ctx);
+			StorageManager manager = new StorageManager(ctx);
 			for (Species species : speciesList) {
 				dao.save(species);
 				try {

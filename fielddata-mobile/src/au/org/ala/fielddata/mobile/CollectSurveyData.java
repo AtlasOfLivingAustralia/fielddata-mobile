@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -52,6 +53,7 @@ import au.org.ala.fielddata.mobile.ui.MenuHelper;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
 import au.org.ala.fielddata.mobile.validation.Binder;
 import au.org.ala.fielddata.mobile.validation.DateBinder;
+import au.org.ala.fielddata.mobile.validation.ImageBinder;
 import au.org.ala.fielddata.mobile.validation.LocationBinder;
 import au.org.ala.fielddata.mobile.validation.RequiredValidator;
 import au.org.ala.fielddata.mobile.validation.SpinnerBinder;
@@ -70,13 +72,26 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	public static final String SURVEY_BUNDLE_KEY = "SurveyIdKey";
 	public static final String RECORD_BUNDLE_KEY = "RecordIdKey";
 
+	/**
+	 * Used to identify a request to the LocationSelectionActivity when a result
+	 * is returned
+	 */
 	public static final int SELECT_LOCATION_REQUEST = 1;
+
+	/** Used to identify a request to the Camera when a result is returned */
+	public static final int TAKE_PHOTO_REQUEST = 2;
+
+	/**
+	 * Used to identify a request to the Image Gallery when a result is returned
+	 */
+	public static final int SELECT_FROM_GALLERY_REQUEST = 3;
 
 	private SurveyViewModel surveyViewModel;
 
 	private SurveyPagerAdapter pagerAdapter;
 	private ViewPager pager;
 	private LocationBinder locationBinder;
+	private ImageBinder imageBinder;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -111,21 +126,22 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			if (recordId <= 0) {
 				record = initRecord(recordId, surveyId);
 			}
-			surveyViewModel = new SurveyViewModel(survey, record);
+			surveyViewModel = new SurveyViewModel(survey, record,
+					getPackageManager());
 
 			getSupportFragmentManager().beginTransaction()
 					.add(new SurveyModelHolder(surveyViewModel), "model")
 					.commit();
-			
+
 		}
 
 		pagerAdapter = new SurveyPagerAdapter(getSupportFragmentManager());
 		pager = (ViewPager) findViewById(R.id.surveyPager);
 		pager.setAdapter(pagerAdapter);
 		pager.setOnPageChangeListener(this);
-		
+
 	}
-	
+
 	public void setViewModel(SurveyViewModel model) {
 		this.surveyViewModel = model;
 		getSupportActionBar().setTitle(model.getSurvey().name);
@@ -229,7 +245,10 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			case POINT:
 				binder = new LocationBinder(view, record);
 				ctx.locationBinder = (LocationBinder) binder;
-
+				break;
+			case IMAGE:
+				binder = new ImageBinder(ctx, attribute, view);
+				ctx.imageBinder = (ImageBinder) binder;
 				break;
 			default:
 				binder = bindByViewClass(view, attribute);
@@ -311,6 +330,29 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			if (resultCode == RESULT_OK) {
 				onLocationSelected((Location) data.getExtras().get(
 						LocationSelectionActivity.LOCATION_BUNDLE_KEY));
+			}
+		} else if (requestCode == TAKE_PHOTO_REQUEST) {
+			if (resultCode == RESULT_OK) {
+				if (imageBinder != null) {
+					if (data != null) {
+						Uri photo = data.getData();
+
+						imageBinder.onImageSelected(photo);
+					} else {
+						imageBinder.onImageSelected(null);
+					}
+				} else {
+					Log.e("CameraResult", "Camera returned null intent...");
+				}
+
+			}
+		}
+		else if (requestCode == SELECT_FROM_GALLERY_REQUEST) {
+			if (resultCode == RESULT_OK) {
+				if (imageBinder != null) {
+					Uri selectedImage = data.getData();
+					imageBinder.onImageSelected(selectedImage);
+				}
 			}
 		}
 	}

@@ -91,7 +91,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	private SurveyPagerAdapter pagerAdapter;
 	private ViewPager pager;
 	private LocationBinder locationBinder;
-	private ImageBinder imageBinder;
+	private List<ImageBinder> imageBinders;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -217,6 +217,13 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		return new MenuHelper(this).handleMenuItemSelection(item);
 	}
+	
+	public void addImageListener(ImageBinder binder) {
+		if (imageBinders == null) {
+			imageBinders = new ArrayList<ImageBinder>(8);
+		}
+		imageBinders.add(binder);
+	}
 
 	static class BinderManager {
 		private List<Binder> binders;
@@ -248,7 +255,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				break;
 			case IMAGE:
 				binder = new ImageBinder(ctx, attribute, view);
-				ctx.imageBinder = (ImageBinder) binder;
+				
 				break;
 			default:
 				binder = bindByViewClass(view, attribute);
@@ -333,7 +340,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			}
 		} else if (requestCode == TAKE_PHOTO_REQUEST) {
 			if (resultCode == RESULT_OK) {
-				if (imageBinder != null) {
+				for (ImageBinder imageBinder : imageBinders) {
 					if (data != null) {
 						Uri photo = data.getData();
 
@@ -341,15 +348,13 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 					} else {
 						imageBinder.onImageSelected(null);
 					}
-				} else {
-					Log.e("CameraResult", "Camera returned null intent...");
 				}
 
 			}
 		}
 		else if (requestCode == SELECT_FROM_GALLERY_REQUEST) {
 			if (resultCode == RESULT_OK) {
-				if (imageBinder != null) {
+				for (ImageBinder imageBinder : imageBinders) {
 					Uri selectedImage = data.getData();
 					imageBinder.onImageSelected(selectedImage);
 				}

@@ -2,7 +2,6 @@ package au.org.ala.fielddata.mobile.validation;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.View;
@@ -21,10 +20,13 @@ public class ImageBinder implements Binder {
 	private CollectSurveyData ctx;
 	private Attribute attribute;
 	private String thumbUri;
+	private boolean expectingResult;
 	
 	public ImageBinder(CollectSurveyData ctx, Attribute attribute, View imageView) {
 		this.ctx = ctx;
 		this.attribute = attribute;
+		expectingResult = false;
+		ctx.addImageListener(this);
 		thumb = (ImageView)imageView.findViewById(R.id.photoThumbnail);
 		SurveyViewModel model = ctx.getViewModel();
 		thumbUri = model.getRecord().getValue(attribute);
@@ -47,6 +49,7 @@ public class ImageBinder implements Binder {
 				// as expected so we have to eagerly bind it to our Record.
 				thumbUri = fileUri.toString();
 				bind();
+				expectingResult = true;
 				ctx.startActivityForResult(intent, CollectSurveyData.TAKE_PHOTO_REQUEST );
 			}
 		});
@@ -57,6 +60,7 @@ public class ImageBinder implements Binder {
 			public void onClick(View v) {
 				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 				intent.setType("image/*");
+				expectingResult = true;
 				ctx.startActivityForResult(Intent.createChooser(intent, "Select Photo"), CollectSurveyData.SELECT_FROM_GALLERY_REQUEST);
 				
 			}
@@ -83,6 +87,10 @@ public class ImageBinder implements Binder {
 	}
 	
 	public void onImageSelected(Uri imageUri) {
+		if (!expectingResult) {
+			return;
+		}
+		
 		// For some reason, the camera application passes back a null intent
 		// on my Galaxy Nexus, so we have to rely on the URI we created before
 		// starting the Camera activity.
@@ -91,6 +99,7 @@ public class ImageBinder implements Binder {
 		}
 		
 		updateThumbnail();
+		expectingResult = false;
 	}
 	
 	public void bind() {

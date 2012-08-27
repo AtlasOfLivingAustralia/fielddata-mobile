@@ -14,6 +14,7 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -83,4 +84,12 @@ public class Survey extends Persistent {
 		return name;
 	}
 	
+	
+	public List<Attribute> allAttributes() {
+		List<Attribute> all = new ArrayList<Attribute>();
+		all.addAll(recordProperties);
+		all.addAll(attributes);
+		
+		return all;
+	}
 }

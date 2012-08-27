@@ -46,6 +46,7 @@ import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
@@ -54,10 +55,9 @@ import au.org.ala.fielddata.mobile.validation.Binder;
 import au.org.ala.fielddata.mobile.validation.DateBinder;
 import au.org.ala.fielddata.mobile.validation.ImageBinder;
 import au.org.ala.fielddata.mobile.validation.LocationBinder;
-import au.org.ala.fielddata.mobile.validation.RequiredValidator;
+import au.org.ala.fielddata.mobile.validation.SpeciesBinder;
 import au.org.ala.fielddata.mobile.validation.SpinnerBinder;
 import au.org.ala.fielddata.mobile.validation.TextViewBinder;
-import au.org.ala.fielddata.mobile.validation.Validator;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -211,7 +211,13 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getItemId() == R.id.save) {
-			new SaveRecordTask(this).execute(surveyViewModel.getRecord());
+			int firstInvalidPage = surveyViewModel.validate();
+			if (firstInvalidPage < 0) {
+				new SaveRecordTask(this).execute(surveyViewModel.getRecord());
+			}
+			else {
+				pager.setCurrentItem(firstInvalidPage);
+			}
 			return true;
 		}
 		return new MenuHelper(this).handleMenuItemSelection(item);
@@ -238,44 +244,47 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 		public void configureBindings(View view, Attribute attribute) {
 
-			Record record = surveyViewModel.getRecord();
-
 			Binder binder = null;
 			// Some attribute types require special bindings.
 			switch (attribute.getType()) {
 			case WHEN:
 			case TIME:
-				binder = new DateBinder(ctx, view, attribute, record,
-						validatorFor(attribute));
+				binder = new DateBinder(ctx, view, attribute, surveyViewModel);
 				break;
 			case POINT:
-				binder = new LocationBinder(view, record);
+				binder = new LocationBinder(view, surveyViewModel);
 				ctx.locationBinder = (LocationBinder) binder;
 				break;
 			case IMAGE:
 				binder = new ImageBinder(ctx, attribute, view);
-				
+				break;
+			case SPECIES_P:
+				binder = new SpeciesBinder(ctx, view, surveyViewModel);
 				break;
 			default:
 				binder = bindByViewClass(view, attribute);
 				break;
 			}
 
+			add(attribute, binder);
+			
+		}
+		
+		private void add(Attribute attribute, Binder binder) {
 			if (binder != null) {
 				binders.add(binder);
+				surveyViewModel.setAttributeChangeListener(binder, attribute);
 			}
 		}
 
 		private Binder bindByViewClass(View view, Attribute attribute) {
-			Record record = surveyViewModel.getRecord();
+			
 			Binder binder = null;
 			if (view instanceof TextView) {
-				binder = new TextViewBinder(ctx, (TextView) view, attribute,
-						record, validatorFor(attribute));
+				binder = new TextViewBinder(ctx, (TextView) view, attribute, surveyViewModel);
 
 			} else if (view instanceof Spinner) {
-				binder = new SpinnerBinder(ctx, (Spinner) view, attribute,
-						record, validatorFor(attribute));
+				binder = new SpinnerBinder(ctx, (Spinner) view, attribute, surveyViewModel);
 
 			}
 			return binder;
@@ -286,30 +295,13 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				binder.bind();
 			}
 		}
-		
-		public boolean validateAll() {
-			boolean valid = true;
-			for (Binder binder: binders) {
-				valid = valid && binder.validate();
-			}
-			
-			return valid;
-		}
 
 		public void clearBindings() {
+			for (Binder binder : binders) {
+				surveyViewModel.removeAttributeChangeListener(binder);
+			}
 			binders.clear();
 		}
-
-		private Validator validatorFor(Attribute attribute) {
-
-			Validator validator = null;
-			if (attribute.required != null && attribute.required) {
-				validator = new RequiredValidator();
-			}
-			return validator;
-
-		}
-
 
 	}
 

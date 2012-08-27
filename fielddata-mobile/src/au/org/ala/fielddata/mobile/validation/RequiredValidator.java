@@ -14,10 +14,23 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.validation;
 
+import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.model.Attribute;
+import au.org.ala.fielddata.mobile.model.Record;
+
 public class RequiredValidator implements Validator {
 
-	public boolean validate(String value) {
-		return value != null && value.length() > 0;
+	public ValidationResult validate(Record record, Attribute attribute) {
+		String value = record.getValue(attribute);
+		
+		boolean valid = value != null && !"".equals(value);
+		
+		if (valid) {
+			return new ValidationResult(attribute);
+		}
+		else {
+			return new ValidationResult(attribute, R.string.requiredMessage);
+		}
 	}
 	
 	

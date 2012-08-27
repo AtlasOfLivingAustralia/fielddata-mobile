@@ -14,9 +14,9 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.validation;
 
-public interface Binder {
+import au.org.ala.fielddata.mobile.model.AttributeChangeListener;
+
+public interface Binder extends AttributeChangeListener {
 
 	public void bind();
-	
-	public boolean validate();
 }

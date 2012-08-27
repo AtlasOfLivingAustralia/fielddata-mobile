@@ -14,11 +14,7 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.view.View;
@@ -26,17 +22,13 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 import au.org.ala.fielddata.mobile.model.Record;
-import au.org.ala.fielddata.mobile.model.Species;
-import au.org.ala.fielddata.mobile.service.StorageManager;
+import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.ui.GPSFragment;
-import au.org.ala.fielddata.mobile.ui.SpeciesListAdapter;
-import au.org.ala.fielddata.mobile.ui.SpeciesViewHolder;
 
 public class SurveyBuilder {
 	
@@ -130,32 +122,8 @@ public class SurveyBuilder {
 	
 	public View buildSpeciesPicker(Attribute attribute) {
 		
-		Species species = model.getSelectedSpecies();
 		final View row = viewContext.getLayoutInflater().inflate(R.layout.species_row, null);
 		
-		row.setOnClickListener(new android.view.View.OnClickListener() {
-			
-			public void onClick(View v) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(viewContext);
-				final SpeciesListAdapter adapter = new SpeciesListAdapter(viewContext);
-				builder.setAdapter(adapter, new android.content.DialogInterface.OnClickListener() {
-					
-					public void onClick(DialogInterface dialog, int which) {
-						
-						Species selected = adapter.getItem(which);
-						model.speciesSelected(selected);
-						new SpeciesViewHolder(row).populate(selected);
-					}
-				});
-				builder.setTitle("Select a species");
-				builder.show();
-				
-			}
-		});
-			
-		if (species != null) {
-			new SpeciesViewHolder(row).populate(species);
-		}
 		return row;
 	}
 	

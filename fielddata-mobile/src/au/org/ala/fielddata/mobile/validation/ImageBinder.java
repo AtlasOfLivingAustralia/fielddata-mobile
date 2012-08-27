@@ -10,9 +10,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import au.org.ala.fielddata.mobile.CollectSurveyData;
 import au.org.ala.fielddata.mobile.R;
-import au.org.ala.fielddata.mobile.SurveyViewModel;
 import au.org.ala.fielddata.mobile.model.Attribute;
+import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.service.StorageManager;
+import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class ImageBinder implements Binder {
 
@@ -134,8 +135,20 @@ public class ImageBinder implements Binder {
 		ctx.getViewModel().getRecord().setValue(attribute, thumbUri);
 	}
 	
-	public boolean validate() {
-		return true;
+	public void onAttributeChange(Attribute attribute) {
+		if (attribute.getServerId() != this.attribute.getServerId()) {
+			return;
+		}
+		bind();
+	}
+
+	public void onAttributeInvalid(Attribute attribute, ValidationResult result) {
+		if (attribute.getServerId() != this.attribute.getServerId()) {
+			return;
+		}
+		// TODO need to render an error somehow, maybe replace the thumbnail
+		// with an error icon?
+		//view.setError(result.getMessage(ctx));
 	}
 
 }

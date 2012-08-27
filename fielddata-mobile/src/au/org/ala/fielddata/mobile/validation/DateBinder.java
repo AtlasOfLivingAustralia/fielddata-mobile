@@ -13,13 +13,13 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
-import au.org.ala.fielddata.mobile.model.Record;
+import au.org.ala.fielddata.mobile.model.SurveyViewModel;
+import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class DateBinder implements Binder, OnClickListener, DatePickerDialog.OnDateSetListener {
 
 	private Attribute attribute;
-	private Record record;
-	private Validator validator;
+	private SurveyViewModel model;
 	private DateFieldHolder holder;
 	private Context ctx;
 	private Date date;
@@ -33,19 +33,17 @@ public class DateBinder implements Binder, OnClickListener, DatePickerDialog.OnD
 		}
 	}
 	
-	public DateBinder(Context ctx, View view, Attribute attribute, Record record,
-			Validator validator) {
+	public DateBinder(Context ctx, View view, Attribute attribute, SurveyViewModel model) {
 		
 		
 		this.ctx = ctx;
 		this.attribute = attribute;
-		this.validator = validator;
-		this.record = record;
+		this.model = model;
 		
 		holder = new DateFieldHolder(view);
 		holder.button.setOnClickListener(this);
 		
-		date = record.getDate(attribute);
+		date = model.getRecord().getDate(attribute);
 		updateDisplay();
 	}
 	
@@ -76,23 +74,22 @@ public class DateBinder implements Binder, OnClickListener, DatePickerDialog.OnD
 		
 	}
 	
-	public boolean validate() {
-
-		boolean valid = true;
-		if (validator != null) {
-//			valid = validator.validate(nullSafeText());
-//			if (!valid) {
-//				View selected = view.getSelectedView();
-//				if (selected instanceof TextView) {
-//					((TextView) selected).setError("Uhoh");
-//				}
-//			}
+	public void onAttributeChange(Attribute attribute) {
+		if (attribute.getServerId() != this.attribute.getServerId()) {
+			return;
 		}
-		return valid;
+		bind();
+	}
 
+	public void onAttributeInvalid(Attribute attribute, ValidationResult result) {
+		if (attribute.getServerId() != this.attribute.getServerId()) {
+			return;
+		}
+		
+		holder.text.setError(result.getMessage(ctx));
 	}
 
 	public void bind() {
-		record.setValue(attribute, date);
+		model.getRecord().setValue(attribute, date);
 	}
 }

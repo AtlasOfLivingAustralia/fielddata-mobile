@@ -1,6 +1,7 @@
 package au.org.ala.fielddata.mobile;
 
 import android.os.Bundle;
+import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 
 import com.actionbarsherlock.app.SherlockFragment;
 

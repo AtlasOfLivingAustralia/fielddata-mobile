@@ -13,7 +13,7 @@
  * rights and limitations under the License.
  ******************************************************************************/
 
-package au.org.ala.fielddata.mobile;
+package au.org.ala.fielddata.mobile.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,11 +23,11 @@ import java.util.List;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.util.Log;
-import au.org.ala.fielddata.mobile.model.Attribute;
+import android.util.SparseArray;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
-import au.org.ala.fielddata.mobile.model.Record;
-import au.org.ala.fielddata.mobile.model.Species;
-import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.validation.RecordValidator;
+import au.org.ala.fielddata.mobile.validation.RecordValidator.RecordValidationResult;
+import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class SurveyViewModel {
 	/** Defines the survey we are rendering in this Activity */
@@ -37,67 +37,100 @@ public class SurveyViewModel {
 
 	/** The data collected for the Survey */
 	private Record record;
-	
+
 	/** The currently selected Species - cached here to avoid database access */
 	private Species species;
-	
+
 	private PackageManager packageManager;
-	
+
+	private SparseArray<AttributeChangeListener> listeners;
+
 	/**
-	 * Compares two Attributes by their weight.
-	 * Not null safe!
+	 * Compares two Attributes by their weight. Not null safe!
 	 */
 	static class WeightComparitor implements Comparator<Attribute> {
 
 		public int compare(Attribute lhs, Attribute rhs) {
 			return lhs.weight.compareTo(rhs.weight);
 		}
-		
+
 	}
-	
+
 	public SurveyViewModel(Survey survey, Record record, PackageManager packageManager) {
 		this.survey = survey;
 		this.record = record;
 		this.packageManager = packageManager;
 		attributes = new ArrayList<List<Attribute>>();
-		
+		listeners = new SparseArray<AttributeChangeListener>();
 		sortAttributes();
 	}
-	
+
 	public int getPageCount() {
 		return attributes.size();
 	}
-	
+
 	public List<Attribute> getPage(int pageNum) {
 		return attributes.get(pageNum);
 	}
-	
+
 	public void speciesSelected(Species species) {
 		this.species = species;
 		record.taxon_id = species.server_id;
 		record.scientificName = species.scientificName;
-		
+
 	}
-	
+
 	public Species getSelectedSpecies() {
 		return species;
 	}
-	
-	public Record getRecord(){ 
+
+	public Record getRecord() {
 		return record;
 	}
-	
+
 	public Survey getSurvey() {
 		return survey;
+	}
+
+	public String getValue(Attribute attribute) {
+
+		return record.getValue(attribute);
+	}
+
+	public void setValue(Attribute attribute, String value) {
+
+		record.setValue(attribute, value);
+		fireAttributeChanged(attribute);
+	}
+
+	public void setAttributeChangeListener(AttributeChangeListener listener, Attribute attribute) {
+		listeners.put(attribute.getServerId(), listener);
+	}
+
+	public void removeAttributeChangeListener(AttributeChangeListener listener) {
+		listeners.delete(listeners.indexOfValue(listener));
+	}
+
+	private void fireAttributeChanged(Attribute attribute) {
+		AttributeChangeListener listener = listeners.get(attribute.getServerId());
+		if (listener != null) {
+			listener.onAttributeChange(attribute);
+		}
+	}
+	
+	private void fireAttributeInvalid(ValidationResult result) {
+		AttributeChangeListener listener = listeners.get(result.getAttribute().getServerId());
+		if (listener != null) {
+			listener.onAttributeInvalid(result.getAttribute(), result);
+		}
 	}
 
 	private void sortAttributes() {
 		List<Attribute> allAttributes = new ArrayList<Attribute>(survey.attributes);
 		allAttributes.addAll(survey.recordProperties);
 		Collections.sort(allAttributes, new WeightComparitor());
-		
-		List<Attribute> filteredAttributes = new ArrayList<Attribute>(
-				allAttributes.size());
+
+		List<Attribute> filteredAttributes = new ArrayList<Attribute>(allAttributes.size());
 
 		for (Attribute attribute : allAttributes) {
 			if (supports(attribute)) {
@@ -106,8 +139,7 @@ public class SurveyViewModel {
 			if (attribute.getType() == AttributeType.HTML_HORIZONTAL_RULE) {
 				if (filteredAttributes.size() > 0) {
 					attributes.add(filteredAttributes);
-					filteredAttributes = new ArrayList<Attribute>(
-							allAttributes.size());
+					filteredAttributes = new ArrayList<Attribute>(allAttributes.size());
 				}
 			}
 		}
@@ -136,7 +168,7 @@ public class SurveyViewModel {
 		Log.d("SurveyBuilder", attribute.scope);
 		return true;
 	}
-	
+
 	private boolean deviceHasCamera() {
 		return packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA);
 	}
@@ -145,5 +177,40 @@ public class SurveyViewModel {
 		getRecord().longitude = location.getLongitude();
 		getRecord().latitude = location.getLatitude();
 		getRecord().accuracy = Double.valueOf(location.getAccuracy());
+	}
+
+	public int validate() {
+		int firstInvalidPage = -1;
+		RecordValidator validator = new RecordValidator();
+		RecordValidationResult result = validator.validateRecord(survey, record);
+		if (!result.valid()) {
+			for (ValidationResult attr : result.invalidAttributes()) {
+				
+				Log.i("SurveyViewModel", "Attribute invalid: "+attr.getAttribute().name);
+				fireAttributeInvalid(attr);
+			}
+			Attribute firstInvalid = result.invalidAttributes().get(0).getAttribute();
+			firstInvalidPage = pageOf(firstInvalid);
+		}
+		return firstInvalidPage;
+	}
+
+	private int pageOf(Attribute firstInvalid) {
+		int firstInvalidPage = -1;
+		int attrId = firstInvalid.getServerId();
+		int pageNum = 0;
+		for (List<Attribute> page : attributes) {
+			for (Attribute attribute : page) {
+				if (attrId == attribute.getServerId()) {
+					firstInvalidPage = pageNum;
+					break;
+				}
+			}
+			if (firstInvalidPage > 0) {
+				break;
+			}
+			pageNum++;
+		}
+		return firstInvalidPage;
 	}
 }

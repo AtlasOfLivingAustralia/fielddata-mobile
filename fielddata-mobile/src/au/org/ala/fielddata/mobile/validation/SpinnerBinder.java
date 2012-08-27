@@ -21,52 +21,70 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
-import au.org.ala.fielddata.mobile.model.Record;
+import au.org.ala.fielddata.mobile.model.SurveyViewModel;
+import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class SpinnerBinder implements Binder, OnItemSelectedListener {
 
 	private Spinner view;
 	private Attribute attribute;
-	private Record record;
-	private Validator validator;
+	private SurveyViewModel model;
+	private Context ctx;
+	private boolean updating;
+	
 
-	public SpinnerBinder(Context ctx, Spinner view, Attribute attribute, Record record,
-			Validator validator) {
+	public SpinnerBinder(Context ctx, Spinner view, Attribute attribute, SurveyViewModel model) {
+		this.ctx = ctx;
 		this.view = view;
 		this.attribute = attribute;
-		this.validator = validator;
-		this.record = record;
+		this.model = model;
+		updating = false;
 		view.setOnItemSelectedListener(this);
 
 	}
 
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
-		validate();
+		
+		bind();
 	}
 
 	public void onNothingSelected(AdapterView<?> parent) {
-		validate();
+		bind("");
 	}
-
-	public boolean validate() {
-
-		boolean valid = true;
-		if (validator != null) {
-			valid = validator.validate(nullSafeText());
-			if (!valid) {
-				View selected = view.getSelectedView();
-				if (selected instanceof TextView) {
-					((TextView) selected).setError("Uhoh");
-				}
-			}
+	
+	public void onAttributeChange(Attribute attribute) {
+		if (attribute.getServerId() != this.attribute.getServerId()) {
+			return;
 		}
-		return valid;
-
+		try {
+			updating = true;
+			bind();
+		}
+		finally {
+			updating = false;
+		}
 	}
 
+	public void onAttributeInvalid(Attribute attribute, ValidationResult result) {
+		if (attribute.getServerId() != this.attribute.getServerId()) {
+			return;
+		}
+		
+		View selected = view.getSelectedView();
+		if (selected instanceof TextView) {
+			((TextView) selected).setError(result.getMessage(ctx));
+		}
+	}
+	
 	public void bind() {
-		record.setValue(attribute, nullSafeText());
+		if (!updating) {
+			bind(nullSafeText());
+		}
+	}
+	
+	private void bind(String value) {
+		model.setValue(attribute, value);
 	}
 
 	private String nullSafeText() {

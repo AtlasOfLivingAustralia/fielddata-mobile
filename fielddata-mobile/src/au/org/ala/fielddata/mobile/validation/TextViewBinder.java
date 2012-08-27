@@ -18,23 +18,26 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.TextView;
-import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
-import au.org.ala.fielddata.mobile.model.Record;
+import au.org.ala.fielddata.mobile.model.AttributeChangeListener;
+import au.org.ala.fielddata.mobile.model.SurveyViewModel;
+import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
-public class TextViewBinder implements Binder, TextWatcher {
+public class TextViewBinder implements Binder, TextWatcher, AttributeChangeListener {
 
 	private TextView view;
-	private Record record;
+	private SurveyViewModel model;
 	private Context ctx;
-	private Validator validator;
 	private Attribute attribute;
+	private boolean updating;
 	
-	public TextViewBinder(Context ctx, TextView view, Attribute attribute, Record record, Validator validator) {
+	public TextViewBinder(Context ctx, TextView view, Attribute attribute, SurveyViewModel model) {
 		this.view = view;
-		this.record = record;
+		this.model = model;
 		this.attribute = attribute;
-		view.setText(record.getValue(attribute));
+		this.ctx = ctx;
+		updating = false;
+		view.setText(model.getValue(attribute));
 		view.addTextChangedListener(this);
 	}
 
@@ -44,26 +47,46 @@ public class TextViewBinder implements Binder, TextWatcher {
 	}
 
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
-		validate();
+		if (!updating) {
+			bind(s);
+		}
 	}
 
 	public void afterTextChanged(Editable s) {
 		
 	}
 	
-	public boolean validate() {
-		boolean valid = true;
-		if (validator != null) {
-			valid = validator.validate(nullSafeText());
-			if (!valid) {
-				view.setError(ctx.getText(R.string.requiredMessage));
-			}
+	
+	
+	
+	public void onAttributeChange(Attribute attribute) {
+		if (attribute.getServerId() != this.attribute.getServerId()) {
+			return;
 		}
-		return valid;
+		try {
+			updating = true;
+			view.setText(model.getValue(attribute));
+		}
+		finally {
+			updating = false;
+		}
+		
+	}
+
+	public void onAttributeInvalid(Attribute attribute, ValidationResult result) {
+		if (attribute.getServerId() != this.attribute.getServerId()) {
+			return;
+		}
+		
+		view.setError(result.getMessage(ctx));
 	}
 	
 	public void bind() {
-		record.setValue(attribute, nullSafeText());
+		bind(nullSafeText());
+	}
+	
+	private void bind(CharSequence text) {
+		model.setValue(attribute, text.toString());
 	}
 	
 	private String nullSafeText() {

@@ -14,7 +14,47 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.validation;
 
+import android.content.Context;
+import au.org.ala.fielddata.mobile.model.Attribute;
+import au.org.ala.fielddata.mobile.model.Record;
+
+
 public interface Validator {
 
-	public boolean validate(String value);
+	public static final int VALID = 0;
+	public static final int INVALID = 1;
+	
+	public static class ValidationResult {
+		private Attribute attribute;
+		private int error;
+		private boolean valid;
+		
+		public ValidationResult(Attribute attribute) {
+			valid = true;
+			this.attribute = attribute;
+		}
+		
+		public ValidationResult(Attribute attribute, int errorCode) {
+			valid = false;
+			this.attribute = attribute;
+			this.error = errorCode;
+		}
+		
+		public boolean isValid() {
+			return valid;
+		}
+		
+		public CharSequence getMessage(Context context) {
+			
+			return context.getResources().getString(error);
+			
+		}
+
+		public Attribute getAttribute() {
+			return attribute;
+		}
+		
+	}
+	
+	public ValidationResult validate(Record record, Attribute attribute);
 }

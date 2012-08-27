@@ -6,7 +6,10 @@ import android.location.Location;
 import android.view.View;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Record;
+import au.org.ala.fielddata.mobile.model.SurveyViewModel;
+import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class LocationBinder implements Binder {
 
@@ -14,9 +17,9 @@ public class LocationBinder implements Binder {
 	private Record record;
 	private Location location;
 	
-	public LocationBinder(View locationView, Record record) {
+	public LocationBinder(View locationView, SurveyViewModel model) {
 		locationTextView = (TextView)locationView.findViewById(R.id.latlong);
-		this.record = record;
+		this.record = model.getRecord();
 		
 		if (record.latitude != null && record.longitude != null) {
 			location = new Location("");
@@ -31,11 +34,20 @@ public class LocationBinder implements Binder {
 		
 	}
 	
-	public boolean validate() {
-		locationTextView.setError("Please select a point");
-		return false;
+	public void onAttributeChange(Attribute attribute) {
+//		if (attribute.getServerId() != this.attribute.getServerId()) {
+//			return;
+//		}
+		bind();
 	}
-	
+
+	public void onAttributeInvalid(Attribute attribute, ValidationResult result) {
+//		if (attribute.getServerId() != this.attribute.getServerId()) {
+//			return;
+//		}
+		
+		locationTextView.setError("Select a location");//result.getMessage(ctx));
+	}
 	private void updateText() {
 		
 		String locationText = "";
@@ -55,6 +67,7 @@ public class LocationBinder implements Binder {
 	
 	public void locationChanged(Location location) {
 		this.location = location;
+		bind();
 		updateText();
 	}
 	

@@ -47,6 +47,7 @@ public class SurveyViewModel {
 	private PackageManager packageManager;
 
 	private SparseArray<AttributeChangeListener> listeners;
+	
 
 	/**
 	 * Compares two Attributes by their weight. Not null safe!
@@ -84,8 +85,8 @@ public class SurveyViewModel {
 		record.scientificName = species.scientificName;
 		
 		Attribute changed = survey.propertyByType(AttributeType.SPECIES_P);
-		validator.validateRecordAttribute(changed, record);
 		
+		validate(changed);	
 	}
 
 	public Species getSelectedSpecies() {
@@ -109,8 +110,7 @@ public class SurveyViewModel {
 
 		record.setValue(attribute, value);
 		fireAttributeChanged(attribute);
-		ValidationResult result = validator.validateRecordAttribute(attribute, record);
-		fireAttributeValidated(result);
+		validate(attribute);
 	}
 
 	public void setAttributeChangeListener(AttributeChangeListener listener, Attribute attribute) {
@@ -201,6 +201,11 @@ public class SurveyViewModel {
 			firstInvalidPage = pageOf(firstInvalid);
 		}
 		return firstInvalidPage;
+	}
+	
+	private void validate(Attribute attribute) {
+		ValidationResult result = validator.validateRecordAttribute(attribute, record);
+		fireAttributeValidated(result);
 	}
 
 	private int pageOf(Attribute firstInvalid) {

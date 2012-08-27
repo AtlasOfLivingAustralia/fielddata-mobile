@@ -38,7 +38,7 @@ public class LocationBinder implements Binder {
 //		if (attribute.getServerId() != this.attribute.getServerId()) {
 //			return;
 //		}
-		bind();
+		updateText();
 	}
 
 	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {

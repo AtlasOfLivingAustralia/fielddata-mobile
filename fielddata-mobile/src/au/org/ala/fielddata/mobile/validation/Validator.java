@@ -54,6 +54,18 @@ public interface Validator {
 			return attribute;
 		}
 		
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append(attribute).append(": ");
+			if (valid) {
+				builder.append("valid");
+			}
+			else {
+				builder.append("invalid");
+			}
+			return builder.toString();
+		}
+		
 	}
 	
 	public ValidationResult validate(Record record, Attribute attribute);

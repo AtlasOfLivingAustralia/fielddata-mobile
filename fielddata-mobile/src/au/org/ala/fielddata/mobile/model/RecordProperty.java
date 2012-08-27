@@ -24,7 +24,7 @@ public class RecordProperty extends Attribute {
 	}
 	
 	public Integer getServerId() {
-		return id;
+		return hashCode()*-1;
 	}
 	
 	public boolean equals(RecordProperty attribute) {

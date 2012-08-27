@@ -44,4 +44,8 @@ public class SpeciesViewHolder {
 	public void setError(CharSequence error) {
 		scientificName.setError(error);
 	}
+	
+	public boolean requestFocus() {
+		return scientificName.requestFocus();
+	}
 }

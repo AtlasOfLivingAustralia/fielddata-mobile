@@ -17,6 +17,7 @@ package au.org.ala.fielddata.mobile.validation;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.AttributeChangeListener;
@@ -39,6 +40,7 @@ public class TextViewBinder implements Binder, TextWatcher, AttributeChangeListe
 		updating = false;
 		view.setText(model.getValue(attribute));
 		view.addTextChangedListener(this);
+		
 	}
 
 	public void beforeTextChanged(CharSequence s, int start, int count,
@@ -74,14 +76,17 @@ public class TextViewBinder implements Binder, TextWatcher, AttributeChangeListe
 	}
 
 	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
-		if (attribute.getServerId() != this.attribute.getServerId()) {
+		if (!attribute.equals(this.attribute)) {
 			return;
 		}
+		Log.d("Binder", "TextViewBinder: "+result);
+		
 		if (result.isValid()) {
 			view.setError(null);
 		}
 		else {
 			view.setError(result.getMessage(ctx));
+			view.requestFocus();
 		}
 	}
 	

@@ -3,6 +3,7 @@ package au.org.ala.fielddata.mobile.validation;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import au.org.ala.fielddata.mobile.model.Attribute;
@@ -42,9 +43,10 @@ public class SpeciesBinder implements Binder, OnClickListener {
 		if (attribute.getType() != AttributeType.SPECIES_P) {
 			return;
 		}
-		
+		Log.d("Binder", "SpeciesBinder: "+result);
 		if (result.isValid()) {
 			viewHolder.setError(null);
+			viewHolder.requestFocus();
 		}
 		else {
 			viewHolder.setError(result.getMessage(ctx));

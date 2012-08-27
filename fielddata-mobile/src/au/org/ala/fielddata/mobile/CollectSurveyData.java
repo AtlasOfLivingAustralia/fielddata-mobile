@@ -220,6 +220,9 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			}
 			return true;
 		}
+		else if (item.getItemId() == R.id.cancel) {
+			finish();
+		}
 		return new MenuHelper(this).handleMenuItemSelection(item);
 	}
 	

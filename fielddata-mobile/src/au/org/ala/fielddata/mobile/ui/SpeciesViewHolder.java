@@ -40,4 +40,8 @@ public class SpeciesViewHolder {
 		scientificName.setText(species.scientificName);
 		commonName.setText(species.commonName);
 	}
+	
+	public void setError(CharSequence error) {
+		scientificName.setError(error);
+	}
 }

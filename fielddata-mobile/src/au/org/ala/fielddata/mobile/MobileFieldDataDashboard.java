@@ -25,8 +25,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
@@ -36,7 +39,6 @@ import au.org.ala.fielddata.mobile.service.FieldDataService;
 import au.org.ala.fielddata.mobile.service.LoginService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 
-import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -50,6 +52,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		implements OnClickListener {
 
 	private Preferences preferences;
+	private TextView status;
+	private Spinner surveySelector;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,9 +61,13 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		preferences = new Preferences(this);
 		setContentView(R.layout.activity_mobile_data_dashboard);
 
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-
+		//getSupportActionBar().setDisplayShowTitleEnabled(false);
+		//getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		getSupportActionBar().setTitle("Condamine Alliance");
+		getSupportActionBar().setSubtitle("Welcome admin admin");
+		
+		status = (TextView)findViewById(R.id.status);
+		surveySelector = (Spinner)findViewById(R.id.surveySelector);
 		addEventHandlers();
 	}
 
@@ -98,6 +106,12 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		protected void onPostExecute(InitialisationResults result) {
 
 			if (result.success) {
+				if (result.online) {
+					status.setText("Online");
+				}
+				else {
+					status.setText("Offline");
+				}
 				updateSurveyList(result.surveys);
 				updateRecordCount(result.recordCount);
 			} else {
@@ -227,22 +241,23 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		if (surveys.size() > 0) {
 			ArrayAdapter<Survey> items = new ArrayAdapter<Survey>(
 					MobileFieldDataDashboard.this,
-					R.layout.sherlock_spinner_item, surveyArray);
+					android.R.layout.simple_list_item_1, surveyArray);
+			surveySelector.setAdapter(items);
+			surveySelector.setOnItemSelectedListener(new OnItemSelectedListener() {
+			
+				public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+					Survey survey = surveyArray[position];
+					if (survey != null) {
+						preferences.setCurrentSurveyName(survey.name);
+						preferences.setCurrentSurvey(survey.server_id);
+					}
+				}
 
-			getSupportActionBar().setListNavigationCallbacks(items,
-					new OnNavigationListener() {
-
-						public boolean onNavigationItemSelected(
-								int itemPosition, long itemId) {
-
-							Survey survey = surveyArray[itemPosition];
-							if (survey != null) {
-								preferences.setCurrentSurveyName(survey.name);
-								preferences.setCurrentSurvey(survey.server_id);
-							}
-							return false;
-						}
-					});
+				public void onNothingSelected(AdapterView<?> parent) {
+					
+				}
+	
+			});
 			Integer selected = preferences.getCurrentSurvey();
 			int index = -1;
 			if (selected != null) {

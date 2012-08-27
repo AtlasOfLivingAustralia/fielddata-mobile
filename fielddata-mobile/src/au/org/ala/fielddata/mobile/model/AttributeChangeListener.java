@@ -6,5 +6,5 @@ public interface AttributeChangeListener {
 
 	public void onAttributeChange(Attribute attribute);
 	
-	public void onAttributeInvalid(Attribute attribute, ValidationResult result);
+	public void onValidationStatusChange(Attribute attribute, ValidationResult result);
 }

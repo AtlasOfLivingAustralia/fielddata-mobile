@@ -66,14 +66,20 @@ public class SpinnerBinder implements Binder, OnItemSelectedListener {
 		}
 	}
 
-	public void onAttributeInvalid(Attribute attribute, ValidationResult result) {
+	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
 		if (attribute.getServerId() != this.attribute.getServerId()) {
 			return;
 		}
 		
 		View selected = view.getSelectedView();
 		if (selected instanceof TextView) {
-			((TextView) selected).setError(result.getMessage(ctx));
+			TextView textView = (TextView)selected;
+			if (result.isValid()) {
+				textView.setError(null);
+			}
+			else {
+			    textView.setError(result.getMessage(ctx));
+			}
 		}
 	}
 	

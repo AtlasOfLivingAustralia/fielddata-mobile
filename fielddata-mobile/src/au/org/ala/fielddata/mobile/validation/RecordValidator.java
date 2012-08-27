@@ -30,16 +30,27 @@ public class RecordValidator {
 		
 		List<ValidationResult> results = new ArrayList<Validator.ValidationResult>(survey.attributes.size());
 		for (Attribute attribute : survey.allAttributes()) {
-			Validator validator = validatorFor(attribute);
-			if (validator != null) {
-				ValidationResult result = validator.validate(record, attribute); 
-				if (!result.isValid()) {
-					results.add(result);
-				}
+			
+			ValidationResult result = validateRecordAttribute(attribute, record); 
+			if (!result.isValid()) {
+				results.add(result);
 			}
 		}
 		return new RecordValidationResult(results);
 		
+	}
+	
+	public ValidationResult validateRecordAttribute(Attribute attribute, Record record) {
+
+		ValidationResult result;
+		Validator validator = validatorFor(attribute);
+		if (validator != null) {
+			result = validator.validate(record, attribute); 
+		}
+		else {
+			result = new ValidationResult(attribute);
+		}
+		return result;
 	}
 	
 	private Validator validatorFor(Attribute attribute) {

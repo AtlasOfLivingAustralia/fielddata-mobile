@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.view.View;
 import android.view.View.OnClickListener;
 import au.org.ala.fielddata.mobile.model.Attribute;
+import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.ui.SpeciesListAdapter;
@@ -37,9 +38,18 @@ public class SpeciesBinder implements Binder, OnClickListener {
 
 	}
 
-	public void onAttributeInvalid(Attribute attribute, ValidationResult result) {
-		// TODO Auto-generated method stub
-
+	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
+		if (attribute.getType() != AttributeType.SPECIES_P) {
+			return;
+		}
+		
+		if (result.isValid()) {
+			viewHolder.setError(null);
+		}
+		else {
+			viewHolder.setError(result.getMessage(ctx));
+		}
+		
 	}
 
 	public void bind() {

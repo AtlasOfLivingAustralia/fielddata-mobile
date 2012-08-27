@@ -37,6 +37,9 @@ public class SurveyViewModel {
 
 	/** The data collected for the Survey */
 	private Record record;
+	
+	/** Validates our record */
+	private RecordValidator validator;
 
 	/** The currently selected Species - cached here to avoid database access */
 	private Species species;
@@ -62,6 +65,8 @@ public class SurveyViewModel {
 		this.packageManager = packageManager;
 		attributes = new ArrayList<List<Attribute>>();
 		listeners = new SparseArray<AttributeChangeListener>();
+		validator = new RecordValidator();
+		
 		sortAttributes();
 	}
 
@@ -77,7 +82,10 @@ public class SurveyViewModel {
 		this.species = species;
 		record.taxon_id = species.server_id;
 		record.scientificName = species.scientificName;
-
+		
+		Attribute changed = survey.propertyByType(AttributeType.SPECIES_P);
+		validator.validateRecordAttribute(changed, record);
+		
 	}
 
 	public Species getSelectedSpecies() {
@@ -101,6 +109,8 @@ public class SurveyViewModel {
 
 		record.setValue(attribute, value);
 		fireAttributeChanged(attribute);
+		ValidationResult result = validator.validateRecordAttribute(attribute, record);
+		fireAttributeValidated(result);
 	}
 
 	public void setAttributeChangeListener(AttributeChangeListener listener, Attribute attribute) {
@@ -118,16 +128,15 @@ public class SurveyViewModel {
 		}
 	}
 	
-	private void fireAttributeInvalid(ValidationResult result) {
+	private void fireAttributeValidated(ValidationResult result) {
 		AttributeChangeListener listener = listeners.get(result.getAttribute().getServerId());
 		if (listener != null) {
-			listener.onAttributeInvalid(result.getAttribute(), result);
+			listener.onValidationStatusChange(result.getAttribute(), result);
 		}
 	}
 
 	private void sortAttributes() {
-		List<Attribute> allAttributes = new ArrayList<Attribute>(survey.attributes);
-		allAttributes.addAll(survey.recordProperties);
+		List<Attribute> allAttributes = survey.allAttributes();
 		Collections.sort(allAttributes, new WeightComparitor());
 
 		List<Attribute> filteredAttributes = new ArrayList<Attribute>(allAttributes.size());
@@ -181,13 +190,12 @@ public class SurveyViewModel {
 
 	public int validate() {
 		int firstInvalidPage = -1;
-		RecordValidator validator = new RecordValidator();
 		RecordValidationResult result = validator.validateRecord(survey, record);
 		if (!result.valid()) {
 			for (ValidationResult attr : result.invalidAttributes()) {
 				
 				Log.i("SurveyViewModel", "Attribute invalid: "+attr.getAttribute().name);
-				fireAttributeInvalid(attr);
+				fireAttributeValidated(attr);
 			}
 			Attribute firstInvalid = result.invalidAttributes().get(0).getAttribute();
 			firstInvalidPage = pageOf(firstInvalid);

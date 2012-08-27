@@ -73,12 +73,16 @@ public class TextViewBinder implements Binder, TextWatcher, AttributeChangeListe
 		
 	}
 
-	public void onAttributeInvalid(Attribute attribute, ValidationResult result) {
+	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
 		if (attribute.getServerId() != this.attribute.getServerId()) {
 			return;
 		}
-		
-		view.setError(result.getMessage(ctx));
+		if (result.isValid()) {
+			view.setError(null);
+		}
+		else {
+			view.setError(result.getMessage(ctx));
+		}
 	}
 	
 	public void bind() {

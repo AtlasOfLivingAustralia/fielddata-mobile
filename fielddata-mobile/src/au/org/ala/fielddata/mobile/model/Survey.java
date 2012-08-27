@@ -17,6 +17,8 @@ package au.org.ala.fielddata.mobile.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Survey extends Persistent {
@@ -75,6 +77,16 @@ public class Survey extends Persistent {
 		for (Attribute attribute : attributes) {
 			if (id == attribute.server_id) {
 				return attribute;
+			}
+		}
+		return null;
+	}
+	
+
+	public RecordProperty propertyByType(AttributeType type) {
+		for (RecordProperty prop : recordProperties) {
+			if (prop.getType() == type) {
+				return prop;
 			}
 		}
 		return null;

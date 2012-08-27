@@ -25,6 +25,4 @@
         class="au.org.ala.fielddata.mobile.ui.SpeciesListFragment" >
     </fragment>
 
-    <include layout="@layout/menu_items" />
-
 </LinearLayout>

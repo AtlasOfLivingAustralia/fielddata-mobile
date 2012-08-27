@@ -112,4 +112,30 @@
         android:text="@string/view_field_guide"
         android:textAppearance="?android:attr/textAppearanceMedium" />
     
+    <TextView 
+        android:id="@+id/status"
+        android:layout_alignParentBottom="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+    
+    <TextView
+        android:id="@+id/surveyLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Survey: "
+        android:layout_below="@id/viewFieldGuideButton"
+        android:layout_marginLeft="15dp"
+        android:textColor="@android:color/darker_gray"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        />
+    <Spinner
+        android:id="@+id/surveySelector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/surveyLabel"
+        android:layout_marginLeft="15dp"
+        
+        />
 </RelativeLayout>

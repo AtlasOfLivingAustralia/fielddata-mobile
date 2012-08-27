@@ -142,7 +142,7 @@ public class ImageBinder implements Binder {
 		bind();
 	}
 
-	public void onAttributeInvalid(Attribute attribute, ValidationResult result) {
+	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
 		if (attribute.getServerId() != this.attribute.getServerId()) {
 			return;
 		}

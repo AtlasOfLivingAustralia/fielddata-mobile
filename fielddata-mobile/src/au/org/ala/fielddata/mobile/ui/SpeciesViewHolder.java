@@ -16,10 +16,17 @@ public class SpeciesViewHolder {
 	TextView scientificName = null;
 	TextView commonName = null;
 	
+
 	public SpeciesViewHolder(View row) {
+		this(row, false);
+	}
+	public SpeciesViewHolder(View row, boolean focusable) {
 		this.icon = (ImageView)row.findViewById(R.id.imageView1);
 		this.scientificName = (TextView)row.findViewById(R.id.scientificName);
 		this.commonName = (TextView)row.findViewById(R.id.commonName);
+		scientificName.setFocusable(focusable);
+		scientificName.setFocusableInTouchMode(focusable);
+		
 		cacheManager = new StorageManager(row.getContext());
 	}
 	

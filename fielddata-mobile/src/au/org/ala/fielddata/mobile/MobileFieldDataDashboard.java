@@ -241,7 +241,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		if (surveys.size() > 0) {
 			ArrayAdapter<Survey> items = new ArrayAdapter<Survey>(
 					MobileFieldDataDashboard.this,
-					android.R.layout.simple_list_item_1, surveyArray);
+					android.R.layout.simple_spinner_item, surveyArray);
+			items.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 			surveySelector.setAdapter(items);
 			surveySelector.setOnItemSelectedListener(new OnItemSelectedListener() {
 			

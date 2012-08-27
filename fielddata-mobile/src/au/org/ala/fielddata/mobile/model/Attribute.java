@@ -109,4 +109,24 @@ public class Attribute extends SurveyProperty {
 	public boolean isModeratorAttribute() {
 		return (scope != null && scope.contains("MODERATION"));
 	}
+	
+	public boolean equals(Attribute attribute) {
+		if (attribute == null || attribute.getServerId() == null) {
+			return false;
+		}
+		return attribute.getServerId().equals(getServerId());
+	}
+	
+	public int hashCode() {
+		if (getServerId() == null) {
+			return -1;
+		}
+		return getServerId();
+	}
+	
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Attribute: ").append(getType().name);
+		return builder.toString();
+	}
 }

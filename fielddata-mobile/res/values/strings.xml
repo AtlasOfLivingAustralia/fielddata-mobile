@@ -18,16 +18,17 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_mobile_field_data">Condamine Alliance</string>
     <string name="submitButtonText">Save</string>
-    <string name="title_activity_mobile_data_dashboard">MobileDataDashboard</string>
+    <string name="title_activity_mobile_data_dashboard"></string>
     <string name="species_label">Species</string>
     <string name="date_label">Date</string>
     <string name="comments_label">Comments</string>
-    <string name="title_activity_select_location">SelectLocationActivity</string>
-    <string name="title_activity_location_selection">LocationSelectionActivity</string>
+    <string name="title_activity_select_location">Select a location</string>
+    <string name="title_activity_location_selection">Select a location</string>
     <string name="title_species_selection">Select a species</string>
     <string name="title_species_list">Species List</string>
-    <string name="saveButtonText">Save</string>
+    <string name="title_activity_view_saved_records">Saved records</string>
     
+    <string name="saveButtonText">Save</string>
     <string name="species_profile_image">Spcies profile image</string>
     <string name="change_date_button_text">Change</string>
 	<string name="touch_to_select">Touch to select</string>
@@ -52,7 +53,6 @@
     <string name="saved_record_message">1 saved record</string>
     <string name="initialisationErrorTitle">Initialisation error</string>
     <string name="initialisationError">Please ensure you have network access and the field data server at %s is running.</string>
-    <string name="title_activity_view_saved_records">ViewSavedRecordsActivity</string>
     <string name="ok">OK</string>
     <string name="close">Close</string>
     <string name="aboutMessage">Field Data mobile client 1.0\nAltas of Living Australia</string>

@@ -75,7 +75,11 @@ public class Record extends Persistent {
 				}
 				return "";
 			case POINT:
-				return "";
+				String result = "";
+				if (latitude != null && longitude != null) {
+					result = Double.toString(latitude)+","+Double.toString(longitude);
+				}
+				return result;
 			case ACCURACY:
 				if (accuracy != null) {
 					return Double.toString(accuracy);	

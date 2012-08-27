@@ -115,7 +115,7 @@ class RecordView {
 
 	public String toString() {
 		StringBuilder out = new StringBuilder();
-		Date created = new Date(record.created);
+		Date created = new Date(record.when);
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		out.append(format.format(created));
 		out.append(" ");

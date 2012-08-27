@@ -194,7 +194,7 @@ public class SurveyViewModel {
 		if (!result.valid()) {
 			for (ValidationResult attr : result.invalidAttributes()) {
 				
-				Log.i("SurveyViewModel", "Attribute invalid: "+attr.getAttribute().name);
+				Log.i("SurveyViewModel", "Attribute invalid: "+attr.getAttribute());
 				fireAttributeValidated(attr);
 			}
 			Attribute firstInvalid = result.invalidAttributes().get(0).getAttribute();
@@ -205,11 +205,12 @@ public class SurveyViewModel {
 
 	private int pageOf(Attribute firstInvalid) {
 		int firstInvalidPage = -1;
-		int attrId = firstInvalid.getServerId();
 		int pageNum = 0;
+		Log.i("SurveyViewModel", "Invalid attribute "+firstInvalid);
 		for (List<Attribute> page : attributes) {
 			for (Attribute attribute : page) {
-				if (attrId == attribute.getServerId()) {
+				if (firstInvalid.equals(attribute)) {
+					Log.i("SurveyViewModel", "Invalid attribute "+attribute+" found on page "+pageNum);
 					firstInvalidPage = pageNum;
 					break;
 				}

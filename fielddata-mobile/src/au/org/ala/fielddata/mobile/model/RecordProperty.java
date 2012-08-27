@@ -26,4 +26,31 @@ public class RecordProperty extends Attribute {
 	public Integer getServerId() {
 		return id;
 	}
+	
+	public boolean equals(RecordProperty attribute) {
+		if (attribute == null || attribute.name == null) {
+			return false;
+		}
+		return attribute.name.equals(name);
+	}
+	
+	public boolean equals(Attribute attribute) {
+		if (!(attribute instanceof RecordProperty)) {
+			return false;
+		}
+		return equals((RecordProperty)attribute);
+	}
+	
+	public int hashCode() {
+		if (name == null) {
+			return -1;
+		}
+		return name.hashCode();
+	}
+	
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Record property: ").append(name);
+		return builder.toString();
+	}
 }

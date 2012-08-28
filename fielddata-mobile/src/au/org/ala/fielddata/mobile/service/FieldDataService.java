@@ -168,10 +168,10 @@ public class FieldDataService extends WebServiceClient {
 			throw new ServiceException(e);
 		} finally {
 			try {
-
 				
 				close(in);
 				close(conn);
+				out.close();
 				
 			} catch (Exception e) {
 				throw new ServiceException(e);

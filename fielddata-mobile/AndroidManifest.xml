@@ -44,7 +44,7 @@
         </activity>
         <activity
             android:name=".CollectSurveyData"
-            android:label="@string/title_activity_mobile_field_data" >
+            android:label="@string/title_activity_mobile_field_data" android:windowSoftInputMode="stateHidden">
         </activity>
         <activity
             android:name=".SpeciesSelectionActivity"

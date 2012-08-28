@@ -15,8 +15,12 @@
 package au.org.ala.fielddata.mobile;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
+import android.text.SpannableStringBuilder;
+import android.text.style.CharacterStyle;
+import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -105,7 +109,9 @@ public class SurveyBuilder {
 	
 	public View buildLabel(Attribute attribute) {
 		TextView view = new TextView(viewContext);
-		view.setText(attribute.description);
+		SpannableStringBuilder builder = new SpannableStringBuilder(attribute.description);
+		builder.setSpan(new StyleSpan(Typeface.BOLD), 0, builder.length(), 0);
+		view.setText(builder);
 		return view;
 	}
 	

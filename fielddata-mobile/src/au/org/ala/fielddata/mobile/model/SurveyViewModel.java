@@ -173,6 +173,10 @@ public class SurveyViewModel {
 			return false;
 		case IMAGE:
 			return deviceHasCamera();
+		
+		case LOCATION:
+			return false; // We dont' support locations yet, but if we did we'd have to 
+			// check if there were any defined for the survey or user.
 		}
 		Log.d("SurveyBuilder", attribute.scope);
 		return true;

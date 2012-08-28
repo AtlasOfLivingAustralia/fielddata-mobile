@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,12 +119,11 @@ public class FieldDataService extends WebServiceClient {
 	public boolean ping(int timeoutInMillis) {
 		String pingUrl = "/webservice/application/ping.htm";
 		InputStream in = null;
-		
+		HttpURLConnection conn = null;
 		boolean canPing = true;
-		
 		try {
 			URL url = new URL(serverUrl + pingUrl);
-			URLConnection conn = url.openConnection();
+			conn = (HttpURLConnection)url.openConnection();
 			conn.setConnectTimeout(timeoutInMillis);
 			conn.setReadTimeout(timeoutInMillis);
 			in = conn.getInputStream();
@@ -135,10 +133,8 @@ public class FieldDataService extends WebServiceClient {
 			canPing = false;
 		} finally {
 			try {
-				if (in != null) {
-					in.close();
-				}
-				
+				close(in);
+				close(conn);
 			} catch (Exception e) {
 				canPing = false;
 			}
@@ -168,6 +164,7 @@ public class FieldDataService extends WebServiceClient {
 			throw new ServiceException(e);
 		} finally {
 			try {
+
 				
 				close(in);
 				close(conn);

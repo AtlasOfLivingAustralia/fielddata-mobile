@@ -14,16 +14,18 @@
         android:singleLine="false"
         android:hint="@string/no_location_supplied" />
 
-    <Button
+    <ImageButton
         android:id="@+id/gpsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/currentLocationLabel" />
+        android:contentDescription="@string/currentLocationLabel"
+        android:src="@drawable/ic_menu_mylocation" />
 
-    <Button
+    <ImageButton
         android:id="@+id/showMapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/mapLabel" />
+        android:contentDescription="@string/mapLabel"
+        android:src="@drawable/ic_menu_mapmode" />
 
 </LinearLayout>

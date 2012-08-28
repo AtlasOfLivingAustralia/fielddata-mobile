@@ -19,13 +19,12 @@ import android.graphics.Typeface;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.text.SpannableStringBuilder;
-import android.text.style.CharacterStyle;
 import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
@@ -136,7 +135,7 @@ public class SurveyBuilder {
 	
 	public View buildLocationPicker(Attribute attribute) {
 		View view = viewContext.getLayoutInflater().inflate(R.layout.read_only_location, null);
-		Button gpsButton = (Button)view.findViewById(R.id.gpsButton);
+		ImageButton gpsButton = (ImageButton)view.findViewById(R.id.gpsButton);
 		gpsButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -146,7 +145,7 @@ public class SurveyBuilder {
 			}
 		});
 		
-		Button showOnMapButton = (Button)view.findViewById(R.id.showMapButton);
+		ImageButton showOnMapButton = (ImageButton)view.findViewById(R.id.showMapButton);
 		showOnMapButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {

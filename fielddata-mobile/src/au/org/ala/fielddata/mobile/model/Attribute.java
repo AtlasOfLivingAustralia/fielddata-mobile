@@ -56,6 +56,7 @@ public class Attribute extends SurveyProperty {
 		SPECIES_P("Species", "Species"),
 		NUMBER("Number", "Number"),
 		POINT("Point", "Point"),
+		LOCATION("Location", "Location"),
 		ACCURACY("AccuracyInMeters", "AccuracyInMeters"),
 		WHEN("When", "When"),
 		DWC_TIME("Time", "Time"),

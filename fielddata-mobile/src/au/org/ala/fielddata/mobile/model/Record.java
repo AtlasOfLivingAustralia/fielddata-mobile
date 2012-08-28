@@ -64,6 +64,9 @@ public class Record extends Persistent {
 		private AttributeType attributeType;
 		public PropertyAttributeValue(Attribute attribute) {
 			attributeType = attribute.getType();
+			if (attributeType == null) {
+				throw new NullPointerException("Attribute has null type: "+attribute);
+			}
 		}
 		
 		public String nullSafeValue() {

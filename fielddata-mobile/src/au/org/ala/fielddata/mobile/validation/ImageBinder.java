@@ -2,6 +2,7 @@ package au.org.ala.fielddata.mobile.validation;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.View;
@@ -90,6 +91,7 @@ public class ImageBinder implements Binder {
 				}
 			}
 		});
+	
 
 	}
 
@@ -98,17 +100,40 @@ public class ImageBinder implements Binder {
 
 			Uri uri = Uri.parse(thumbUri);
 			try {
-
-				// TODO fixme. Working with the full size bitmap in real time on the
-				// UI thread is bad....
 				
-				Bitmap image = MediaStore.Images.Media.getBitmap(
-						ctx.getContentResolver(), uri);
-				Bitmap imageThumb = Bitmap.createScaledBitmap(image, 100, 100,
-						false);
-				// Bitmap image =
-				// BitmapFactory.decodeFile(uri.getEncodedPath());
-				thumb.setImageBitmap(imageThumb);
+				 // Get the dimensions of the View
+			    int targetW = thumb.getWidth();
+			    int targetH = thumb.getHeight();
+			    
+			    // The view is created when the previous page is displayed
+			    // so the imageview size is 0 at that point.
+			    if (targetW == 0 || targetH == 0) {
+			    	thumb.postDelayed(new Runnable() {
+			    		public void run() {
+			    			updateThumbnail();
+			    		}
+			    	}, 2000);
+			    	return;
+			    }
+			  
+			    // Get the dimensions of the bitmap
+			    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+			    bmOptions.inJustDecodeBounds = true;
+			    BitmapFactory.decodeFile(uri.getEncodedPath(), bmOptions);
+			    int photoW = bmOptions.outWidth;
+			    int photoH = bmOptions.outHeight;
+			  
+			    // Determine how much to scale down the image
+			    int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+			  
+			    // Decode the image file into a Bitmap sized to fill the View
+			    bmOptions.inJustDecodeBounds = false;
+			    bmOptions.inSampleSize = scaleFactor;
+			    bmOptions.inPurgeable = true;
+			  
+			    Bitmap bitmap = BitmapFactory.decodeFile(uri.getEncodedPath(), bmOptions);
+			    thumb.setImageBitmap(bitmap);
+
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -119,6 +144,8 @@ public class ImageBinder implements Binder {
 		if (!expectingResult) {
 			return;
 		}
+		
+		
 
 		// For some reason, the camera application passes back a null intent
 		// on my Galaxy Nexus, so we have to rely on the URI we created before
@@ -130,7 +157,15 @@ public class ImageBinder implements Binder {
 		updateThumbnail();
 		expectingResult = false;
 	}
-
+	
+	private void addToGallery(Uri photo) {
+	    Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+	   
+	    mediaScanIntent.setData(photo);
+	    ctx.sendBroadcast(mediaScanIntent);
+	}
+	
+	
 	public void bind() {
 		ctx.getViewModel().getRecord().setValue(attribute, thumbUri);
 	}
@@ -139,7 +174,7 @@ public class ImageBinder implements Binder {
 		if (attribute.getServerId() != this.attribute.getServerId()) {
 			return;
 		}
-		bind();
+		updateThumbnail();
 	}
 
 	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {

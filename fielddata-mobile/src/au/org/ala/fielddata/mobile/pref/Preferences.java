@@ -61,9 +61,9 @@ public class Preferences {
 		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
 		String hostName = prefs.getString("serverHostName", "");
 		String context = prefs.getString("contextName", "");
-		String portal = prefs.getString("portalName", "");
+		String path = prefs.getString("path", "");
 		
-		String fieldDataServerUrl = "http://"+hostName+"/"+context+"/"+portal;
+		String fieldDataServerUrl = "http://"+hostName+"/"+context+"/"+path;
 		
 		return fieldDataServerUrl;
 	}
@@ -82,6 +82,12 @@ public class Preferences {
 		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
 		String contextName = prefs.getString("contextName", "");
 		return contextName;
+	}
+	
+	public String getFieldDataPath() {
+		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
+		String portalName = prefs.getString("path", "");
+		return portalName;
 	}
 	
 	public String getFieldDataPortalName() {

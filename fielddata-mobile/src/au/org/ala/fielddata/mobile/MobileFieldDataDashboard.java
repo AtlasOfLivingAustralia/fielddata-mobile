@@ -73,6 +73,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		// check if the preferences are set if not redirect
 		if (preferences.getFieldDataServerHostName().equals("") ||
 			preferences.getFieldDataContextName().equals("") ||
+			preferences.getFieldDataPath().equals("") ||
 			preferences.getFieldDataPortalName().equals("")) {
 			redirectToPreferences();
 		}

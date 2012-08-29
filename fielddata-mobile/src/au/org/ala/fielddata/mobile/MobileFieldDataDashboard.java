@@ -34,9 +34,9 @@ import android.widget.TextView;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.pref.EditPreferences;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
-import au.org.ala.fielddata.mobile.service.LoginService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
@@ -69,6 +69,13 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		status = (TextView)findViewById(R.id.status);
 		surveySelector = (Spinner)findViewById(R.id.surveySelector);
 		addEventHandlers();
+		
+		// check if the preferences are set if not redirect
+		if (preferences.getFieldDataServerHostName().equals("") ||
+			preferences.getFieldDataContextName().equals("") ||
+			preferences.getFieldDataPortalName().equals("")) {
+			redirectToPreferences();
+		}
 	}
 
 	private void addEventHandlers() {
@@ -105,7 +112,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		@Override
 		protected void onPostExecute(InitialisationResults result) {
 
-			if (result.success) {
+			if (result.success && isInitialised()) {
 				if (result.online) {
 					status.setText("Online");
 				}
@@ -115,18 +122,21 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 				updateSurveyList(result.surveys);
 				updateRecordCount(result.recordCount);
 			} else {
-				showErrorAndClose();
+				if (!result.online) {
+					showConnectionError();
+				}
 			}
 		}
-
 	}
-	
 	
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		new InitTask().execute();
+		// will redirect if not logged in
+		if (!redirectToLogin()) {
+			new InitTask().execute();
+		}
 	}
 
 	class InitialisationResults {
@@ -140,6 +150,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	private InitialisationResults init() {
 		InitialisationResults results = new InitialisationResults();
 		results.online = canAccessFieldDataServer();
+		/*
 		if (!isInitialised()) {
 
 			if (results.online) {
@@ -157,10 +168,9 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 
 				// Can't do much here.
 				results.success = false;
-
 			}
-		}
-		if (results.success) {
+		}*/
+		if (results.success && isInitialised()) {
 			populateResults(results);
 		}
 		return results;
@@ -175,7 +185,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		results.recordCount = recordDAO.count(Record.class);
 	}
 
-	private void showErrorAndClose() {
+	private void showConnectionError() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.initialisationErrorTitle);
 		builder.setMessage(String.format(
@@ -184,11 +194,27 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		builder.setNegativeButton(R.string.close, new Dialog.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				finish();
+				dialog.cancel();
 			}
 		});
 		builder.show();
 		return;
+	}
+	
+	private void redirectToPreferences() {
+		Intent intent = new Intent(this, EditPreferences.class);
+		startActivity(intent);
+	}
+	
+	private boolean redirectToLogin() {
+		boolean didRedirect = false;
+		if (canAccessFieldDataServer() && !isInitialised()) {
+			Intent intent = new Intent(this, LoginActivity.class);
+			startActivity(intent);
+			didRedirect = true;
+		} 
+		
+		return didRedirect;
 	}
 
 	private boolean isInitialised() {
@@ -306,21 +332,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 					count));
 		}
 	}
+	
+	
 
-	private void downloadSurveys() {
-
-		LoginService loginService = new LoginService(
-				MobileFieldDataDashboard.this);
-		loginService.login();
-		FieldDataService service = new FieldDataService(
-				MobileFieldDataDashboard.this);
-		List<Survey> surveys = service.downloadSurveys();
-
-		GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(
-				MobileFieldDataDashboard.this);
-		for (Survey survey : surveys) {
-			surveyDAO.save(survey);
-		}
-
-	}
+	
 }

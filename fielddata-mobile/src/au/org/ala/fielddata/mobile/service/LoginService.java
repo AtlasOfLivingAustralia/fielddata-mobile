@@ -31,11 +31,16 @@ public class LoginService extends WebServiceClient {
 		super(ctx);
 	}
 	
-	public LoginResponse login() {
+	public LoginResponse login(String username, String password, String portalName) {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-		params.set("portalName", "Condamine NRM");
-		params.set("username", "admin");
-		params.set("password", "cambia401FD");
+		
+		params.set("portalName", portalName);
+		params.set("username", username);
+		params.set("password", password);
+		
+//		params.set("portalName", "Condamine NRM");
+//		params.set("username", "admin");
+//		params.set("password", "cambia401FD");
 		
 //		params.set("portalName", "Koala Count");
 //		params.set("username", "admin");
@@ -43,7 +48,6 @@ public class LoginService extends WebServiceClient {
 //		
 		
 		String url = serverUrl + loginUrl;
-		
 		
 		LoginResponse result = getRestTemplate().postForObject(url, params, LoginResponse.class);
 		System.out.println(result);

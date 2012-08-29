@@ -15,7 +15,9 @@
 package au.org.ala.fielddata.mobile.pref;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
 
 public class Preferences {
 
@@ -53,14 +55,39 @@ public class Preferences {
 	}
 
 	public String getFieldDataServerUrl() {
-		return "http://"+getFieldDataServerHostName()+"/bdrs-core/condamine";
+		//return "http://"+getFieldDataServerHostName()+"/bdrs-core/condamine";
 		//return "http://"+getFieldDataServerHostName()+"/bdrs-core/koalacount";
+
+		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
+		String hostName = prefs.getString("serverHostName", "");
+		String context = prefs.getString("contextName", "");
+		String portal = prefs.getString("portalName", "");
+		
+		String fieldDataServerUrl = "http://"+hostName+"/"+context+"/"+portal;
+		
+		return fieldDataServerUrl;
 	}
 	
 	public String getFieldDataServerHostName() {
 		//return "152.83.195.62";
 		//return "192.168.0.8";
-		return "root.ala.org.au";
+		//return "root.ala.org.au";
+		
+		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
+		String hostName = prefs.getString("serverHostName", "");
+		return hostName;
+	}
+	
+	public String getFieldDataContextName() {
+		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
+		String contextName = prefs.getString("contextName", "");
+		return contextName;
+	}
+	
+	public String getFieldDataPortalName() {
+		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
+		String portalName = prefs.getString("portalName", "");
+		return portalName;
 	}
 	
 	public String getFieldDataSessionKey() {

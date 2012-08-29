@@ -31,9 +31,9 @@
     <string name="saveButtonText">Save</string>
     <string name="species_profile_image">Spcies profile image</string>
     <string name="change_date_button_text">Change</string>
-	<string name="touch_to_select">Touch to select</string>
-	<string name="no_location_supplied">No location supplied</string>
-	
+    <string name="touch_to_select">Touch to select</string>
+    <string name="no_location_supplied">No location supplied</string>
+
     <!-- Dashboard -->
     <string name="new_record">New recording</string>
     <string name="view_field_guide">Species List</string>
@@ -45,7 +45,6 @@
     <string name="menu_upload">Upload</string>
     <string name="menu_cancel">Cancel</string>
     
-  
     <!-- Validation Errors -->
     <string name="requiredMessage">Please enter a value</string>
     <string name="no_saved_records_message">No saved records</string>
@@ -57,12 +56,21 @@
     <string name="close">Close</string>
     <string name="aboutMessage">Field Data mobile client 1.0\nAltas of Living Australia</string>
     <string name="title_activity_edit_preferences">EditPreferences</string>
-    
+
     <!-- Location selection -->
     <string name="latitudeLabel">Latitude</string>
     <string name="longitudeLabel">Longitude</string>
     <string name="accuracyLabel">Accuracy</string>
     <string name="currentLocationLabel">GPS</string>
     <string name="mapLabel">Map</string>
+    
+    <!-- Login page -->
+    <string name="title_activity_login">Login</string>
+    <string name="user_name">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="login_failed">Login Failed</string>
+    <string name="unknown_user">Username unknown or incorrect password</string>
+    <string name="menu_login">Login</string>
     
 </resources>

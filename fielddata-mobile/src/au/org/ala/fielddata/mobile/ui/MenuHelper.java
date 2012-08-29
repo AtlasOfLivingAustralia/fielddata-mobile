@@ -18,6 +18,7 @@ package au.org.ala.fielddata.mobile.ui;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import au.org.ala.fielddata.mobile.LoginActivity;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.pref.EditPreferences;
 
@@ -39,6 +40,10 @@ public class MenuHelper {
 		case R.id.menu_settings:
 			Intent editPreferencesIntent = new Intent(ctx, EditPreferences.class);
 			ctx.startActivity(editPreferencesIntent);
+			return true;
+		case R.id.login_screen:
+			Intent loginScreenIntent = new Intent(ctx, LoginActivity.class);
+			ctx.startActivity(loginScreenIntent);
 			return true;
 		}
 		return false;

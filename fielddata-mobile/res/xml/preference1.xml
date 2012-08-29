@@ -14,7 +14,8 @@
   rights and limitations under the License.
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <EditTextPreference android:key="serverHostName" android:title="Field Data Server Host Name" android:summary="The host name of the server running the field data software."/>
-    
+    <EditTextPreference android:key="serverHostName" android:title="Server Host Name" android:summary="The host name of the server running the field data software."/>
+    <EditTextPreference android:key="contextName" android:title="Context Name" android:summary="The context name of the field data instance."/>
+    <EditTextPreference android:key="portalName" android:title="Portal Name" android:summary="The field data portal name."/>
 
 </PreferenceScreen>

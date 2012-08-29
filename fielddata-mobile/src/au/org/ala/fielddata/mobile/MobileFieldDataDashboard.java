@@ -140,8 +140,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		super.onResume();
 		// will redirect if not logged in
 		if (!redirectToLogin()) {
-			pd = ProgressDialog.show(MobileFieldDataDashboard.this, "Updating Survey List", 
-					null, true, false, null);
+			pd = ProgressDialog.show(MobileFieldDataDashboard.this, "", 
+					"Updating Survey List", true, false, null);
 			new InitTask().execute();
 		}
 	}
@@ -261,8 +261,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.sync) {
-			pd = ProgressDialog.show(MobileFieldDataDashboard.this, "Updating Survey List", 
-					null, true, false, null);
+			pd = ProgressDialog.show(MobileFieldDataDashboard.this, "", 
+					"Updating Survey List", true, false, null);
 			new InitTask().execute();
 			return true;
 		}

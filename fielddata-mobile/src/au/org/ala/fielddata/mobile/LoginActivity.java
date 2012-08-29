@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import com.actionbarsherlock.app.SherlockActivity;
 
 public class LoginActivity extends SherlockActivity implements OnClickListener {
 
+	private ProgressDialog pd;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,14 +35,21 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 
 	public void onClick(View v) {
 		if (v.getId() == R.id.loginBtn) {
+			
+			Preferences preferences = new Preferences(this);
+			
 			final EditText username = (EditText) findViewById(R.id.username);
 			final EditText password = (EditText) findViewById(R.id.userPassword);
-			final String portalName = new Preferences(this).getFieldDataPortalName();
+			final String portalName = preferences.getFieldDataPortalName();
 
+			pd = ProgressDialog.show(LoginActivity.this, "Logging in", 
+					"Contacting Field Data Server: " + preferences.getFieldDataServerUrl(), true, false, null);
+			
 			new AsyncTask<Void, Void, Void>() {
 				private Exception e;
 
 				public Void doInBackground(Void... args) {
+					
 					LoginService loginService = new LoginService(LoginActivity.this);
 
 					try {
@@ -57,6 +67,9 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 				}
 
 				protected void onPostExecute(Void result) {
+					
+					pd.dismiss();
+					
 					if (e != null) {
 
 						AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
@@ -66,7 +79,7 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 						builder.setNegativeButton(R.string.close, new Dialog.OnClickListener() {
 
 							public void onClick(DialogInterface dialog, int which) {
-								dialog.cancel();
+								dialog.dismiss();
 							}
 						});
 						builder.show();

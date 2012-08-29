@@ -18,6 +18,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -54,6 +55,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	private Preferences preferences;
 	private TextView status;
 	private Spinner surveySelector;
+	private ProgressDialog pd;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -127,7 +129,9 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 					showConnectionError();
 				}
 			}
+			pd.dismiss();
 		}
+		
 	}
 	
 
@@ -136,6 +140,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		super.onResume();
 		// will redirect if not logged in
 		if (!redirectToLogin()) {
+			pd = ProgressDialog.show(MobileFieldDataDashboard.this, "Updating Survey List", 
+					null, true, false, null);
 			new InitTask().execute();
 		}
 	}
@@ -255,6 +261,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.sync) {
+			pd = ProgressDialog.show(MobileFieldDataDashboard.this, "Updating Survey List", 
+					null, true, false, null);
 			new InitTask().execute();
 			return true;
 		}

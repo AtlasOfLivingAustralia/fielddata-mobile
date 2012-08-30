@@ -308,7 +308,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			int index = -1;
 			if (selected != null) {
 				for (int i = 0; i < surveyArray.length; i++) {
-					if (surveyArray[i].id == selected) {
+					if (surveyArray[i].getId() == selected) {
 						index = i;
 						break;
 					}

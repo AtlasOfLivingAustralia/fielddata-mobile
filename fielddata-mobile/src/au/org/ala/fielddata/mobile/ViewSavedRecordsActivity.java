@@ -62,7 +62,7 @@ public class ViewSavedRecordsActivity extends SherlockListActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		int recordId = records.get(position).id;
+		int recordId = records.get(position).getId();
 		Intent intent = new Intent(this, CollectSurveyData.class);
 		intent.putExtra(CollectSurveyData.RECORD_BUNDLE_KEY, recordId);
 		startActivity(intent);
@@ -110,7 +110,7 @@ class RecordView {
 	}
 	
 	public int getId() {
-		return record.id;
+		return record.getId();
 	}
 
 	public String toString() {

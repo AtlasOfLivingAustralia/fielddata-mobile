@@ -18,12 +18,17 @@ package au.org.ala.fielddata.mobile.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+
+import com.google.gson.annotations.SerializedName;
 
 import android.net.Uri;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 
 public class Record extends Persistent {
 
+	@SerializedName("id")
+	public String uuid;
 	
 	public Double latitude;
 	public Double longitude;
@@ -196,6 +201,7 @@ public class Record extends Persistent {
 	}
 	
 	public Record() {
+		uuid = UUID.randomUUID().toString();
 		attributeValues = new ArrayList<Record.AttributeValue>();
 		
 		

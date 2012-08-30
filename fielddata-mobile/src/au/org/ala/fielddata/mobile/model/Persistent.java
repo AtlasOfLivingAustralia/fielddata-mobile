@@ -20,7 +20,7 @@ public class Persistent  {
 
 	public long created;
 	public long updated;
-	public Integer id;
+	private Integer _id;
 	public Integer server_id;
 	public long lastSync;
 	
@@ -29,5 +29,12 @@ public class Persistent  {
 		return gson.toJson(this);
 	}
 	
+	public Integer getId() {
+		return _id;
+	}
+	
+	public void setId(Integer id) {
+		_id = id;
+	}
 	
 }

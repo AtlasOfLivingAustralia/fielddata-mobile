@@ -39,11 +39,11 @@ public class GenericDAO<T extends Persistent> {
 	public T findByServerId(Class<T> modelClass, Integer id) {
 		return findByColumn(modelClass, "server_id", Integer.toString(id));
 	}
-	
-	public T load(Class<T> modelClass, Integer id)  {
+
+	public T load(Class<T> modelClass, Integer id) {
 		return findByColumn(modelClass, "_id", Integer.toString(id));
 	}
-	
+
 	private T findByColumn(Class<T> modelClass, String column, String value) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		Cursor result = null;
@@ -51,13 +51,11 @@ public class GenericDAO<T extends Persistent> {
 		try {
 			db = helper.getReadableDatabase();
 			db.beginTransaction();
-			result = db.query(true, modelClass.getSimpleName(), null,
-					column+" = ?", new String[] { value }, null,
-					null, null, null);
+			result = db.query(true, modelClass.getSimpleName(), null, column + " = ?",
+					new String[] { value }, null, null, null, null);
 
 			if (result.getCount() != 1) {
-				throw new DatabaseException("Expected 1 result, found: "
-						+ result.getCount());
+				throw new DatabaseException("Expected 1 result, found: " + result.getCount());
 			}
 			result.moveToFirst();
 			String json = result.getString(5);
@@ -82,8 +80,8 @@ public class GenericDAO<T extends Persistent> {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		try {
 			db.beginTransaction();
-			
-			modelObject.id = save(modelObject, db);
+
+			modelObject.setId(save(modelObject, db));
 
 			db.setTransactionSuccessful();
 		} finally {
@@ -92,9 +90,9 @@ public class GenericDAO<T extends Persistent> {
 				db.close();
 			}
 		}
-		return modelObject.id;
+		return modelObject.getId();
 	}
-	
+
 	public Integer save(T modelObject, SQLiteDatabase db) {
 		ContentValues values = new ContentValues();
 		long now = System.currentTimeMillis();
@@ -103,25 +101,22 @@ public class GenericDAO<T extends Persistent> {
 		values.put("json", modelObject.asJson());
 		values.put("server_id", modelObject.server_id);
 
-		if (modelObject.id != null) {
-			db.update(modelObject.getClass().getSimpleName(), values,
-					"_id=?",
-					new String[] { Integer.toString(modelObject.id) });
+		if (modelObject.getId() != null) {
+			db.update(modelObject.getClass().getSimpleName(), values, "_id=?",
+					new String[] { Integer.toString(modelObject.getId()) });
 		} else {
 			values.put("created", now);
 			modelObject.created = now;
-			long id = db.insertOrThrow(modelObject.getClass()
-					.getSimpleName(), null, values);
+			long id = db.insertOrThrow(modelObject.getClass().getSimpleName(), null, values);
 			if (id == -1) {
-				throw new RuntimeException("Error saving object: "
-						+ modelObject);
+				throw new RuntimeException("Error saving object: " + modelObject);
 			}
-			modelObject.id = (int) id;
+			modelObject.setId((int) id);
 		}
-			return modelObject.id;
+		return modelObject.getId();
 	}
 
-	public List<T> loadAll(Class<T> modelClass)  {
+	public List<T> loadAll(Class<T> modelClass) {
 
 		List<T> results = new ArrayList<T>();
 		SQLiteDatabase db = helper.getReadableDatabase();
@@ -129,8 +124,8 @@ public class GenericDAO<T extends Persistent> {
 		T modelObject = null;
 		try {
 			db.beginTransaction();
-			result = db.query(false, modelClass.getSimpleName(), null, null,
-					null, null, null, null, null);
+			result = db.query(false, modelClass.getSimpleName(), null, null, null, null, null,
+					null, null);
 
 			if (result.getCount() > 0) {
 
@@ -139,7 +134,7 @@ public class GenericDAO<T extends Persistent> {
 					String json = result.getString(5);
 					Gson gson = new Gson();
 					modelObject = (T) gson.fromJson(json, modelClass);
-					modelObject.id = result.getInt(0);
+					modelObject.setId(result.getInt(0));
 					results.add(modelObject);
 					result.moveToNext();
 
@@ -159,22 +154,23 @@ public class GenericDAO<T extends Persistent> {
 
 		return results;
 	}
-	
+
 	public int count(Class<T> modelClass) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		Cursor result = null;
-		
+
 		int count = 0;
 		try {
 			db.beginTransaction();
-			
-			result = db.rawQuery(String.format("SELECT count(*) from %s", modelClass.getSimpleName()), null);
-		    if (result.getCount() != 1) {
-		    	throw new DatabaseException("Error performing query");
-		    }
-		    result.moveToFirst();
-		    count = result.getInt(0);
-		    result.close();
+
+			result = db.rawQuery(
+					String.format("SELECT count(*) from %s", modelClass.getSimpleName()), null);
+			if (result.getCount() != 1) {
+				throw new DatabaseException("Error performing query");
+			}
+			result.moveToFirst();
+			count = result.getInt(0);
+			result.close();
 			db.setTransactionSuccessful();
 		} finally {
 			if (result != null) {

@@ -59,8 +59,8 @@ public class Species extends Persistent implements Parcelable {
 
 	public void writeToParcel(Parcel dest, int flags) {
 		int tmpId = -1;
-		if (id != null) {
-			tmpId  = id;
+		if (getId() != null) {
+			tmpId  = getId();
 		}
 		dest.writeInt(tmpId);
 		dest.writeInt(server_id);
@@ -79,7 +79,7 @@ public class Species extends Persistent implements Parcelable {
 	};
 	
 	private Species(Parcel in) {
-		id = in.readInt();
+		setId(in.readInt());
 		server_id = in.readInt();
 		scientificName = in.readString();
 		commonName = in.readString();

@@ -13,9 +13,13 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.model.Record;
+import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
+import au.org.ala.fielddata.mobile.service.LoginResponse;
 import au.org.ala.fielddata.mobile.service.LoginService;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -43,7 +47,7 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 			final String portalName = preferences.getFieldDataPortalName();
 
 			pd = ProgressDialog.show(LoginActivity.this, "Logging in", 
-					"Contacting Field Data Server: " + preferences.getFieldDataServerUrl(), true, false, null);
+					preferences.getFieldDataServerUrl(), true, false, null);
 			
 			new AsyncTask<Void, Void, Void>() {
 				private Exception e;
@@ -53,10 +57,11 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 					LoginService loginService = new LoginService(LoginActivity.this);
 
 					try {
-						loginService.login(username.getText().toString(), password.getText()
+						LoginResponse response = loginService.login(username.getText().toString(), password.getText()
 								.toString(), portalName);
 
-						downloadSurveys();
+						clearPersistantData();
+						initialiseUserAndSurveys(response);
 						// return to the main activity
 						finish();
 
@@ -90,8 +95,30 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 		}
 	}
 
-	private void downloadSurveys() {
+	private void clearPersistantData() {
+		
+		GenericDAO<User> userDAO = new GenericDAO<User>(this);
+		userDAO.deleteAll(User.class);
+		
+		GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(this);
+		surveyDAO.deleteAll(Survey.class);
+		
+		GenericDAO<Record> recordDAO = new GenericDAO<Record>(this);
+		recordDAO.deleteAll(Record.class);
+		
+		GenericDAO<Species> speciesDAO = new GenericDAO<Species>(this);
+		speciesDAO.deleteAll(Species.class);
+	}
+	
+	/**
+	 * Persist the user object and downloaded surveys
+	 * @param response
+	 */
+	private void initialiseUserAndSurveys(LoginResponse response) {
 
+		GenericDAO<User> userDAO = new GenericDAO<User>(LoginActivity.this);
+		userDAO.save(response.user);
+		
 		FieldDataService service = new FieldDataService(LoginActivity.this);
 		List<Survey> surveys = service.downloadSurveys();
 

@@ -35,6 +35,7 @@ import android.widget.TextView;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.EditPreferences;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
@@ -63,11 +64,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		preferences = new Preferences(this);
 		setContentView(R.layout.activity_mobile_data_dashboard);
 
-		//getSupportActionBar().setDisplayShowTitleEnabled(false);
-		//getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		getSupportActionBar().setTitle("Condamine Alliance");
-		getSupportActionBar().setSubtitle("Welcome admin admin");
-		
 		status = (TextView)findViewById(R.id.status);
 		surveySelector = (Spinner)findViewById(R.id.surveySelector);
 		addEventHandlers();
@@ -140,12 +136,28 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		super.onResume();
 		// will redirect if not logged in
 		if (!redirectToLogin()) {
-			pd = ProgressDialog.show(MobileFieldDataDashboard.this, "", 
-					"Updating Survey List", true, false, null);
-			new InitTask().execute();
+			refreshPage();
 		}
 	}
 
+	private void refreshPage() {
+		
+		pd = ProgressDialog.show(MobileFieldDataDashboard.this, "", 
+				"Updating Survey List", true, false, null);
+		new InitTask().execute();
+		
+		//getSupportActionBar().setDisplayShowTitleEnabled(false);
+		//getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		
+		String portal = preferences.getFieldDataPortalName();
+		GenericDAO<User> userDAO = new GenericDAO<User>(this);
+		User user = userDAO.loadAll(User.class).get(0);
+		
+		getSupportActionBar().setTitle(portal);
+		getSupportActionBar().setSubtitle("Welcome " + user.firstName + " " + user.lastName);
+		
+	}
+	
 	class InitialisationResults {
 		public boolean online;
 		public boolean success = true;
@@ -201,7 +213,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		builder.setNegativeButton(R.string.close, new Dialog.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				dialog.cancel();
+				dialog.dismiss();
 			}
 		});
 		builder.show();
@@ -261,9 +273,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.sync) {
-			pd = ProgressDialog.show(MobileFieldDataDashboard.this, "", 
-					"Updating Survey List", true, false, null);
-			new InitTask().execute();
+			refreshPage();
 			return true;
 		}
 		return new MenuHelper(this).handleMenuItemSelection(item);

@@ -188,4 +188,8 @@ public class GenericDAO<T extends Persistent> {
 		return count;
 	}
 
+	public void deleteAll(Class<T> modelClass) {
+		SQLiteDatabase db = helper.getReadableDatabase();
+		db.delete(modelClass.getSimpleName(), null, null);
+	}
 }

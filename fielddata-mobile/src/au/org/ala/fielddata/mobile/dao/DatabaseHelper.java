@@ -21,6 +21,7 @@ import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.model.User;
 
 /**
  * Responsible for creating and configuring the database used by the
@@ -34,7 +35,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final int SCHEMA_VERSION = 1;
 
 	private static final String[] TABLES = { Survey.class.getSimpleName(),
-			Record.class.getSimpleName(), Species.class.getSimpleName() };
+			Record.class.getSimpleName(), Species.class.getSimpleName(),
+			User.class.getSimpleName()};
 
 	private Context ctx;
 

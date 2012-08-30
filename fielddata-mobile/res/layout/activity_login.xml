@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="25dp"
         android:text="@string/user_name"
         tools:context=".LoginActivity" />
     
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/usernameLbl"
         android:layout_below="@+id/username"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         android:text="@string/password" />
     
     <EditText
@@ -44,11 +44,11 @@
 
     <Button
         android:id="@+id/loginBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/passwordLbl"
         android:layout_below="@+id/userPassword"
-        android:layout_marginTop="25dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
         android:text="@string/login" />
 
 </RelativeLayout>

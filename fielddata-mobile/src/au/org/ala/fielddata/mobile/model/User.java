@@ -16,13 +16,13 @@ package au.org.ala.fielddata.mobile.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class User {
+public class User extends Persistent {
 
 	public String firstName;
 	public String lastName;
 	public String emailAddress;
-	@SerializedName("server_id")
-	public Integer serverId;
+	//@SerializedName("server_id")
+	//public Integer serverId;
 	
 	public String toString() {
 		StringBuilder user = new StringBuilder();

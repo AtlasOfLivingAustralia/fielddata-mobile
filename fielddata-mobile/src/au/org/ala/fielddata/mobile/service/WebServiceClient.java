@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import android.content.Context;
 import android.util.Log;
+import au.org.ala.fielddata.mobile.model.Record.StringValue;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 
 import com.google.gson.FieldNamingPolicy;
@@ -56,7 +57,11 @@ public class WebServiceClient {
 	}
 	
 	protected Gson getGson() {
-		return new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
+		GsonBuilder builder = new GsonBuilder();
+		builder.setFieldNamingPolicy(FieldNamingPolicy.IDENTITY);
+		builder.registerTypeAdapterFactory(StringValueAdapter.FACTORY);
+		builder.registerTypeHierarchyAdapter(StringValue.class, new StringValueAdapter());
+		return builder.create();
 	}
 	
 	protected void close(InputStream in) {

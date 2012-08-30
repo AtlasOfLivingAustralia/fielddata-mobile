@@ -59,7 +59,9 @@ public class FieldDataService extends WebServiceClient {
 		params.set("ident", ident);
 		params.set("inFrame", "false"); // Setting this parameter prevents the
 										// server from assuming a jsonp request.
-		params.set("syncData", new Gson().toJson(records));
+		Gson gson = getGson();
+		
+		params.set("syncData", gson.toJson(records));
 
 		String url = serverUrl + syncUrl;
 

@@ -22,13 +22,13 @@
         android:id="@+id/viewSavedRecordsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dip"
-        android:layout_marginBottom="15dip"       
-        android:layout_marginRight="14dip"
+        android:layout_marginBottom="15dip"
         android:layout_marginLeft="15dip"
+        android:layout_marginRight="14dip"
+        android:layout_marginTop="25dip"
         android:clickable="false"
         android:contentDescription="@string/new_record"
-        android:src="@android:drawable/ic_input_get" />
+        android:src="@drawable/saved_records_icon" />
     
     <TextView
         android:id="@+id/noSavedRecords"
@@ -53,13 +53,13 @@
         android:id="@+id/newRecordButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dip"
-        android:layout_marginBottom="15dip"       
-        android:layout_marginRight="14dp"
-        android:layout_marginLeft="15dip"
         android:layout_below="@id/hr1"
+        android:layout_marginBottom="15dip"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="15dip"
         android:contentDescription="@string/new_record"
-        android:src="@android:drawable/ic_input_get" />
+        android:src="@drawable/add_record_icon" />
 
     <TextView
         android:id="@+id/textView2"
@@ -90,13 +90,13 @@
         android:id="@+id/viewFieldGuideButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dip"
-        android:layout_marginBottom="15dip"   
-        android:layout_marginRight="14dp"
-        android:layout_marginLeft="15dip"
         android:layout_below="@id/hr2"
+        android:layout_marginBottom="15dip"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="15dip"
         android:contentDescription="@string/new_record"
-        android:src="@android:drawable/ic_input_get" />
+        android:src="@drawable/species_list_icon" />
 
     <TextView
         android:id="@+id/viewFieldGuideText"

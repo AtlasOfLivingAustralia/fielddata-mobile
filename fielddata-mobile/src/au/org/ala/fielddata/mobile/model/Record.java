@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.net.Uri;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 
 public class Record extends Persistent {
@@ -38,25 +39,59 @@ public class Record extends Persistent {
 	
 	private List<AttributeValue> attributeValues;
 	
+	public static class StringValue {
+		public String value;
+		
+		public boolean uri;
+		
+		public String getValue() {
+			return value;
+		}
+	}
+	
+	static class UriValue extends StringValue {
+		public Uri getUri() {
+			return Uri.parse(value);
+		}
+	}
+	
 	static class AttributeValue {
 		public Integer id = 1;
 		public Integer server_id;
 		
 		public Integer attribute_id;
-		public String value;
 		
-		public Attribute attribute;
+		protected StringValue value = new StringValue();
 		
 		public void setValue(String value) {
-			this.value = value;
+			this.value.value = value;
+		}
+		
+		public void setUri(Uri uri) {
+			value.uri = true;
+			if (uri == null) {
+				value.value = "";
+			}
+			else {
+				value.value = uri.toString();
+			}
+		}
+		
+		public Uri getUri() {
+			if (value.value == null || "".equals(value.value)) {
+				return null;
+			}
+			return Uri.parse(value.value);
 		}
 		
 		public String nullSafeValue() {
-			if (value == null) {
+			if (value.value == null) {
 				return "";
 			}
-			return value;
+			return value.value;
 		}
+		
+		
 	}
 	
 	class PropertyAttributeValue extends AttributeValue {
@@ -107,7 +142,7 @@ public class Record extends Persistent {
 		
 		public void setValue(String value) {
 			
-			this.value = value;
+			this.value.value = value;
 			
 			switch (attributeType) {
 			case SPECIES_P:
@@ -208,6 +243,36 @@ public class Record extends Persistent {
 		
 	}
 	
+	public void setUri(Attribute attribute, Uri value) {
+		checkUriSupport(attribute);
+		AttributeValue attrValue = valueOf(attribute);
+		attrValue.setUri(value);
+	}
+	
+	public Uri getUri(Attribute attribute) {
+		checkUriSupport(attribute);
+		AttributeValue attrValue = valueOf(attribute);
+		return attrValue.getUri();
+	}
+	
+	
+	private void checkUriSupport(Attribute attribute) {
+		boolean supportsUri = false;
+		switch (attribute.getType()) {
+		case IMAGE:
+		case FILE:
+		case AUDIO:
+			supportsUri = true;
+			break;
+			default:
+				supportsUri = false;
+		}
+		if (!supportsUri) {
+			throw new IllegalArgumentException("Attributes of type: "+
+					attribute.getType()+" do not support URI typed values");
+		}
+	}
+	
 	public void setValue(Attribute attribute, Date value) {
 		if (!attribute.getType().isDateType()) {
 			throw new IllegalArgumentException("Attribute is not a date attribute");
@@ -231,5 +296,5 @@ public class Record extends Persistent {
 		}
 		return date;
 	}
-	
+
 }

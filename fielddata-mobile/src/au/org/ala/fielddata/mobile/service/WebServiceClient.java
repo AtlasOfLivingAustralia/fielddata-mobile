@@ -59,8 +59,7 @@ public class WebServiceClient {
 	protected Gson getGson() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setFieldNamingPolicy(FieldNamingPolicy.IDENTITY);
-		builder.registerTypeAdapterFactory(StringValueAdapter.FACTORY);
-		builder.registerTypeHierarchyAdapter(StringValue.class, new StringValueAdapter());
+		builder.registerTypeHierarchyAdapter(StringValue.class, new StringValueAdapter(ctx));
 		return builder.create();
 	}
 	

@@ -48,12 +48,7 @@ public class Record extends Persistent {
 			return value;
 		}
 	}
-	
-	static class UriValue extends StringValue {
-		public Uri getUri() {
-			return Uri.parse(value);
-		}
-	}
+
 	
 	static class AttributeValue {
 		public Integer id = 1;

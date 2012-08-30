@@ -9,14 +9,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import util.Base64;
+import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Record.StringValue;
 
-import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
@@ -30,15 +29,11 @@ import com.google.gson.stream.JsonWriter;
  */
 public class StringValueAdapter extends TypeAdapter<Record.StringValue> {
 
-	public static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() {
-		@SuppressWarnings("unchecked")
-		public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-			if (type.getRawType() == Object.class) {
-				return (TypeAdapter<T>) new StringValueAdapter();
-			}
-			return null;
-		}
-	};
+	private Context ctx;
+	
+	public StringValueAdapter(Context ctx) {
+		this.ctx = ctx;
+	}
 
 	public StringValue read(JsonReader reader) throws IOException {
 		if (reader.peek() == JsonToken.NULL) {
@@ -60,11 +55,13 @@ public class StringValueAdapter extends TypeAdapter<Record.StringValue> {
 		
 		if (stringValue.uri && stringValue.value != null && !"".equals(stringValue.value)) {
 			Uri uri = Uri.parse(stringValue.value);
-			File file = new File(uri.getEncodedPath());
+			InputStream in = ctx.getContentResolver().openInputStream(uri);
+			Log.d("JSON", "Writing URI: "+uri);
+			//File file = new File(uri.getEncodedPath());
 			
 			JsonWriterWrapper wrapper = new JsonWriterWrapper(writer);
-			
-			wrapper.value(new FileInputStream(file));
+			wrapper.value(in);
+			//wrapper.value(new FileInputStream(file));
 		}
 		else {
 			writer.value(stringValue.value);

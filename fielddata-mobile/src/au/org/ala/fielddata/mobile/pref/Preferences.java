@@ -55,17 +55,19 @@ public class Preferences {
 	}
 
 	public String getFieldDataServerUrl() {
-		//return "http://"+getFieldDataServerHostName()+"/bdrs-core/condamine";
+		return "http://152.83.195.62:8080/BDRS/condamine";
+		//return "http://192.168.0.8:8080/BDRS/condamine";
+		
 		//return "http://"+getFieldDataServerHostName()+"/bdrs-core/koalacount";
 
-		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
-		String hostName = prefs.getString("serverHostName", "");
-		String context = prefs.getString("contextName", "");
-		String path = prefs.getString("path", "");
-		
-		String fieldDataServerUrl = "http://"+hostName+"/"+context+"/"+path;
-		
-		return fieldDataServerUrl;
+//		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
+//		String hostName = prefs.getString("serverHostName", "");
+//		String context = prefs.getString("contextName", "");
+//		String path = prefs.getString("path", "");
+//		
+//		String fieldDataServerUrl = "http://"+hostName+"/"+context+"/"+path;
+//		
+//		return fieldDataServerUrl;
 	}
 	
 	public String getFieldDataServerHostName() {

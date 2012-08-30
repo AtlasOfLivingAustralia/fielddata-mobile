@@ -255,7 +255,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				binder = new DateBinder(ctx, view, attribute, surveyViewModel);
 				break;
 			case POINT:
-				binder = new LocationBinder(view, surveyViewModel);
+				binder = new LocationBinder(ctx, view, surveyViewModel);
 				ctx.locationBinder = (LocationBinder) binder;
 				break;
 			case IMAGE:

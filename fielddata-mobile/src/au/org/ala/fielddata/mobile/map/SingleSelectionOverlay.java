@@ -41,6 +41,17 @@ public class SingleSelectionOverlay extends ItemizedOverlay<OverlayItem> {
 		populate();
 	}
 
+	public void selectLocation(Location location) {
+		selectLocation(locationToPoint(location));
+	}
+	
+	public void selectLocation(GeoPoint location) {
+		if (items.size() > 0) {
+			items.clear();
+		}
+		addItem(new OverlayItem(location, "", ""));
+	}
+	
 	@Override
 	protected OverlayItem createItem(int i) {
 		return (items.get(i));
@@ -143,6 +154,15 @@ public class SingleSelectionOverlay extends ItemizedOverlay<OverlayItem> {
 		return selectedLocation;
 	}
 
+	private GeoPoint locationToPoint(Location location) {
+		int latitudeE6 = (int)Math.round(location.getLatitude()*1000000);
+		int longitudeE6 = (int)Math.round(location.getLongitude()*1000000);
+		
+		GeoPoint point = new GeoPoint(latitudeE6, longitudeE6);
+		return point;
+	
+	}
+	
 	private void setDragImagePosition(int x, int y) {
 		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) dragImage
 				.getLayoutParams();

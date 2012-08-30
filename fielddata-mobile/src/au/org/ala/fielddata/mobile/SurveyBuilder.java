@@ -14,24 +14,20 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile;
 
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
-import au.org.ala.fielddata.mobile.ui.GPSFragment;
 
 public class SurveyBuilder {
 	
@@ -135,24 +131,7 @@ public class SurveyBuilder {
 	
 	public View buildLocationPicker(Attribute attribute) {
 		View view = viewContext.getLayoutInflater().inflate(R.layout.read_only_location, null);
-		ImageButton gpsButton = (ImageButton)view.findViewById(R.id.gpsButton);
-		gpsButton.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				GPSFragment fragment = new GPSFragment();
-				fragment.show(viewContext.getSupportFragmentManager(), "gpsDialog");
-				
-			}
-		});
 		
-		ImageButton showOnMapButton = (ImageButton)view.findViewById(R.id.showMapButton);
-		showOnMapButton.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				Intent intent = new Intent(viewContext, LocationSelectionActivity.class);
-				viewContext.startActivityForResult(intent, CollectSurveyData.SELECT_LOCATION_REQUEST );
-			}
-		});
 		return view;
 	}
 	

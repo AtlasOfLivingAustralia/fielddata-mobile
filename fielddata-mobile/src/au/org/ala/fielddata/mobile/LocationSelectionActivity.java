@@ -16,10 +16,8 @@ package au.org.ala.fielddata.mobile;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,9 +38,7 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		LocationListener {
 
 	public static final String LOCATION_BUNDLE_KEY = "Location";
-	private LocationManager locationManager;
 	private MapView mapView;
-	private MyLocationOverlay overlay;
 	private SingleSelectionOverlay selectionOverlay;
 	private Location selectedLocation;
 
@@ -55,7 +51,15 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		mapView.setBuiltInZoomControls(true);
 		mapView.getController().setZoom(7);
 		mapView.getController().setCenter(new GeoPoint(-27561777, 151493591));
+		addEventHandlers();
 
+		
+		initiaseOverlays();
+		
+		
+	}
+
+	private void initiaseOverlays() {
 		Drawable marker = getResources().getDrawable(R.drawable.marker);
 
 		marker.setBounds(0, 0, marker.getIntrinsicWidth(),
@@ -63,25 +67,18 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 
 		ImageView dragImage = (ImageView) findViewById(R.id.drag);
 		selectionOverlay = new SingleSelectionOverlay(marker, dragImage, this);
+		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			Location location = (Location)extras.get(LOCATION_BUNDLE_KEY);
+			if (location != null) {
+				selectionOverlay.selectLocation(location);
+				onLocationChanged(location);
+			}
+		}
+		
+		
 		mapView.getOverlays().add(selectionOverlay);
-		addEventHandlers();
-
-		// getCurrentLocation();
-	}
-
-	private Location getCurrentLocation() {
-		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-		Criteria criteria = new Criteria();
-		criteria.setAltitudeRequired(false);
-		criteria.setAccuracy(Criteria.ACCURACY_HIGH);
-		criteria.setCostAllowed(false);
-
-		String provider = locationManager.getBestProvider(criteria, false);
-		Location location = locationManager.getLastKnownLocation(provider);
-
-		locationManager.requestLocationUpdates(provider, 0, 0, this);
-
-		return location;
 	}
 
 	@Override
@@ -134,20 +131,11 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 
 	}
 
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
+	public void onStatusChanged(String provider, int status, Bundle extras) {}
 
-	}
+	public void onProviderEnabled(String provider) {}
 
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-
-	}
+	public void onProviderDisabled(String provider) {}
 
 	private void updateLocation() {
 		final MyLocationOverlay overlay = new MyLocationOverlay(this, mapView);
@@ -161,6 +149,7 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 				if (point != null) {
 					mapView.getController().setCenter(point);
 					mapView.getController().setZoom(18);
+					selectionOverlay.selectLocation(point);
 					runOnUiThread(new Runnable() {
 						public void run() {
 							Button button = (Button) findViewById(R.id.mapNext);

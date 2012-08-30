@@ -14,12 +14,13 @@ import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 public class LocationBinder implements Binder {
 
 	private TextView locationTextView;
-	private Record record;
+	private SurveyViewModel model;
 	private Location location;
 	
 	public LocationBinder(View locationView, SurveyViewModel model) {
 		locationTextView = (TextView)locationView.findViewById(R.id.latlong);
-		this.record = model.getRecord();
+		this.model = model;
+		Record record = model.getRecord();
 		
 		if (record.latitude != null && record.longitude != null) {
 			location = new Location("");
@@ -45,8 +46,13 @@ public class LocationBinder implements Binder {
 //		if (attribute.getServerId() != this.attribute.getServerId()) {
 //			return;
 //		}
+		if (result.isValid()) {
+			locationTextView.setError(null);
+		}
+		else {
+			locationTextView.setError("Select a location"); 	//result.getMessage(ctx));
+		}
 		
-		locationTextView.setError("Select a location");//result.getMessage(ctx));
 	}
 	private void updateText() {
 		
@@ -72,11 +78,7 @@ public class LocationBinder implements Binder {
 	}
 	
 	public void bind() {
-		if (location != null) {
-			record.longitude = location.getLongitude();
-			record.latitude = location.getLatitude();
-			record.accuracy = Double.valueOf(location.getAccuracy());
-		}
+		model.locationSelected(location);
 	}
 
 }

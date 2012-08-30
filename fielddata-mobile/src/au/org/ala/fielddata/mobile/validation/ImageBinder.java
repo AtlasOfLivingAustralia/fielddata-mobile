@@ -25,7 +25,8 @@ public class ImageBinder implements Binder {
 	private Attribute attribute;
 	private Uri thumbUri;
 	private boolean expectingResult;
-
+	private boolean thumbnailRendered;
+	
 	public ImageBinder(CollectSurveyData ctx, Attribute attribute,
 			View imageView) {
 		this.ctx = ctx;
@@ -95,8 +96,9 @@ public class ImageBinder implements Binder {
 		thumb.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
 			
 			public void onGlobalLayout() {
-				Log.d("ImageBinder", "onGlobalLayout");
-				updateThumbnail();
+				if (!thumbnailRendered) {
+					updateThumbnail();
+				}
 			}
 		});
 
@@ -113,7 +115,8 @@ public class ImageBinder implements Binder {
 			    
 			    // The view is created when the previous page is displayed
 			    // so the imageview size is 0 at that point.
-			    if (targetW == 0 || targetH == 0) {    	
+			    if (targetW == 0 || targetH == 0) {  
+			    	thumbnailRendered = false;
 			    	return;
 			    }
 			    Bitmap bitmap = null;
@@ -127,6 +130,7 @@ public class ImageBinder implements Binder {
 			    			MediaStore.Images.Thumbnails.MICRO_KIND, null);
 			    }
 			    thumb.setImageBitmap(bitmap);
+			    thumbnailRendered = true;
 
 			} catch (Exception e) {
 				throw new RuntimeException(e);

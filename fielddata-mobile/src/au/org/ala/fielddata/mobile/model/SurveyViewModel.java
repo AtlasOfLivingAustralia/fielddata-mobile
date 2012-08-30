@@ -88,6 +88,25 @@ public class SurveyViewModel {
 		
 		validate(changed);	
 	}
+	
+	public void locationSelected(Location location) {
+		if (location != null) {
+			record.longitude = location.getLongitude();
+			record.latitude = location.getLatitude();
+			if (location.hasAccuracy()) {
+				record.accuracy = Double.valueOf(location.getAccuracy());
+			}
+		}
+		else {
+			record.longitude = null;
+			record.latitude = null;
+		}
+		
+
+		Attribute changed = survey.propertyByType(AttributeType.POINT);
+		
+		validate(changed);
+	}
 
 	public Species getSelectedSpecies() {
 		return species;
@@ -184,12 +203,6 @@ public class SurveyViewModel {
 
 	private boolean deviceHasCamera() {
 		return packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA);
-	}
-
-	public void locationSelected(Location location) {
-		getRecord().longitude = location.getLongitude();
-		getRecord().latitude = location.getLatitude();
-		getRecord().accuracy = Double.valueOf(location.getAccuracy());
 	}
 
 	public int validate() {

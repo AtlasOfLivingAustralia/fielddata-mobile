@@ -150,12 +150,14 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		//getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		
 		String portal = preferences.getFieldDataPortalName();
+		getSupportActionBar().setTitle(portal);
+		
 		GenericDAO<User> userDAO = new GenericDAO<User>(this);
-		//User user = userDAO.loadAll(User.class).get(0);
-		
-		//getSupportActionBar().setTitle(portal);
-		//getSupportActionBar().setSubtitle("Welcome " + user.firstName + " " + user.lastName);
-		
+		List<User> users = userDAO.loadAll(User.class);
+		if (users.size() > 0) {
+			User user = users.get(0);
+			getSupportActionBar().setSubtitle("Welcome " + user.firstName + " " + user.lastName);
+		}
 	}
 	
 	class InitialisationResults {

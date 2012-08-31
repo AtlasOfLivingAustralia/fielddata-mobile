@@ -14,7 +14,7 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.service;
 
-import java.io.InputStream;
+import java.io.Closeable;
 import java.net.HttpURLConnection;
 
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -63,13 +63,13 @@ public class WebServiceClient {
 		return builder.create();
 	}
 	
-	protected void close(InputStream in) {
-		if (in != null) {
+	protected void close(Closeable stream) {
+		if (stream != null) {
 			try {
-				in.close();
+				stream.close();
 			}
 			catch (Exception e) {
-				Log.e("WebServiceClient", "Error closing input stream: ", e);
+				Log.e("WebServiceClient", "Error closing stream: ", e);
 			}
 		}
 	}

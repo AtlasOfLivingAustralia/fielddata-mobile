@@ -1,6 +1,10 @@
 package au.org.ala.fielddata.mobile;
 
 import android.os.Bundle;
+import android.util.Log;
+import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.model.Record;
+import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -15,22 +19,89 @@ public class SurveyModelHolder extends SherlockFragment {
 
 	private SurveyViewModel model;
 	
-	public SurveyModelHolder(SurveyViewModel model) {
-		this.model = model;
-	}
-	
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
-		setRetainInstance(true);
+		int surveyId = getActivity().getIntent().getIntExtra(CollectSurveyData.SURVEY_BUNDLE_KEY, 0);
+		int recordId = getActivity().getIntent().getIntExtra(CollectSurveyData.RECORD_BUNDLE_KEY, 0);
+
 		
-		if (savedInstanceState == null) {
-			((CollectSurveyData)getActivity()).setViewModel(model);
+		if (savedInstanceState != null) {
+			if (surveyId == 0) {
+				surveyId = savedInstanceState.getInt(CollectSurveyData.SURVEY_BUNDLE_KEY);
+			}
+			if (recordId == 0) {
+				recordId = savedInstanceState.getInt(CollectSurveyData.RECORD_BUNDLE_KEY);
+			}
 		}
+		
+		setRetainInstance(true);
+		updateModel(surveyId, recordId);
 		
 	}
 	
+	
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Log.i("SurveyModelHolder", "Saving survey: "+model.getSurvey());
+		Log.i("SurveyModelHolder", "Saving record: "+model.getRecord());
+		
+		GenericDAO<Record> recordDao = new GenericDAO<Record>(getActivity());
+		recordDao.save(model.getRecord());
+		
+		outState.putInt(CollectSurveyData.SURVEY_BUNDLE_KEY, model.getSurvey().server_id);
+		outState.putInt(CollectSurveyData.SURVEY_BUNDLE_KEY, model.getRecord().getId());
+		
+	}
+
+
+
+	private synchronized void updateModel(int surveyId, int recordId) {
+		if (model == null) {
+			Record record = null;
+			Survey survey;
+			if (recordId > 0) {
+				record = initRecord(recordId, surveyId);
+				surveyId = record.survey_id;
+			}
+			try {
+				survey = initSurvey(surveyId);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			if (recordId <= 0) {
+				record = initRecord(recordId, surveyId);
+			}
+			model = new SurveyViewModel(survey, record,
+					getActivity().getPackageManager());
+
+		}
+		((CollectSurveyData)getActivity()).setViewModel(model);
+	}
+	
+	private Survey initSurvey(int surveyId) throws Exception {
+		GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(getActivity().getApplicationContext());
+		return surveyDAO.findByServerId(Survey.class, surveyId);
+	}
+	
+	
+	private Record initRecord(int recordId, int surveyId) {
+		Record record;
+		if (recordId <= 0) {
+			record = new Record();
+			record.survey_id = surveyId;
+			record.when = System.currentTimeMillis();
+
+		} else {
+			GenericDAO<Record> recordDAO = new GenericDAO<Record>(getActivity().getApplicationContext());
+			record = recordDAO.load(Record.class, recordId);
+		}
+		return record;
+	}
+
 	
 }

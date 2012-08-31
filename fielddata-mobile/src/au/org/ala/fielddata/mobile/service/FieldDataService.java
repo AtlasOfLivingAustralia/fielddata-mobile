@@ -170,9 +170,10 @@ public class FieldDataService extends WebServiceClient {
 				
 				close(in);
 				close(conn);
-				out.close();
+				close(out);
 				
 			} catch (Exception e) {
+				Log.e("FieldDataService", "Error downloadSpeciesProfileImage: ", e);
 				throw new ServiceException(e);
 			}
 		}

@@ -45,7 +45,6 @@ import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
-import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
@@ -100,42 +99,13 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		int surveyId = getIntent().getIntExtra(SURVEY_BUNDLE_KEY, 0);
-		int recordId = getIntent().getIntExtra(RECORD_BUNDLE_KEY, 0);
-
-		if (savedInstanceState != null) {
-			if (surveyId == 0) {
-				surveyId = savedInstanceState.getInt(SURVEY_BUNDLE_KEY);
-			}
-			if (recordId == 0) {
-				recordId = savedInstanceState.getInt(RECORD_BUNDLE_KEY);
-			}
-		}
-
+		
 		setContentView(R.layout.activity_collect_survey_data);
 
 		if (savedInstanceState == null) {
-			Record record = null;
-			Survey survey;
-			if (recordId > 0) {
-				record = initRecord(recordId, surveyId);
-				surveyId = record.survey_id;
-			}
-			try {
-				survey = initSurvey(surveyId);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-			if (recordId <= 0) {
-				record = initRecord(recordId, surveyId);
-			}
-			surveyViewModel = new SurveyViewModel(survey, record,
-					getPackageManager());
-
 			getSupportFragmentManager().beginTransaction()
-					.add(new SurveyModelHolder(surveyViewModel), "model")
+					.add(new SurveyModelHolder(), "model")
 					.commit();
-
 		}
 
 		pagerAdapter = new SurveyPagerAdapter(getSupportFragmentManager());
@@ -162,10 +132,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		return surveyViewModel;
 	}
 
-	private Survey initSurvey(int surveyId) throws Exception {
-		GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(this);
-		return surveyDAO.findByServerId(Survey.class, surveyId);
-	}
 
 	public void onSpeciesSelected(Species selectedSpecies) {
 
@@ -183,21 +149,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		if (locationBinder != null) {
 			locationBinder.locationChanged(location);
 		}
-	}
-
-	
-	private Record initRecord(int recordId, int surveyId) {
-		Record record;
-		if (recordId <= 0) {
-			record = new Record();
-			record.survey_id = surveyId;
-			record.when = System.currentTimeMillis();
-
-		} else {
-			GenericDAO<Record> recordDAO = new GenericDAO<Record>(this);
-			record = recordDAO.load(Record.class, recordId);
-		}
-		return record;
 	}
 
 	@Override

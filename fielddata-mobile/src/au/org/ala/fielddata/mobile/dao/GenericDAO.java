@@ -185,7 +185,12 @@ public class GenericDAO<T extends Persistent> {
 	}
 
 	public void deleteAll(Class<T> modelClass) {
-		SQLiteDatabase db = helper.getReadableDatabase();
+		SQLiteDatabase db = helper.getWritableDatabase();
 		db.delete(modelClass.getSimpleName(), null, null);
+	}
+
+	public void delete(Class<T> modelClass, Integer id) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.delete(modelClass.getSimpleName(), "_id=?", new String[] {Integer.toString(id)});
 	}
 }

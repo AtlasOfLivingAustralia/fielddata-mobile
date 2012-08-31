@@ -46,7 +46,7 @@ import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
-import au.org.ala.fielddata.mobile.service.FieldDataService;
+import au.org.ala.fielddata.mobile.service.UploadService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
 import au.org.ala.fielddata.mobile.ui.ValidatingViewPager;
@@ -458,11 +458,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 						ctx.getApplicationContext());
 				recordDao.save(ctx.getViewModel().getRecord());
 
-				FieldDataService recordService = new FieldDataService(ctx);
-				List<Record> records = new ArrayList<Record>();
-				records.add(ctx.getViewModel().getRecord());
-
-				recordService.sync(records);
+				Intent intent = new Intent(ctx, UploadService.class);
+				ctx.startService(intent);
 
 			} catch (Exception e) {
 				success = false;
@@ -473,8 +470,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			String message = result ? "Upload successful!" : "Upload failed!";
-			Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show();
 			ctx.finish();
 		}
 

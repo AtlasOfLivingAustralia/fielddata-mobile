@@ -235,7 +235,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	
 	private boolean redirectToLogin() {
 		boolean didRedirect = false;
-		if (canAccessFieldDataServer() && !isInitialised()) {
+		if (!isInitialised() && canAccessFieldDataServer()) {
 			Intent intent = new Intent(this, LoginActivity.class);
 			startActivity(intent);
 			didRedirect = true;

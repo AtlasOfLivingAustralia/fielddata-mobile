@@ -21,8 +21,11 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -51,7 +54,7 @@ import com.actionbarsherlock.view.MenuItem;
  * This class is the main activity for the Mobile Field Data application.
  */
 public class MobileFieldDataDashboard extends SherlockFragmentActivity
-		implements OnClickListener {
+		implements OnClickListener, OnSharedPreferenceChangeListener {
 
 	private Preferences preferences;
 	private TextView status;
@@ -67,6 +70,9 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		status = (TextView)findViewById(R.id.status);
 		surveySelector = (Spinner)findViewById(R.id.surveySelector);
 		addEventHandlers();
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 		
 		// check if the preferences are set if not redirect
 		if (preferences.getFieldDataServerHostName().equals("") ||
@@ -354,7 +360,14 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		}
 	}
 	
-	
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if (key.equals("serverHostName") || 
+			key.equals("contextName") ||	
+			key.equals("path") ||
+			key.equals("portalName")) {
+			preferences.setFieldDataSessionKey(null);
+		}
+	}
 
 	
 }

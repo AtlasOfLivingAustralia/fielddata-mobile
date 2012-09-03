@@ -75,6 +75,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 	public static final String SURVEY_BUNDLE_KEY = "SurveyIdKey";
 	public static final String RECORD_BUNDLE_KEY = "RecordIdKey";
+	public static final String SPECIES = "species";
 
 	/**
 	 * Used to identify a request to the LocationSelectionActivity when a result
@@ -96,12 +97,12 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	private ValidatingViewPager pager;
 	private LocationBinder locationBinder;
 	private List<ImageBinder> imageBinders;
+	private Species selectedSpecies;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		
 		setContentView(R.layout.activity_collect_survey_data);
 
 		if (savedInstanceState == null) {
@@ -114,7 +115,12 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		pager = (ValidatingViewPager) findViewById(R.id.surveyPager);
 		pager.setAdapter(pagerAdapter);
 		
-		
+		Intent i = getIntent();
+		int speciesId = i.getIntExtra(CollectSurveyData.SPECIES, 0);
+		if (speciesId > 0) {
+			GenericDAO<Species> speciesDao = new GenericDAO<Species>(this);
+			selectedSpecies = speciesDao.load(Species.class, speciesId);
+		}
 	}
 
 	public void setViewModel(SurveyViewModel model) {
@@ -127,6 +133,9 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			titleIndicator.setViewPager(pager);
 			titleIndicator.setOnPageChangeListener(pagerAdapter);
 			titleIndicator.setVisibility(View.VISIBLE);
+		}
+		if (selectedSpecies != null) {
+			onSpeciesSelected(selectedSpecies);
 		}
 	}
 

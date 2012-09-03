@@ -48,6 +48,7 @@ public class SurveyViewModel {
 
 	private SparseArray<AttributeChangeListener> listeners;
 	
+	private TempValue tempValue;
 
 	/**
 	 * Compares two Attributes by their weight. Not null safe!
@@ -58,6 +59,24 @@ public class SurveyViewModel {
 			return lhs.weight.compareTo(rhs.weight);
 		}
 
+	}
+	
+	public static class TempValue {
+		Attribute attribute;
+		String value;
+		
+		public TempValue(Attribute attribute, String value) {
+			this.attribute = attribute;
+			this.value = value;
+		}
+		
+		public Attribute getAttribute() {
+			return attribute;
+		}
+		
+		public String getValue() {
+			return value;
+		}
 	}
 
 	public SurveyViewModel(Survey survey, Record record, PackageManager packageManager) {
@@ -104,7 +123,6 @@ public class SurveyViewModel {
 		
 
 		Attribute changed = survey.propertyByType(AttributeType.POINT);
-		
 		validate(changed);
 	}
 
@@ -197,7 +215,6 @@ public class SurveyViewModel {
 			return false; // We dont' support locations yet, but if we did we'd have to 
 			// check if there were any defined for the survey or user.
 		}
-		Log.d("SurveyBuilder", attribute.scope);
 		return true;
 	}
 
@@ -243,5 +260,27 @@ public class SurveyViewModel {
 			pageNum++;
 		}
 		return firstInvalidPage;
+	}
+
+	/**
+	 * Temporary storage for the URI we are going to save a photo as. 
+	 * This value needs to be persisted in the event the CollectSurveyData
+	 * activity is killed while the camera activity is in the foreground. 
+	 *
+	 * @param fileUri the URI that will hold our photo.
+	 */
+	public void setTempValue(Attribute attribute, String value) {
+		tempValue = new TempValue(attribute, value);
+	}
+
+	public void persistTempValue() {
+		if (tempValue != null) {
+			setValue(tempValue.getAttribute(), tempValue.getValue());
+		}
+		tempValue = null;
+	}
+	
+	public void clearTempValue() {
+		tempValue = null;
 	}
 }

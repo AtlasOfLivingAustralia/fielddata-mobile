@@ -60,7 +60,7 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 	}
 
 	private void initiaseOverlays() {
-		Drawable marker = getResources().getDrawable(R.drawable.marker);
+		Drawable marker = getResources().getDrawable(R.drawable.iconr);
 
 		marker.setBounds(0, 0, marker.getIntrinsicWidth(),
 				marker.getIntrinsicHeight());

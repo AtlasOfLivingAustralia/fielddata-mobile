@@ -49,8 +49,12 @@ public class TextViewBinder implements Binder, TextWatcher, AttributeChangeListe
 	}
 
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
-		if (!updating) {
+		try {
+			updating = true;
 			bind(s);
+		}
+		finally {
+			updating = false;
 		}
 	}
 
@@ -65,14 +69,9 @@ public class TextViewBinder implements Binder, TextWatcher, AttributeChangeListe
 		if (attribute.getServerId() != this.attribute.getServerId()) {
 			return;
 		}
-		try {
-			updating = true;
+		if (!updating) {	
 			view.setText(model.getValue(attribute));
 		}
-		finally {
-			updating = false;
-		}
-		
 	}
 
 	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {

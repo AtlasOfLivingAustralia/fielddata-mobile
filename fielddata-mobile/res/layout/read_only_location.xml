@@ -19,13 +19,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/currentLocationLabel"
-        android:src="@drawable/ic_menu_mylocation" />
+        android:src="@drawable/select_current_location_icon_wht_bg">
+        
+    </ImageButton>
 
     <ImageButton
         android:id="@+id/showMapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/mapLabel"
-        android:src="@drawable/ic_menu_mapmode" />
+        android:src="@drawable/select_map_location_icon_wht_bg" />
 
 </LinearLayout>

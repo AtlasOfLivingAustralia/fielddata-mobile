@@ -21,6 +21,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Persistent;
 
 import com.google.gson.Gson;
@@ -45,6 +46,7 @@ public class GenericDAO<T extends Persistent> {
 	}
 
 	private T findByColumn(Class<T> modelClass, String column, String value) {
+		synchronized(helper) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		Cursor result = null;
 		T modelObject = null;
@@ -55,13 +57,16 @@ public class GenericDAO<T extends Persistent> {
 					new String[] { value }, null, null, null, null);
 
 			if (result.getCount() != 1) {
+				Log.e("GenericDAO", "Expected 1 "+modelClass.getSimpleName()+", found: "+result.getCount());
 				throw new DatabaseException("Expected 1 result, found: " + result.getCount());
 			}
 			result.moveToFirst();
 			String json = result.getString(5);
-			db.setTransactionSuccessful();
 			Gson gson = new Gson();
 			modelObject = (T) gson.fromJson(json, modelClass);
+			modelObject.setId(result.getInt(0));
+			db.setTransactionSuccessful();
+			
 
 		} finally {
 			if (result != null) {
@@ -69,14 +74,16 @@ public class GenericDAO<T extends Persistent> {
 			}
 			if (db != null) {
 				db.endTransaction();
-				db.close();
+				helper.close();
 			}
 		}
 
 		return modelObject;
+		}
 	}
 
 	public Integer save(T modelObject) {
+		synchronized(helper) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		try {
 			db.beginTransaction();
@@ -87,10 +94,11 @@ public class GenericDAO<T extends Persistent> {
 		} finally {
 			if (db != null) {
 				db.endTransaction();
-				db.close();
+				helper.close();
 			}
 		}
-		return modelObject.getId();
+		return modelObject.getId(); 
+		}
 	}
 
 	public Integer save(T modelObject, SQLiteDatabase db) {
@@ -117,7 +125,7 @@ public class GenericDAO<T extends Persistent> {
 	}
 
 	public List<T> loadAll(Class<T> modelClass) {
-
+		synchronized(helper) {
 		List<T> results = new ArrayList<T>();
 		SQLiteDatabase db = helper.getReadableDatabase();
 		Cursor result = null;
@@ -148,14 +156,16 @@ public class GenericDAO<T extends Persistent> {
 			}
 			if (db != null) {
 				db.endTransaction();
-				db.close();
+				helper.close();
 			}
 		}
 
 		return results;
+		}
 	}
 
 	public int count(Class<T> modelClass) {
+		synchronized(helper) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		Cursor result = null;
 
@@ -170,7 +180,7 @@ public class GenericDAO<T extends Persistent> {
 			}
 			result.moveToFirst();
 			count = result.getInt(0);
-			result.close();
+			
 			db.setTransactionSuccessful();
 		} finally {
 			if (result != null) {
@@ -178,19 +188,39 @@ public class GenericDAO<T extends Persistent> {
 			}
 			if (db != null) {
 				db.endTransaction();
-				db.close();
+				helper.close();
 			}
 		}
 		return count;
+		}
 	}
 
 	public void deleteAll(Class<T> modelClass) {
+		synchronized(helper) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		db.delete(modelClass.getSimpleName(), null, null);
+		try {
+			db.delete(modelClass.getSimpleName(), null, null);
+		}
+		finally {
+			if (db != null) {
+				helper.close();
+			}
+		}
+		}
 	}
 
 	public void delete(Class<T> modelClass, Integer id) {
+		synchronized(helper) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		db.delete(modelClass.getSimpleName(), "_id=?", new String[] {Integer.toString(id)});
+		
+		try {
+			db.delete(modelClass.getSimpleName(), "_id=?", new String[] {Integer.toString(id)});
+		}
+		finally {
+			if (db != null) {
+				helper.close();
+			}
+		}
+		}
 	}
 }

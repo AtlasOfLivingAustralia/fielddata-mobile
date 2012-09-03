@@ -19,13 +19,17 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,6 +39,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
@@ -42,6 +47,7 @@ import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.EditPreferences;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
+import au.org.ala.fielddata.mobile.service.UploadService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
@@ -74,6 +80,17 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		
+		LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+			
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				if (UploadService.UPLOAD_FAILED.equals(intent.getAction())) {
+					Toast.makeText(getApplicationContext(), "Upload failed!", Toast.LENGTH_SHORT).show();
+				}
+				refreshPage();
+			}
+		}, new IntentFilter(UploadService.UPLOADED));
+		
 		// check if the preferences are set if not redirect
 		if (preferences.getFieldDataServerHostName().equals("") ||
 			preferences.getFieldDataContextName().equals("") ||
@@ -82,6 +99,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			redirectToPreferences();
 		}
 	}
+	
+	
 
 	private void addEventHandlers() {
 		ImageButton button = (ImageButton) findViewById(R.id.viewSavedRecordsButton);
@@ -295,7 +314,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			ArrayAdapter<Survey> items = new ArrayAdapter<Survey>(
 					MobileFieldDataDashboard.this,
 					android.R.layout.simple_spinner_item, surveyArray);
-			items.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+			items.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			surveySelector.setAdapter(items);
 			surveySelector.setOnItemSelectedListener(new OnItemSelectedListener() {
 			

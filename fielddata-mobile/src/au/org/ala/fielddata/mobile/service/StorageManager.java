@@ -61,12 +61,21 @@ public class StorageManager {
 	      return Uri.fromFile(getOutputMediaFile(type));
 	}
 	
+	public static boolean canWriteToExternalStorage() {
+		String state = Environment.getExternalStorageState();
+		 return Environment.MEDIA_MOUNTED.equals(state);
+	}
+	
 	/** Create a File for saving an image or video */
 	@TargetApi(8)
 	private static File getOutputMediaFile(int type){
-	    // To be safe, you should check that the SDCard is mounted
-	    // using Environment.getExternalStorageState() before doing this.
-
+		
+		if (!canWriteToExternalStorage()) {
+			throw new RuntimeException("External storage is not writable!");
+		}
+		
+		
+		
 		File mediaStorageDir = null;
 		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {

@@ -15,13 +15,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
-        android:src="@drawable/ic_menu_camera" />
+        android:src="@drawable/take_photo_icon_wht_bg" />
 
     <ImageButton
         android:id="@+id/selectFromGallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|right"
-        android:src="@drawable/ic_menu_gallery" />
+        android:src="@drawable/search_saved_photos_icon_wht_bg" />
 
 </LinearLayout>

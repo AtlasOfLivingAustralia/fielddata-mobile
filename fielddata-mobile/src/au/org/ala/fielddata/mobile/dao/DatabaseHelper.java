@@ -17,7 +17,6 @@ package au.org.ala.fielddata.mobile.dao;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
@@ -66,8 +65,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 							"created INTEGER, updated INTEGER, last_sync INTEGER" +
 							"name TEXT, json TEXT)");
 			}
-			//populateSpecies(db);
-
 			
 			db.setTransactionSuccessful();
 		} finally {
@@ -81,18 +78,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		throw new RuntimeException("Upgrade not supported.");
 	}
 
-	private void populateSpecies(SQLiteDatabase database) {
-		GenericDAO<Species> dao = new GenericDAO<Species>(ctx);
-		Species species = new Species("Nassella neesiana", "Chilean Needle Grass",
-				R.drawable.nassella_neesiana_thumb);
-		species.server_id = 11831;
-		dao.save(species, database);
-		
-		species = new Species("Parthenium hysterophorus", "Parthenium Weed",
-				R.drawable.parthenium_hysterophorus_thumb);
-		species.server_id = 11830;
-		dao.save(species, database);
-		
-	}
 	
 }

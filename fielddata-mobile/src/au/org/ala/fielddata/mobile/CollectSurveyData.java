@@ -18,12 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -40,12 +42,12 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
+import au.org.ala.fielddata.mobile.service.StorageManager;
 import au.org.ala.fielddata.mobile.service.UploadService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
@@ -81,7 +83,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	public static final int SELECT_LOCATION_REQUEST = 1;
 
 	/** Used to identify a request to the Camera when a result is returned */
-	public static final int TAKE_PHOTO_REQUEST = 2;
+	public static final int TAKE_PHOTO_REQUEST = 10000;
 
 	/**
 	 * Used to identify a request to the Image Gallery when a result is returned
@@ -313,6 +315,26 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 	}
 
+	public void takePhoto(Attribute attribute) {
+		if (StorageManager.canWriteToExternalStorage()) {
+			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			Uri fileUri = StorageManager
+					.getOutputMediaFileUri(StorageManager.MEDIA_TYPE_IMAGE);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+			// Unfortunately, this URI isn't being returned in the
+			// result as expected so we have to save it somewhere it can 
+			// survive an activity restart.
+			surveyViewModel.setTempValue(attribute, fileUri.toString());
+			startActivityForResult(intent, CollectSurveyData.TAKE_PHOTO_REQUEST);
+		}
+		else {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Cannot take photo").
+			    setMessage("Please ensure you have mounted your SD card and it is writable").
+				setPositiveButton("OK", null).show();
+		}
+	}
+	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == SELECT_LOCATION_REQUEST) {
 			if (resultCode == RESULT_OK) {
@@ -321,16 +343,10 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			}
 		} else if (requestCode == TAKE_PHOTO_REQUEST) {
 			if (resultCode == RESULT_OK) {
-				for (ImageBinder imageBinder : imageBinders) {
-					if (data != null) {
-						Uri photo = data.getData();
-
-						imageBinder.onImageSelected(photo);
-					} else {
-						imageBinder.onImageSelected(null);
-					}
-				}
-
+				surveyViewModel.persistTempValue();
+			}
+			else {
+				surveyViewModel.clearTempValue();
 			}
 		}
 		else if (requestCode == SELECT_FROM_GALLERY_REQUEST) {

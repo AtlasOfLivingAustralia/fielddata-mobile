@@ -5,8 +5,8 @@ import java.util.List;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
@@ -18,6 +18,13 @@ import au.org.ala.fielddata.mobile.validation.RecordValidator.RecordValidationRe
  */
 public class UploadService extends IntentService {
 
+	public static final String UPLOADED = "Upload";
+	public static final String UPLOAD_FAILED = "UploadFailed";
+	
+	private int SUCCESS = 0;
+	private int FAILED_INVALID = 1;
+	private int FAILED_SERVER = 2;
+	
 	public UploadService() {
 		super("Upload Service");
 	}
@@ -27,23 +34,25 @@ public class UploadService extends IntentService {
 		
 		Log.i("UploadService", "Uploading records...");
 		
-		GenericDAO<Record> recordDao = new GenericDAO<Record>(getApplicationContext());
-		
+		GenericDAO<Record> recordDao = new GenericDAO<Record>(this);
 		List<Record> records = recordDao.loadAll(Record.class);
 		
 		boolean success = true;
 		for (Record record : records) {
-			boolean result = upload(record);
-			if (result) {
+			int result = upload(record);
+			if (result == SUCCESS) {
 				recordDao.delete(Record.class, record.getId());
 			}
-			success = success && result;
+			success = success && result == SUCCESS;
 		}
-		if (success) {
-			Toast.makeText(getApplicationContext(), "Uploaded succeeded!", Toast.LENGTH_SHORT).show();
+		String action = UPLOADED;
+		if (!success) {
+			action = UPLOAD_FAILED;
 		}
-		stopSelf();
 		
+		intent = new Intent(action);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+		stopSelf();
 	}
 	
 	/**
@@ -51,10 +60,10 @@ public class UploadService extends IntentService {
 	 * @param record the Record to upload.
 	 * @return true if the upload succeeded, false otherwise.
 	 */
-	private boolean upload(Record record) {
+	private int upload(Record record) {
 	
-		boolean success = false;
-		GenericDAO<Survey> surveyDao = new GenericDAO<Survey>(getApplicationContext());
+		int resultCode = SUCCESS;
+		GenericDAO<Survey> surveyDao = new GenericDAO<Survey>(this);
 		Survey survey = surveyDao.findByServerId(Survey.class, record.survey_id);
 		FieldDataService service = new FieldDataService(getApplicationContext());
 		
@@ -65,19 +74,19 @@ public class UploadService extends IntentService {
 			RecordValidationResult result = validator.validateRecord(survey, record);
 			if (result.valid()) {
 				service.sync(tmp);
-				success = true;
+				resultCode = SUCCESS;
 				
 			}
 			else {
 				Log.w("UploadService", "Not uploading due to validation error");
-				Toast.makeText(getApplicationContext(), "Record invalid!", Toast.LENGTH_SHORT).show();
+				resultCode = FAILED_INVALID;
 			}
 		}
 		catch (Exception e) {
 			Log.e("UploadService", "Error calling the field data service: ", e);
-			Toast.makeText(getApplicationContext(), "Upload failed: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+			resultCode = FAILED_SERVER;
 		}
-		return success;
+		return resultCode;
 	}
 	
 	

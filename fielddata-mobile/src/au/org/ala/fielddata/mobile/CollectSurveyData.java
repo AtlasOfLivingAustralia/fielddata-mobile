@@ -47,6 +47,7 @@ import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
+import au.org.ala.fielddata.mobile.model.SurveyViewModel.TempValue;
 import au.org.ala.fielddata.mobile.service.StorageManager;
 import au.org.ala.fielddata.mobile.service.UploadService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
@@ -344,6 +345,15 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		}
 	}
 	
+	public void selectFromGallery(Attribute attribute) {
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+		intent.setType("image/*");
+		// Just saving the attribute we are working with.
+		surveyViewModel.setTempValue(attribute, "");
+		startActivityForResult(Intent.createChooser(intent, "Select Photo"),
+				CollectSurveyData.SELECT_FROM_GALLERY_REQUEST);
+	}
+	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == SELECT_LOCATION_REQUEST) {
 			if (resultCode == RESULT_OK) {
@@ -359,10 +369,14 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			}
 		}
 		else if (requestCode == SELECT_FROM_GALLERY_REQUEST) {
+			TempValue value = surveyViewModel.clearTempValue();
 			if (resultCode == RESULT_OK) {
-				for (ImageBinder imageBinder : imageBinders) {
-					Uri selectedImage = data.getData();
-					imageBinder.onImageSelected(selectedImage);
+				Uri selected = data.getData();
+				if (selected != null) {
+					surveyViewModel.setValue(value.getAttribute(), selected.toString());
+				}
+				else {
+					Log.e("CollectSurveyData", "Null data returned from gallery intent!"+data);
 				}
 			}
 		}

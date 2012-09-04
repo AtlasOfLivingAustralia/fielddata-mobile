@@ -55,11 +55,7 @@ public class ImageBinder implements Binder {
 		selectFromGallery.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-				intent.setType("image/*");
-				expectingResult = true;
-				ctx.startActivityForResult(Intent.createChooser(intent, "Select Photo"),
-						CollectSurveyData.SELECT_FROM_GALLERY_REQUEST);
+				ctx.selectFromGallery(attribute);
 
 			}
 		});
@@ -155,13 +151,6 @@ public class ImageBinder implements Binder {
 		bind();
 		updateThumbnail();
 		expectingResult = false;
-	}
-
-	private void addToGallery(Uri photo) {
-		Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-
-		mediaScanIntent.setData(photo);
-		ctx.sendBroadcast(mediaScanIntent);
 	}
 
 	public void bind() {

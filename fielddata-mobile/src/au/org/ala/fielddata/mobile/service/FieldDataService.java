@@ -36,8 +36,6 @@ import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 
-import com.google.gson.Gson;
-
 public class FieldDataService extends WebServiceClient {
 
 	private String syncUrl = "/webservice/application/clientSync.htm";
@@ -55,19 +53,19 @@ public class FieldDataService extends WebServiceClient {
 
 	public void sync(List<Record> records) throws Exception {
 
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+		MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
 		params.set("ident", ident);
 		params.set("inFrame", "false"); // Setting this parameter prevents the
 										// server from assuming a jsonp request.
-		Gson gson = getGson();
+		//Gson gson = getGson();
 		
-		params.set("syncData", gson.toJson(records));
+		params.set("syncData", records);
 
 		String url = serverUrl + syncUrl;
 
 		RestTemplate restTemplate = getRestTemplate();
-		restTemplate.getMessageConverters().add(
-				new StringHttpMessageConverter());
+//		restTemplate.getMessageConverters().add(
+//				new StringHttpMessageConverter());
 		SyncRecordsResponse result = restTemplate.postForObject(url, params,
 				SyncRecordsResponse.class);
 		System.out.println(result);

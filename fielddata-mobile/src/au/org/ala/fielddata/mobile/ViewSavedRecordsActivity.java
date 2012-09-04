@@ -48,6 +48,10 @@ public class ViewSavedRecordsActivity extends SherlockListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(UploadService.UPLOAD_FAILED);
+		filter.addAction(UploadService.UPLOADED);
+		
 		LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
 
 			@Override
@@ -57,7 +61,7 @@ public class ViewSavedRecordsActivity extends SherlockListActivity {
 				}
 				refresh();
 			}
-		}, new IntentFilter(UploadService.UPLOADED));
+		}, filter);
 		refresh();
 		
 	}

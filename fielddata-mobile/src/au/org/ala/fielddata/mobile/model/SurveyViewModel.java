@@ -273,14 +273,17 @@ public class SurveyViewModel {
 		tempValue = new TempValue(attribute, value);
 	}
 
+	public TempValue clearTempValue() {
+		TempValue tmp = tempValue;
+		tempValue = null;
+		return tmp;
+	}
+	
 	public void persistTempValue() {
 		if (tempValue != null) {
 			setValue(tempValue.getAttribute(), tempValue.getValue());
 		}
 		tempValue = null;
 	}
-	
-	public void clearTempValue() {
-		tempValue = null;
-	}
+
 }

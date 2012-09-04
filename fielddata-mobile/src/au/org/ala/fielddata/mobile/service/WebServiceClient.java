@@ -50,8 +50,11 @@ public class WebServiceClient {
 	protected RestTemplate getRestTemplate() {
 		
 		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
-		restTemplate.getMessageConverters().add(new GsonHttpMessageConverter(getGson()));
+		FormHttpMessageConverter formConverter = new FormHttpMessageConverter();
+		GsonHttpMessageConverter gsonConverter = new GsonHttpMessageConverter(getGson());
+		formConverter.addPartConverter(gsonConverter);
+		restTemplate.getMessageConverters().add(formConverter);
+		restTemplate.getMessageConverters().add(gsonConverter);
 		
 		return restTemplate;
 	}

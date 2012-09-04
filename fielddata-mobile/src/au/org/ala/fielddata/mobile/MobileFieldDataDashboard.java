@@ -80,6 +80,10 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(UploadService.UPLOAD_FAILED);
+		filter.addAction(UploadService.UPLOADED);
+		
 		LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
 			
 			@Override
@@ -89,7 +93,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 				}
 				refreshPage();
 			}
-		}, new IntentFilter(UploadService.UPLOADED));
+		}, filter);
 		
 		// check if the preferences are set if not redirect
 		if (preferences.getFieldDataServerHostName().equals("") ||

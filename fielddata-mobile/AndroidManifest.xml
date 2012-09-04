@@ -83,11 +83,6 @@
             android:name=".FieldGuideActivity"
             android:label="@string/title_activity_field_guide" 
             android:configChanges="orientation">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

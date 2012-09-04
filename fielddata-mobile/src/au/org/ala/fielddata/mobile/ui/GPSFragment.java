@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import au.org.ala.fielddata.mobile.CollectSurveyData;
@@ -30,7 +31,6 @@ public class GPSFragment extends DialogFragment implements LocationListener, Dia
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		
-		init();
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		
@@ -58,10 +58,11 @@ public class GPSFragment extends DialogFragment implements LocationListener, Dia
 			}
 		});
 		}
+		
 		return dialog;
 	}
 	
-	private void init() {
+	private void startLocationUpdates() {
 		locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 		
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
@@ -69,14 +70,20 @@ public class GPSFragment extends DialogFragment implements LocationListener, Dia
 
 	}
 	
+	@Override
+	public void onStart() {
+		super.onStart();
+		startLocationUpdates();
+	}
 	
 	@Override
-	public void onDismiss(DialogInterface dialog) {
+	public void onPause() {
+		super.onPause();
 		locationManager.removeUpdates(this);
 	}
 
 	public void onLocationChanged(Location location) {
-		System.out.println(location);
+		Log.d("GPSFragment", "Location update received: "+location);
 		if (bestLocation == null) {
 			bestLocation = location;
 			
@@ -91,17 +98,11 @@ public class GPSFragment extends DialogFragment implements LocationListener, Dia
 	    accuracy.setText(Double.toString(bestLocation.getAccuracy()));
 	}
 
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		System.out.println(provider+", status: "+status);
-	}
+	public void onStatusChanged(String provider, int status, Bundle extras) {}
 
-	public void onProviderEnabled(String provider) {
-		System.out.println(provider+" enabled");
-	}
+	public void onProviderEnabled(String provider) {}
 
-	public void onProviderDisabled(String provider) {
-		System.out.println(provider+" disabled");
-	}
+	public void onProviderDisabled(String provider) {}
 
 	public void onClick(DialogInterface dialog, int which) {
 		if (bestLocation != null) {

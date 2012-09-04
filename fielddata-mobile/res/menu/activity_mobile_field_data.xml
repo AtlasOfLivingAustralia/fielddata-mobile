@@ -17,7 +17,7 @@
         android:title="@string/menu_save"
         android:orderInCategory="1"
         android:showAsAction="always"
-        android:icon="@drawable/save_record_icon" />
+        android:icon="@drawable/saveicon" />
     <item android:id="@+id/cancel"
         android:title="@string/menu_cancel"
         android:orderInCategory="1"

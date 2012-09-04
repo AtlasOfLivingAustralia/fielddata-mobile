@@ -40,12 +40,14 @@
             android:label="@string/title_activity_mobile_data_dashboard" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".CollectSurveyData"
-            android:label="@string/title_activity_mobile_field_data" android:windowSoftInputMode="stateHidden">
+            android:label="@string/title_activity_mobile_field_data"
+            android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name=".SpeciesSelectionActivity"
@@ -70,9 +72,23 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" >
-            
         </activity>
-        <service android:name=".service.UploadService" android:label="Upload Service"></service>
+
+        <service
+            android:name=".service.UploadService"
+            android:label="Upload Service" >
+        </service>
+
+        <activity
+            android:name=".FieldGuideActivity"
+            android:label="@string/title_activity_field_guide" 
+            android:configChanges="orientation">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

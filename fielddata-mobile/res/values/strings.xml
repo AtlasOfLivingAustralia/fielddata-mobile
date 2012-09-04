@@ -27,7 +27,6 @@
     <string name="title_species_selection">Select a species</string>
     <string name="title_species_list">Species List</string>
     <string name="title_activity_view_saved_records">Saved records</string>
-    
     <string name="saveButtonText">Save</string>
     <string name="species_profile_image">Spcies profile image</string>
     <string name="change_date_button_text">Change</string>
@@ -44,7 +43,7 @@
     <string name="menu_save">Save</string>
     <string name="menu_upload">Upload</string>
     <string name="menu_cancel">Cancel</string>
-    
+
     <!-- Validation Errors -->
     <string name="requiredMessage">Please enter a value</string>
     <string name="no_saved_records_message">No saved records</string>
@@ -63,7 +62,7 @@
     <string name="accuracyLabel">Accuracy</string>
     <string name="currentLocationLabel">GPS</string>
     <string name="mapLabel">Map</string>
-    
+
     <!-- Login page -->
     <string name="title_activity_login">Login</string>
     <string name="user_name">Username</string>
@@ -72,5 +71,6 @@
     <string name="login_failed">Login Failed</string>
     <string name="unknown_user">Username unknown or incorrect password.</string>
     <string name="menu_login">Change Login</string>
-    
+    <string name="title_activity_field_guide">View Field Guide</string>
+
 </resources>

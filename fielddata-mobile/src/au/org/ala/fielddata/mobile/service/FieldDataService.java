@@ -125,7 +125,7 @@ public class FieldDataService extends WebServiceClient {
 			URL url = new URL(serverUrl + pingUrl);
 			conn = (HttpURLConnection)url.openConnection();
 			conn.setConnectTimeout(timeoutInMillis);
-			conn.setReadTimeout(timeoutInMillis);
+			//conn.setReadTimeout(timeoutInMillis);
 			in = conn.getInputStream();
 			while (in.read() != -1) {}
 			

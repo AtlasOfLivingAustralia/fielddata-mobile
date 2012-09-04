@@ -3,9 +3,11 @@ package au.org.ala.fielddata.mobile;
 import android.os.Bundle;
 import android.util.Log;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
+import au.org.ala.fielddata.mobile.model.SurveyViewModel.TempValue;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
@@ -35,11 +37,21 @@ public class SurveyModelHolder extends SherlockFragment {
 			if (recordId == 0) {
 				recordId = savedInstanceState.getInt(CollectSurveyData.RECORD_BUNDLE_KEY);
 			}
+			
 		}
 		
 		setRetainInstance(true);
 		updateModel(surveyId, recordId);
 		
+		// Now restore the default value if required
+		if (savedInstanceState != null) {
+			int attributeId = savedInstanceState.getInt("TempAttribute", -1);
+			if (attributeId > 0) {
+				Attribute attr = model.getSurvey().getAttribute(attributeId);
+				String value = savedInstanceState.getString("TempAttributeValue");
+				model.setTempValue(attr, value);
+			}
+		}
 	}
 	
 	
@@ -55,6 +67,9 @@ public class SurveyModelHolder extends SherlockFragment {
 		
 		outState.putInt(CollectSurveyData.SURVEY_BUNDLE_KEY, model.getSurvey().server_id);
 		outState.putInt(CollectSurveyData.SURVEY_BUNDLE_KEY, model.getRecord().getId());
+		TempValue toSave = model.clearTempValue();
+		outState.putInt("TempAttribute", toSave.getAttribute().server_id);
+		outState.putString("TempAttributeValue", toSave.getValue());
 		
 	}
 

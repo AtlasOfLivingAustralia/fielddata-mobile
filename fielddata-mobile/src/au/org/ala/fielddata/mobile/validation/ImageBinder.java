@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -24,13 +23,11 @@ public class ImageBinder implements Binder {
 	private Attribute attribute;
 	private Uri thumbUri;
 	private SurveyViewModel model;
-	private boolean expectingResult;
 	private boolean thumbnailRendered;
 
 	public ImageBinder(CollectSurveyData ctx, Attribute attribute, View imageView) {
 		this.ctx = ctx;
 		this.attribute = attribute;
-		expectingResult = false;
 		
 		thumb = (ImageView) imageView.findViewById(R.id.photoThumbnail);
 		model = ctx.getViewModel();
@@ -133,24 +130,6 @@ public class ImageBinder implements Binder {
 
 		Bitmap bitmap = BitmapFactory.decodeFile(thumbUri.getEncodedPath(), bmOptions);
 		return bitmap;
-	}
-
-	public void onImageSelected(Uri imageUri) {
-		if (!expectingResult) {
-			return;
-		}
-
-		Log.d("ImageBinder", "Selected: " + imageUri);
-
-		// For some reason, the camera application passes back a null intent
-		// on my Galaxy Nexus, so we have to rely on the URI we created before
-		// starting the Camera activity.
-		if (imageUri != null) {
-			thumbUri = imageUri;
-		}
-		bind();
-		updateThumbnail();
-		expectingResult = false;
 	}
 
 	public void bind() {

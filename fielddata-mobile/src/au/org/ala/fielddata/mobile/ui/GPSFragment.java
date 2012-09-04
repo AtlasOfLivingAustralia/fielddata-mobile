@@ -106,7 +106,7 @@ public class GPSFragment extends DialogFragment implements LocationListener, Dia
 	public void onClick(DialogInterface dialog, int which) {
 		if (bestLocation != null) {
 			CollectSurveyData activity = (CollectSurveyData)getActivity();
-			activity.onLocationSelected(bestLocation);
+			activity.getViewModel().locationSelected(bestLocation);
 		}
 		
 	}

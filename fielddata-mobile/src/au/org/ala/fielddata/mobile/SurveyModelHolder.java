@@ -67,7 +67,7 @@ public class SurveyModelHolder extends SherlockFragment {
 		
 		outState.putInt(CollectSurveyData.SURVEY_BUNDLE_KEY, model.getSurvey().server_id);
 		outState.putInt(CollectSurveyData.SURVEY_BUNDLE_KEY, model.getRecord().getId());
-		TempValue toSave = model.clearTempValue();
+		TempValue toSave = model.getTempValue();
 		if (toSave != null) {
 			outState.putInt("TempAttribute", toSave.getAttribute().server_id);
 			outState.putString("TempAttributeValue", toSave.getValue());

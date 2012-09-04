@@ -123,6 +123,7 @@ public class SurveyViewModel {
 		
 
 		Attribute changed = survey.propertyByType(AttributeType.POINT);
+		fireAttributeChanged(changed);
 		validate(changed);
 	}
 
@@ -279,11 +280,28 @@ public class SurveyViewModel {
 		return tmp;
 	}
 	
+	public TempValue getTempValue() {
+		return tempValue;
+	}
+	
 	public void persistTempValue() {
 		if (tempValue != null) {
 			setValue(tempValue.getAttribute(), tempValue.getValue());
 		}
 		tempValue = null;
+	}
+
+	public Location getLocation() {
+		Location location = null;
+		if (record.latitude != null && record.longitude != null) {
+			location = new Location("");
+			location.setLatitude(record.latitude);
+			location.setLongitude(record.longitude);
+			if (record.accuracy != null) {
+				location.setAccuracy(record.accuracy.floatValue());
+			}
+		}
+		return location;
 	}
 
 }

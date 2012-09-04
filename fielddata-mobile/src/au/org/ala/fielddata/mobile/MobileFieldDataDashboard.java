@@ -175,17 +175,14 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 				"Updating Survey List", true, false, null);
 		new InitTask().execute();
 		
-		//getSupportActionBar().setDisplayShowTitleEnabled(false);
-		//getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		
 		String portal = preferences.getFieldDataPortalName();
-		getSupportActionBar().setTitle(portal);
+		getSupportActionBar().setTitle(Utils.bold(portal));
 		
 		GenericDAO<User> userDAO = new GenericDAO<User>(this);
 		List<User> users = userDAO.loadAll(User.class);
 		if (users.size() > 0) {
 			User user = users.get(0);
-			getSupportActionBar().setSubtitle("Welcome " + user.firstName + " " + user.lastName);
+			getSupportActionBar().setSubtitle(Utils.bold("Welcome " + user.firstName + " " + user.lastName));
 		}
 	}
 	

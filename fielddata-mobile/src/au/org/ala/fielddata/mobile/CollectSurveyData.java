@@ -96,7 +96,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 	private SurveyPagerAdapter pagerAdapter;
 	private ValidatingViewPager pager;
-	private LocationBinder locationBinder;
 	private List<ImageBinder> imageBinders;
 	private Species selectedSpecies;
 
@@ -126,7 +125,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 	public void setViewModel(SurveyViewModel model) {
 		this.surveyViewModel = model;
-		getSupportActionBar().setTitle(model.getSurvey().name);
+		getSupportActionBar().setTitle(Utils.bold(model.getSurvey().name));
 		getSupportActionBar().setSubtitle(model.getSurvey().description);
 
 		if (surveyViewModel.getPageCount() > 1) {
@@ -155,12 +154,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		getSupportActionBar().setTitle(title);
 		getSupportActionBar().setSubtitle(selectedSpecies.commonName);
 
-	}
-
-	public void onLocationSelected(Location location) {
-		if (locationBinder != null) {
-			locationBinder.locationChanged(location);
-		}
 	}
 
 	@Override
@@ -218,8 +211,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				binder = new DateBinder(ctx, view, attribute, surveyViewModel);
 				break;
 			case POINT:
-				binder = new LocationBinder(ctx, view, surveyViewModel);
-				ctx.locationBinder = (LocationBinder) binder;
+				binder = new LocationBinder(ctx, view, attribute, surveyViewModel);
 				break;
 			case IMAGE:
 				binder = new ImageBinder(ctx, attribute, view);
@@ -325,6 +317,11 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 	}
 
+	/**
+	 * Launches the default camera application to take a photo and store
+	 * the result for the supplied attribute.
+	 * @param attribute the attribute the photo relates to.
+	 */
 	public void takePhoto(Attribute attribute) {
 		if (StorageManager.canWriteToExternalStorage()) {
 			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -345,6 +342,11 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		}
 	}
 	
+	/**
+	 * Launches the default gallery application to allow the user to select
+	 * an image to be attached to the supplied attribute.
+	 * @param attribute the attribute the image is being selected for.
+	 */
 	public void selectFromGallery(Attribute attribute) {
 		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 		intent.setType("image/*");
@@ -354,11 +356,26 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				CollectSurveyData.SELECT_FROM_GALLERY_REQUEST);
 	}
 	
+	public void selectLocation() {
+		Intent intent = new Intent(this, LocationSelectionActivity.class);
+		Location location = surveyViewModel.getLocation();
+		if (location != null) {
+			intent.putExtra(LocationSelectionActivity.LOCATION_BUNDLE_KEY, location);
+		}
+		startActivityForResult(intent, CollectSurveyData.SELECT_LOCATION_REQUEST );
+	}
+	
+	
+	/**
+	 * Callback made to this activity after the camera, gallery or map 
+	 * activity has finished.
+	 */
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == SELECT_LOCATION_REQUEST) {
 			if (resultCode == RESULT_OK) {
-				onLocationSelected((Location) data.getExtras().get(
-						LocationSelectionActivity.LOCATION_BUNDLE_KEY));
+				Location location = (Location) data.getExtras().get(
+						LocationSelectionActivity.LOCATION_BUNDLE_KEY);
+				surveyViewModel.locationSelected(location);
 			}
 		} else if (requestCode == TAKE_PHOTO_REQUEST) {
 			if (resultCode == RESULT_OK) {

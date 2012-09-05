@@ -10,6 +10,7 @@ import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel.TempValue;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.google.gson.Gson;
 
 
 /**
@@ -28,15 +29,16 @@ public class SurveyModelHolder extends SherlockFragment {
 		
 		int surveyId = getActivity().getIntent().getIntExtra(CollectSurveyData.SURVEY_BUNDLE_KEY, 0);
 		int recordId = getActivity().getIntent().getIntExtra(CollectSurveyData.RECORD_BUNDLE_KEY, 0);
-
+		Log.d("SurveyModelHolder", "Found survey "+surveyId+" in intent");
+		Log.d("SurveyModelHolder", "Found record "+recordId+" in intent");
+		
 		
 		if (savedInstanceState != null) {
-			if (surveyId == 0) {
-				surveyId = savedInstanceState.getInt(CollectSurveyData.SURVEY_BUNDLE_KEY);
-			}
-			if (recordId == 0) {
-				recordId = savedInstanceState.getInt(CollectSurveyData.RECORD_BUNDLE_KEY);
-			}
+			surveyId = savedInstanceState.getInt(CollectSurveyData.SURVEY_BUNDLE_KEY, surveyId);
+			recordId = savedInstanceState.getInt(CollectSurveyData.RECORD_BUNDLE_KEY, recordId);
+			
+			Log.d("SurveyModelHolder", "Found survey "+surveyId+" in bundle");
+			Log.d("SurveyModelHolder", "Found record "+recordId+" in bundle");
 			
 		}
 		
@@ -59,14 +61,14 @@ public class SurveyModelHolder extends SherlockFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		Log.i("SurveyModelHolder", "Saving survey: "+model.getSurvey());
-		Log.i("SurveyModelHolder", "Saving record: "+model.getRecord());
 		
 		GenericDAO<Record> recordDao = new GenericDAO<Record>(getActivity());
 		recordDao.save(model.getRecord());
+		Log.i("SurveyModelHolder", this+"Saving survey: "+model.getSurvey().server_id);
+		Log.i("SurveyModelHolder", this+"Saving record: "+model.getRecord().getId());
 		
 		outState.putInt(CollectSurveyData.SURVEY_BUNDLE_KEY, model.getSurvey().server_id);
-		outState.putInt(CollectSurveyData.SURVEY_BUNDLE_KEY, model.getRecord().getId());
+		outState.putInt(CollectSurveyData.RECORD_BUNDLE_KEY, model.getRecord().getId());
 		TempValue toSave = model.getTempValue();
 		if (toSave != null) {
 			outState.putInt("TempAttribute", toSave.getAttribute().server_id);
@@ -111,10 +113,12 @@ public class SurveyModelHolder extends SherlockFragment {
 			record = new Record();
 			record.survey_id = surveyId;
 			record.when = System.currentTimeMillis();
+			Log.d("SurveyModelHolder", "Creating new record for survey: "+surveyId);
 
 		} else {
 			GenericDAO<Record> recordDAO = new GenericDAO<Record>(getActivity().getApplicationContext());
 			record = recordDAO.load(Record.class, recordId);
+			Log.d("SurveyModelHolder", "Loaded record with id: "+recordId+", record="+new Gson().toJson(record));
 		}
 		return record;
 	}

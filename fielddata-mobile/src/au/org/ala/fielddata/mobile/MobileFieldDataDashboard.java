@@ -171,7 +171,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 
 	private void refreshPage() {
 		
-		pd = ProgressDialog.show(MobileFieldDataDashboard.this, "", 
+		pd = ProgressDialog.show(this, "", 
 				"Updating Survey List", true, false, null);
 		new InitTask().execute();
 		

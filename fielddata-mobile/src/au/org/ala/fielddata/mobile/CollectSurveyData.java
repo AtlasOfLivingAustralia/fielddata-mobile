@@ -526,6 +526,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 		@Override
 		protected void onPostExecute(Boolean result) {
+			
 			ctx.finish();
 		}
 

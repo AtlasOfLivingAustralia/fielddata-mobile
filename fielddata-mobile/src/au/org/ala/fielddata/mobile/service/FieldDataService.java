@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -42,7 +43,7 @@ public class FieldDataService extends WebServiceClient {
 
 	private String surveyUrl = "/webservice/survey/surveysForUser.htm?ident=";
 
-	private String surveyDetails = "/webservice/application/survey.htm?ident=%s&sid=%d";
+	private String surveyDetails = "/webservice/application/survey.htm?ident=%s&sid=%d&surveysOnDevice=%s";
 
 	private String ident;
 
@@ -84,9 +85,11 @@ public class FieldDataService extends WebServiceClient {
 		url = serverUrl + surveyDetails;
 		List<Survey> surveys = new ArrayList<Survey>();
 		List<Species> speciesList;
+		
 		for (UserSurveyResponse userSurvey : result) {
+			String downloadedSurveys = jsonSurveyIds(surveys);
 			DownloadSurveyResponse surveyResponse = restTemplate.getForObject(
-					String.format(url, ident, userSurvey.id),
+					String.format(url, ident, userSurvey.id, downloadedSurveys),
 					DownloadSurveyResponse.class);
 			Survey survey = new Survey();
 
@@ -114,6 +117,14 @@ public class FieldDataService extends WebServiceClient {
 		}
 
 		return surveys;
+	}
+	
+	private String jsonSurveyIds(List<Survey> surveys) {
+		JSONArray ids = new JSONArray();
+		for (Survey survey : surveys) {
+			ids.put(survey.server_id);
+		}
+		return ids.toString();
 	}
 	
 	public boolean ping(int timeoutInMillis) {

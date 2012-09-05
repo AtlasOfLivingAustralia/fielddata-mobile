@@ -38,6 +38,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -57,6 +58,7 @@ import au.org.ala.fielddata.mobile.validation.Binder;
 import au.org.ala.fielddata.mobile.validation.DateBinder;
 import au.org.ala.fielddata.mobile.validation.ImageBinder;
 import au.org.ala.fielddata.mobile.validation.LocationBinder;
+import au.org.ala.fielddata.mobile.validation.SingleCheckboxBinder;
 import au.org.ala.fielddata.mobile.validation.SpeciesBinder;
 import au.org.ala.fielddata.mobile.validation.SpinnerBinder;
 import au.org.ala.fielddata.mobile.validation.TextViewBinder;
@@ -218,6 +220,9 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				break;
 			case SPECIES_P:
 				binder = new SpeciesBinder(ctx, view, surveyViewModel);
+				break;
+			case SINGLE_CHECKBOX:
+				binder = new SingleCheckboxBinder(ctx, (CheckBox) view, attribute, surveyViewModel);
 				break;
 			default:
 				binder = bindByViewClass(view, attribute);

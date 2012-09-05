@@ -75,6 +75,9 @@ public class SurveyBuilder {
 		case IMAGE:
 			view = buildImagePicker(attribute);
 			break;
+		case SINGLE_CHECKBOX:
+			view = buildSingleCheckbox(attribute);
+			break;
 		default:
 		    view = buildEditText(InputType.TYPE_CLASS_TEXT);
 		    break;
@@ -137,5 +140,11 @@ public class SurveyBuilder {
 		
 		return view;
 	}
+	
+	public View buildSingleCheckbox(Attribute attribute) {
+		View view = viewContext.getLayoutInflater().inflate(R.layout.single_check_box, null);
+		return view;
+	}
+	
 	
 }

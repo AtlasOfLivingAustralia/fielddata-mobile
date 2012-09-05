@@ -48,7 +48,12 @@ public class StorageManager {
 		File profileImage = new File(cacheDir, fileName+".jpg");
 		
 		if (!profileImage.exists()) {
-			downloadService.downloadSpeciesProfileImage(fileName, profileImage);
+			try {
+				downloadService.downloadSpeciesProfileImage(fileName, profileImage);
+			}
+			catch (Exception e) {
+				// If we are offline the download will fail.
+			}
 		}
 		return profileImage;
 	}

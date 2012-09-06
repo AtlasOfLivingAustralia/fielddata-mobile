@@ -52,12 +52,14 @@ import au.org.ala.fielddata.mobile.model.SurveyViewModel.TempValue;
 import au.org.ala.fielddata.mobile.service.StorageManager;
 import au.org.ala.fielddata.mobile.service.UploadService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
+import au.org.ala.fielddata.mobile.ui.MultiSpinner;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
 import au.org.ala.fielddata.mobile.ui.ValidatingViewPager;
 import au.org.ala.fielddata.mobile.validation.Binder;
 import au.org.ala.fielddata.mobile.validation.DateBinder;
 import au.org.ala.fielddata.mobile.validation.ImageBinder;
 import au.org.ala.fielddata.mobile.validation.LocationBinder;
+import au.org.ala.fielddata.mobile.validation.MultiSpinnerBinder;
 import au.org.ala.fielddata.mobile.validation.SingleCheckboxBinder;
 import au.org.ala.fielddata.mobile.validation.SpeciesBinder;
 import au.org.ala.fielddata.mobile.validation.SpinnerBinder;
@@ -224,6 +226,9 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			case SINGLE_CHECKBOX:
 				binder = new SingleCheckboxBinder(ctx, (CheckBox) view, attribute, surveyViewModel);
 				break;
+			case MULTI_CHECKBOX:
+				binder = new MultiSpinnerBinder(ctx, (MultiSpinner) view, attribute, surveyViewModel); 
+				break;
 			default:
 				binder = bindByViewClass(view, attribute);
 				break;
@@ -248,8 +253,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 			} else if (view instanceof Spinner) {
 				binder = new SpinnerBinder(ctx, (Spinner) view, attribute, surveyViewModel);
-
-			}
+			} 
 			return binder;
 		}
 

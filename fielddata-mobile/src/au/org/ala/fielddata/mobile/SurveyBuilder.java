@@ -25,6 +25,7 @@ import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
+import au.org.ala.fielddata.mobile.ui.MultiSpinner;
 
 public class SurveyBuilder {
 	
@@ -77,6 +78,9 @@ public class SurveyBuilder {
 			break;
 		case SINGLE_CHECKBOX:
 			view = buildSingleCheckbox(attribute);
+			break;
+		case MULTI_CHECKBOX:
+			view = buildMultiSpinner(attribute);
 			break;
 		default:
 		    view = buildEditText(InputType.TYPE_CLASS_TEXT);
@@ -142,8 +146,18 @@ public class SurveyBuilder {
 	}
 	
 	public View buildSingleCheckbox(Attribute attribute) {
-		View view = viewContext.getLayoutInflater().inflate(R.layout.single_check_box, null);
+		View view = viewContext.getLayoutInflater().inflate(R.layout.input_single_checkbox_view, null);
 		return view;
+	}
+	
+	private MultiSpinner buildMultiSpinner(Attribute attribute) {
+		MultiSpinner multiSpinner = (MultiSpinner)viewContext.getLayoutInflater().inflate(R.layout.input_multi_spinner_view, null);
+		multiSpinner.setPrompt("Select "+attribute.description);
+		
+		//ArrayAdapter<AttributeOption> adapter = new ArrayAdapter<AttributeOption>(viewContext, android.R.layout.simple_spinner_item, attribute.options);
+		//adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		//multiSpinner.setAdapter(adapter);
+		return multiSpinner;
 	}
 	
 	

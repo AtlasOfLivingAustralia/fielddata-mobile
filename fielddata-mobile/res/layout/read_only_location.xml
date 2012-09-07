@@ -24,7 +24,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/currentLocationLabel"
-        android:src="@drawable/select_current_location_icon_wht_bg">
+        android:src="@drawable/select_current_location_icon_wht_bg"
+        android:background="@null">
         
     </ImageButton>
 
@@ -33,6 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/mapLabel"
-        android:src="@drawable/select_map_location_icon_wht_bg" />
+        android:src="@drawable/select_map_location_icon_wht_bg" 
+        android:background="@null"/>
 
 </LinearLayout>

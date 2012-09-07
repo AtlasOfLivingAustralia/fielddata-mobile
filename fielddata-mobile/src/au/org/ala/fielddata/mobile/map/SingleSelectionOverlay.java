@@ -50,6 +50,7 @@ public class SingleSelectionOverlay extends ItemizedOverlay<OverlayItem> {
 			items.clear();
 		}
 		addItem(new OverlayItem(location, "", ""));
+		listener.onLocationChanged(pointToLocation(location));
 	}
 	
 	@Override

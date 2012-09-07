@@ -87,7 +87,6 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		Location location = (Location)getIntent().getParcelableExtra(LOCATION_BUNDLE_KEY);
 		if (location != null) {
 			selectionOverlay.selectLocation(location);
-			onLocationChanged(location);
 			
 			mapView.getController().setZoom(16);
 			mapView.getController().setCenter(selectionOverlay.getItem(0).getPoint());
@@ -172,15 +171,15 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		myLocationOverlay.runOnFirstFix(new Runnable() {
 
 			public void run() {
-				GeoPoint point = myLocationOverlay.getMyLocation();
+				final GeoPoint point = myLocationOverlay.getMyLocation();
 				if (point != null) {
 					mapView.getController().setCenter(point);
 					mapView.getController().setZoom(18);
-					selectionOverlay.selectLocation(point);
+					
+					
 					runOnUiThread(new Runnable() {
 						public void run() {
-							Button button = (Button) findViewById(R.id.mapNext);
-							button.setEnabled(true);
+							selectionOverlay.selectLocation(point);
 						}
 					});
 

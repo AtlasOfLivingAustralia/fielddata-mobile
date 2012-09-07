@@ -40,7 +40,7 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (pd.isShowing()) {
+		if (pd != null && pd.isShowing()) {
 			pd.dismiss();
 		}
 	}

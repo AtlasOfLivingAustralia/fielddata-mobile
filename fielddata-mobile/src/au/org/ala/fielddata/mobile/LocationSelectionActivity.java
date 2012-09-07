@@ -47,6 +47,7 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 	private MapView mapView;
 	private SingleSelectionOverlay selectionOverlay;
 	private Location selectedLocation;
+	private MyLocationOverlay myLocationOverlay;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,17 +55,16 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		setContentView(R.layout.activity_location_selection);
 
 		mapView = (MapView) findViewById(R.id.mapview);
+		initialiseOverlays();
 		initialiseMap();
 		addEventHandlers();
 
 	}
 	
-	/**
-	 * Adds the overlay, and the previously selected point.
-	 * Sets the map zoom and centre.
-	 */
-	private void initialiseMap() {
-		mapView.setBuiltInZoomControls(true);
+	private void initialiseOverlays() {
+		myLocationOverlay = new MyLocationOverlay(this, mapView);
+		
+		mapView.getOverlays().add(myLocationOverlay);
 		Drawable marker = getResources().getDrawable(R.drawable.iconr);
 
 		marker.setBounds(0, 0, marker.getIntrinsicWidth(),
@@ -74,6 +74,15 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		selectionOverlay = new SingleSelectionOverlay(marker, dragImage, this);
 		
 		mapView.getOverlays().add(selectionOverlay);
+	}
+	
+	/**
+	 * Adds the overlay, and the previously selected point.
+	 * Sets the map zoom and centre.
+	 */
+	private void initialiseMap() {
+		mapView.setBuiltInZoomControls(true);
+		
 		
 		Location location = (Location)getIntent().getParcelableExtra(LOCATION_BUNDLE_KEY);
 		if (location != null) {
@@ -101,6 +110,12 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		new MenuInflater(this).inflate(R.menu.common_menu_items, menu);
 
 		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		myLocationOverlay.disableMyLocation();
 	}
 
 	@Override
@@ -152,14 +167,12 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 	public void onProviderDisabled(String provider) {}
 
 	private void updateLocation() {
-		final MyLocationOverlay overlay = new MyLocationOverlay(this, mapView);
-		overlay.enableMyLocation();
-		mapView.getOverlays().add(overlay);
-
-		overlay.runOnFirstFix(new Runnable() {
+		
+		myLocationOverlay.enableMyLocation();
+		myLocationOverlay.runOnFirstFix(new Runnable() {
 
 			public void run() {
-				GeoPoint point = overlay.getMyLocation();
+				GeoPoint point = myLocationOverlay.getMyLocation();
 				if (point != null) {
 					mapView.getController().setCenter(point);
 					mapView.getController().setZoom(18);

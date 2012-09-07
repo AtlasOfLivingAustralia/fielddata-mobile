@@ -39,11 +39,16 @@ import au.org.ala.fielddata.mobile.pref.Preferences;
 
 public class FieldDataService extends WebServiceClient {
 
-	private String syncUrl = "/webservice/application/clientSync.htm";
+	private String syncUrl = "/survey/upload";
 
-	private String surveyUrl = "/webservice/survey/surveysForUser.htm?ident=";
+	private String surveyUrl = "/survey/list?ident=";
 
-	private String surveyDetails = "/webservice/application/survey.htm?ident=%s&sid=%d&surveysOnDevice=%s";
+	private String surveyDetails = "/survey/get/%d?ident=%s&surveysOnDevice=%s";
+	
+	private String pingUrl = "/survey/ping";
+	
+	private String downloadUrl = "/survey/download?uuid=";
+	
 
 	private String ident;
 
@@ -89,7 +94,7 @@ public class FieldDataService extends WebServiceClient {
 		for (UserSurveyResponse userSurvey : result) {
 			String downloadedSurveys = jsonSurveyIds(surveys);
 			DownloadSurveyResponse surveyResponse = restTemplate.getForObject(
-					String.format(url, ident, userSurvey.id, downloadedSurveys),
+					String.format(url, userSurvey.id, ident, downloadedSurveys),
 					DownloadSurveyResponse.class);
 			Survey survey = new Survey();
 
@@ -98,6 +103,7 @@ public class FieldDataService extends WebServiceClient {
 			survey.name = surveyResponse.details.name;
 			survey.attributes = surveyResponse.attributes;
 			survey.recordProperties = surveyResponse.recordProperties;
+			survey.map = surveyResponse.map;
 
 			surveys.add(survey);
 
@@ -128,7 +134,7 @@ public class FieldDataService extends WebServiceClient {
 	}
 	
 	public boolean ping(int timeoutInMillis) {
-		String pingUrl = "/webservice/application/ping.htm";
+		
 		InputStream in = null;
 		HttpURLConnection conn = null;
 		boolean canPing = true;
@@ -154,7 +160,6 @@ public class FieldDataService extends WebServiceClient {
 	}
 
 	public void downloadSpeciesProfileImage(String uuid, File destinationFile) {
-		String downloadUrl = "/files/downloadByUUID.htm?uuid=" + uuid;
 		InputStream in = null;
 		OutputStream out = null;
 		HttpURLConnection conn = null;
@@ -162,7 +167,7 @@ public class FieldDataService extends WebServiceClient {
 		final int BUFFER_SIZE = 8192;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		try {
-			URL url = new URL(serverUrl + downloadUrl);
+			URL url = new URL(serverUrl + downloadUrl+uuid);
 			conn = (HttpURLConnection)url.openConnection();
 			in = conn.getInputStream();
 			out = new FileOutputStream(destinationFile);

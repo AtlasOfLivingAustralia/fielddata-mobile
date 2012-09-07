@@ -5,6 +5,7 @@ import android.util.Log;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Record;
+import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel.TempValue;
@@ -27,6 +28,7 @@ public class SurveyModelHolder extends SherlockFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
+		long start = System.currentTimeMillis();
 		int surveyId = getActivity().getIntent().getIntExtra(CollectSurveyData.SURVEY_BUNDLE_KEY, 0);
 		int recordId = getActivity().getIntent().getIntExtra(CollectSurveyData.RECORD_BUNDLE_KEY, 0);
 		Log.d("SurveyModelHolder", "Found survey "+surveyId+" in intent");
@@ -54,6 +56,9 @@ public class SurveyModelHolder extends SherlockFragment {
 				model.setTempValue(attr, value);
 			}
 		}
+		long end = System.currentTimeMillis();
+		Log.d("Perf", "SurveyModelHolder.onActivityCreated took "+(end-start)+" millis");
+		
 	}
 	
 	
@@ -85,17 +90,24 @@ public class SurveyModelHolder extends SherlockFragment {
 			if (recordId > 0) {
 				record = initRecord(recordId, surveyId);
 				surveyId = record.survey_id;
+				
 			}
 			try {
 				survey = initSurvey(surveyId);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
+			
 			if (recordId <= 0) {
 				record = initRecord(recordId, surveyId);
 			}
+			
 			model = new SurveyViewModel(survey, record,
 					getActivity().getPackageManager());
+			if (record.taxon_id != null && record.taxon_id > 0) {
+				Species species = new GenericDAO<Species>(getActivity()).findByServerId(Species.class, record.taxon_id);
+				model.speciesSelected(species);
+			}
 
 		}
 		((CollectSurveyData)getActivity()).setViewModel(model);

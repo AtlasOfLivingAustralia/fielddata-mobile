@@ -55,6 +55,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 
 /**
  * This class is the main activity for the Mobile Field Data application.
@@ -70,8 +71,14 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		preferences = new Preferences(this);
+		
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		
 		setContentView(R.layout.activity_mobile_data_dashboard);
+		setSupportProgressBarIndeterminateVisibility(true);
+		
+		preferences = new Preferences(this);
+		
 
 		status = (TextView)findViewById(R.id.status);
 		surveySelector = (Spinner)findViewById(R.id.surveySelector);
@@ -154,7 +161,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 					showConnectionError();
 				}
 			}
-			pd.dismiss();
+			setSupportProgressBarIndeterminateVisibility(false);
 		}
 		
 	}
@@ -162,17 +169,22 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 
 	@Override
 	protected void onResume() {
+		
 		super.onResume();
 		// will redirect if not logged in
 		if (!redirectToLogin()) {
 			refreshPage();
 		}
 	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		
+	}
 
 	private void refreshPage() {
 		
-		pd = ProgressDialog.show(this, "", 
-				"Updating Survey List", true, false, null);
 		new InitTask().execute();
 		
 		String portal = preferences.getFieldDataPortalName();

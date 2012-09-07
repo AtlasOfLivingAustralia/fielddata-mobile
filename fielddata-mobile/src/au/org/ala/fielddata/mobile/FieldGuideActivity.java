@@ -46,7 +46,7 @@ public class FieldGuideActivity extends SherlockActivity {
 		new AsyncTask<Void, Void, Void>() {
 
 			String fieldDataUrl = new Preferences(FieldGuideActivity.this).getFieldDataServerUrl() +
-					"/fieldguide/taxon.htm?id="+species.server_id;
+					"/survey/fieldguide/"+species.server_id;
 			
 			StringBuffer contentBuffer = new StringBuffer(
 					"<html><body><link rel=\"stylesheet\" href=\"/bdrs-core/css2.1.2/bdrs/bdrs.css\" type=\"text/css\"/>");

@@ -24,7 +24,7 @@ import au.org.ala.fielddata.mobile.pref.Preferences;
 public class LoginService extends WebServiceClient {
 
 	
-	private String loginUrl = "/webservice/user/validate.htm";
+	private String loginUrl = "/survey/login";
 	
 	
 	public LoginService(Context ctx) {

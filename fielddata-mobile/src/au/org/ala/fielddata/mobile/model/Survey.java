@@ -23,6 +23,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Survey extends Persistent {
 
+	
 	public static class SurveyDetails {
 		public int id;
 		public Long startDate;
@@ -33,6 +34,7 @@ public class Survey extends Persistent {
 	
 	public String name;
 	public String description;
+	public MapDefaults map;
 	
 	@SerializedName("attributesAndOptions")
 	public List<Attribute> attributes;

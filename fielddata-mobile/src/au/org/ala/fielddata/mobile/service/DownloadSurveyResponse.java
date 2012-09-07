@@ -17,6 +17,7 @@ package au.org.ala.fielddata.mobile.service;
 import java.util.List;
 
 import au.org.ala.fielddata.mobile.model.Attribute;
+import au.org.ala.fielddata.mobile.model.MapDefaults;
 import au.org.ala.fielddata.mobile.model.RecordProperty;
 import au.org.ala.fielddata.mobile.model.Species;
 
@@ -31,6 +32,8 @@ public class DownloadSurveyResponse {
 		public String name;
 		public String description;
 	}
+	
+	public MapDefaults map;
 	
 	public List<Species> indicatorSpecies;
 	

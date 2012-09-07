@@ -24,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import au.org.ala.fielddata.mobile.map.SingleSelectionOverlay;
+import au.org.ala.fielddata.mobile.model.MapDefaults;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
@@ -34,10 +35,15 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 
+/**
+ * Displays a map that allows the user to select the location of their 
+ * observation.
+ */
 public class LocationSelectionActivity extends SherlockMapActivity implements
 		LocationListener {
 
 	public static final String LOCATION_BUNDLE_KEY = "Location";
+	public static final String MAP_DEFAULTS_BUNDLE_KEY = "MapDefaults";
 	private MapView mapView;
 	private SingleSelectionOverlay selectionOverlay;
 	private Location selectedLocation;
@@ -48,18 +54,17 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		setContentView(R.layout.activity_location_selection);
 
 		mapView = (MapView) findViewById(R.id.mapview);
-		mapView.setBuiltInZoomControls(true);
-		mapView.getController().setZoom(7);
-		mapView.getController().setCenter(new GeoPoint(-27561777, 151493591));
+		initialiseMap();
 		addEventHandlers();
 
-		
-		initiaseOverlays();
-		
-		
 	}
-
-	private void initiaseOverlays() {
+	
+	/**
+	 * Adds the overlay, and the previously selected point.
+	 * Sets the map zoom and centre.
+	 */
+	private void initialiseMap() {
+		mapView.setBuiltInZoomControls(true);
 		Drawable marker = getResources().getDrawable(R.drawable.iconr);
 
 		marker.setBounds(0, 0, marker.getIntrinsicWidth(),
@@ -68,17 +73,26 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		ImageView dragImage = (ImageView) findViewById(R.id.drag);
 		selectionOverlay = new SingleSelectionOverlay(marker, dragImage, this);
 		
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			Location location = (Location)extras.get(LOCATION_BUNDLE_KEY);
-			if (location != null) {
-				selectionOverlay.selectLocation(location);
-				onLocationChanged(location);
+		mapView.getOverlays().add(selectionOverlay);
+		
+		Location location = (Location)getIntent().getParcelableExtra(LOCATION_BUNDLE_KEY);
+		if (location != null) {
+			selectionOverlay.selectLocation(location);
+			onLocationChanged(location);
+			
+			mapView.getController().setZoom(16);
+			mapView.getController().setCenter(selectionOverlay.getItem(0).getPoint());
+		}
+		else {
+			MapDefaults mapDefaults = (MapDefaults)getIntent().getParcelableExtra(MAP_DEFAULTS_BUNDLE_KEY);
+			if (mapDefaults != null) {
+				mapView.getController().setZoom(mapDefaults.zoom);
+				
+				mapView.getController().setCenter(
+						new GeoPoint((int)(mapDefaults.center.y*1000000), (int)(mapDefaults.center.x*1000000)));
 			}
 		}
-		
-		
-		mapView.getOverlays().add(selectionOverlay);
+	
 	}
 
 	@Override

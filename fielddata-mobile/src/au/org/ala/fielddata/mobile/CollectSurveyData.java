@@ -45,6 +45,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Attribute;
+import au.org.ala.fielddata.mobile.model.MapDefaults;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
@@ -368,8 +369,11 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	public void selectLocation() {
 		Intent intent = new Intent(this, LocationSelectionActivity.class);
 		Location location = surveyViewModel.getLocation();
+		MapDefaults defaults = surveyViewModel.getSurvey().map;
+		intent.putExtra(LocationSelectionActivity.MAP_DEFAULTS_BUNDLE_KEY, defaults);
 		if (location != null) {
 			intent.putExtra(LocationSelectionActivity.LOCATION_BUNDLE_KEY, location);
+			
 		}
 		startActivityForResult(intent, CollectSurveyData.SELECT_LOCATION_REQUEST );
 	}

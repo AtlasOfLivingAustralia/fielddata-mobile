@@ -36,6 +36,14 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 		Button button = (Button) findViewById(R.id.loginBtn);
 		button.setOnClickListener(this);
 	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		if (pd.isShowing()) {
+			pd.dismiss();
+		}
+	}
 
 	public void onClick(View v) {
 		if (v.getId() == R.id.loginBtn) {
@@ -73,7 +81,9 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 
 				protected void onPostExecute(Void result) {
 					
-					pd.dismiss();
+					if (pd.isShowing()) {
+						pd.dismiss();
+					}
 					
 					if (e != null) {
 

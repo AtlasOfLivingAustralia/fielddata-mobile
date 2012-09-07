@@ -16,6 +16,7 @@ package au.org.ala.fielddata.mobile;
 
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -126,9 +127,11 @@ public class SurveyBuilder {
 	}
 	
 	public View buildSpeciesPicker(Attribute attribute) {
-		
+		long start = System.currentTimeMillis();
 		final View row = viewContext.getLayoutInflater().inflate(R.layout.species_row, null);
+		long end = System.currentTimeMillis();
 		
+		Log.d("Perf", "SurveyBuilder.buildSpeciesPicker took "+(end-start)+" millis");
 		return row;
 	}
 	

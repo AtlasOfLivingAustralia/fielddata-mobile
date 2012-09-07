@@ -469,10 +469,9 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		private void buildSurveyForm(View page) {
 			SurveyBuilder builder = new SurveyBuilder(getActivity(), viewModel);
 
-			TableLayout tableLayout = (TableLayout) page
-					.findViewById(R.id.surveyGrid);
-			Display display = getActivity().getWindowManager()
-					.getDefaultDisplay();
+			TableLayout tableLayout = (TableLayout) page.findViewById(R.id.surveyGrid);
+			Display display = getActivity().getWindowManager().getDefaultDisplay();
+			
 			@SuppressWarnings("deprecation")
 			int width = display.getWidth();
 			Log.d("Size", "Width: " + width);
@@ -485,25 +484,27 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			}
 
 			List<Attribute> pageAttributes = viewModel.getPage(pageNum);
-			;
+			
 			int rowCount = pageAttributes.size();
 			for (int i = 0; i < rowCount; i++) {
 				TableRow row = new TableRow(getActivity());
 				Attribute attribute = pageAttributes.get(i);
 
-				row.addView(builder.buildLabel(attribute));
+				builder.buildLabel(attribute, row);
 
 				if (!twoColumns) {
+					TableRow.LayoutParams params = new TableRow.LayoutParams();
+					params.setMargins(5, 5, 0, 2);
 					tableLayout.addView(row);
 					row = new TableRow(getActivity());
 				}
-				View inputView = builder.buildInput(attribute);
+				View inputView = builder.buildInput(attribute, row);
 				binder.configureBindings(inputView, attribute);
-				row.addView(inputView);
+				//row.addView(inputView);
 
 				TableRow.LayoutParams params = new TableRow.LayoutParams();
-				params.setMargins(10, 10, 10, 10);
-				tableLayout.addView(row, params);
+				params.setMargins(5, 5, 10, 10);
+				tableLayout.addView(row);
 			}
 
 		}

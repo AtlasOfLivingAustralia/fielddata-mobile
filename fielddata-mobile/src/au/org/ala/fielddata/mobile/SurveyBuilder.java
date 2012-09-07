@@ -19,8 +19,10 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
@@ -36,132 +38,149 @@ public class SurveyBuilder {
 	public SurveyBuilder(FragmentActivity viewContext, SurveyViewModel model) {
 		this.viewContext = viewContext;
 		this.model = model;
-		
 	}
 	
-	public View buildInput(Attribute attribute) {
+	public View buildInput(Attribute attribute, TableRow parent) {
 		Record record = model.getRecord();
 		View view;
 		switch (attribute.getType()) {
 		case STRING:
-			view = buildEditText(InputType.TYPE_CLASS_TEXT);
+			view = buildEditText(InputType.TYPE_CLASS_TEXT, parent);
 			break;
 		case INTEGER:
 		case NUMBER:
-			view = buildEditText(InputType.TYPE_CLASS_NUMBER);
+			view = buildEditText(InputType.TYPE_CLASS_NUMBER, parent);
 			break;
 		case DECIMAL:
 		case ACCURACY:
-			
-			view = buildEditText(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+			view = buildEditText(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL, parent);
 			break;
 		case MULTI_SELECT:
 		case STRING_WITH_VALID_VALUES:
-			view = buildSpinner(attribute);
+			view = buildSpinner(attribute, parent);
 			break;
 		case NOTES:
-			view = buildEditText(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+			view = buildEditText(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE, parent);
 			break;
 		case WHEN:
-			view = buildDatePicker(attribute, record);
+			view = buildDatePicker(attribute, record, parent);
 			break;
 		case DWC_TIME:
-			view = buildTimePicker(attribute, record);
+			view = buildTimePicker(attribute, record, parent);
 			break;
 		case SPECIES_P:
-			view = buildSpeciesPicker(attribute);
+			view = buildSpeciesPicker(attribute, parent);
 			break;
 		case POINT:
-			view = buildLocationPicker(attribute);
+			view = buildLocationPicker(attribute, parent);
 			break;
 		case IMAGE:
-			view = buildImagePicker(attribute);
+			view = buildImagePicker(attribute, parent);
 			break;
 		case SINGLE_CHECKBOX:
-			view = buildSingleCheckbox(attribute);
+			view = buildSingleCheckbox(attribute, parent);
 			break;
 		case MULTI_CHECKBOX:
-			view = buildMultiSpinner(attribute);
+			view = buildMultiSpinner(attribute, parent);
 			break;
 		default:
-		    view = buildEditText(InputType.TYPE_CLASS_TEXT);
+		    view = buildEditText(InputType.TYPE_CLASS_TEXT, parent);
 		    break;
 		}
 		return view;
 	}
 	
+	public View buildLabel(Attribute attribute, TableRow parent) {
+		//TextView view = new TextView(viewContext);
+		TableRow view = (TableRow)viewContext.getLayoutInflater().inflate(R.layout.label_text_view, parent);
+		TextView textView = (TextView)view.getChildAt(0);
+		
+		textView.setText(Utils.bold(attribute.description));
+		return view;
+	}
 	
+	private View buildEditText(int inputType, TableRow parent) {
+		
+		TableRow row = (TableRow)viewContext.getLayoutInflater().inflate(R.layout.input_text_view, parent);
+		EditText editTextview = (EditText)getFirstNonLabelView(row);
+		editTextview.setInputType(inputType);
+		return editTextview;
+	}
 	
-	private Spinner buildSpinner(Attribute attribute) {
-		Spinner spinner = (Spinner)viewContext.getLayoutInflater().inflate(R.layout.input_spinner_view, null);
+	public View buildDatePicker(Attribute attribute, Record record, TableRow parent) {
+		
+		TableRow row = (TableRow)viewContext.getLayoutInflater().inflate(R.layout.date_field, parent);
+		return getFirstNonLabelView(row);
+	}
+	
+	public View buildTimePicker(Attribute attribute, Record record, TableRow parent) {
+		
+		TableRow row = (TableRow)viewContext.getLayoutInflater().inflate(R.layout.date_field, parent);
+		return getFirstNonLabelView(row);
+	}
+	
+	public View buildSpeciesPicker(Attribute attribute, TableRow parent) {
+		long start = System.currentTimeMillis();
+		
+		TableRow row = (TableRow)viewContext.getLayoutInflater().inflate(R.layout.species_row, parent);
+		
+		long end = System.currentTimeMillis();
+		Log.d("Perf", "SurveyBuilder.buildSpeciesPicker took "+(end-start)+" millis");
+
+		return getFirstNonLabelView(row);
+	}
+	
+	public View buildLocationPicker(Attribute attribute, TableRow parent) {
+		TableRow row = (TableRow)viewContext.getLayoutInflater().inflate(R.layout.read_only_location, parent);
+		return getFirstNonLabelView(row);
+	}
+	
+	public View buildImagePicker(Attribute attribute, TableRow parent) {
+		
+		TableRow row = (TableRow)viewContext.getLayoutInflater().inflate(R.layout.image_selection, parent);
+		return getFirstNonLabelView(row);
+	}
+	
+	public View buildSingleCheckbox(Attribute attribute, TableRow parent) {
+		TableRow row = (TableRow)viewContext.getLayoutInflater().inflate(R.layout.input_single_checkbox_view, parent);
+		CheckBox checkbox = (CheckBox)getFirstNonLabelView(row);
+		return checkbox;
+	}
+	
+	private Spinner buildSpinner(Attribute attribute, TableRow parent) {
+		
+		TableRow row = (TableRow)viewContext.getLayoutInflater().inflate(R.layout.input_spinner_view, parent);
+		
+		Spinner spinner = (Spinner)getFirstNonLabelView(row);
 		spinner.setPrompt("Select "+attribute.description);
 		ArrayAdapter<AttributeOption> adapter = new ArrayAdapter<AttributeOption>(viewContext, android.R.layout.simple_spinner_item, attribute.options);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
+		
 		return spinner;
 	}
-
-	private View buildEditText(int inputType) {
-		EditText view = (EditText)viewContext.getLayoutInflater().inflate(R.layout.input_text_view, null);
-		view.setInputType(inputType);
-		return view;
-	}
 	
-	public View buildLabel(Attribute attribute) {
-		TextView view = new TextView(viewContext);
+	private MultiSpinner buildMultiSpinner(Attribute attribute, TableRow parent) {
 		
-		view.setText(Utils.bold(attribute.description));
-		return view;
-	}
-	
-	public View buildDatePicker(Attribute attribute, Record record) {
+		TableRow row = (TableRow)viewContext.getLayoutInflater().inflate(R.layout.input_multi_spinner_view, parent);
 		
-		View row = viewContext.getLayoutInflater().inflate(R.layout.date_field, null);
-		return row;
-	}
-	
-	public View buildTimePicker(Attribute attribute, Record record) {
-		
-		View row = viewContext.getLayoutInflater().inflate(R.layout.date_field, null);
-		return row;
-	}
-	
-	public View buildSpeciesPicker(Attribute attribute) {
-		long start = System.currentTimeMillis();
-		final View row = viewContext.getLayoutInflater().inflate(R.layout.species_row, null);
-		long end = System.currentTimeMillis();
-		
-		Log.d("Perf", "SurveyBuilder.buildSpeciesPicker took "+(end-start)+" millis");
-		return row;
-	}
-	
-	public View buildLocationPicker(Attribute attribute) {
-		View view = viewContext.getLayoutInflater().inflate(R.layout.read_only_location, null);
-		
-		return view;
-	}
-	
-	public View buildImagePicker(Attribute attribute) {
-		View view = viewContext.getLayoutInflater().inflate(R.layout.image_selection, null);
-		
-		
-		return view;
-	}
-	
-	public View buildSingleCheckbox(Attribute attribute) {
-		View view = viewContext.getLayoutInflater().inflate(R.layout.input_single_checkbox_view, null);
-		return view;
-	}
-	
-	private MultiSpinner buildMultiSpinner(Attribute attribute) {
-		MultiSpinner multiSpinner = (MultiSpinner)viewContext.getLayoutInflater().inflate(R.layout.input_multi_spinner_view, null);
+		// get the spinner child
+		MultiSpinner multiSpinner = (MultiSpinner)getFirstNonLabelView(row);
 		multiSpinner.setPrompt("Select "+attribute.description);
 		
-		//ArrayAdapter<AttributeOption> adapter = new ArrayAdapter<AttributeOption>(viewContext, android.R.layout.simple_spinner_item, attribute.options);
-		//adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		//multiSpinner.setAdapter(adapter);
 		return multiSpinner;
 	}
 	
+	private View getFirstNonLabelView(TableRow row) {
+		int i;
+		for (i=0; i<row.getChildCount(); i++) {
+			if (!(row.getChildAt(i) instanceof TextView)) {
+				break;
+			} else if (row.getChildAt(i) instanceof EditText) {
+				break;
+			}
+		}
+		return row.getChildAt(i);
+	}
 	
 }

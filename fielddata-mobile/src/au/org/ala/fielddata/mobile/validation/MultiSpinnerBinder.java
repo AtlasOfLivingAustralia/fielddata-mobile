@@ -65,7 +65,9 @@ public class MultiSpinnerBinder implements Binder, MultiSpinnerListener {
 				selectedItems.append(items.get(i) + ", ");
 			}
 		}
-		bind(selectedItems.toString().substring(0,selectedItems.length()-2));
+		
+		String result = selectedItems.length() > 0 ? selectedItems.toString().substring(0,selectedItems.length()-2) : "";
+		bind(result);
 	}
 	
 		
@@ -118,6 +120,7 @@ public class MultiSpinnerBinder implements Binder, MultiSpinnerListener {
 				selectedItems.append(items.get(i) + ", ");
 			}
 		}
+		
 		String result = selectedItems.length() > 0 ? selectedItems.toString().substring(0,selectedItems.length()-2) : "";
 		return result;
 	}

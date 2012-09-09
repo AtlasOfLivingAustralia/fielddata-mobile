@@ -1,7 +1,5 @@
 package au.org.ala.fielddata.mobile.service;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -99,8 +97,9 @@ public class StringValueAdapter extends TypeAdapter<Record.StringValue> {
 			Writer writer = getWriter();
 			writer.write('\"');
 			// Buffer size needs to be divisible by 3 to avoid padding 
-			// during base64 encoding
-			byte[] buffer = new byte[9126];
+			// during base64 encoding & divisible by 76 to get the line
+			// endings to line up correctly.
+			byte[] buffer = new byte[7296];
 			
 			int nRead;
 			while ((nRead = in.read(buffer, 0, buffer.length)) != -1) {
@@ -111,6 +110,8 @@ public class StringValueAdapter extends TypeAdapter<Record.StringValue> {
 					buffer = tmp;
 				}
 				writer.write(Base64.encodeToChar(buffer, true));
+				writer.write('\r');
+				writer.write('\n');
 				writer.flush();
 			}
 			writer.write('\"');

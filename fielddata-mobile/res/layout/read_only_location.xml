@@ -3,7 +3,6 @@
     android:layout_width="fill_parent"
     android:layout_height="48dp"
     android:orientation="horizontal"
-    android:layout_weight="9"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
     android:layout_marginTop="0dp"
@@ -24,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/currentLocationLabel"
-        android:src="@drawable/select_current_location_icon_wht_bg"
+        android:src="@drawable/select_current_location_icon"
         android:background="@null">
         
     </ImageButton>
@@ -34,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/mapLabel"
-        android:src="@drawable/select_map_location_icon_wht_bg" 
+        android:src="@drawable/select_map_location_icon" 
         android:background="@null"/>
 
 </LinearLayout>

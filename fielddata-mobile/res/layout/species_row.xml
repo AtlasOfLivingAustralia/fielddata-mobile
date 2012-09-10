@@ -27,7 +27,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:contentDescription="@string/species_profile_image"
-        android:src="@drawable/species_search_icon_wht_bg" />
+        android:src="@drawable/search_species_icon" />
 
     <LinearLayout
         android:layout_width="fill_parent"

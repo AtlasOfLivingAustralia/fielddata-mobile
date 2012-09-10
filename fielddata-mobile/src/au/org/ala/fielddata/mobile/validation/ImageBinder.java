@@ -18,6 +18,7 @@ import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class ImageBinder implements Binder {
 
+	private View layout;
 	private ImageView thumb;
 	private CollectSurveyData ctx;
 	private Attribute attribute;
@@ -29,6 +30,7 @@ public class ImageBinder implements Binder {
 		this.ctx = ctx;
 		this.attribute = attribute;
 		
+		layout = imageView;
 		thumb = (ImageView) imageView.findViewById(R.id.photoThumbnail);
 		model = ctx.getViewModel();
 		thumbUri = model.getRecord().getUri(attribute);
@@ -84,6 +86,8 @@ public class ImageBinder implements Binder {
 	private void updateThumbnail() {
 		if (thumbUri != null) {
 
+			layout.findViewById(R.id.noPhotoText).setVisibility(View.GONE);
+			layout.findViewById(R.id.photoThumbnail).setVisibility(View.VISIBLE);
 			try {
 
 				// Get the dimensions of the View
@@ -110,6 +114,11 @@ public class ImageBinder implements Binder {
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
+		}
+		else {
+			layout.findViewById(R.id.noPhotoText).setVisibility(View.VISIBLE);
+			layout.findViewById(R.id.photoThumbnail).setVisibility(View.GONE);
+			
 		}
 	}
 

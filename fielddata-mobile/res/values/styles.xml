@@ -16,6 +16,10 @@
 
     <style name="AppTheme" parent="@style/Theme.Sherlock.Light">
         <item name="vpiTitlePageIndicatorStyle">@style/CustomTitlePageIndicator</item>
+        <item name="android:actionBarStyle">@style/FieldData.ActionBar</item>
+         <item name="actionBarStyle">@style/FieldData.ActionBar</item>
+         <item name="android:windowBackground">@drawable/roundedrectangle</item>
+         
     </style>
        
       <style name="CustomTitlePageIndicator">
@@ -27,6 +31,39 @@
         <item name="android:textColor">#AA000000</item>
         <item name="selectedColor">#FF000000</item>
         <item name="selectedBold">true</item>
+    </style>
+    
+       <style name="FieldData.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid">
+        <item name="android:titleTextStyle">@style/FieldData.ActionBar.Title</item>     
+        <item name="titleTextStyle">@style/FieldData.ActionBar.Title</item>
+        
+        <item name="subtitleTextStyle">@style/FieldData.ActionBar.Subtitle</item>
+        <item name="android:subtitleTextStyle">@style/FieldData.ActionBar.Subtitle</item>
+        
+        <item name="background">@drawable/ad_tab_unselected_holo</item>
+        <item name="android:background">@drawable/roundedrectangle3</item>
+        <item name="actionBarItemBackground">@drawable/ad_tab_unselected_holo</item>
+        <item name="backgroundStacked">@drawable/ad_tab_unselected_holo</item>
+        <item name="backgroundSplit">@drawable/ad_tab_unselected_holo</item>
+         <item name="android:backgroundStacked">@drawable/ad_tab_unselected_holo</item>
+        <item name="android:backgroundSplit">@drawable/ad_tab_unselected_holo</item>
+        <item name="homeAsUpIndicator">@drawable/abs__ic_ab_back_holo_light</item>
+        <item name="progressBarStyle">@style/Widget.Sherlock.Light.ProgressBar.Horizontal</item>
+        <item name="indeterminateProgressStyle">@style/Widget.Sherlock.Light.ProgressBar</item>
+    </style>
+    
+    <style name="FieldData.ActionBar.Title" parent="@style/TextAppearance.Sherlock.Widget.ActionBar.Title">
+       
+        <item name="android:colorBackground">#3d5978</item>
+        <item name="android:textColor">#FFFFFF</item>
+        
+    </style>
+    
+    <style name="FieldData.ActionBar.Subtitle" parent="@style/TextAppearance.Sherlock.Widget.ActionBar.Subtitle">
+         <item name="background">@drawable/ad_tab_unselected_holo</item>
+        <item name="android:background">#3d5978</item>
+        <item name="android:textColor">#EEEEEE</item>
+        
     </style>
     
 </resources>

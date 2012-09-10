@@ -41,7 +41,8 @@
         android:layout_alignLeft="@id/viewSavedRecordsButton"
         android:layout_marginBottom="15dip"
         android:text="@string/no_saved_records_message"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall" 
+        android:background="@android:color/transparent"/>
 
     <View
         android:id="@+id/hr1"

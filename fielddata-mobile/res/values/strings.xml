@@ -32,6 +32,8 @@
     <string name="change_date_button_text">Change</string>
     <string name="touch_to_select">Touch to select</string>
     <string name="no_location_supplied">No location supplied</string>
+    <string name="no_photo">No photo selected</string>
+    
 
     <!-- Dashboard -->
     <string name="new_record">New recording</string>

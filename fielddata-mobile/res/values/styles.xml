@@ -23,7 +23,7 @@
     </style>
        
       <style name="CustomTitlePageIndicator">
-        <item name="android:background">#CCF0FF</item>
+        <item name="android:background">@drawable/roundedrectangle4</item>
         <item name="footerColor">#00A7D1</item>
         <item name="footerLineHeight">1dp</item>
         <item name="footerIndicatorHeight">3dp</item>
@@ -33,15 +33,16 @@
         <item name="selectedBold">true</item>
     </style>
     
-       <style name="FieldData.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid">
+    <style name="FieldData.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid">
         <item name="android:titleTextStyle">@style/FieldData.ActionBar.Title</item>     
         <item name="titleTextStyle">@style/FieldData.ActionBar.Title</item>
         
         <item name="subtitleTextStyle">@style/FieldData.ActionBar.Subtitle</item>
         <item name="android:subtitleTextStyle">@style/FieldData.ActionBar.Subtitle</item>
         
-        <item name="background">@drawable/ad_tab_unselected_holo</item>
+        <item name="background">@drawable/roundedrectangle3</item>
         <item name="android:background">@drawable/roundedrectangle3</item>
+        
         <item name="actionBarItemBackground">@drawable/ad_tab_unselected_holo</item>
         <item name="backgroundStacked">@drawable/ad_tab_unselected_holo</item>
         <item name="backgroundSplit">@drawable/ad_tab_unselected_holo</item>

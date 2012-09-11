@@ -12,6 +12,9 @@ import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Species;
 
+/**
+ * A list adapter for displaying lists of Species.
+ */
 public class SpeciesListAdapter extends ArrayAdapter<Species> {
 	
 	public SpeciesListAdapter(Context ctx) {

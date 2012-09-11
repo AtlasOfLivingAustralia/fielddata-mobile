@@ -12,22 +12,49 @@
   implied. See the License for the specific language governing
   rights and limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:background="@drawable/roundedrectangle3">
 
     <com.viewpagerindicator.TitlePageIndicator
         android:id="@+id/titles"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        
         android:visibility="gone" />
 
     <au.org.ala.fielddata.mobile.ui.ValidatingViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/surveyPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+         android:layout_marginBottom="5dp"
+         android:layout_below="@id/titles"
+         android:layout_alignParentLeft="true" />
 
+    <SlidingDrawer 
+        android:id="@+id/actions"
+        android:layout_width="fill_parent"
+        android:layout_height="96dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:handle="@+id/handle"
+        android:content="@+id/content"
+        >
+        
+        <TextView
+            android:id="@id/handle"
+            android:layout_width="88dp"
+			android:layout_height="36dp"
+			android:background="@drawable/roundedrectangle7"/>
+        <include
+            android:id="@id/content"
+            android:layout_height="wrap_content" 
+            layout="@layout/action_bar"/>
+    </SlidingDrawer>
  
-</LinearLayout>
+</RelativeLayout>

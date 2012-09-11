@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import au.org.ala.fielddata.mobile.map.SingleSelectionOverlay;
 import au.org.ala.fielddata.mobile.model.MapDefaults;
@@ -137,8 +138,8 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		});
 		button.setEnabled(false);
 
-		button = (Button) findViewById(R.id.mapCurrentLocation);
-		button.setOnClickListener(new OnClickListener() {
+		ImageButton gps = (ImageButton) findViewById(R.id.mapCurrentLocation);
+		gps.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
 				updateLocation();

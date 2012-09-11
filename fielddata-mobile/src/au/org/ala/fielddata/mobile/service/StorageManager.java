@@ -6,9 +6,12 @@ import java.util.Date;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Species;
 
@@ -115,6 +118,38 @@ public class StorageManager {
 	    }
 
 	    return mediaFile;
+	}
+	
+	public Bitmap bitmapFromFile(Uri path, int targetW, int targetH) {
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(path.getEncodedPath(), bmOptions);
+		int photoW = bmOptions.outWidth;
+		int photoH = bmOptions.outHeight;
+
+		// Determine how much to scale down the image
+		int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+
+		// Decode the image file into a Bitmap sized to fill the View
+		bmOptions.inJustDecodeBounds = false;
+		bmOptions.inSampleSize = scaleFactor;
+		bmOptions.inPurgeable = true;
+
+		Bitmap bitmap = BitmapFactory.decodeFile(path.getEncodedPath(), bmOptions);
+		return bitmap;
+	}
+	
+	public Bitmap bitmapFromUri(Uri uri, int targetW, int targetH) {
+		Log.d("StorageManager", "Creating bitmap from :"+uri.toString());
+		Bitmap bitmap = null;
+		if ("file".equals(uri.getScheme())) {
+			bitmap = bitmapFromFile(uri, targetW, targetH);
+		} else if ("content".equals(uri.getScheme())) {
+			bitmap = MediaStore.Images.Thumbnails.getThumbnail(ctx.getContentResolver(),
+					Long.parseLong(uri.getLastPathSegment()),
+					MediaStore.Images.Thumbnails.MICRO_KIND, null);
+		}
+		return bitmap;
 	}
 	
 }

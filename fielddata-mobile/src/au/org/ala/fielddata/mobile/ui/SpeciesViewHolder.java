@@ -10,6 +10,12 @@ import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.service.StorageManager;
 
+/**
+ * Caches references to the UI components that display the details 
+ * of a single Species.
+ * Used to prevent continual calls to findViewById during View recycling
+ * while the list is scrolling. 
+ */
 public class SpeciesViewHolder {
 	StorageManager cacheManager;
 	ImageView icon = null;
@@ -20,6 +26,7 @@ public class SpeciesViewHolder {
 	public SpeciesViewHolder(View row) {
 		this(row, false);
 	}
+	
 	public SpeciesViewHolder(View row, boolean focusable) {
 		this.icon = (ImageView)row.findViewById(R.id.imageView1);
 		this.scientificName = (TextView)row.findViewById(R.id.scientificName);
@@ -30,6 +37,11 @@ public class SpeciesViewHolder {
 		cacheManager = new StorageManager(row.getContext());
 	}
 	
+	/**
+	 * Populates the contents of the contained views using the supplied
+	 * Species object.
+	 * @param species contains the species data to display.
+	 */
 	public void populate(Species species) {
 		// Should *not* be doing this on the UI thread.
 		File profileImage = cacheManager.getProfileImage(species);

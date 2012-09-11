@@ -490,15 +490,16 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				TableRow row = new TableRow(getActivity());
 				Attribute attribute = pageAttributes.get(i);
 
-				builder.buildLabel(attribute, row);
-
-				if (!twoColumns) {
-					TableRow.LayoutParams params = new TableRow.LayoutParams();
-					params.setMargins(5, 5, 0, 2);
-					tableLayout.addView(row);
-					row = new TableRow(getActivity());
-				}
-				View inputView = builder.buildInput(attribute, row);
+				//builder.buildLabel(attribute, row);
+				
+//				if (!twoColumns) {
+//					TableRow.LayoutParams params = new TableRow.LayoutParams();
+//					params.setMargins(5, 5, 0, 2);
+//					tableLayout.addView(row);
+//					row = new TableRow(getActivity());
+//				}
+				View inputView = builder.buildFields(attribute, row);
+				//View inputView = builder.buildInput(attribute, row);
 				binder.configureBindings(inputView, attribute);
 				//row.addView(inputView);
 

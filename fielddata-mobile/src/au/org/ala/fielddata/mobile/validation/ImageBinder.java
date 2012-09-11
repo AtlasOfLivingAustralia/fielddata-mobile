@@ -2,9 +2,7 @@ package au.org.ala.fielddata.mobile.validation;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -14,6 +12,7 @@ import au.org.ala.fielddata.mobile.CollectSurveyData;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
+import au.org.ala.fielddata.mobile.service.StorageManager;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class ImageBinder implements Binder {
@@ -100,14 +99,7 @@ public class ImageBinder implements Binder {
 					thumbnailRendered = false;
 					return;
 				}
-				Bitmap bitmap = null;
-				if ("file".equals(thumbUri.getScheme())) {
-					bitmap = bitmapFromFile(targetW, targetH);
-				} else if ("content".equals(thumbUri.getScheme())) {
-					bitmap = MediaStore.Images.Thumbnails.getThumbnail(ctx.getContentResolver(),
-							Long.parseLong(thumbUri.getLastPathSegment()),
-							MediaStore.Images.Thumbnails.MICRO_KIND, null);
-				}
+				Bitmap bitmap = new StorageManager(ctx).bitmapFromUri(thumbUri, targetW, targetH);
 				thumb.setImageBitmap(bitmap);
 				thumbnailRendered = true;
 
@@ -122,24 +114,7 @@ public class ImageBinder implements Binder {
 		}
 	}
 
-	private Bitmap bitmapFromFile(int targetW, int targetH) {
-		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-		bmOptions.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(thumbUri.getEncodedPath(), bmOptions);
-		int photoW = bmOptions.outWidth;
-		int photoH = bmOptions.outHeight;
-
-		// Determine how much to scale down the image
-		int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-
-		// Decode the image file into a Bitmap sized to fill the View
-		bmOptions.inJustDecodeBounds = false;
-		bmOptions.inSampleSize = scaleFactor;
-		bmOptions.inPurgeable = true;
-
-		Bitmap bitmap = BitmapFactory.decodeFile(thumbUri.getEncodedPath(), bmOptions);
-		return bitmap;
-	}
+	
 
 	public void bind() {
 		ctx.getViewModel().getRecord().setUri(attribute, thumbUri);

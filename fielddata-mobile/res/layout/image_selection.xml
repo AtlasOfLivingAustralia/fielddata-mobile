@@ -10,7 +10,7 @@
 
     <ImageView
         android:id="@+id/photoThumbnail"
-        android:layout_width="66dp"
+        android:layout_width="48dp"
         android:layout_height="48dp"
         android:src="@android:drawable/gallery_thumb"
         android:layout_weight="1"
@@ -19,7 +19,7 @@
     
     <TextView 
         android:id="@+id/noPhotoText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_gravity="left|center_vertical"
@@ -29,16 +29,17 @@
 
     <ImageButton
         android:id="@+id/takePhoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_gravity="right|center_vertical"
         android:src="@drawable/take_photo_icon" 
         android:background="@null"/>
 
     <ImageButton
         android:id="@+id/selectFromGallery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="5dp"
         android:layout_gravity="center_vertical|right"
         android:src="@drawable/search_saved_photos_icon" 
         android:background="@null"/>

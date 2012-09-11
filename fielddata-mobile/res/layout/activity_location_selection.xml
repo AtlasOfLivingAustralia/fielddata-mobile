@@ -31,20 +31,32 @@
         android:src="@drawable/marker"
         android:visibility="gone" />
 
+    <LinearLayout 
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/roundedrectangle4"
+        android:gravity="right">
+   
+    <ImageButton
+        android:id="@+id/mapCurrentLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:gravity="right"
+        android:src="@drawable/ic_menu_mylocation" />
+    
     <Button
         android:id="@+id/mapNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
+        android:layout_gravity="right"
+        android:gravity="right"
+        android:textColor="@drawable/selector"
         android:text="Done" />
 
-    <Button
-        android:id="@+id/mapCurrentLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@id/mapNext"
-        android:text="Use Current Location" />
-
+       
+    </LinearLayout>
+    
 </RelativeLayout>

@@ -48,6 +48,8 @@ public class SurveyViewModel {
 
 	private SparseArray<AttributeChangeListener> listeners;
 	
+	private SparseArray<ValidationResult> validationStatus;
+	
 	private TempValue tempValue;
 
 	/**
@@ -85,7 +87,9 @@ public class SurveyViewModel {
 		this.packageManager = packageManager;
 		attributes = new ArrayList<List<Attribute>>();
 		listeners = new SparseArray<AttributeChangeListener>();
+		validationStatus = new SparseArray<ValidationResult>();
 		validator = new RecordValidator();
+		
 		
 		sortAttributes();
 	}
@@ -240,7 +244,13 @@ public class SurveyViewModel {
 	
 	private void validate(Attribute attribute) {
 		ValidationResult result = validator.validateRecordAttribute(attribute, record);
+		validationStatus.put(attribute.getServerId(), result);
 		fireAttributeValidated(result);
+	}
+	
+	public ValidationResult validationStatus(Attribute attribute) {
+		ValidationResult result = validationStatus.get(attribute.server_id);
+		return result != null ? result : new ValidationResult(attribute);
 	}
 
 	private int pageOf(Attribute firstInvalid) {

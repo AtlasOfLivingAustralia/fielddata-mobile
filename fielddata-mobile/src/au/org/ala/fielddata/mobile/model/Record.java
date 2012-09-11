@@ -44,6 +44,9 @@ public class Record extends Persistent {
 	
 	private List<AttributeValue> attributeValues;
 	
+	/** Caches a reference to the first image for display purposes */
+	private transient Uri photo;
+	
 	public static class StringValue {
 		public String value;
 		
@@ -58,7 +61,6 @@ public class Record extends Persistent {
 	static class AttributeValue {
 		public Integer id = 1;
 		public Integer server_id;
-		
 		public Integer attribute_id;
 		
 		protected StringValue value = new StringValue();
@@ -69,6 +71,7 @@ public class Record extends Persistent {
 		
 		public void setUri(Uri uri) {
 			value.uri = true;
+			
 			if (uri == null) {
 				value.value = "";
 			}
@@ -78,7 +81,7 @@ public class Record extends Persistent {
 		}
 		
 		public Uri getUri() {
-			if (value.value == null || "".equals(value.value)) {
+			if (!value.uri || value.value == null || "".equals(value.value)) {
 				return null;
 			}
 			return Uri.parse(value.value);
@@ -297,5 +300,19 @@ public class Record extends Persistent {
 		}
 		return date;
 	}
-
+	
+	public Uri getFirstImageUri() {
+		if (photo == null) {
+			for (AttributeValue value : attributeValues) {
+				Uri uri = value.getUri();
+				if (uri != null) {
+					photo = uri;
+					break;
+				}
+			}
+		}
+		return photo;
+	}
+	
+	
 }

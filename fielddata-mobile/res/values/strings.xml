@@ -38,7 +38,13 @@
     <!-- Dashboard -->
     <string name="new_record">New recording</string>
     <string name="view_field_guide">Species List</string>
-
+    <string name="survey_list_title">Downloaded Surveys</string>
+    
+    <!--  Action Bar -->
+    <string name="view_saved_records_description">View Saved Records</string>
+    <string name="view_species_list_description">View Species List</string>
+    <string name="new_record_description">New Record</string>
+    
     <!-- Menu Text -->
     <string name="menu_about">About</string>
     <string name="menu_settings">Settings</string>

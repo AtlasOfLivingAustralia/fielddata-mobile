@@ -66,5 +66,15 @@
         <item name="android:textColor">#EEEEEE</item>
         
     </style>
+   
+    <style name="FieldData.HeaderLabel" parent="@android:style/Widget.Holo.TextView">
+        <item name="android:background">@drawable/roundedrectangle6</item>
+        <item name="android:textColor">@android:color/white</item>
+        
+    </style>
+    
+    <style name="FieldData.ActionButton" parent="@android:style/Widget.Holo.ImageButton">
+        
+    </style>
     
 </resources>

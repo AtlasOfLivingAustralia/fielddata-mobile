@@ -16,7 +16,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" 
-    android:background="@drawable/roundedrectangle3">
+    android:background="#CCCCCC">
 
     <com.viewpagerindicator.TitlePageIndicator
         android:id="@+id/titles"

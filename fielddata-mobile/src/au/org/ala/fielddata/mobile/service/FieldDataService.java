@@ -63,15 +63,11 @@ public class FieldDataService extends WebServiceClient {
 		params.set("ident", ident);
 		params.set("inFrame", "false"); // Setting this parameter prevents the
 										// server from assuming a jsonp request.
-		//Gson gson = getGson();
-		
-		params.set("syncData", records);
+	    params.set("syncData", records);
 
 		String url = serverUrl + syncUrl;
 
 		RestTemplate restTemplate = getRestTemplate();
-//		restTemplate.getMessageConverters().add(
-//				new StringHttpMessageConverter());
 		SyncRecordsResponse result = restTemplate.postForObject(url, params,
 				SyncRecordsResponse.class);
 		System.out.println(result);
@@ -104,6 +100,7 @@ public class FieldDataService extends WebServiceClient {
 			survey.attributes = surveyResponse.attributes;
 			survey.recordProperties = surveyResponse.recordProperties;
 			survey.map = surveyResponse.map;
+			survey.description = surveyResponse.details.description;
 
 			surveys.add(survey);
 

@@ -18,7 +18,6 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,10 +32,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,13 +62,13 @@ import com.actionbarsherlock.view.Window;
  * This class is the main activity for the Mobile Field Data application.
  */
 public class MobileFieldDataDashboard extends SherlockFragmentActivity
-		implements OnClickListener, OnSharedPreferenceChangeListener {
+		implements OnSharedPreferenceChangeListener {
 
 	private Preferences preferences;
 	private TextView status;
 	private Spinner surveySelector;
-	private ProgressDialog pd;
-
+	private ListView surveyList;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -79,14 +80,29 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		
 		preferences = new Preferences(this);
 		
-
+		surveyList = (ListView)findViewById(R.id.surveyList);
 		status = (TextView)findViewById(R.id.status);
 		surveySelector = (Spinner)findViewById(R.id.surveySelector);
-		addEventHandlers();
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		
+		//TODO do we need to add and remove this in pause and resume?
+		addBroadcastListener();
+		
+		
+		// check if the preferences are set if not redirect
+		if (preferences.getFieldDataServerHostName().equals("") ||
+			preferences.getFieldDataContextName().equals("") ||
+			preferences.getFieldDataPath().equals("") ||
+			preferences.getFieldDataPortalName().equals("")) {
+			redirectToPreferences();
+		}
+	}
+
+
+
+	private void addBroadcastListener() {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(UploadService.UPLOAD_FAILED);
 		filter.addAction(UploadService.UPLOADED);
@@ -101,42 +117,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 				refreshPage();
 			}
 		}, filter);
-		
-		// check if the preferences are set if not redirect
-		if (preferences.getFieldDataServerHostName().equals("") ||
-			preferences.getFieldDataContextName().equals("") ||
-			preferences.getFieldDataPath().equals("") ||
-			preferences.getFieldDataPortalName().equals("")) {
-			redirectToPreferences();
-		}
 	}
 	
-	
-
-	private void addEventHandlers() {
-		ImageButton button = (ImageButton) findViewById(R.id.viewSavedRecordsButton);
-		button.setOnClickListener(this);
-		button = (ImageButton) findViewById(R.id.newRecordButton);
-		button.setOnClickListener(this);
-		button = (ImageButton) findViewById(R.id.viewFieldGuideButton);
-		button.setOnClickListener(this);
-	}
-
-	public void onClick(View v) {
-		if (v.getId() == R.id.viewSavedRecordsButton) {
-			Intent intent = new Intent(this, ViewSavedRecordsActivity.class);
-			startActivity(intent);
-		} else if (v.getId() == R.id.newRecordButton) {
-			Intent intent = new Intent(this, CollectSurveyData.class);
-			intent.putExtra(CollectSurveyData.SURVEY_BUNDLE_KEY, preferences.getCurrentSurvey());
-			startActivity(intent);
-		} else if (v.getId() == R.id.viewFieldGuideButton) {
-			Intent intent = new Intent(this, SpeciesListActivity.class);
-			startActivity(intent);
-		}
-
-	}
-
 	class InitTask extends AsyncTask<Void, Void, InitialisationResults> {
 
 		@Override
@@ -238,10 +220,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	private void populateResults(InitialisationResults results) {
 		GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(this);
 		results.surveys = surveyDAO.loadAll(Survey.class);
-		GenericDAO<Record> recordDAO = new GenericDAO<Record>(
-				MobileFieldDataDashboard.this);
-
-		results.recordCount = recordDAO.count(Record.class);
+		
 	}
 
 	private void showConnectionError() {
@@ -324,12 +303,9 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 				.toArray(new Survey[surveys.size()]);
 
 		if (surveys.size() > 0) {
-			ArrayAdapter<Survey> items = new ArrayAdapter<Survey>(
-					MobileFieldDataDashboard.this,
-					android.R.layout.simple_spinner_item, surveyArray);
-			items.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			surveySelector.setAdapter(items);
-			surveySelector.setOnItemSelectedListener(new OnItemSelectedListener() {
+			SurveyListAdapter items = new SurveyListAdapter(this, surveys);
+			surveyList.setAdapter(items);
+			surveyList.setOnItemSelectedListener(new OnItemSelectedListener() {
 			
 				public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 					Survey survey = surveyArray[position];
@@ -378,18 +354,19 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	}
 
 	private void updateRecordCount(int count) {
-		TextView view = (TextView) findViewById(R.id.noSavedRecords);
-		if (count == 0) {
-			view.setText(getResources().getString(
-					R.string.no_saved_records_message));
-		} else if (count == 1) {
-			view.setText(getResources()
-					.getString(R.string.saved_record_message));
-		} else {
-			view.setText(String.format(
-					getResources().getString(R.string.saved_records_message),
-					count));
-		}
+//		TextView view = (TextView) findViewById(R.id.noSavedRecords);
+//		
+//		if (count == 0) {
+//			view.setText(getResources().getString(
+//					R.string.no_saved_records_message));
+//		} else if (count == 1) {
+//			view.setText(getResources()
+//					.getString(R.string.saved_record_message));
+//		} else {
+//			view.setText(String.format(
+//					getResources().getString(R.string.saved_records_message),
+//					count));
+//		}
 	}
 	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -401,5 +378,25 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		}
 	}
 
+	
+	class SurveyListAdapter extends ArrayAdapter<Survey> {
+		public SurveyListAdapter(Context context, List<Survey> surveys) {
+			super(context, android.R.layout.simple_list_item_2, android.R.id.text1, surveys);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			
+			View row = super.getView(position, convertView, parent);
+			TextView name = (TextView)row.findViewById(android.R.id.text1);
+			name.setText(getItem(position).name);
+			TextView description = (TextView)row.findViewById(android.R.id.text2);
+			description.setText(getItem(position).description);
+			
+			return row;
+			
+		}
+		
+	}
 	
 }

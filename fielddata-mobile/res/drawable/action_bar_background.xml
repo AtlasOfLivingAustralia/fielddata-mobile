@@ -3,15 +3,15 @@
 
     <item>
         <shape>
-            <solid android:color="#FD9443" />
+            <solid android:color="@color/headerLabelBackgroundContrast" />
         </shape>
     </item>
     <item android:bottom="2dp">
         <shape android:shape="rectangle" >
             <gradient
                 android:angle="90"
-                android:endColor="#19496f"
-                android:startColor="#8dd1fe" />
+                android:endColor="@color/headerLabelBackgroundStart"
+                android:startColor="@color/headerLabelBackgroundEnd" />
         </shape>
     </item>
 

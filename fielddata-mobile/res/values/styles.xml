@@ -40,8 +40,8 @@
         <item name="subtitleTextStyle">@style/FieldData.ActionBar.Subtitle</item>
         <item name="android:subtitleTextStyle">@style/FieldData.ActionBar.Subtitle</item>
         
-        <item name="background">@drawable/roundedrectangle3</item>
-        <item name="android:background">@drawable/roundedrectangle3</item>
+        <item name="background">@drawable/action_bar_background</item>
+        <item name="android:background">@drawable/action_bar_background</item>
         
         <item name="actionBarItemBackground">@drawable/ad_tab_unselected_holo</item>
         <item name="backgroundStacked">@drawable/ad_tab_unselected_holo</item>
@@ -67,14 +67,14 @@
         
     </style>
    
-    <style name="FieldData.HeaderLabel" parent="@android:style/Widget.Holo.TextView">
-        <item name="android:background">@drawable/roundedrectangle6</item>
+    <style name="FieldData.HeaderLabel" parent="@style/TextAppearance.Sherlock.Widget.ActionBar.Title">
+        <item name="android:background">@drawable/header_label_background</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
         
     </style>
     
-    <style name="FieldData.ActionButton" parent="@android:style/Widget.Holo.ImageButton">
-        
-    </style>
+    <style name="FieldData.ActionButton" parent="@android:style/Widget.Holo.Light.ImageButton">
+           </style>
     
 </resources>

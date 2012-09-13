@@ -21,6 +21,13 @@ import com.google.gson.annotations.SerializedName;
 
 public class LoginResponse {
 
+	class Portal {
+		public String name;
+		public String path;
+	}
+	
+	public Portal portal;
+	
 	public String ident;
 	@SerializedName("portal_id")
 	public Integer portalId;

@@ -21,7 +21,6 @@ import android.preference.PreferenceManager;
 
 public class Preferences {
 
-	private static final String PREFERENCES_NAME = "MobileFieldDataPreferences";
 	private static final String SURVEY_KEY = "SurveyPreference";
 	private static final String SURVEY_NAME_KEY = "SurveyNamePreference";
 	private static final String SESSION_KEY = "Session";
@@ -37,7 +36,7 @@ public class Preferences {
 	}
 	
 	public Integer getCurrentSurvey() {
-		return ctx.getSharedPreferences(PREFERENCES_NAME, 0).getInt(SURVEY_KEY, -1);
+		return PreferenceManager.getDefaultSharedPreferences(ctx).getInt(SURVEY_KEY, -1);
 	}
 	
 	public void setCurrentSurveyName(String name) {
@@ -47,32 +46,30 @@ public class Preferences {
 	}
 	
 	public String getCurrentSurveyName() {
-		return ctx.getSharedPreferences(PREFERENCES_NAME, 0).getString(SURVEY_NAME_KEY, "No survey");
+		return PreferenceManager.getDefaultSharedPreferences(ctx).getString(SURVEY_NAME_KEY, "No survey");
 	}
 	
 	private Editor preferencesEditor() {
-		return ctx.getSharedPreferences(PREFERENCES_NAME, 0).edit();
+		return PreferenceManager.getDefaultSharedPreferences(ctx).edit();
 	}
 
 	public String getFieldDataServerUrl() {
-		//return "http://"+getFieldDataServerHostName()+"/bdrs-core/condamine";
-		//return "http://"+getFieldDataServerHostName()+"/bdrs-core/koalacount";
-
 		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
 		String hostName = prefs.getString("serverHostName", "");
 		String context = prefs.getString("contextName", "");
 		String path = prefs.getString("path", "");
 		
-		String fieldDataServerUrl = "http://"+hostName+"/"+context+"/"+path;
+		StringBuilder url = new StringBuilder();
+		url.append("http://").append(hostName).append("/").append(context);
 		
-		return fieldDataServerUrl;
+		if (path.length() > 0) {
+			url.append("/").append(path);
+		}
+		
+		return url.toString();
 	}
 	
 	public String getFieldDataServerHostName() {
-		//return "152.83.195.62";
-		//return "192.168.0.8";
-		//return "root.ala.org.au";
-		
 		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
 		String hostName = prefs.getString("serverHostName", "");
 		return hostName;
@@ -90,14 +87,24 @@ public class Preferences {
 		return portalName;
 	}
 	
+	public void setFieldDataPath(String path) {
+		Editor preferences = preferencesEditor();
+		preferences.putString("path", path).commit();
+	}
+	
 	public String getFieldDataPortalName() {
 		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
 		String portalName = prefs.getString("portalName", "");
 		return portalName;
 	}
 	
+	public void setFieldDataPortalName(String name) {
+		Editor preferences = preferencesEditor();
+		preferences.putString("portalName", name).commit();
+	}
+	
 	public String getFieldDataSessionKey() {
-		return ctx.getSharedPreferences(PREFERENCES_NAME, 0).getString(SESSION_KEY, null);
+		return PreferenceManager.getDefaultSharedPreferences(ctx).getString(SESSION_KEY, null);
 	}
 	
 	public void setFieldDataSessionKey(String sessionKey) {

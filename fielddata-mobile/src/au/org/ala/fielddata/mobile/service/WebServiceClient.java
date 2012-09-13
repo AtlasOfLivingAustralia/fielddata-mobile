@@ -31,16 +31,20 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class WebServiceClient {
-	protected String serverUrl;
+	protected Preferences preferences;
 	protected Context ctx;
 	
 	public WebServiceClient(Context ctx) {
 		this.ctx = ctx;
-		serverUrl = new Preferences(ctx).getFieldDataServerUrl();
+		preferences = new Preferences(ctx);
 		// This shouldn't be necessary however I am seeing frequent failures
 		// due to recycled closed connections (possibly something I am doing
 		// wrong).  This is working around that.
 		System.setProperty("http.keepAlive", "false");
+	}
+	
+	public String getServerUrl() {
+		return preferences.getFieldDataServerUrl();
 	}
 	
 	/**

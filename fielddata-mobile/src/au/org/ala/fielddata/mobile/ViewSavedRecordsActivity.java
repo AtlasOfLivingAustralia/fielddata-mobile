@@ -77,6 +77,11 @@ public class ViewSavedRecordsActivity extends SherlockListActivity {
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		if (item.getItemId() == R.id.upload) {
+			Intent intent = new Intent(this, UploadService.class);
+			startService(intent);
+		}
+		
 		return new MenuHelper(this).handleMenuItemSelection(item);
 	}
 

@@ -529,8 +529,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 						ctx.getApplicationContext());
 				recordDao.save(ctx.getViewModel().getRecord());
 
-				Intent intent = new Intent(ctx, UploadService.class);
-				ctx.startService(intent);
 
 			} catch (Exception e) {
 				success = false;

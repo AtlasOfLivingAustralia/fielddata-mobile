@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
@@ -24,6 +25,9 @@ import au.org.ala.fielddata.mobile.service.LoginService;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
+/**
+ * Displays a login form to the user and initiates the login process.
+ */
 public class LoginActivity extends SherlockActivity implements OnClickListener {
 
 	private ProgressDialog pd;
@@ -52,8 +56,9 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 			
 			final EditText username = (EditText) findViewById(R.id.username);
 			final EditText password = (EditText) findViewById(R.id.userPassword);
-			final String portalName = preferences.getFieldDataPortalName();
-
+			Spinner portal = (Spinner) findViewById(R.id.portal);
+			final String portalName = (String)portal.getSelectedItem();
+			
 			pd = ProgressDialog.show(LoginActivity.this, "Logging in", 
 					preferences.getFieldDataServerUrl(), true, false, null);
 			

@@ -27,8 +27,8 @@
         android:id="@+id/passwordLbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/usernameLbl"
-        android:layout_below="@+id/username"
+        android:layout_alignLeft="@id/usernameLbl"
+        android:layout_below="@id/username"
         android:layout_marginTop="15dp"
         android:text="@string/password" />
     
@@ -36,17 +36,38 @@
         android:id="@+id/userPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/passwordLbl"
+        android:layout_below="@id/passwordLbl"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
         android:ems="10"
         android:inputType="textPassword" />
+  
+    <TextView
+        android:id="@+id/portalLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/userPassword"
+        android:layout_marginTop="15dp"
+        android:text="@string/portal" />
+    
+    <Spinner
+        android:id="@+id/portal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/portalLbl"
+        android:layout_centerHorizontal="true"
+        android:entries="@array/portals"
+        android:layout_marginTop="5dp"
+        android:ems="10"
+        />
+        
 
     <Button
         android:id="@+id/loginBtn"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/userPassword"
+        android:layout_below="@id/portal"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="35dp"
         android:text="@string/login" />

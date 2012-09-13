@@ -65,7 +65,7 @@ public class FieldDataService extends WebServiceClient {
 										// server from assuming a jsonp request.
 	    params.set("syncData", records);
 
-		String url = serverUrl + syncUrl;
+		String url = getServerUrl() + syncUrl;
 
 		RestTemplate restTemplate = getRestTemplate();
 		SyncRecordsResponse result = restTemplate.postForObject(url, params,
@@ -75,7 +75,7 @@ public class FieldDataService extends WebServiceClient {
 
 	public List<Survey> downloadSurveys() {
 
-		String url = serverUrl + surveyUrl + ident;
+		String url = getServerUrl() + surveyUrl + ident;
 
 		RestTemplate restTemplate = getRestTemplate();
 		restTemplate.getMessageConverters().add(
@@ -83,7 +83,7 @@ public class FieldDataService extends WebServiceClient {
 		UserSurveyResponse[] result = restTemplate.getForObject(url,
 				UserSurveyResponse[].class);
 
-		url = serverUrl + surveyDetails;
+		url = getServerUrl() + surveyDetails;
 		List<Survey> surveys = new ArrayList<Survey>();
 		List<Species> speciesList;
 		
@@ -136,7 +136,7 @@ public class FieldDataService extends WebServiceClient {
 		HttpURLConnection conn = null;
 		boolean canPing = true;
 		try {
-			URL url = new URL(serverUrl + pingUrl);
+			URL url = new URL(getServerUrl() + pingUrl);
 			conn = (HttpURLConnection)url.openConnection();
 			conn.setConnectTimeout(timeoutInMillis);
 			//conn.setReadTimeout(timeoutInMillis);
@@ -164,7 +164,7 @@ public class FieldDataService extends WebServiceClient {
 		final int BUFFER_SIZE = 8192;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		try {
-			URL url = new URL(serverUrl + downloadUrl+uuid);
+			URL url = new URL(getServerUrl() + downloadUrl+uuid);
 			conn = (HttpURLConnection)url.openConnection();
 			in = conn.getInputStream();
 			out = new FileOutputStream(destinationFile);

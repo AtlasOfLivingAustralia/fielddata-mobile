@@ -1,6 +1,8 @@
 package au.org.ala.fielddata.mobile.service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -121,22 +123,54 @@ public class StorageManager {
 	}
 	
 	public Bitmap bitmapFromFile(Uri path, int targetW, int targetH) {
-		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-		bmOptions.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(path.getEncodedPath(), bmOptions);
-		int photoW = bmOptions.outWidth;
-		int photoH = bmOptions.outHeight;
-
-		// Determine how much to scale down the image
-		int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-
-		// Decode the image file into a Bitmap sized to fill the View
-		bmOptions.inJustDecodeBounds = false;
-		bmOptions.inSampleSize = scaleFactor;
-		bmOptions.inPurgeable = true;
-
-		Bitmap bitmap = BitmapFactory.decodeFile(path.getEncodedPath(), bmOptions);
+		
+		String name = path.getLastPathSegment();
+		// Check if we already have a thumbnail.
+		Bitmap bitmap = getThumb(name);
+		if (bitmap == null) {
+			
+			BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+			bmOptions.inJustDecodeBounds = true;
+			BitmapFactory.decodeFile(path.getEncodedPath(), bmOptions);
+			int photoW = bmOptions.outWidth;
+			int photoH = bmOptions.outHeight;
+	
+			// Determine how much to scale down the image
+			int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+	
+			// Decode the image file into a Bitmap sized to fill the View
+			bmOptions.inJustDecodeBounds = false;
+			bmOptions.inSampleSize = scaleFactor;
+			bmOptions.inPurgeable = true;
+	
+			bitmap = BitmapFactory.decodeFile(path.getEncodedPath(), bmOptions);
+			
+			saveThumb(bitmap, name);
+		}
 		return bitmap;
+	}
+	
+	private Bitmap getThumb(String fileName) {
+		File cacheDir = ctx.getCacheDir();
+		File thumbFile = new File(cacheDir, fileName);
+		
+		Bitmap bitmap = null;
+		if (thumbFile.exists()) {
+			bitmap = BitmapFactory.decodeFile(thumbFile.getAbsolutePath());
+		}
+		return bitmap;
+		
+	}
+	
+	private void saveThumb(Bitmap bitmap, String filename) {
+		File cacheDir = ctx.getCacheDir();
+		File thumbFile = new File(cacheDir, filename);
+		
+		try {
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(thumbFile));
+		} catch (FileNotFoundException e) {
+			Log.e("StorageManager", "Unable to save thumbnail: "+thumbFile, e);
+		}
 	}
 	
 	public Bitmap bitmapFromUri(Uri uri, int targetW, int targetH) {

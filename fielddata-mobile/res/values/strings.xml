@@ -39,6 +39,8 @@
     <string name="new_record">New recording</string>
     <string name="view_field_guide">Species List</string>
     <string name="survey_list_title">Downloaded Surveys</string>
+    <string name="default_icon_description">This survey is the default survey</string>
+    
     
     <!--  Action Bar -->
     <string name="view_saved_records_description">View Saved Records</string>
@@ -51,6 +53,8 @@
     <string name="menu_save">Save</string>
     <string name="menu_upload">Upload</string>
     <string name="menu_cancel">Cancel</string>
+    <string name="menu_upload">Upload</string>
+    
 
     <!-- Validation Errors -->
     <string name="requiredMessage">Please enter a value</string>
@@ -62,7 +66,7 @@
     <string name="ok">OK</string>
     <string name="close">Close</string>
     <string name="aboutMessage">Field Data mobile client 1.0\nAltas of Living Australia</string>
-    <string name="title_activity_edit_preferences">EditPreferences</string>
+    <string name="title_activity_edit_preferences">Application Preferences</string>
 
     <!-- Location selection -->
     <string name="latitudeLabel">Latitude</string>
@@ -78,7 +82,16 @@
     <string name="login">Login</string>
     <string name="login_failed">Login Failed</string>
     <string name="unknown_user">Username unknown or incorrect password.</string>
+    <string name="portal">Portal</string>
+    
     <string name="menu_login">Change Login</string>
     <string name="title_activity_field_guide">View Field Guide</string>
+    
+    
+    <!--  Portal names -->
+	<string-array name="portals">
+	    <item>Condamine NRM</item>
+	    <item>Koala Count</item>
+	</string-array>
 
 </resources>

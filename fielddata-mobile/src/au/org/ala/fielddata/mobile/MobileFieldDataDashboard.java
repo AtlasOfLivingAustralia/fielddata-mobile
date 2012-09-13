@@ -18,40 +18,31 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
-import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.EditPreferences;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
-import au.org.ala.fielddata.mobile.service.UploadService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 
-import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -66,7 +57,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 
 	private Preferences preferences;
 	private TextView status;
-	private Spinner surveySelector;
 	private ListView surveyList;
 	
 	@Override
@@ -82,65 +72,84 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		
 		surveyList = (ListView)findViewById(R.id.surveyList);
 		status = (TextView)findViewById(R.id.status);
-		surveySelector = (Spinner)findViewById(R.id.surveySelector);
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		prefs.registerOnSharedPreferenceChangeListener(this);
-		
-		//TODO do we need to add and remove this in pause and resume?
-		addBroadcastListener();
-		
-		
-		// check if the preferences are set if not redirect
-		if (preferences.getFieldDataServerHostName().equals("") ||
-			preferences.getFieldDataContextName().equals("") ||
-			preferences.getFieldDataPath().equals("") ||
-			preferences.getFieldDataPortalName().equals("")) {
-			redirectToPreferences();
-		}
 	}
 
-
-
-	private void addBroadcastListener() {
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(UploadService.UPLOAD_FAILED);
-		filter.addAction(UploadService.UPLOADED);
+	class Model {
+		private List<Survey> surveys;
+		private User user;
+		private String portal;
+		public Model(List<Survey> surveys, User user, String portal) {
+			this.surveys = surveys;
+			this.user = user;
+			this.portal = portal;
+		}
+		public List<Survey> getSurveys() {
+			return surveys;
+		}
+		public User getUser() {
+			return user;
+		}
+		public String getPortal() {
+			return portal;
+		}
 		
-		LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
-			
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				if (UploadService.UPLOAD_FAILED.equals(intent.getAction())) {
-					Toast.makeText(getApplicationContext(), "Upload failed!", Toast.LENGTH_SHORT).show();
-				}
-				refreshPage();
-			}
-		}, filter);
 	}
 	
-	class InitTask extends AsyncTask<Void, Void, InitialisationResults> {
+	class InitDataTask extends AsyncTask<Void, Void, Model> {
+		
+		@Override
+		protected Model doInBackground(Void... params) {
+			GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(getApplicationContext());
+			List<Survey> surveys = surveyDAO.loadAll(Survey.class);
+			
+			GenericDAO<User> userDAO = new GenericDAO<User>(getApplicationContext());
+			List<User> users = userDAO.loadAll(User.class);
+			User user = null;
+			if (users.size() > 0) {
+				user = users.get(0);
+				
+			}
+			String portal = preferences.getFieldDataPortalName();
+			
+			return new Model(surveys, user, portal);
+		}
+		@Override
+		protected void onPostExecute(Model model) {
+			getSupportActionBar().setTitle(Utils.bold(model.getPortal()));
+			
+			User user = model.getUser();
+			if (user != null) {
+				getSupportActionBar().setSubtitle(Utils.bold("Welcome " + user.firstName + " " + user.lastName));
+			}
+			updateSurveyList(model.getSurveys());
+			
+		}
+	}
+	
+	class StatusTask extends AsyncTask<Void, Void, AppStatus> {
 
 		@Override
-		protected InitialisationResults doInBackground(Void... params) {
-			return init();
+		protected AppStatus doInBackground(Void... params) {
+			return checkStatus();
 		}
 
 		@Override
-		protected void onPostExecute(InitialisationResults result) {
+		protected void onPostExecute(AppStatus result) {
 
-			if (result.success && isInitialised()) {
-				if (result.online) {
+			if (result.isInitialised()) {
+				if (result.isOnline()) {
 					status.setText("Online");
 				}
 				else {
 					status.setText("Offline");
-				}
-				updateSurveyList(result.surveys);
-				updateRecordCount(result.recordCount);
+				}				
 			} else {
-				if (!result.online) {
+				if (!result.isOnline()) {
 					showConnectionError();
+				}
+				else {
+					redirectToLogin();
 				}
 			}
 			setSupportProgressBarIndeterminateVisibility(false);
@@ -153,74 +162,64 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	protected void onResume() {
 		
 		super.onResume();
-		// will redirect if not logged in
-		if (!redirectToLogin()) {
-			refreshPage();
-		}
+		
+		refreshPage();
+		
 	}
 	
 	@Override
 	public void onPause() {
 		super.onPause();
 		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.unregisterOnSharedPreferenceChangeListener(this);
+		
+		
 	}
 
 	private void refreshPage() {
 		
-		new InitTask().execute();
+		PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preference1, true);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 		
-		String portal = preferences.getFieldDataPortalName();
-		getSupportActionBar().setTitle(Utils.bold(portal));
-		
-		GenericDAO<User> userDAO = new GenericDAO<User>(this);
-		List<User> users = userDAO.loadAll(User.class);
-		if (users.size() > 0) {
-			User user = users.get(0);
-			getSupportActionBar().setSubtitle(Utils.bold("Welcome " + user.firstName + " " + user.lastName));
+		// check if the preferences are set if not redirect
+		if (preferences.getFieldDataServerHostName().equals("") ||
+			preferences.getFieldDataContextName().equals("")) {
+			redirectToPreferences();
+		}
+		else {
+			new InitDataTask().execute();
+			new StatusTask().execute();
 		}
 	}
 	
-	class InitialisationResults {
-		public boolean online;
-		public boolean success = true;
-		public List<Survey> surveys;
-		public int recordCount;
-
-	}
-
-	private InitialisationResults init() {
-		InitialisationResults results = new InitialisationResults();
-		results.online = canAccessFieldDataServer();
-		/*
-		if (!isInitialised()) {
-
-			if (results.online) {
-				Log.i("Status", "Online");
-
-				// do first time initialisation.
-				try {
-					downloadSurveys();
-				} catch (Exception e) {
-					results.success = false;
-				}
-
-			} else {
-				Log.i("Status", "Offline");
-
-				// Can't do much here.
-				results.success = false;
-			}
-		}*/
-		if (results.success && isInitialised()) {
-			populateResults(results);
-		}
-		return results;
-	}
-
-	private void populateResults(InitialisationResults results) {
-		GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(this);
-		results.surveys = surveyDAO.loadAll(Survey.class);
+	
+	class AppStatus {
 		
+		private boolean online;
+		private boolean initialised;
+
+		public AppStatus(boolean initialised, boolean online) {
+			this.online = online;
+			this.initialised = initialised;
+		}
+		
+		public boolean isOnline() {
+			return online;
+		}
+		
+		public boolean isInitialised() {
+			return initialised;
+		}
+		
+	}
+
+	private AppStatus checkStatus() {
+		
+		boolean online = canAccessFieldDataServer();
+		boolean initialised = isLoggedIn();
+		return new AppStatus(initialised, online);
 	}
 
 	private void showConnectionError() {
@@ -244,18 +243,14 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		startActivity(intent);
 	}
 	
-	private boolean redirectToLogin() {
-		boolean didRedirect = false;
-		if (!isInitialised() && canAccessFieldDataServer()) {
-			Intent intent = new Intent(this, LoginActivity.class);
-			startActivity(intent);
-			didRedirect = true;
-		} 
+	private void redirectToLogin() {
 		
-		return didRedirect;
+        Intent intent = new Intent(this, LoginActivity.class);
+	    startActivity(intent);
+			
 	}
 
-	private boolean isInitialised() {
+	private boolean isLoggedIn() {
 
 		String sessionKey = preferences.getFieldDataSessionKey();
 		return sessionKey != null;
@@ -305,75 +300,36 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		if (surveys.size() > 0) {
 			SurveyListAdapter items = new SurveyListAdapter(this, surveys);
 			surveyList.setAdapter(items);
-			surveyList.setOnItemSelectedListener(new OnItemSelectedListener() {
+			surveyList.setOnItemClickListener(new OnItemClickListener() {
 			
-				public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Survey survey = surveyArray[position];
 					if (survey != null) {
 						preferences.setCurrentSurveyName(survey.name);
 						preferences.setCurrentSurvey(survey.server_id);
+						((SurveyListAdapter)surveyList.getAdapter()).refresh();
+						
 					}
 				}
-
-				public void onNothingSelected(AdapterView<?> parent) {
-					
-				}
-	
 			});
 			Integer selected = preferences.getCurrentSurvey();
-			int index = -1;
-			if (selected != null) {
-				for (int i = 0; i < surveyArray.length; i++) {
-					if (surveyArray[i].getId() == selected) {
-						index = i;
-						break;
-					}
-				}
-
-				System.out.println("Selected: " + selected);
-				System.out.println("Selected index: " + index);
-
-				if (index >= 0) {
-					getSupportActionBar().setSelectedNavigationItem(index);
-				}
+			if (selected == null || selected <= 0) {
+				preferences.setCurrentSurvey(surveyArray[0].server_id);
+				preferences.setCurrentSurveyName(surveyArray[0].name);
 			}
 		} else {
 			ArrayAdapter<String> items = new ArrayAdapter<String>(
 					MobileFieldDataDashboard.this,
 					R.layout.sherlock_spinner_item,
 					new String[] { "No surveys" });
-			getSupportActionBar().setListNavigationCallbacks(items,
-					new OnNavigationListener() {
-
-						public boolean onNavigationItemSelected(
-								int itemPosition, long itemId) {
-							return false;
-						}
-					});
+			surveyList.setAdapter(items);
+			
 		}
-	}
-
-	private void updateRecordCount(int count) {
-//		TextView view = (TextView) findViewById(R.id.noSavedRecords);
-//		
-//		if (count == 0) {
-//			view.setText(getResources().getString(
-//					R.string.no_saved_records_message));
-//		} else if (count == 1) {
-//			view.setText(getResources()
-//					.getString(R.string.saved_record_message));
-//		} else {
-//			view.setText(String.format(
-//					getResources().getString(R.string.saved_records_message),
-//					count));
-//		}
 	}
 	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		if (key.equals("serverHostName") || 
-			key.equals("contextName") ||	
-			key.equals("path") ||
-			key.equals("portalName")) {
+			key.equals("contextName"))  {
 			preferences.setFieldDataSessionKey(null);
 		}
 	}
@@ -381,20 +337,33 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	
 	class SurveyListAdapter extends ArrayAdapter<Survey> {
 		public SurveyListAdapter(Context context, List<Survey> surveys) {
-			super(context, android.R.layout.simple_list_item_2, android.R.id.text1, surveys);
+			super(context, R.layout.survey_row, R.id.surveyName, surveys);
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
+			Survey survey = getItem(position);
 			View row = super.getView(position, convertView, parent);
-			TextView name = (TextView)row.findViewById(android.R.id.text1);
-			name.setText(getItem(position).name);
-			TextView description = (TextView)row.findViewById(android.R.id.text2);
-			description.setText(getItem(position).description);
+			TextView name = (TextView)row.findViewById(R.id.surveyName);
+			name.setText(survey.name);
+			TextView description = (TextView)row.findViewById(R.id.surveyDescription);
+			description.setText(survey.description);
+			
+			ImageView defaultIcon = (ImageView)row.findViewById(R.id.defaulticon);
+			if (survey.server_id.equals(preferences.getCurrentSurvey())) {
+				defaultIcon.setVisibility(View.VISIBLE);
+			}
+			else {
+				defaultIcon.setVisibility(View.GONE);
+			}
 			
 			return row;
 			
+		}
+		
+		public void refresh() {
+			notifyDataSetChanged();
 		}
 		
 	}

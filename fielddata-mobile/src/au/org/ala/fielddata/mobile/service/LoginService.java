@@ -38,21 +38,14 @@ public class LoginService extends WebServiceClient {
 		params.set("username", username);
 		params.set("password", password);
 		
-//		params.set("portalName", "Condamine NRM");
-//		params.set("username", "admin");
-//		params.set("password", "cambia401FD");
-		
-//		params.set("portalName", "Koala Count");
-//		params.set("username", "admin");
-//		params.set("password", "password");
-//		
-		
-		String url = serverUrl + loginUrl;
+		String url = getServerUrl() + loginUrl;
 		
 		LoginResponse result = getRestTemplate().postForObject(url, params, LoginResponse.class);
-		System.out.println(result);
 		
-		new Preferences(ctx).setFieldDataSessionKey(result.ident);
+		Preferences prefs = new Preferences(ctx);
+		prefs.setFieldDataSessionKey(result.ident);
+		prefs.setFieldDataPath(result.portal.path);
+		prefs.setFieldDataPortalName(result.portal.name);
 		
 		return result;
 	}

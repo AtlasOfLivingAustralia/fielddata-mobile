@@ -1,17 +1,23 @@
 package au.org.ala.fielddata.mobile;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.pref.Preferences;
+import au.org.ala.fielddata.mobile.service.UploadService;
 import au.org.ala.fielddata.mobile.ui.NumberedImageButton;
 
 /**
@@ -21,6 +27,8 @@ import au.org.ala.fielddata.mobile.ui.NumberedImageButton;
 public class ActionBarFragment extends Fragment implements OnClickListener {
 
 	private NumberedImageButton savedRecords;
+	
+	private BroadcastReceiver broadcastReceiver;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,6 +49,11 @@ public class ActionBarFragment extends Fragment implements OnClickListener {
 	public void onResume() {
 		super.onResume();
 		
+		refresh();	
+		addBroadcastListener();
+	}
+	
+	private void refresh() {
 		new AsyncTask<Void, Void, Integer>() {
 
 			@Override
@@ -55,8 +68,14 @@ public class ActionBarFragment extends Fragment implements OnClickListener {
 			}
 			
 		}.execute();
-		
-		
+
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
+			
 	}
 	
 	private void addEventHandlers(View actionBar) {
@@ -86,6 +105,22 @@ public class ActionBarFragment extends Fragment implements OnClickListener {
 
 	}
 
+	private void addBroadcastListener() {
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(UploadService.UPLOAD_FAILED);
+		filter.addAction(UploadService.UPLOADED);
+		
+		broadcastReceiver = new BroadcastReceiver() {
+			
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				if (UploadService.UPLOAD_FAILED.equals(intent.getAction())) {
+					Toast.makeText(getActivity(), "Upload failed!", Toast.LENGTH_SHORT).show();
+				}
+			}
+		};
+		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, filter);
+	}
 	
 
 }

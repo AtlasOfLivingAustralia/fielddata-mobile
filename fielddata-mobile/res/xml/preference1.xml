@@ -14,9 +14,25 @@
   rights and limitations under the License.
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <EditTextPreference android:key="serverHostName" android:title="Server Host Name" android:summary="The host name of the server running the field data software."/>
-    <EditTextPreference android:key="contextName" android:title="Context Name" android:summary="The context name of the field data instance."/>
-    <EditTextPreference android:key="path" android:title="Path" android:summary="The field data path."/>
-    <EditTextPreference android:key="portalName" android:title="Portal Name" android:summary="The field data portal name."/>
+
+    <EditTextPreference
+        android:key="serverHostName"
+        android:summary="The host name of the server running the field data software."
+        android:title="Server Host Name" 
+        android:defaultValue="root-uat.ala.org.au"/>
+    	
+    <EditTextPreference
+        android:key="contextName"
+        android:summary="The context name of the field data instance."
+        android:title="Context Name"
+        android:defaultValue="fielddata-proxy" />
+    <EditTextPreference
+        android:key="path"
+        android:summary="The field data path."
+        android:title="Path" />
+    <EditTextPreference
+        android:key="portalName"
+        android:summary="The field data portal name."
+        android:title="Portal Name" />
 
 </PreferenceScreen>

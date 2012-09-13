@@ -26,16 +26,22 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true" 
         android:text="@string/survey_list_title"
-        android:layout_margin="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="15dp"
+        
         android:paddingLeft="5dp"
         style="@style/FieldData.HeaderLabel"
     />   
+    
     <ListView
         android:id="@+id/surveyList"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="#66FFFFFF" 
         android:layout_below="@id/surveyListTitle"
-        android:layout_alignParentLeft="true" 
+        android:layout_alignLeft="@id/surveyListTitle"
     ></ListView>
     <View
         android:id="@+id/listBottom"
@@ -55,7 +61,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:background="@drawable/roundedrectangle4"/>
+        android:background="#DDDDDD"/>
      
     <LinearLayout
         android:layout_height="wrap_content"

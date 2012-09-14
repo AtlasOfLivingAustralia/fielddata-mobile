@@ -34,7 +34,6 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,6 @@ import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel.TempValue;
 import au.org.ala.fielddata.mobile.service.StorageManager;
-import au.org.ala.fielddata.mobile.service.UploadService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 import au.org.ala.fielddata.mobile.ui.MultiSpinner;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
@@ -392,6 +390,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			}
 		} else if (requestCode == TAKE_PHOTO_REQUEST) {
 			if (resultCode == RESULT_OK) {
+				Log.d("CollectSurveyData", "Returned ok from photo request");
 				surveyViewModel.persistTempValue();
 			}
 			else {
@@ -470,19 +469,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			SurveyBuilder builder = new SurveyBuilder(getActivity(), viewModel);
 
 			TableLayout tableLayout = (TableLayout) page.findViewById(R.id.surveyGrid);
-			Display display = getActivity().getWindowManager().getDefaultDisplay();
-			
-			@SuppressWarnings("deprecation")
-			int width = display.getWidth();
-			Log.d("Size", "Width: " + width);
-
-			boolean twoColumns = false;
-			if (twoColumns) {
-				tableLayout.setColumnStretchable(1, true);
-			} else {
-				tableLayout.setColumnStretchable(0, true);
-			}
-
 			List<Attribute> pageAttributes = viewModel.getPage(pageNum);
 			
 			int rowCount = pageAttributes.size();
@@ -490,14 +476,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				TableRow row = new TableRow(getActivity());
 				Attribute attribute = pageAttributes.get(i);
 
-				//builder.buildLabel(attribute, row);
-				
-//				if (!twoColumns) {
-//					TableRow.LayoutParams params = new TableRow.LayoutParams();
-//					params.setMargins(5, 5, 0, 2);
-//					tableLayout.addView(row);
-//					row = new TableRow(getActivity());
-//				}
 				View inputView = builder.buildFields(attribute, row);
 				//View inputView = builder.buildInput(attribute, row);
 				binder.configureBindings(inputView, attribute);
@@ -505,7 +483,9 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 				TableRow.LayoutParams params = new TableRow.LayoutParams();
 				params.setMargins(5, 5, 10, 10);
-				tableLayout.addView(row);
+				params.width = TableRow.LayoutParams.MATCH_PARENT;
+				params.height = TableRow.LayoutParams.WRAP_CONTENT;
+				tableLayout.addView(row, params);
 			}
 
 		}

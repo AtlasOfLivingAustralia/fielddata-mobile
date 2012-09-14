@@ -49,10 +49,14 @@ public class SurveyModelHolder extends SherlockFragment {
 		
 		// Now restore the default value if required
 		if (savedInstanceState != null) {
+			
 			int attributeId = savedInstanceState.getInt("TempAttribute", -1);
+			Log.i("SurveyModelHolder", "Temp attribute from bundle is: "+attributeId);
 			if (attributeId > 0) {
 				Attribute attr = model.getSurvey().getAttribute(attributeId);
 				String value = savedInstanceState.getString("TempAttributeValue");
+				Log.i("SurveyModelHolder", "Found temp value: "+attr+", value: "+value+" in bundle");
+				
 				model.setTempValue(attr, value);
 			}
 		}
@@ -76,6 +80,7 @@ public class SurveyModelHolder extends SherlockFragment {
 		outState.putInt(CollectSurveyData.RECORD_BUNDLE_KEY, model.getRecord().getId());
 		TempValue toSave = model.getTempValue();
 		if (toSave != null) {
+			Log.i("SurveyModelHolder", "Saving temp: "+toSave.getAttribute()+", value: "+toSave.getValue());
 			outState.putInt("TempAttribute", toSave.getAttribute().server_id);
 			outState.putString("TempAttributeValue", toSave.getValue());
 		}

@@ -32,25 +32,38 @@
         android:layout_marginTop="15dp"
         
         android:paddingLeft="5dp"
-        style="@style/FieldData.HeaderLabel"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        
     />   
+    <View
+        android:id="@+id/listTop"
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:layout_below="@id/surveyListTitle"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="0dp"
+        android:background="@color/headerLabelBackgroundStart"
+        
+        />
+   
     
     <ListView
         android:id="@+id/surveyList"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="#66FFFFFF" 
-        android:layout_below="@id/surveyListTitle"
+        android:layout_below="@id/listTop"
         android:layout_alignLeft="@id/surveyListTitle"
+        android:paddingBottom="5dp"
     ></ListView>
     <View
         android:id="@+id/listBottom"
         android:layout_width="fill_parent"
-        android:layout_height="5dp"
+        android:layout_height="3dp"
         android:layout_below="@id/surveyList"
         android:layout_alignParentLeft="true"
-        android:layout_margin="5dp"
-        android:background="#527092"
+        android:layout_margin="0dp"
+        android:background="@color/headerLabelBackgroundStart"
         
         />
    

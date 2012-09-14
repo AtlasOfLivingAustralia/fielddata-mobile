@@ -67,11 +67,10 @@
         
     </style>
    
-    <style name="FieldData.HeaderLabel" parent="@style/TextAppearance.Sherlock.Widget.ActionBar.Title">
-        <item name="android:background">@drawable/header_label_background</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-        
+    <style name="FieldData.HeaderLabel" parent="@android:style/Widget.Holo.Light.TextView">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:singleLine">false</item>
+      
     </style>
     
     <style name="FieldData.ActionButton" parent="@android:style/Widget.Holo.Light.ImageButton">

@@ -243,8 +243,13 @@ public class Record extends Persistent {
 	public void setValue(Attribute attribute, String value) {
 	
 		AttributeValue attrValue = valueOf(attribute);
-		attrValue.setValue(value);
 		
+		if (supportsUri(attribute) && value != null && value.length() > 0) {
+			attrValue.setUri(Uri.parse(value));
+		}
+		else {
+			attrValue.setValue(value);
+		}
 	}
 	
 	public void setUri(Attribute attribute, Uri value) {
@@ -261,6 +266,14 @@ public class Record extends Persistent {
 	
 	
 	private void checkUriSupport(Attribute attribute) {
+		
+		if (!supportsUri(attribute)) {
+			throw new IllegalArgumentException("Attributes of type: "+
+					attribute.getType()+" do not support URI typed values");
+		}
+	}
+	
+	private boolean supportsUri(Attribute attribute) {
 		boolean supportsUri = false;
 		switch (attribute.getType()) {
 		case IMAGE:
@@ -271,10 +284,7 @@ public class Record extends Persistent {
 			default:
 				supportsUri = false;
 		}
-		if (!supportsUri) {
-			throw new IllegalArgumentException("Attributes of type: "+
-					attribute.getType()+" do not support URI typed values");
-		}
+		return supportsUri;
 	}
 	
 	public void setValue(Attribute attribute, Date value) {

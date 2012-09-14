@@ -91,7 +91,7 @@
     <!--  Portal names -->
 	<string-array name="portals">
 	    <item>Condamine NRM</item>
-	    <item>Koala Count</item>
+	    <item>SA Koala Count</item>
 	</string-array>
 
 </resources>

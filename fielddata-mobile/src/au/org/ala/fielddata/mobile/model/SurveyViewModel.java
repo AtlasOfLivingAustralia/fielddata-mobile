@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.gson.Gson;
+
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.util.Log;
@@ -151,8 +153,10 @@ public class SurveyViewModel {
 	public void setValue(Attribute attribute, String value) {
 
 		record.setValue(attribute, value);
+		Log.d("SurveyViewModel", "Setting attribute: "+attribute+", value: "+value);
 		fireAttributeChanged(attribute);
 		validate(attribute);
+		
 	}
 
 	public void setAttributeChangeListener(AttributeChangeListener listener, Attribute attribute) {
@@ -295,6 +299,8 @@ public class SurveyViewModel {
 	}
 	
 	public void persistTempValue() {
+		
+		Log.d("SurveyViewModel", "persistTempValue, tempValue="+tempValue);
 		if (tempValue != null) {
 			setValue(tempValue.getAttribute(), tempValue.getValue());
 		}

@@ -137,6 +137,12 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 		FieldDataService service = new FieldDataService(LoginActivity.this);
 		List<Survey> surveys = service.downloadSurveys();
 
+		if (surveys.size() > 0) {
+			Preferences prefs = new Preferences(this);
+			prefs.setCurrentSurvey(surveys.get(0).server_id);
+			prefs.setCurrentSurveyName(surveys.get(0).name);
+			
+		}
 		GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(LoginActivity.this);
 		for (Survey survey : surveys) {
 			surveyDAO.save(survey);

@@ -124,6 +124,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			GenericDAO<Species> speciesDao = new GenericDAO<Species>(this);
 			selectedSpecies = speciesDao.load(Species.class, speciesId);
 		}
+		
 	}
 
 	public void setViewModel(SurveyViewModel model) {

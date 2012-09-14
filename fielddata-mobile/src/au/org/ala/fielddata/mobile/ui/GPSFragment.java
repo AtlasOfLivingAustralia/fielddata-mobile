@@ -3,20 +3,25 @@ package au.org.ala.fielddata.mobile.ui;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnShowListener;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import au.org.ala.fielddata.mobile.CollectSurveyData;
 import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.service.LocationServiceHelper;
+import au.org.ala.fielddata.mobile.service.LocationServiceHelper.LocationServiceBinder;
 
 public class GPSFragment extends DialogFragment implements LocationListener, DialogInterface.OnClickListener {
 
@@ -24,8 +29,20 @@ public class GPSFragment extends DialogFragment implements LocationListener, Dia
 	private EditText longitude;
 	private EditText accuracy;
 	
-	private LocationManager locationManager;
 	private Location bestLocation;
+	
+	private LocationServiceConnection locationService;
+	
+	private class LocationServiceConnection implements ServiceConnection {
+		
+		public void onServiceDisconnected(ComponentName name) {
+		}
+		
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			LocationServiceBinder locationBinder = (LocationServiceBinder)service;
+			locationBinder.getService().registerLocationListener(GPSFragment.this);
+		}
+	};
 	
 	@TargetApi(8)
 	@Override
@@ -63,23 +80,27 @@ public class GPSFragment extends DialogFragment implements LocationListener, Dia
 	}
 	
 	private void startLocationUpdates() {
-		locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-		
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-
+//		locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+//		
+//		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+//		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+		locationService = new LocationServiceConnection();
+		Intent intent = new Intent(getActivity(), LocationServiceHelper.class);
+		getActivity().bindService(intent, locationService, Context.BIND_AUTO_CREATE);
 	}
 	
 	@Override
-	public void onStart() {
-		super.onStart();
+	public void onResume() {
+		Log.i("GPSFragment", "onResume");
+		super.onResume();
 		startLocationUpdates();
 	}
 	
 	@Override
 	public void onPause() {
+		Log.i("GPSFragment", "onPause");
 		super.onPause();
-		locationManager.removeUpdates(this);
+		getActivity().unbindService(locationService);
 	}
 
 	public void onLocationChanged(Location location) {

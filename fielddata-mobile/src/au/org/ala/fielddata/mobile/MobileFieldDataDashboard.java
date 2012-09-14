@@ -41,6 +41,7 @@ import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.EditPreferences;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
+import au.org.ala.fielddata.mobile.service.LocationServiceHelper;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -73,6 +74,21 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		surveyList = (ListView)findViewById(R.id.surveyList);
 		status = (TextView)findViewById(R.id.status);
 		
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		Intent locationIntent = new Intent(this, LocationServiceHelper.class);
+		startService(locationIntent);
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Intent locationIntent = new Intent(MobileFieldDataDashboard.this, LocationServiceHelper.class);
+		
+		stopService(locationIntent);
 	}
 
 	class Model {
@@ -157,7 +173,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		
 	}
 	
-
 	@Override
 	protected void onResume() {
 		
@@ -173,7 +188,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.unregisterOnSharedPreferenceChangeListener(this);
-		
 		
 	}
 

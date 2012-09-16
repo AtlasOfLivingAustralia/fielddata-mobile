@@ -40,7 +40,7 @@ import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.EditPreferences;
 import au.org.ala.fielddata.mobile.pref.Preferences;
-import au.org.ala.fielddata.mobile.service.FieldDataService;
+import au.org.ala.fielddata.mobile.service.FieldDataServiceClient;
 import au.org.ala.fielddata.mobile.service.LocationServiceHelper;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 
@@ -274,7 +274,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		boolean success = false;
 		String fieldDataServer = preferences.getFieldDataServerHostName();
 		try {
-			FieldDataService service = new FieldDataService(this);
+			FieldDataServiceClient service = new FieldDataServiceClient(this);
 			success = service.ping(5000);
 			if (!success) {
 				Log.i("Status", "Field data server at: " + fieldDataServer

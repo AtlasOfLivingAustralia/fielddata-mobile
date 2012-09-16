@@ -19,9 +19,9 @@ import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.Preferences;
-import au.org.ala.fielddata.mobile.service.FieldDataService;
-import au.org.ala.fielddata.mobile.service.LoginResponse;
+import au.org.ala.fielddata.mobile.service.FieldDataServiceClient;
 import au.org.ala.fielddata.mobile.service.LoginService;
+import au.org.ala.fielddata.mobile.service.dto.LoginResponse;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
@@ -134,7 +134,7 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 		GenericDAO<User> userDAO = new GenericDAO<User>(LoginActivity.this);
 		userDAO.save(response.user);
 		
-		FieldDataService service = new FieldDataService(LoginActivity.this);
+		FieldDataServiceClient service = new FieldDataServiceClient(LoginActivity.this);
 		List<Survey> surveys = service.downloadSurveys();
 
 		if (surveys.size() > 0) {

@@ -27,11 +27,11 @@ import au.org.ala.fielddata.mobile.model.Species;
 public class StorageManager {
 
 	private Context ctx;
-	private FieldDataService downloadService;
+	private FieldDataServiceClient downloadService;
 	
 	public StorageManager(Context ctx) {
 		this.ctx = ctx;
-		downloadService = new FieldDataService(ctx);
+		downloadService = new FieldDataServiceClient(ctx);
 	}
 	
 	/**

@@ -19,6 +19,7 @@ import org.springframework.util.MultiValueMap;
 
 import android.content.Context;
 import au.org.ala.fielddata.mobile.pref.Preferences;
+import au.org.ala.fielddata.mobile.service.dto.LoginResponse;
 
 
 public class LoginService extends WebServiceClient {

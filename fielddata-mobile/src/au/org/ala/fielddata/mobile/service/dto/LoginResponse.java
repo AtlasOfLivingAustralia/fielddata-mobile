@@ -13,7 +13,7 @@
  * rights and limitations under the License.
  ******************************************************************************/
 
-package au.org.ala.fielddata.mobile.service;
+package au.org.ala.fielddata.mobile.service.dto;
 
 import au.org.ala.fielddata.mobile.model.User;
 
@@ -21,7 +21,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class LoginResponse {
 
-	class Portal {
+	public class Portal {
 		public String name;
 		public String path;
 	}

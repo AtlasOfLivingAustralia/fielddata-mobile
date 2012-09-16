@@ -65,7 +65,7 @@ public class UploadService extends IntentService {
 		int resultCode = SUCCESS;
 		GenericDAO<Survey> surveyDao = new GenericDAO<Survey>(this);
 		Survey survey = surveyDao.findByServerId(Survey.class, record.survey_id);
-		FieldDataService service = new FieldDataService(getApplicationContext());
+		FieldDataServiceClient service = new FieldDataServiceClient(getApplicationContext());
 		
 		RecordValidator validator = new RecordValidator();
 		List<Record> tmp = new ArrayList<Record>();

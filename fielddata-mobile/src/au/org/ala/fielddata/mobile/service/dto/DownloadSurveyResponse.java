@@ -12,7 +12,7 @@
  * implied. See the License for the specific language governing
  * rights and limitations under the License.
  ******************************************************************************/
-package au.org.ala.fielddata.mobile.service;
+package au.org.ala.fielddata.mobile.service.dto;
 
 import java.util.List;
 

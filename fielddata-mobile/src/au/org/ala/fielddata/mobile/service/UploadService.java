@@ -21,6 +21,8 @@ public class UploadService extends IntentService {
 	public static final String UPLOADED = "Upload";
 	public static final String UPLOAD_FAILED = "UploadFailed";
 	
+	public static final String RECORD_IDS_EXTRA = "RecordIds";
+	
 	private int SUCCESS = 0;
 	private int FAILED_INVALID = 1;
 	private int FAILED_SERVER = 2;
@@ -34,9 +36,18 @@ public class UploadService extends IntentService {
 		
 		Log.i("UploadService", "Uploading records...");
 		
-		GenericDAO<Record> recordDao = new GenericDAO<Record>(this);
-		List<Record> records = recordDao.loadAll(Record.class);
+		int[] recordIds = intent.getIntArrayExtra(RECORD_IDS_EXTRA);
 		
+		GenericDAO<Record> recordDao = new GenericDAO<Record>(this);
+		List<Record> records = new ArrayList<Record>();
+		if (recordIds == null) {
+			records.addAll(recordDao.loadAll(Record.class));
+		}
+		else {
+			for (int id : recordIds) {
+				records.add(recordDao.load(Record.class, id));
+			}
+		}
 		boolean success = true;
 		for (Record record : records) {
 			int result = upload(record);

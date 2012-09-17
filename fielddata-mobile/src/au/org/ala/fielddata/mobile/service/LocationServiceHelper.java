@@ -1,8 +1,5 @@
 package au.org.ala.fielddata.mobile.service;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +10,6 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import au.org.ala.fielddata.mobile.MobileFieldDataDashboard;
 
 /**
  * The purpose of this class is to allow activities to turn on the system
@@ -136,13 +132,14 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	}
 	
 	private void notify(String message) {
-		NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-		int icon = android.R.drawable.stat_notify_sync;
-		Notification notification = new Notification(icon, message, System.currentTimeMillis());
-		Intent blah = new Intent(this, MobileFieldDataDashboard.class);
-		PendingIntent blah2 = PendingIntent.getActivity(this, 0, blah, 0);
-		notification.setLatestEventInfo(this, message, message, blah2);
-		notificationManager.notify(1, notification);
+//		NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+//		int icon = android.R.drawable.stat_notify_sync;
+//		Notification notification = new Notification(icon, message, System.currentTimeMillis());
+//		Intent blah = new Intent(this, MobileFieldDataDashboard.class);
+//		PendingIntent blah2 = PendingIntent.getActivity(this, 0, blah, 0);
+//		notification.setLatestEventInfo(this, message, message, blah2);
+//		notificationManager.notify(1, notification);
+		Log.i("LocationServiceHelper", "State changed: "+message);
 	}
 
 	

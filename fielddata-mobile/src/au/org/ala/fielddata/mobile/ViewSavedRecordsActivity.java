@@ -63,7 +63,7 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 		filter.addAction(UploadService.UPLOAD_FAILED);
 		filter.addAction(UploadService.UPLOADED);
 		
-				LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+		LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
@@ -223,19 +223,41 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 	
 	
 	private void deleteSelectedRecords() {
+		GenericDAO<Record> recordDao = new GenericDAO<Record>(this);
 		SparseBooleanArray selected = getListView().getCheckedItemPositions();
+		int deleteCount = 0;
 		for (int i=0; i<selected.size(); i++) {
 			if (selected.valueAt(i) == true) {
 				Record record = (Record)getListAdapter().getItem(i);
-				Toast.makeText(this, "Deleting record: "+record.getId(), Toast.LENGTH_SHORT).show();	
-				
+				recordDao.delete(Record.class, record.getId());
+				deleteCount++;
 			}
 		}
+		if (deleteCount > 0) {
+			Toast.makeText(this, deleteCount + " records deleted", Toast.LENGTH_SHORT).show();	
+				
+		}
+		
 		actionMode.finish();
+		refresh();
 	}
 	
 	private void uploadSelectedRecords() {
-		Toast.makeText(this, "Upload pressed", Toast.LENGTH_SHORT).show();
+		SparseBooleanArray selected = getListView().getCheckedItemPositions();
+		int count = countSelected();
+		int index = 0;
+		int[] recordIds = new int[count];
+		for (int i=0; i<selected.size(); i++) {
+			if (selected.valueAt(i) == true) {
+				Record record = (Record)getListAdapter().getItem(i);
+				recordIds[index++] = record.getId();
+			}
+		}
+		
+		Intent intent = new Intent(this, UploadService.class);
+		intent.putExtra(UploadService.RECORD_IDS_EXTRA, recordIds);
+		startService(intent);
+		
 		actionMode.finish();
 	}
 	

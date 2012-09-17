@@ -24,9 +24,12 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
@@ -36,23 +39,31 @@ import au.org.ala.fielddata.mobile.ui.MenuHelper;
 import au.org.ala.fielddata.mobile.ui.SavedRecordHolder;
 
 import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class ViewSavedRecordsActivity extends SherlockListActivity {
+/**
+ * Allows the user to view records that have been created but not
+ * yet uploaded to the FieldData server.
+ */
+public class ViewSavedRecordsActivity extends SherlockListActivity implements ActionMode.Callback {
 
 	private List<Record> records;
+	private ActionMode actionMode;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(UploadService.UPLOAD_FAILED);
 		filter.addAction(UploadService.UPLOADED);
-
-		LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+		
+				LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
@@ -132,10 +143,101 @@ public class ViewSavedRecordsActivity extends SherlockListActivity {
 				viewHolder = new SavedRecordHolder(row);
 				row.setTag(viewHolder);
 			}
-
+			boolean checked = ((ListView)parent).getCheckedItemPositions().get(position);
+			viewHolder.checkbox.setChecked(checked);
+			viewHolder.checkbox.setTag(position);
 			viewHolder.populate(getItem(position));
 			return row;
 		}
 
 	}
+	
+	public void onCheckboxClicked(View view) {
+		CheckBox checkBox = (CheckBox)view;
+		Log.d("ViewSavedRecordsActivity", "Checkbox at position "+checkBox.getTag()+" is "+checkBox.isChecked());
+		getListView().setItemChecked((Integer)view.getTag(), checkBox.isChecked());
+		
+		int count = countSelected();
+		if (count > 0) {
+			if (actionMode == null) {
+				startActionMode(this);
+			}
+			else {
+				actionMode.setTitle(count+" selected");
+			}
+		}
+		else {
+			if (actionMode != null) {
+				actionMode.finish();
+				actionMode = null;
+			}
+		}
+		
+		Log.d("ViewSavedRecordsActivity", "OnCheckboxClicked:"+countSelected());
+	}
+	
+	private int countSelected() {
+		
+		int count = 0;
+		SparseBooleanArray selected = getListView().getCheckedItemPositions();
+		for (int i=0; i<selected.size(); i++) {
+			if (selected.valueAt(i)) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	
+	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+		this.actionMode = mode;
+		mode.setTitle(countSelected() + " selected");
+		
+		menu.add("Delete").setIcon(android.R.drawable.ic_menu_delete);
+		menu.add("Upload").setIcon(android.R.drawable.ic_menu_upload);
+		
+		return true;
+	}
+
+	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+		
+		return false;
+	}
+
+	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+		if ("Delete".equals(item.getTitle())) {
+			deleteSelectedRecords();
+		}
+		else if ("Upload".equals(item.getTitle())) {
+			uploadSelectedRecords();
+		}
+		return true;
+	}
+
+	public void onDestroyActionMode(ActionMode mode) {
+		
+		for (int i=0; i<getListAdapter().getCount(); i++) {
+			getListView().setItemChecked(i, false);
+		}
+	}
+	
+	
+	private void deleteSelectedRecords() {
+		SparseBooleanArray selected = getListView().getCheckedItemPositions();
+		for (int i=0; i<selected.size(); i++) {
+			if (selected.valueAt(i) == true) {
+				Record record = (Record)getListAdapter().getItem(i);
+				Toast.makeText(this, "Deleting record: "+record.getId(), Toast.LENGTH_SHORT).show();	
+				
+			}
+		}
+		actionMode.finish();
+	}
+	
+	private void uploadSelectedRecords() {
+		Toast.makeText(this, "Upload pressed", Toast.LENGTH_SHORT).show();
+		actionMode.finish();
+	}
+	
+	
 }

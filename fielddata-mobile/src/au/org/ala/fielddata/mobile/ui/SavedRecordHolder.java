@@ -6,6 +6,7 @@ import java.util.Date;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.R;
@@ -23,18 +24,22 @@ public class SavedRecordHolder {
 	ImageView icon = null;
 	TextView recordSpecies = null;
 	TextView recordTime = null;
+	public CheckBox checkbox = null;
+	
 	private StorageManager storageManager;
 	
 	public SavedRecordHolder(View row) {
 		recordSpecies = (TextView)row.findViewById(R.id.record_description_species);
 		recordTime = (TextView)row.findViewById(R.id.record_description_time);
-		
 		icon = (ImageView)row.findViewById(R.id.record_image);
+		checkbox = (CheckBox)row.findViewById(R.id.checkbox);
 		
 		storageManager = new StorageManager(row.getContext());
+		
 	}
 	
 	public void populate(Record record) {
+		
 		Uri image = record.getFirstImageUri();
 		if (image != null) {
 		
@@ -60,5 +65,7 @@ public class SavedRecordHolder {
 		
 		
 	}
+	
+	
 	
 }

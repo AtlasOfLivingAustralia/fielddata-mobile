@@ -1,7 +1,5 @@
 package au.org.ala.fielddata.mobile;
 
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -19,7 +17,7 @@ import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.Preferences;
-import au.org.ala.fielddata.mobile.service.FieldDataServiceClient;
+import au.org.ala.fielddata.mobile.service.FieldDataService;
 import au.org.ala.fielddata.mobile.service.LoginService;
 import au.org.ala.fielddata.mobile.service.dto.LoginResponse;
 
@@ -134,19 +132,7 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 		GenericDAO<User> userDAO = new GenericDAO<User>(LoginActivity.this);
 		userDAO.save(response.user);
 		
-		FieldDataServiceClient service = new FieldDataServiceClient(LoginActivity.this);
-		List<Survey> surveys = service.downloadSurveys();
-
-		if (surveys.size() > 0) {
-			Preferences prefs = new Preferences(this);
-			prefs.setCurrentSurvey(surveys.get(0).server_id);
-			prefs.setCurrentSurveyName(surveys.get(0).name);
-			
-		}
-		GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(LoginActivity.this);
-		for (Survey survey : surveys) {
-			surveyDAO.save(survey);
-		}
+		new FieldDataService(this).downloadSurveys();
 
 	}
 }

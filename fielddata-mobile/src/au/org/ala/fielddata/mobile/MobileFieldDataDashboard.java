@@ -40,6 +40,7 @@ import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.EditPreferences;
 import au.org.ala.fielddata.mobile.pref.Preferences;
+import au.org.ala.fielddata.mobile.service.FieldDataService;
 import au.org.ala.fielddata.mobile.service.FieldDataServiceClient;
 import au.org.ala.fielddata.mobile.service.LocationServiceHelper;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
@@ -67,7 +68,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		
 		setContentView(R.layout.activity_mobile_data_dashboard);
-		setSupportProgressBarIndeterminateVisibility(true);
 		
 		preferences = new Preferences(this);
 		
@@ -193,6 +193,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 
 	private void refreshPage() {
 		
+		
 		PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preference1, true);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
@@ -203,6 +204,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			redirectToPreferences();
 		}
 		else {
+			setSupportProgressBarIndeterminateVisibility(true);
+			
 			new InitDataTask().execute();
 			new StatusTask().execute();
 		}
@@ -301,6 +304,23 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.sync) {
+			setSupportProgressBarIndeterminateVisibility(true);
+			
+			new AsyncTask<Void, Void, Void>() {
+				
+				
+			    @Override
+				protected Void doInBackground(Void... params) {
+			    	new FieldDataService(MobileFieldDataDashboard.this).downloadSurveys();
+					return null;
+				}
+
+				@Override
+				protected void onPostExecute(Void result) {
+					refreshPage();
+				}
+			}.execute();
+			
 			refreshPage();
 			return true;
 		}

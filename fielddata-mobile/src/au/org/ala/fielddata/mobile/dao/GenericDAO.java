@@ -38,14 +38,14 @@ public class GenericDAO<T extends Persistent> {
 	}
 
 	public T findByServerId(Class<T> modelClass, Integer id) {
-		return findByColumn(modelClass, "server_id", Integer.toString(id));
+		return findByColumn(modelClass, "server_id", Integer.toString(id), true);
 	}
 
 	public T load(Class<T> modelClass, Integer id) {
-		return findByColumn(modelClass, "_id", Integer.toString(id));
+		return findByColumn(modelClass, "_id", Integer.toString(id), false);
 	}
 
-	private T findByColumn(Class<T> modelClass, String column, String value) {
+	private T findByColumn(Class<T> modelClass, String column, String value, boolean allowNoResults) {
 		synchronized(helper) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		Cursor result = null;
@@ -56,17 +56,22 @@ public class GenericDAO<T extends Persistent> {
 			result = db.query(true, modelClass.getSimpleName(), null, column + " = ?",
 					new String[] { value }, null, null, null, null);
 
-			if (result.getCount() != 1) {
-				Log.e("GenericDAO", "Expected 1 "+modelClass.getSimpleName()+", found: "+result.getCount());
-				throw new DatabaseException("Expected 1 result, found: " + result.getCount());
-			}
-			result.moveToFirst();
-			String json = result.getString(5);
-			Gson gson = new Gson();
-			modelObject = (T) gson.fromJson(json, modelClass);
-			modelObject.setId(result.getInt(0));
-			db.setTransactionSuccessful();
 			
+			if (result.getCount() != 1) {
+				
+				if (!allowNoResults) {
+					Log.e("GenericDAO", "Expected 1 "+modelClass.getSimpleName()+", found: "+result.getCount());
+					throw new DatabaseException("Expected 1 result, found: " + result.getCount());
+				}
+			}
+			else {
+				result.moveToFirst();
+				String json = result.getString(5);
+				Gson gson = new Gson();
+				modelObject = (T) gson.fromJson(json, modelClass);
+				modelObject.setId(result.getInt(0));
+			}
+			db.setTransactionSuccessful();
 
 		} finally {
 			if (result != null) {

@@ -34,6 +34,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +51,6 @@ import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel.TempValue;
 import au.org.ala.fielddata.mobile.service.StorageManager;
-import au.org.ala.fielddata.mobile.ui.MenuHelper;
 import au.org.ala.fielddata.mobile.ui.MultiSpinner;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
 import au.org.ala.fielddata.mobile.ui.ValidatingViewPager;
@@ -64,9 +64,9 @@ import au.org.ala.fielddata.mobile.validation.SpeciesBinder;
 import au.org.ala.fielddata.mobile.validation.SpinnerBinder;
 import au.org.ala.fielddata.mobile.validation.TextViewBinder;
 
+import com.actionbarsherlock.app.ActionBar.LayoutParams;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.TitlePageIndicator;
 
@@ -108,6 +108,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 		setContentView(R.layout.activity_collect_survey_data);
 
+		buildCustomActionBar();
+		
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
 					.add(new SurveyModelHolder(), "model")
@@ -125,6 +127,20 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			selectedSpecies = speciesDao.load(Species.class, speciesId);
 		}
 		
+	}
+
+	private void buildCustomActionBar() {
+		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		
+		View customNav = LayoutInflater.from(this).inflate(R.layout.cancel_done, null);
+        
+        customNav.findViewById(R.id.action_done).setOnClickListener(customActionBarListener);
+        customNav.findViewById(R.id.action_cancel).setOnClickListener(customActionBarListener);
+        
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, Gravity.FILL_HORIZONTAL);
+        getSupportActionBar().setCustomView(customNav, params);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
 	}
 
 	public void setViewModel(SurveyViewModel model) {
@@ -162,15 +178,22 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = new MenuInflater(this);
-		inflater.inflate(R.menu.common_menu_items, menu);
-		inflater.inflate(R.menu.activity_mobile_field_data, menu);
+//		menu.add("Help").setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+//		menu.add("Done").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+//		MenuInflater inflater = new MenuInflater(this);
+//		inflater.inflate(R.menu.common_menu_items, menu);
+//		inflater.inflate(R.menu.activity_mobile_field_data, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		if (item.getItemId() == R.id.save) {
+		onActionBarItemSelected(item.getItemId());
+		return true;
+	}
+	
+	public void onActionBarItemSelected(int itemId) {
+		if (itemId == R.id.action_done) {
 			int firstInvalidPage = surveyViewModel.validate();
 			if (firstInvalidPage < 0) {
 				new SaveRecordTask(this).execute(surveyViewModel.getRecord());
@@ -178,12 +201,10 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			else {
 				pager.setCurrentItem(firstInvalidPage);
 			}
-			return true;
 		}
-		else if (item.getItemId() == R.id.cancel) {
+		else if (itemId == R.id.action_cancel) {
 			finish();
 		}
-		return new MenuHelper(this).handleMenuItemSelection(item);
 	}
 	
 	public void addImageListener(ImageBinder binder) {
@@ -473,8 +494,14 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			List<Attribute> pageAttributes = viewModel.getPage(pageNum);
 			
 			int rowCount = pageAttributes.size();
+			if (pageNum == 0) {
+				TableRow row = new TableRow(getActivity());
+				builder.buildSurveyName(viewModel.getSurvey(), row);
+				addRow(tableLayout, row);
+			}
 			for (int i = 0; i < rowCount; i++) {
 				TableRow row = new TableRow(getActivity());
+				
 				Attribute attribute = pageAttributes.get(i);
 
 				View inputView = builder.buildFields(attribute, row);
@@ -482,13 +509,17 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				binder.configureBindings(inputView, attribute);
 				//row.addView(inputView);
 
-				TableRow.LayoutParams params = new TableRow.LayoutParams();
-				params.setMargins(5, 5, 10, 10);
-				params.width = TableRow.LayoutParams.MATCH_PARENT;
-				params.height = TableRow.LayoutParams.WRAP_CONTENT;
-				tableLayout.addView(row, params);
+				addRow(tableLayout, row);
 			}
 
+		}
+
+		private void addRow(TableLayout tableLayout, TableRow row) {
+			TableRow.LayoutParams params = new TableRow.LayoutParams();
+			params.setMargins(5, 5, 10, 10);
+			params.width = TableRow.LayoutParams.MATCH_PARENT;
+			params.height = TableRow.LayoutParams.WRAP_CONTENT;
+			tableLayout.addView(row, params);
 		}
 
 	}
@@ -525,4 +556,10 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		}
 
 	}
+	
+	private final View.OnClickListener customActionBarListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            onActionBarItemSelected(v.getId());
+        }
+    };
 }

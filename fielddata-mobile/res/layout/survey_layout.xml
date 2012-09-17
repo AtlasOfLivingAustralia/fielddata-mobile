@@ -19,24 +19,17 @@
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:mode="twoLine"
+    android:background="@drawable/action_bar_background"
 >
-    
-    <!-- <ImageView android:id="@+id/defaulticon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="8dip"
-        android:layout_marginLeft="?android:attr/listPreferredItemPaddingLeft"
-    	android:visibility="gone"
-        android:contentDescription="@string/default_icon_description"
-        android:src="@drawable/green_tick"/>
-   -->  
+ 
 	<TextView android:id="@android:id/text1"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
     	android:layout_marginLeft="?android:attr/listPreferredItemPaddingLeft"
     	android:layout_marginTop="8dip"
     	android:layout_alignParentLeft="true"
-		android:textAppearance="?android:attr/textAppearanceListItem"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="#FFFFFF"
 	/>
 		
 	<TextView android:id="@android:id/text2"
@@ -45,6 +38,7 @@
 		android:layout_below="@android:id/text1"
     	android:layout_alignLeft="@android:id/text1"
 		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="#FFFFFF"
 	/>
 
 </TwoLineListItem>

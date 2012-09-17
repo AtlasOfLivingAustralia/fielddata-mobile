@@ -21,21 +21,18 @@
         android:id="@+id/checkbox"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_margin="3dp"
         android:layout_alignParentLeft="true"
         android:onClick="onCheckboxClicked"
         android:focusable="false"
         android:clickable="true"
-        android:padding="15dp"
         />
     
     <ImageView
         android:id="@+id/record_image"        
         android:layout_height="48dp"
         android:layout_width="48dp"
-        android:layout_alignParentLeft="true"
-        android:layout_margin="3dp"
         android:layout_toRightOf="@id/checkbox"
+        android:layout_marginRight="3dp"
         />
 
     <TextView

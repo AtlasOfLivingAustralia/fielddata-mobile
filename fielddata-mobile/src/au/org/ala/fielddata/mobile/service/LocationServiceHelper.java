@@ -3,6 +3,7 @@ package au.org.ala.fielddata.mobile.service;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,7 +23,8 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	private final IBinder binder = new LocationServiceBinder();
 	private Location bestLocation;
 	private LocationListener listener;
-	
+	private boolean hasGps;
+	private boolean hasNetwork;
 	
 	public class LocationServiceBinder extends Binder {
 		public LocationServiceHelper getService() {
@@ -34,20 +36,32 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	public void onCreate() {
 	
 		Log.i("LocationServiceHelper", "Starting location updates");
-		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-		requestLocationUpdates(false);
+		hasGps = getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS);
+		hasNetwork = getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_NETWORK);
+		
+		if (hasGps || hasNetwork) {
+			locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+			requestLocationUpdates(false);
+		}
 	}
 	
 	private void requestLocationUpdates(boolean active) {
-		
 		if (active) {
 			final int TEN_SECONDS = 10000;
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TEN_SECONDS, DISTANCE_CHANGE, this);
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TEN_SECONDS, DISTANCE_CHANGE, this);
+			if (hasGps && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TEN_SECONDS, DISTANCE_CHANGE, this);
+			}
+			if (hasNetwork) {
+				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TEN_SECONDS, DISTANCE_CHANGE, this);
+			}
 		}
 		else {
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TWO_MINUTES, DISTANCE_CHANGE, this);
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TWO_MINUTES, DISTANCE_CHANGE, this);
+			if (hasGps) {
+				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TWO_MINUTES, DISTANCE_CHANGE, this);
+			}
+			if (hasNetwork) {
+				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TWO_MINUTES, DISTANCE_CHANGE, this);
+			}
 		}
 	}
 	
@@ -79,7 +93,9 @@ public class LocationServiceHelper extends Service implements LocationListener {
 		
 		Log.i("LocationServiceHelper", "onBind");
 		
-		requestLocationUpdates(true);
+		if (hasGps || hasNetwork) {
+			requestLocationUpdates(true);
+		}
 		notify("Location service bound");
 		
 		return binder;

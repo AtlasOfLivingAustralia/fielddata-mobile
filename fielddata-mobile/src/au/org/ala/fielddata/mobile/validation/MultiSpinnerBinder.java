@@ -26,10 +26,8 @@ import au.org.ala.fielddata.mobile.ui.MultiSpinner;
 import au.org.ala.fielddata.mobile.ui.MultiSpinner.MultiSpinnerListener;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
-public class MultiSpinnerBinder implements Binder, MultiSpinnerListener {
+public class MultiSpinnerBinder extends AbsBinder implements MultiSpinnerListener {
 
-	private MultiSpinner view;
-	private Attribute attribute;
 	private SurveyViewModel model;
 	private Context ctx;
 	private boolean updating;
@@ -37,9 +35,8 @@ public class MultiSpinnerBinder implements Binder, MultiSpinnerListener {
 	
 
 	public MultiSpinnerBinder(Context ctx, MultiSpinner view, Attribute attribute, SurveyViewModel model) {
+		super(attribute, view);
 		this.ctx = ctx;
-		this.view = view;
-		this.attribute = attribute;
 		this.model = model;
 		updating = false;
 		
@@ -89,7 +86,7 @@ public class MultiSpinnerBinder implements Binder, MultiSpinnerListener {
 			return;
 		}
 		
-		View selected = view.getSelectedView();
+		View selected = mulitSpinner().getSelectedView();
 		if (selected instanceof TextView) {
 			TextView textView = (TextView)selected;
 			if (result.isValid()) {
@@ -113,7 +110,7 @@ public class MultiSpinnerBinder implements Binder, MultiSpinnerListener {
 
 	private String nullSafeText() {
 		
-		boolean[] selected = view.getSelected();
+		boolean[] selected = mulitSpinner().getSelected();
 		StringBuffer selectedItems = new StringBuffer();
 		for (int i=0; i<selected.length; i++) {
 			if (selected[i]) {
@@ -123,6 +120,10 @@ public class MultiSpinnerBinder implements Binder, MultiSpinnerListener {
 		
 		String result = selectedItems.length() > 0 ? selectedItems.toString().substring(0,selectedItems.length()-2) : "";
 		return result;
+	}
+	
+	private MultiSpinner mulitSpinner() {
+		return (MultiSpinner)view;
 	}
 
 }

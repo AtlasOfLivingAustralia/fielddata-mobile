@@ -130,6 +130,14 @@ public class SurveyModelHolder extends SherlockFragment {
 			record = new Record();
 			record.survey_id = surveyId;
 			record.when = System.currentTimeMillis();
+			
+			GenericDAO<Species> speciesDao = new GenericDAO<Species>(getActivity());
+			if (speciesDao.count(Species.class) == 1) {
+				Species species = speciesDao.loadAll(Species.class).get(0);
+				record.taxon_id = species.server_id;
+				record.scientificName = species.scientificName;
+			}
+			
 			Log.d("SurveyModelHolder", "Creating new record for survey: "+surveyId);
 
 		} else {

@@ -24,18 +24,15 @@ import au.org.ala.fielddata.mobile.model.AttributeChangeListener;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
-public class TextViewBinder implements Binder, TextWatcher, AttributeChangeListener {
+public class TextViewBinder extends AbsBinder implements TextWatcher, AttributeChangeListener {
 
-	private TextView view;
 	private SurveyViewModel model;
 	private Context ctx;
-	private Attribute attribute;
 	private boolean updating;
 	
 	public TextViewBinder(Context ctx, TextView view, Attribute attribute, SurveyViewModel model) {
-		this.view = view;
+		super(attribute, view);
 		this.model = model;
-		this.attribute = attribute;
 		this.ctx = ctx;
 		updating = false;
 		view.setText(model.getValue(attribute));
@@ -70,7 +67,7 @@ public class TextViewBinder implements Binder, TextWatcher, AttributeChangeListe
 			return;
 		}
 		if (!updating) {	
-			view.setText(model.getValue(attribute));
+			((TextView)view).setText(model.getValue(attribute));
 		}
 	}
 
@@ -81,11 +78,11 @@ public class TextViewBinder implements Binder, TextWatcher, AttributeChangeListe
 		Log.d("Binder", "TextViewBinder: "+result);
 		
 		if (result.isValid()) {
-			view.setError(null);
+			((TextView)view).setError(null);
 		}
 		else {
-			view.setError(result.getMessage(ctx));
-			view.requestFocus();
+			((TextView)view).setError(result.getMessage(ctx));
+			
 		}
 	}
 	
@@ -98,7 +95,7 @@ public class TextViewBinder implements Binder, TextWatcher, AttributeChangeListe
 	}
 	
 	private String nullSafeText() {
-		CharSequence text = view.getText();
+		CharSequence text = ((TextView)view).getText();
 		if (text == null) {
 			return "";
 		}

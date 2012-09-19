@@ -20,8 +20,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.gson.Gson;
-
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.util.Log;
@@ -231,8 +229,7 @@ public class SurveyViewModel {
 		return packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA);
 	}
 
-	public int validate() {
-		int firstInvalidPage = -1;
+	public RecordValidationResult validate() {
 		RecordValidationResult result = validator.validateRecord(survey, record);
 		if (!result.valid()) {
 			for (ValidationResult attr : result.invalidAttributes()) {
@@ -240,10 +237,9 @@ public class SurveyViewModel {
 				Log.i("SurveyViewModel", "Attribute invalid: "+attr.getAttribute());
 				fireAttributeValidated(attr);
 			}
-			Attribute firstInvalid = result.invalidAttributes().get(0).getAttribute();
-			firstInvalidPage = pageOf(firstInvalid);
+			
 		}
-		return firstInvalidPage;
+		return result;
 	}
 	
 	private void validate(Attribute attribute) {
@@ -257,7 +253,7 @@ public class SurveyViewModel {
 		return result != null ? result : new ValidationResult(attribute);
 	}
 
-	private int pageOf(Attribute firstInvalid) {
+	public int pageOf(Attribute firstInvalid) {
 		int firstInvalidPage = -1;
 		int pageNum = 0;
 		Log.i("SurveyViewModel", "Invalid attribute "+firstInvalid);

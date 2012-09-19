@@ -24,19 +24,16 @@ import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
-public class SpinnerBinder implements Binder, OnItemSelectedListener {
+public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener {
 
-	private Spinner view;
-	private Attribute attribute;
 	private SurveyViewModel model;
 	private Context ctx;
 	private boolean updating;
 	
 
 	public SpinnerBinder(Context ctx, Spinner view, Attribute attribute, SurveyViewModel model) {
+		super(attribute, view);
 		this.ctx = ctx;
-		this.view = view;
-		this.attribute = attribute;
 		this.model = model;
 		updating = false;
 		view.setOnItemSelectedListener(this);
@@ -71,7 +68,7 @@ public class SpinnerBinder implements Binder, OnItemSelectedListener {
 			return;
 		}
 		
-		View selected = view.getSelectedView();
+		View selected = ((Spinner)view).getSelectedView();
 		if (selected instanceof TextView) {
 			TextView textView = (TextView)selected;
 			if (result.isValid()) {
@@ -89,12 +86,16 @@ public class SpinnerBinder implements Binder, OnItemSelectedListener {
 		}
 	}
 	
+	public View getView() {
+		return view;
+	}
+	
 	private void bind(String value) {
 		model.setValue(attribute, value);
 	}
 
 	private String nullSafeText() {
-		CharSequence text = view.getSelectedItem().toString();
+		CharSequence text = ((Spinner)view).getSelectedItem().toString();
 		if (text == null) {
 			return "";
 		}

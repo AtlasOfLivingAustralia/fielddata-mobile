@@ -9,6 +9,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import au.org.ala.fielddata.mobile.CollectSurveyData;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
@@ -16,21 +17,17 @@ import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.service.StorageManager;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
-public class ImageBinder implements Binder {
+public class ImageBinder extends AbsBinder {
 
-	private View layout;
 	private ImageView thumb;
 	private CollectSurveyData ctx;
-	private Attribute attribute;
 	private Uri thumbUri;
 	private SurveyViewModel model;
 	private boolean thumbnailRendered;
 
 	public ImageBinder(CollectSurveyData ctx, Attribute attribute, View imageView) {
+		super(attribute, imageView);
 		this.ctx = ctx;
-		this.attribute = attribute;
-		
-		layout = imageView;
 		thumb = (ImageView) imageView.findViewById(R.id.photoThumbnail);
 		model = ctx.getViewModel();
 		thumbUri = model.getRecord().getUri(attribute);
@@ -86,8 +83,8 @@ public class ImageBinder implements Binder {
 	private void updateThumbnail() {
 		if (thumbUri != null) {
 
-			layout.findViewById(R.id.noPhotoText).setVisibility(View.GONE);
-			layout.findViewById(R.id.photoThumbnail).setVisibility(View.VISIBLE);
+			view.findViewById(R.id.noPhotoText).setVisibility(View.GONE);
+			view.findViewById(R.id.photoThumbnail).setVisibility(View.VISIBLE);
 			try {
 
 				// Get the dimensions of the View
@@ -109,8 +106,8 @@ public class ImageBinder implements Binder {
 			}
 		}
 		else {
-			layout.findViewById(R.id.noPhotoText).setVisibility(View.VISIBLE);
-			layout.findViewById(R.id.photoThumbnail).setVisibility(View.GONE);
+			view.findViewById(R.id.noPhotoText).setVisibility(View.VISIBLE);
+			view.findViewById(R.id.photoThumbnail).setVisibility(View.GONE);
 			
 		}
 	}
@@ -139,9 +136,9 @@ public class ImageBinder implements Binder {
 		if (attribute.getServerId() != this.attribute.getServerId()) {
 			return;
 		}
-		// TODO need to render an error somehow, maybe replace the thumbnail
-		// with an error icon?
-		// view.setError(result.getMessage(ctx));
+		if (!result.isValid()) {
+			((TextView)view.findViewById(R.id.noPhotoText)).setError(result.getMessage(ctx));
+		}
 	}
 
 }

@@ -23,19 +23,16 @@ import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
-public class SingleCheckboxBinder implements Binder, OnCheckedChangeListener {
+public class SingleCheckboxBinder extends AbsBinder implements OnCheckedChangeListener {
 
-	private CheckBox view;
 	private SurveyViewModel model;
 	private Context ctx;
-	private Attribute attribute;
 	
 	public SingleCheckboxBinder(Context ctx, CheckBox view, Attribute attribute, SurveyViewModel model) {
-		this.view = view;
+		super(attribute, view);
 		this.model = model;
-		this.attribute = attribute;
 		this.ctx = ctx;
-		this.view.setChecked(Boolean.valueOf(model.getValue(attribute)));
+		view.setChecked(Boolean.valueOf(model.getValue(attribute)));
 		view.setOnCheckedChangeListener(this);
 	}
 
@@ -59,11 +56,11 @@ public class SingleCheckboxBinder implements Binder, OnCheckedChangeListener {
 		Log.d("Binder", "TextViewBinder: "+result);
 		
 		if (result.isValid()) {
-			view.setError(null);
+			((CheckBox)view).setError(null);
 		}
 		else {
-			view.setError(result.getMessage(ctx));
-			view.requestFocus();
+			((CheckBox)view).setError(result.getMessage(ctx));
+			
 		}
 	}
 	
@@ -76,7 +73,7 @@ public class SingleCheckboxBinder implements Binder, OnCheckedChangeListener {
 	}
 	
 	private String nullSafeText() {
-		CharSequence text = Boolean.toString(view.isChecked());
+		CharSequence text = Boolean.toString(((CheckBox)view).isChecked());
 		if (text == null) {
 			return "false";
 		}

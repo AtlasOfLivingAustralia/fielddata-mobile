@@ -20,6 +20,7 @@ import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.net.Uri;
@@ -39,6 +40,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -59,6 +61,7 @@ import au.org.ala.fielddata.mobile.validation.DateBinder;
 import au.org.ala.fielddata.mobile.validation.ImageBinder;
 import au.org.ala.fielddata.mobile.validation.LocationBinder;
 import au.org.ala.fielddata.mobile.validation.MultiSpinnerBinder;
+import au.org.ala.fielddata.mobile.validation.RecordValidator.RecordValidationResult;
 import au.org.ala.fielddata.mobile.validation.SingleCheckboxBinder;
 import au.org.ala.fielddata.mobile.validation.SpeciesBinder;
 import au.org.ala.fielddata.mobile.validation.SpinnerBinder;
@@ -194,12 +197,31 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	
 	public void onActionBarItemSelected(int itemId) {
 		if (itemId == R.id.action_done) {
-			int firstInvalidPage = surveyViewModel.validate();
-			if (firstInvalidPage < 0) {
+			RecordValidationResult result = surveyViewModel.validate();
+			
+			if (result.valid()) {
 				new SaveRecordTask(this).execute(surveyViewModel.getRecord());
 			}
 			else {
+				Attribute firstInvalid = result.invalidAttributes().get(0).getAttribute();
+				int firstInvalidPage = surveyViewModel.pageOf(firstInvalid);
 				pager.setCurrentItem(firstInvalidPage);
+				
+				final ScrollView view =(ScrollView)pager.findViewById(R.id.tableScroller);
+				BinderManager manager = (BinderManager)view.getTag();
+				View invalid = manager.getView(firstInvalid);
+				final Rect r = new Rect();
+			
+				view.offsetDescendantRectToMyCoords((View)invalid.getParent(), r);
+				Log.d("CollectSurveyData", "Invalid: "+firstInvalid+", Pager scrolling to: "+invalid.getBottom());
+				
+				view.post(new Runnable() {
+					public void run() {
+						view.scrollTo(0, r.bottom);
+						
+					}
+				});
+				
 			}
 		}
 		else if (itemId == R.id.action_cancel) {
@@ -242,7 +264,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				binder = new ImageBinder(ctx, attribute, view);
 				break;
 			case SPECIES_P:
-				binder = new SpeciesBinder(ctx, view, surveyViewModel);
+				binder = new SpeciesBinder(ctx, attribute, view, surveyViewModel);
 				break;
 			case SINGLE_CHECKBOX:
 				binder = new SingleCheckboxBinder(ctx, (CheckBox) view, attribute, surveyViewModel);
@@ -290,17 +312,21 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			}
 			binders.clear();
 		}
-
+		
+		public View getView(Attribute attribute) {
+			for (Binder binder : binders) {
+				if (binder.getAttribute().equals(attribute)) {
+					return binder.getView();
+				}
+			}
+			return null;
+		}
 	}
 
 	class SurveyPagerAdapter extends FragmentPagerAdapter implements OnPageChangeListener {
 
-		private BinderManager[] binders;
-		
 		public SurveyPagerAdapter(FragmentManager manager) {
 			super(manager);
-			
-			//binders = new BinderManager[getCount()];
 		}
 
 		@Override
@@ -310,6 +336,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			Bundle args = new Bundle();
 			args.putInt("pageNum", page);
 			surveyPage.setArguments(args);
+			
 			return surveyPage;
 		}
 
@@ -322,7 +349,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		public String getPageTitle(int page) {
 			return "Page " + (page + 1);
 		}
-
+		
 		public void onPageScrollStateChanged(int arg0) {
 			Log.d("Paging", "Scroll state changed, page: "+arg0);
 			
@@ -344,7 +371,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			//pager.setPagingEnabled(false);
 			
 		}
-
+	
 	}
 
 	/**
@@ -439,7 +466,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		private SurveyViewModel viewModel;
 		private BinderManager binder;
 		private CollectSurveyData ctx;
-
+		private ScrollView scroller;
 		
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
@@ -457,7 +484,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 					+ pageNum);
 
 			ctx = (CollectSurveyData) activity;
-			
 		}
 		
 		@Override
@@ -469,22 +495,51 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
+			Log.d("SurveyDataCollection", "onCreateView for page: "
+					+ pageNum);
+			
 			viewModel = ctx.getViewModel();
 			binder = new BinderManager(ctx);
 			Log.d("SurveyDataCollection", "Creating view for page: " + pageNum);
 			View view = inflater.inflate(R.layout.survey_data_page, container,
 					false);
+			view.setTag(binder);
+			scroller = (ScrollView)view.findViewById(R.id.tableScroller);
+			scroller.setTag(binder);
 			buildSurveyForm(view);
+			
 			return view;
 		}
 
 		@Override
 		public void onPause() {
+			super.onPause();
 			Log.d("SurveyDataCollection", "Pausing view for page: "
 					+ pageNum);
 			binder.bindAll();
+			scroller.setTag(null);
+			
+		}
+		
+		@Override
+		public void onResume() {
+			super.onResume();
+			Log.d("SurveyDataCollection", "onResume for page: "
+					+ pageNum);
+			scroller.setTag(binder);
+		}
+		
+		
+
+		@Override
+		public void onDestroyView() {
+			Log.d("SurveyDataCollection", "onDestroyView for page: "
+					+ pageNum);
+			
+			super.onDestroyView();
+			
 			binder.clearBindings();
-			super.onPause();
+			
 		}
 
 		private void buildSurveyForm(View page) {

@@ -14,13 +14,15 @@ import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.ui.GPSFragment;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
-public class LocationBinder implements Binder {
+public class LocationBinder extends AbsBinder {
 
 	private TextView locationTextView;
 	private SurveyViewModel model;
 	private CollectSurveyData ctx;
 	
 	public LocationBinder(CollectSurveyData context, View locationView, Attribute locationAttribute, SurveyViewModel model) {
+		super(locationAttribute, locationView);
+		
 		locationTextView = (TextView)locationView.findViewById(R.id.latlong);
 		this.model = model;
 		this.ctx = context;

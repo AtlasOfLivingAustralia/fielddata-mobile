@@ -14,14 +14,14 @@ import au.org.ala.fielddata.mobile.ui.SpeciesListAdapter;
 import au.org.ala.fielddata.mobile.ui.SpeciesViewHolder;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
-public class SpeciesBinder implements Binder, OnClickListener {
+public class SpeciesBinder extends AbsBinder implements OnClickListener {
 
 	private Context ctx;
 	private SurveyViewModel model;
 	private SpeciesViewHolder viewHolder;
 
-	public SpeciesBinder(Context viewCtx, View speciesView, SurveyViewModel model) {
-
+	public SpeciesBinder(Context viewCtx, Attribute attribute, View speciesView, SurveyViewModel model) {
+		super(attribute, speciesView);
 		this.ctx = viewCtx;
 		this.model = model;
 		viewHolder = new SpeciesViewHolder(speciesView); 
@@ -46,7 +46,7 @@ public class SpeciesBinder implements Binder, OnClickListener {
 		Log.d("Binder", "SpeciesBinder: "+result);
 		if (result.isValid()) {
 			viewHolder.setError(null);
-			viewHolder.requestFocus();
+			
 		}
 		else {
 			viewHolder.setError(result.getMessage(ctx));

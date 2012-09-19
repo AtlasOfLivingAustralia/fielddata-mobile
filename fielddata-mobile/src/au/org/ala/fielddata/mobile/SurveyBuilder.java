@@ -176,11 +176,16 @@ public class SurveyBuilder {
 
 		Spinner spinner = (Spinner) row.findViewById(R.id.spinner);
 		spinner.setPrompt("Select " + attribute.description);
-		ArrayAdapter<AttributeOption> adapter = new ArrayAdapter<AttributeOption>(viewContext,
-				android.R.layout.simple_spinner_item, attribute.options);
+		
+		AttributeOption empty = new AttributeOption();
+		AttributeOption[] options = new AttributeOption[attribute.options.length+1];
+		options[0] = empty;
+		System.arraycopy(attribute.options, 0, options, 1, attribute.options.length);
+		 ArrayAdapter<AttributeOption> adapter = new  ArrayAdapter<AttributeOption>(viewContext,
+				android.R.layout.simple_spinner_item, options);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
-
+		
 		return spinner;
 	}
 
@@ -212,9 +217,11 @@ public class SurveyBuilder {
 
 		ViewGroup row = (ViewGroup) viewContext.getLayoutInflater().inflate(R.layout.survey_layout,
 				parent);
-		TextView name = (TextView) row.findViewById(android.R.id.text1);
+		TextView name = (TextView) row.findViewById(R.id.surveyName);
 		name.setText(survey.name);
-		TextView description = (TextView) row.findViewById(android.R.id.text2);
+		name.setFocusableInTouchMode(true);
+		name.setFocusable(true);
+		TextView description = (TextView) row.findViewById(R.id.surveyDescription);
 		description.setText(survey.description);
 
 	}

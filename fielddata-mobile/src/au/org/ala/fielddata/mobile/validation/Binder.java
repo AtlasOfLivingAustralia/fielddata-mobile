@@ -14,9 +14,15 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.validation;
 
+import android.view.View;
+import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.AttributeChangeListener;
 
 public interface Binder extends AttributeChangeListener {
 
 	public void bind();
+	
+	public View getView();
+	
+	public Attribute getAttribute();
 }

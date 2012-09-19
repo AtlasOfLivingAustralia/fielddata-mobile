@@ -16,9 +16,8 @@ import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
-public class DateBinder implements Binder, OnClickListener, DatePickerDialog.OnDateSetListener {
+public class DateBinder extends AbsBinder implements OnClickListener, DatePickerDialog.OnDateSetListener {
 
-	private Attribute attribute;
 	private SurveyViewModel model;
 	private DateFieldHolder holder;
 	private Context ctx;
@@ -34,7 +33,7 @@ public class DateBinder implements Binder, OnClickListener, DatePickerDialog.OnD
 	}
 	
 	public DateBinder(Context ctx, View view, Attribute attribute, SurveyViewModel model) {
-		
+		super(attribute, view);
 		
 		this.ctx = ctx;
 		this.attribute = attribute;

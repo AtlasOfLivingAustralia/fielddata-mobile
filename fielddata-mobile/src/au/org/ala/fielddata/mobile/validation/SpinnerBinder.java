@@ -15,7 +15,10 @@
 package au.org.ala.fielddata.mobile.validation;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
@@ -24,11 +27,12 @@ import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
-public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener {
+public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, OnTouchListener {
 
 	private SurveyViewModel model;
 	private Context ctx;
 	private boolean updating;
+	private boolean bindEnabled;
 	
 
 	public SpinnerBinder(Context ctx, Spinner view, Attribute attribute, SurveyViewModel model) {
@@ -36,20 +40,40 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener {
 		this.ctx = ctx;
 		this.model = model;
 		updating = false;
+		bindEnabled = false;
 		view.setOnItemSelectedListener(this);
+		view.setOnTouchListener(this);
 
 	}
 
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
-		
-		bind();
+		Log.d("SpinnerBinder", "onItemSelected");
+		if (bindEnabled) {
+			bind();
+		}
 	}
 
 	public void onNothingSelected(AdapterView<?> parent) {
-		bind("");
+		if (bindEnabled) {
+			bind("");
+		}
 	}
 	
+	
+	/**
+	 * The reason this is necessary is spinners fire onItemSelected events
+	 * automatically when they are first layed out (including after an 
+	 * orientation change for example).
+	 * We don't actually want to trigger validation unless the user has
+	 * interacted with the Spinner (or the user has pressed Save).
+	 */
+	public boolean onTouch(View v, MotionEvent event) {
+		Log.d("SpinnerBinder", "onTouch");
+		bindEnabled = true;
+		return false;
+	}
+
 	public void onAttributeChange(Attribute attribute) {
 		if (attribute.getServerId() != this.attribute.getServerId()) {
 			return;
@@ -64,6 +88,7 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener {
 	}
 
 	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
+		Log.d("SpinnerBinder", "onValidationStatusChange: "+attribute+", "+result.isValid());
 		if (attribute.getServerId() != this.attribute.getServerId()) {
 			return;
 		}
@@ -75,13 +100,18 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener {
 				textView.setError(null);
 			}
 			else {
+				
 			    textView.setError(result.getMessage(ctx));
 			}
 		}
 	}
 	
 	public void bind() {
+		Log.d("SpinnerBinder", "bind");
 		if (!updating) {
+			
+			bindEnabled = true;
+			Log.d("SpinnerBinder", "bind - not updating");
 			bind(nullSafeText());
 		}
 	}

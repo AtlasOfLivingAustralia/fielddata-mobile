@@ -14,7 +14,7 @@
 -->
 <resources>
 
-    <string name="app_name">SA Koala Count</string>
+    <string name="app_name">ALA FieldData</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_mobile_field_data">SA Koala Count</string>
     <string name="submitButtonText">Save</string>
@@ -87,10 +87,13 @@
     <string name="menu_login">Change Login</string>
     <string name="title_activity_field_guide">View Field Guide</string>
     
+    <!-- Survey pages -->
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
     
     <!--  Portal names -->
 	<string-array name="portals">
-	   <!--  <item>Condamine NRM</item> -->
+	    <item>Condamine NRM</item>
 	    <item>SA Koala Count</item>
 	</string-array>
 

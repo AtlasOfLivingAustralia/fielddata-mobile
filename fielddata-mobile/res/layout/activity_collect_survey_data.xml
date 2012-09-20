@@ -16,7 +16,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" 
-    android:background="#CCCCCC">
+    android:background="#CCCCCC" xmlns:app="http://schemas.android.com/apk/res/au.org.ala.fielddata.mobile">
 
     <com.viewpagerindicator.TitlePageIndicator
         android:id="@+id/titles"
@@ -24,9 +24,31 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        
+        app:clipPadding="12dp"
         android:visibility="gone" />
-
+    <ImageView
+        android:id="@+id/leftArrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="12dp"
+        android:src="@drawable/indicator_prev_arrow"
+        android:contentDescription="@string/previous"
+        android:visibility="gone"
+        />
+    <ImageView
+        android:id="@+id/rightArrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="12dp"
+        android:src="@drawable/indicator_next_arrow"
+        android:contentDescription="@string/next"
+        android:visibility="gone"
+        />
+    
     <au.org.ala.fielddata.mobile.ui.ValidatingViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/surveyPager"

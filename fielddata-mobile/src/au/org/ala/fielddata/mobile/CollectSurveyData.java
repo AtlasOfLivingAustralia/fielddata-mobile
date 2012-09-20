@@ -153,9 +153,30 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 		if (surveyViewModel.getPageCount() > 1) {
 			TitlePageIndicator titleIndicator = (TitlePageIndicator) findViewById(R.id.titles);
+			final View leftArrow = findViewById(R.id.leftArrow);
+			final View rightArrow = findViewById(R.id.rightArrow);
 			titleIndicator.setViewPager(pager);
-			titleIndicator.setOnPageChangeListener(pagerAdapter);
+			titleIndicator.setOnPageChangeListener(new OnPageChangeListener() {
+				
+				public void onPageSelected(int arg0) {
+					int leftVisiblity = View.VISIBLE;
+					int rightVisibility = View.VISIBLE;
+					if (arg0 == 0) {
+						leftVisiblity = View.GONE;
+					}
+					int count = pagerAdapter.getCount();
+					if (arg0 == count-1) {
+						rightVisibility = View.GONE;
+					}
+					leftArrow.setVisibility(leftVisiblity);
+					rightArrow.setVisibility(rightVisibility);
+				}
+				
+				public void onPageScrolled(int arg0, float arg1, int arg2) {}
+				public void onPageScrollStateChanged(int arg0) {}
+			});
 			titleIndicator.setVisibility(View.VISIBLE);
+			rightArrow.setVisibility(View.VISIBLE);
 		}
 		if (selectedSpecies != null) {
 			onSpeciesSelected(selectedSpecies);
@@ -323,7 +344,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		}
 	}
 
-	class SurveyPagerAdapter extends FragmentPagerAdapter implements OnPageChangeListener {
+	class SurveyPagerAdapter extends FragmentPagerAdapter {
 
 		public SurveyPagerAdapter(FragmentManager manager) {
 			super(manager);
@@ -350,27 +371,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			return "Page " + (page + 1);
 		}
 		
-		public void onPageScrollStateChanged(int arg0) {
-			Log.d("Paging", "Scroll state changed, page: "+arg0);
-			
-			if (arg0 == ViewPager.SCROLL_STATE_DRAGGING) {
-				int page = pager.getCurrentItem();
-				//boolean valid = binders[page].validateAll(); 
-				//Log.d("Paging", "Validating page: "+page+", result: "+valid);
-				
-				
-			}
-		}
-
-		public void onPageScrolled(int arg0, float arg1, int arg2) {
-			
-		}
-
-		public void onPageSelected(int arg0) {
-			Log.d("Paging", "Page selected, page: "+arg0);
-			//pager.setPagingEnabled(false);
-			
-		}
 	
 	}
 

@@ -229,6 +229,7 @@ public class SurveyViewModel {
 		return packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA);
 	}
 
+	
 	public RecordValidationResult validate() {
 		RecordValidationResult result = validator.validateRecord(survey, record);
 		if (!result.valid()) {
@@ -249,7 +250,7 @@ public class SurveyViewModel {
 	}
 	
 	public ValidationResult validationStatus(Attribute attribute) {
-		ValidationResult result = validationStatus.get(attribute.server_id);
+		ValidationResult result = validationStatus.get(attribute.getServerId());
 		return result != null ? result : new ValidationResult(attribute);
 	}
 
@@ -271,6 +272,10 @@ public class SurveyViewModel {
 			pageNum++;
 		}
 		return firstInvalidPage;
+	}
+	
+	public AttributeChangeListener getAttributeListener(Attribute attribute) {
+		return listeners.get(attribute.getServerId());
 	}
 
 	/**

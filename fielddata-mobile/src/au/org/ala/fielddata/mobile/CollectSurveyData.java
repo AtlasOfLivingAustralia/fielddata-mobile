@@ -30,7 +30,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
@@ -39,6 +38,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.CheckBox;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -69,16 +69,15 @@ import au.org.ala.fielddata.mobile.validation.TextViewBinder;
 
 import com.actionbarsherlock.app.ActionBar.LayoutParams;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.TitlePageIndicator;
 
 /**
- * The CollectSurveyData activity presents a survey form to the user to
- * fill out.
+ * The CollectSurveyData activity presents a survey form to the user to fill
+ * out.
  */
 public class CollectSurveyData extends SherlockFragmentActivity implements
-		SpeciesSelectionListener {
+		SpeciesSelectionListener, OnPageChangeListener {
 
 	public static final String SURVEY_BUNDLE_KEY = "SurveyIdKey";
 	public static final String RECORD_BUNDLE_KEY = "RecordIdKey";
@@ -102,8 +101,10 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 	private SurveyPagerAdapter pagerAdapter;
 	private ValidatingViewPager pager;
-	private List<ImageBinder> imageBinders;
 	private Species selectedSpecies;
+	private View leftArrow;
+	private View rightArrow;
+	private Attribute firstInvalidAttribute;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -112,38 +113,39 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		setContentView(R.layout.activity_collect_survey_data);
 
 		buildCustomActionBar();
-		
+
 		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(new SurveyModelHolder(), "model")
+			getSupportFragmentManager().beginTransaction().add(new SurveyModelHolder(), "model")
 					.commit();
 		}
 
 		pagerAdapter = new SurveyPagerAdapter(getSupportFragmentManager());
 		pager = (ValidatingViewPager) findViewById(R.id.surveyPager);
 		pager.setAdapter(pagerAdapter);
-		
+		leftArrow = findViewById(R.id.leftArrow);
+		rightArrow = findViewById(R.id.rightArrow);
 		Intent i = getIntent();
 		int speciesId = i.getIntExtra(CollectSurveyData.SPECIES, 0);
 		if (speciesId > 0) {
 			GenericDAO<Species> speciesDao = new GenericDAO<Species>(this);
 			selectedSpecies = speciesDao.load(Species.class, speciesId);
 		}
-		
+
 	}
 
 	private void buildCustomActionBar() {
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
-		
+
 		View customNav = LayoutInflater.from(this).inflate(R.layout.cancel_done, null);
-        
-        customNav.findViewById(R.id.action_done).setOnClickListener(customActionBarListener);
-        customNav.findViewById(R.id.action_cancel).setOnClickListener(customActionBarListener);
-        
-        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, Gravity.FILL_HORIZONTAL);
-        getSupportActionBar().setCustomView(customNav, params);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
+
+		customNav.findViewById(R.id.action_done).setOnClickListener(customActionBarListener);
+		customNav.findViewById(R.id.action_cancel).setOnClickListener(customActionBarListener);
+
+		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT, Gravity.FILL_HORIZONTAL);
+		getSupportActionBar().setCustomView(customNav, params);
+		getSupportActionBar().setDisplayShowCustomEnabled(true);
 	}
 
 	public void setViewModel(SurveyViewModel model) {
@@ -153,28 +155,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 		if (surveyViewModel.getPageCount() > 1) {
 			TitlePageIndicator titleIndicator = (TitlePageIndicator) findViewById(R.id.titles);
-			final View leftArrow = findViewById(R.id.leftArrow);
-			final View rightArrow = findViewById(R.id.rightArrow);
 			titleIndicator.setViewPager(pager);
-			titleIndicator.setOnPageChangeListener(new OnPageChangeListener() {
-				
-				public void onPageSelected(int arg0) {
-					int leftVisiblity = View.VISIBLE;
-					int rightVisibility = View.VISIBLE;
-					if (arg0 == 0) {
-						leftVisiblity = View.GONE;
-					}
-					int count = pagerAdapter.getCount();
-					if (arg0 == count-1) {
-						rightVisibility = View.GONE;
-					}
-					leftArrow.setVisibility(leftVisiblity);
-					rightArrow.setVisibility(rightVisibility);
-				}
-				
-				public void onPageScrolled(int arg0, float arg1, int arg2) {}
-				public void onPageScrollStateChanged(int arg0) {}
-			});
+			titleIndicator.setOnPageChangeListener(this);
 			titleIndicator.setVisibility(View.VISIBLE);
 			rightArrow.setVisibility(View.VISIBLE);
 		}
@@ -183,17 +165,75 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		}
 	}
 
+	public void onPageSelected(int page) {
+		int leftVisiblity = View.VISIBLE;
+		int rightVisibility = View.VISIBLE;
+		if (page == 0) {
+			leftVisiblity = View.GONE;
+		}
+		int count = pagerAdapter.getCount();
+		if (page == count - 1) {
+			rightVisibility = View.GONE;
+		}
+
+		leftArrow.setVisibility(leftVisiblity);
+		rightArrow.setVisibility(rightVisibility);
+
+		if (firstInvalidAttribute != null) {
+			Log.d("CollectSurveyData", "Invalid: " + firstInvalidAttribute + ", Pager scrolling");
+			final Attribute invalid = firstInvalidAttribute;
+			scrollTo(invalid);
+			firstInvalidAttribute = null;
+		}
+
+	}
+
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+	}
+
+	public void onPageScrollStateChanged(int arg0) {
+	}
+
 	public SurveyViewModel getViewModel() {
 		return surveyViewModel;
 	}
 
+	public void scrollTo(final Attribute attribute) {
+		pager.post(new Runnable() {
+			public void run() {
+
+				Binder binder = (Binder) surveyViewModel.getAttributeListener(attribute);
+				View boundView = binder.getView();
+				ViewParent parent = boundView.getParent();
+				while (parent != null && !(parent instanceof ScrollView)) {
+					parent = parent.getParent();
+				}
+				Log.d("CollectSurveyData", "Bound view; " + boundView + ", parent=" + parent);
+
+				if (parent != null) {
+					final ScrollView view = (ScrollView) parent;
+					final Rect r = new Rect();
+
+					view.offsetDescendantRectToMyCoords((View) boundView.getParent(), r);
+					Log.d("CollectSurveyData", "Invalid: " + attribute + ", Pager scrolling to: "
+							+ boundView.getBottom());
+					view.post(new Runnable() {
+						public void run() {
+							view.scrollTo(0, r.bottom);
+
+						}
+					});
+
+				}
+			}
+		});
+	}
 
 	public void onSpeciesSelected(Species selectedSpecies) {
 
 		surveyViewModel.speciesSelected(selectedSpecies);
 		pager.setCurrentItem(1);
-		SpannableString title = new SpannableString(
-				selectedSpecies.scientificName);
+		SpannableString title = new SpannableString(selectedSpecies.scientificName);
 		title.setSpan(new StyleSpan(Typeface.ITALIC), 0, title.length(), 0);
 		getSupportActionBar().setTitle(title);
 		getSupportActionBar().setSubtitle(selectedSpecies.commonName);
@@ -201,60 +241,32 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-//		menu.add("Help").setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-//		menu.add("Done").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-//		MenuInflater inflater = new MenuInflater(this);
-//		inflater.inflate(R.menu.common_menu_items, menu);
-//		inflater.inflate(R.menu.activity_mobile_field_data, menu);
-		return true;
-	}
-
-	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		onActionBarItemSelected(item.getItemId());
 		return true;
 	}
-	
+
 	public void onActionBarItemSelected(int itemId) {
 		if (itemId == R.id.action_done) {
 			RecordValidationResult result = surveyViewModel.validate();
-			
+
 			if (result.valid()) {
 				new SaveRecordTask(this).execute(surveyViewModel.getRecord());
-			}
-			else {
+			} else {
 				Attribute firstInvalid = result.invalidAttributes().get(0).getAttribute();
 				int firstInvalidPage = surveyViewModel.pageOf(firstInvalid);
-				pager.setCurrentItem(firstInvalidPage);
-				
-				final ScrollView view =(ScrollView)pager.findViewById(R.id.tableScroller);
-				BinderManager manager = (BinderManager)view.getTag();
-				View invalid = manager.getView(firstInvalid);
-				final Rect r = new Rect();
-			
-				view.offsetDescendantRectToMyCoords((View)invalid.getParent(), r);
-				Log.d("CollectSurveyData", "Invalid: "+firstInvalid+", Pager scrolling to: "+invalid.getBottom());
-				
-				view.post(new Runnable() {
-					public void run() {
-						view.scrollTo(0, r.bottom);
-						
-					}
-				});
-				
+				if (pager.getCurrentItem() != firstInvalidPage) {
+					pager.setCurrentItem(firstInvalidPage);
+				}
+				else {
+					firstInvalidAttribute = firstInvalid;
+					scrollTo(firstInvalidAttribute);
+				}
+
 			}
-		}
-		else if (itemId == R.id.action_cancel) {
+		} else if (itemId == R.id.action_cancel) {
 			finish();
 		}
-	}
-	
-	public void addImageListener(ImageBinder binder) {
-		if (imageBinders == null) {
-			imageBinders = new ArrayList<ImageBinder>(8);
-		}
-		imageBinders.add(binder);
 	}
 
 	static class BinderManager {
@@ -291,7 +303,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				binder = new SingleCheckboxBinder(ctx, (CheckBox) view, attribute, surveyViewModel);
 				break;
 			case MULTI_CHECKBOX:
-				binder = new MultiSpinnerBinder(ctx, (MultiSpinner) view, attribute, surveyViewModel); 
+				binder = new MultiSpinnerBinder(ctx, (MultiSpinner) view, attribute,
+						surveyViewModel);
 				break;
 			default:
 				binder = bindByViewClass(view, attribute);
@@ -299,9 +312,9 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			}
 
 			add(attribute, binder);
-			
+
 		}
-		
+
 		private void add(Attribute attribute, Binder binder) {
 			if (binder != null) {
 				binders.add(binder);
@@ -310,14 +323,14 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		}
 
 		private Binder bindByViewClass(View view, Attribute attribute) {
-			
+
 			Binder binder = null;
 			if (view instanceof TextView) {
 				binder = new TextViewBinder(ctx, (TextView) view, attribute, surveyViewModel);
 
 			} else if (view instanceof Spinner) {
 				binder = new SpinnerBinder(ctx, (Spinner) view, attribute, surveyViewModel);
-			} 
+			}
 			return binder;
 		}
 
@@ -333,7 +346,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			}
 			binders.clear();
 		}
-		
+
 		public View getView(Attribute attribute) {
 			for (Binder binder : binders) {
 				if (binder.getAttribute().equals(attribute)) {
@@ -357,7 +370,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			Bundle args = new Bundle();
 			args.putInt("pageNum", page);
 			surveyPage.setArguments(args);
-			
+
 			return surveyPage;
 		}
 
@@ -370,39 +383,40 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		public String getPageTitle(int page) {
 			return "Page " + (page + 1);
 		}
-		
-	
+
 	}
 
 	/**
-	 * Launches the default camera application to take a photo and store
-	 * the result for the supplied attribute.
-	 * @param attribute the attribute the photo relates to.
+	 * Launches the default camera application to take a photo and store the
+	 * result for the supplied attribute.
+	 * 
+	 * @param attribute
+	 *            the attribute the photo relates to.
 	 */
 	public void takePhoto(Attribute attribute) {
 		if (StorageManager.canWriteToExternalStorage()) {
 			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			Uri fileUri = StorageManager
-					.getOutputMediaFileUri(StorageManager.MEDIA_TYPE_IMAGE);
+			Uri fileUri = StorageManager.getOutputMediaFileUri(StorageManager.MEDIA_TYPE_IMAGE);
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 			// Unfortunately, this URI isn't being returned in the
-			// result as expected so we have to save it somewhere it can 
+			// result as expected so we have to save it somewhere it can
 			// survive an activity restart.
 			surveyViewModel.setTempValue(attribute, fileUri.toString());
 			startActivityForResult(intent, CollectSurveyData.TAKE_PHOTO_REQUEST);
-		}
-		else {
+		} else {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Cannot take photo").
-			    setMessage("Please ensure you have mounted your SD card and it is writable").
-				setPositiveButton("OK", null).show();
+			builder.setTitle("Cannot take photo")
+					.setMessage("Please ensure you have mounted your SD card and it is writable")
+					.setPositiveButton("OK", null).show();
 		}
 	}
-	
+
 	/**
-	 * Launches the default gallery application to allow the user to select
-	 * an image to be attached to the supplied attribute.
-	 * @param attribute the attribute the image is being selected for.
+	 * Launches the default gallery application to allow the user to select an
+	 * image to be attached to the supplied attribute.
+	 * 
+	 * @param attribute
+	 *            the attribute the image is being selected for.
 	 */
 	public void selectFromGallery(Attribute attribute) {
 		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -412,7 +426,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		startActivityForResult(Intent.createChooser(intent, "Select Photo"),
 				CollectSurveyData.SELECT_FROM_GALLERY_REQUEST);
 	}
-	
+
 	public void selectLocation() {
 		Intent intent = new Intent(this, LocationSelectionActivity.class);
 		Location location = surveyViewModel.getLocation();
@@ -420,15 +434,14 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		intent.putExtra(LocationSelectionActivity.MAP_DEFAULTS_BUNDLE_KEY, defaults);
 		if (location != null) {
 			intent.putExtra(LocationSelectionActivity.LOCATION_BUNDLE_KEY, location);
-			
+
 		}
-		startActivityForResult(intent, CollectSurveyData.SELECT_LOCATION_REQUEST );
+		startActivityForResult(intent, CollectSurveyData.SELECT_LOCATION_REQUEST);
 	}
-	
-	
+
 	/**
-	 * Callback made to this activity after the camera, gallery or map 
-	 * activity has finished.
+	 * Callback made to this activity after the camera, gallery or map activity
+	 * has finished.
 	 */
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == SELECT_LOCATION_REQUEST) {
@@ -441,20 +454,17 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			if (resultCode == RESULT_OK) {
 				Log.d("CollectSurveyData", "Returned ok from photo request");
 				surveyViewModel.persistTempValue();
-			}
-			else {
+			} else {
 				surveyViewModel.clearTempValue();
 			}
-		}
-		else if (requestCode == SELECT_FROM_GALLERY_REQUEST) {
+		} else if (requestCode == SELECT_FROM_GALLERY_REQUEST) {
 			TempValue value = surveyViewModel.clearTempValue();
 			if (resultCode == RESULT_OK) {
 				Uri selected = data.getData();
 				if (selected != null) {
 					surveyViewModel.setValue(value.getAttribute(), selected.toString());
-				}
-				else {
-					Log.e("CollectSurveyData", "Null data returned from gallery intent!"+data);
+				} else {
+					Log.e("CollectSurveyData", "Null data returned from gallery intent!" + data);
 				}
 			}
 		}
@@ -467,12 +477,11 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		private BinderManager binder;
 		private CollectSurveyData ctx;
 		private ScrollView scroller;
-		
+
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-			pageNum = getArguments() != null ? getArguments().getInt("pageNum")
-					: 0;
+			pageNum = getArguments() != null ? getArguments().getInt("pageNum") : 0;
 
 		}
 
@@ -480,12 +489,11 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		public void onAttach(Activity activity) {
 
 			super.onAttach(activity);
-			Log.d("SurveyDataCollection", "Attaching to activity for page: "
-					+ pageNum);
+			Log.d("SurveyDataCollection", "Attaching to activity for page: " + pageNum);
 
 			ctx = (CollectSurveyData) activity;
 		}
-		
+
 		@Override
 		public void onActivityCreated(Bundle bundle) {
 			super.onActivityCreated(bundle);
@@ -495,51 +503,44 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			Log.d("SurveyDataCollection", "onCreateView for page: "
-					+ pageNum);
-			
+			Log.d("SurveyDataCollection", "onCreateView for page: " + pageNum);
+
 			viewModel = ctx.getViewModel();
 			binder = new BinderManager(ctx);
 			Log.d("SurveyDataCollection", "Creating view for page: " + pageNum);
-			View view = inflater.inflate(R.layout.survey_data_page, container,
-					false);
+			View view = inflater.inflate(R.layout.survey_data_page, container, false);
 			view.setTag(binder);
-			scroller = (ScrollView)view.findViewById(R.id.tableScroller);
+			scroller = (ScrollView) view.findViewById(R.id.tableScroller);
 			scroller.setTag(binder);
 			buildSurveyForm(view);
-			
+
 			return view;
 		}
 
 		@Override
 		public void onPause() {
 			super.onPause();
-			Log.d("SurveyDataCollection", "Pausing view for page: "
-					+ pageNum);
+			Log.d("SurveyDataCollection", "Pausing view for page: " + pageNum);
 			binder.bindAll();
 			scroller.setTag(null);
-			
+
 		}
-		
+
 		@Override
 		public void onResume() {
 			super.onResume();
-			Log.d("SurveyDataCollection", "onResume for page: "
-					+ pageNum);
+			Log.d("SurveyDataCollection", "onResume for page: " + pageNum);
 			scroller.setTag(binder);
 		}
-		
-		
 
 		@Override
 		public void onDestroyView() {
-			Log.d("SurveyDataCollection", "onDestroyView for page: "
-					+ pageNum);
-			
+			Log.d("SurveyDataCollection", "onDestroyView for page: " + pageNum);
+
 			super.onDestroyView();
-			
+
 			binder.clearBindings();
-			
+
 		}
 
 		private void buildSurveyForm(View page) {
@@ -547,7 +548,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 			TableLayout tableLayout = (TableLayout) page.findViewById(R.id.surveyGrid);
 			List<Attribute> pageAttributes = viewModel.getPage(pageNum);
-			
+
 			int rowCount = pageAttributes.size();
 			if (pageNum == 0) {
 				TableRow row = new TableRow(getActivity());
@@ -556,13 +557,13 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			}
 			for (int i = 0; i < rowCount; i++) {
 				TableRow row = new TableRow(getActivity());
-				
+
 				Attribute attribute = pageAttributes.get(i);
 
 				View inputView = builder.buildFields(attribute, row);
-				//View inputView = builder.buildInput(attribute, row);
+				// View inputView = builder.buildInput(attribute, row);
 				binder.configureBindings(inputView, attribute);
-				//row.addView(inputView);
+				// row.addView(inputView);
 
 				addRow(tableLayout, row);
 			}
@@ -592,10 +593,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			boolean success = true;
 			try {
 
-				GenericDAO<Record> recordDao = new GenericDAO<Record>(
-						ctx.getApplicationContext());
+				GenericDAO<Record> recordDao = new GenericDAO<Record>(ctx.getApplicationContext());
 				recordDao.save(ctx.getViewModel().getRecord());
-
 
 			} catch (Exception e) {
 				success = false;
@@ -606,15 +605,15 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			
+
 			ctx.finish();
 		}
 
 	}
-	
+
 	private final View.OnClickListener customActionBarListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            onActionBarItemSelected(v.getId());
-        }
-    };
+		public void onClick(View v) {
+			onActionBarItemSelected(v.getId());
+		}
+	};
 }

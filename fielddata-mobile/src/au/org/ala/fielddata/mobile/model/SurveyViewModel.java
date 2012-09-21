@@ -52,6 +52,7 @@ public class SurveyViewModel {
 	
 	private TempValue tempValue;
 
+	
 	/**
 	 * Compares two Attributes by their weight. Not null safe!
 	 */
@@ -112,20 +113,8 @@ public class SurveyViewModel {
 		validate(changed);	
 	}
 	
-	public void locationSelected(Location location) {
-		if (location != null) {
-			record.longitude = location.getLongitude();
-			record.latitude = location.getLatitude();
-			if (location.hasAccuracy()) {
-				record.accuracy = Double.valueOf(location.getAccuracy());
-			}
-		}
-		else {
-			record.longitude = null;
-			record.latitude = null;
-		}
-		
-
+	public void setLocation(Location location) {
+		record.setLocation(location);
 		Attribute changed = survey.propertyByType(AttributeType.POINT);
 		fireAttributeChanged(changed);
 		validate(changed);
@@ -309,16 +298,7 @@ public class SurveyViewModel {
 	}
 
 	public Location getLocation() {
-		Location location = null;
-		if (record.latitude != null && record.longitude != null) {
-			location = new Location("");
-			location.setLatitude(record.latitude);
-			location.setLongitude(record.longitude);
-			if (record.accuracy != null) {
-				location.setAccuracy(record.accuracy.floatValue());
-			}
-		}
-		return location;
+		return record.getLocation();
 	}
 
 }

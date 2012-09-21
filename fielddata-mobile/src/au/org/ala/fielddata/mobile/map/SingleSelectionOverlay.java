@@ -12,13 +12,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import au.org.ala.fielddata.mobile.R;
 
 import com.google.android.maps.GeoPoint;
-import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
+import com.readystatesoftware.mapviewballoons.BalloonItemizedOverlay;
 
-public class SingleSelectionOverlay extends ItemizedOverlay<OverlayItem> {
+public class SingleSelectionOverlay extends BalloonItemizedOverlay<OverlayItem> {
 
 	private LocationListener listener;
 	private List<OverlayItem> items = new ArrayList<OverlayItem>();
@@ -30,26 +31,27 @@ public class SingleSelectionOverlay extends ItemizedOverlay<OverlayItem> {
 	private int xDragTouchOffset = 0;
 	private int yDragTouchOffset = 0;
 
-	public SingleSelectionOverlay(Drawable marker, ImageView dragImage, LocationListener listener) {
-		super(marker);
+	public SingleSelectionOverlay(MapView mapView, Drawable marker, ImageView dragImage, LocationListener listener) {
+		super(marker, mapView);
 		this.marker = marker;
 		this.listener = listener;
 		this.dragImage = dragImage;
 		xDragImageOffset = dragImage.getDrawable().getIntrinsicWidth() / 2;
 		yDragImageOffset = dragImage.getDrawable().getIntrinsicHeight();
-
+		setBalloonBottomOffset(marker.getIntrinsicHeight());
 		populate();
 	}
 
 	public void selectLocation(Location location) {
 		selectLocation(locationToPoint(location));
+		showHelp();
 	}
 	
 	public void selectLocation(GeoPoint location) {
 		if (items.size() > 0) {
 			items.clear();
 		}
-		addItem(new OverlayItem(location, "", ""));
+		addItem(new OverlayItem(location, dragImage.getResources().getString(R.string.mapHelp), ""));
 		listener.onLocationChanged(pointToLocation(location));
 	}
 	
@@ -79,10 +81,28 @@ public class SingleSelectionOverlay extends ItemizedOverlay<OverlayItem> {
 		return items.get(0).getPoint();
 	}
 	
+	
+	private void showHelp() {
+		if (size() == 1) {
+			onTap(0);
+		}
+	}
+	
+	private void hideHelp() {
+		hideBalloon();
+	}
+	
+	protected boolean onBalloonTap(int index, Item item) {
+		hideHelp();
+		return false;
+	}
+	
 	@Override
 	public boolean onTap(GeoPoint arg0, MapView arg1) {
 		if (size() == 0) {
-			updateSelection(new OverlayItem(arg0, "", ""));
+			String helpText = arg1.getResources().getString(R.string.mapHelp);
+			updateSelection(new OverlayItem(arg0, helpText, ""));
+			showHelp();
 		}
 		else {
 			return super.onTap(arg0, arg1);
@@ -105,6 +125,9 @@ public class SingleSelectionOverlay extends ItemizedOverlay<OverlayItem> {
 				mapView.getProjection().toPixels(item.getPoint(), p);
 
 				if (hitTest(item, marker, x - p.x, y - p.y)) {
+					
+					hideHelp();
+					
 					result = true;
 					inDrag = item;
 					items.remove(inDrag);
@@ -137,7 +160,6 @@ public class SingleSelectionOverlay extends ItemizedOverlay<OverlayItem> {
 			inDrag = null;
 			result = true;
 		}
-
 		return (result || super.onTouchEvent(event, mapView));
 	}
 	

@@ -57,6 +57,7 @@
     
 
     <!-- Validation Errors -->
+    <string name="validationMessage">Please answer the marked questions before continuing</string>
     <string name="requiredMessage">Please enter a value</string>
     <string name="no_saved_records_message">No saved records</string>
     <string name="saved_records_message">%s saved records</string>
@@ -74,6 +75,8 @@
     <string name="accuracyLabel">Accuracy</string>
     <string name="currentLocationLabel">GPS</string>
     <string name="mapLabel">Map</string>
+    <string name="locationSelectedByGPS">Location set using GPS</string>
+    <string name="mapHelp">Change the selected location by dragging the marker</string>
 
     <!-- Login page -->
     <string name="title_activity_login">Login</string>

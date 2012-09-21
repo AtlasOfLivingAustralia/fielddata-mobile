@@ -1,8 +1,10 @@
 package au.org.ala.fielddata.mobile.service;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -23,6 +25,7 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	private final IBinder binder = new LocationServiceBinder();
 	private Location bestLocation;
 	private LocationListener listener;
+	private float locationListenerRequiredAccuracy;
 	private boolean hasGps;
 	private boolean hasNetwork;
 	
@@ -31,6 +34,25 @@ public class LocationServiceHelper extends Service implements LocationListener {
 			return LocationServiceHelper.this;
 		}
 	}
+	
+	public static class LocationServiceConnection implements ServiceConnection {
+		
+		private LocationListener listener;
+		private float accuracyThreshold;
+		
+		public LocationServiceConnection(LocationListener listener, float accuracyThreshold) {
+			this.listener = listener;
+			this.accuracyThreshold = accuracyThreshold;
+		}
+		
+		public void onServiceDisconnected(ComponentName name) {
+		}
+		
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			LocationServiceBinder locationBinder = (LocationServiceBinder)service;
+			locationBinder.getService().registerLocationListener(listener, accuracyThreshold);
+		}
+	};
 	
 	@Override
 	public void onCreate() {
@@ -79,13 +101,18 @@ public class LocationServiceHelper extends Service implements LocationListener {
 		return bestLocation;
 	}
 	
-	public void registerLocationListener(LocationListener listener) {
+	public void registerLocationListener(LocationListener listener, float accuracyThreshold) {
 		this.listener = listener;
-		if (bestLocation != null) {
+		locationListenerRequiredAccuracy = accuracyThreshold;
+		fireLocationChanged();
+	}
+	
+	
+	private void fireLocationChanged() {
+		if (listener != null && bestLocation != null && bestLocation.getAccuracy() < locationListenerRequiredAccuracy) {
 			listener.onLocationChanged(bestLocation);
 		}
 	}
-	
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -141,9 +168,7 @@ public class LocationServiceHelper extends Service implements LocationListener {
 		if (isBetterLocation(location, bestLocation)) {
 			bestLocation = location;
 			notify("New best location obtained");
-			if (listener != null) {
-				listener.onLocationChanged(bestLocation);
-			}
+			fireLocationChanged();
 		}
 	}
 	

@@ -19,10 +19,12 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.location.LocationListener;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -45,6 +47,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.MapDefaults;
@@ -52,6 +55,8 @@ import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel.TempValue;
+import au.org.ala.fielddata.mobile.service.LocationServiceHelper;
+import au.org.ala.fielddata.mobile.service.LocationServiceHelper.LocationServiceConnection;
 import au.org.ala.fielddata.mobile.service.StorageManager;
 import au.org.ala.fielddata.mobile.ui.MultiSpinner;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
@@ -77,11 +82,14 @@ import com.viewpagerindicator.TitlePageIndicator;
  * out.
  */
 public class CollectSurveyData extends SherlockFragmentActivity implements
-		SpeciesSelectionListener, OnPageChangeListener {
+		SpeciesSelectionListener, OnPageChangeListener, LocationListener {
 
 	public static final String SURVEY_BUNDLE_KEY = "SurveyIdKey";
 	public static final String RECORD_BUNDLE_KEY = "RecordIdKey";
 	public static final String SPECIES = "species";
+	
+	/** The accuracy required to auto-populate the location from GPS */
+	private static final float ACCURACY_THESHOLD = 20f;
 
 	/**
 	 * Used to identify a request to the LocationSelectionActivity when a result
@@ -104,7 +112,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	private Species selectedSpecies;
 	private View leftArrow;
 	private View rightArrow;
-	private Attribute firstInvalidAttribute;
+	private Attribute autoScrollAttribute;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -131,6 +139,51 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			selectedSpecies = speciesDao.load(Species.class, speciesId);
 		}
 
+	}
+	
+	private LocationServiceConnection locationServiceConnection;
+	private void startLocationUpdates() {
+		if (surveyViewModel.getLocation() == null) {
+			locationServiceConnection = new LocationServiceConnection(this, ACCURACY_THESHOLD);
+			Intent intent = new Intent(this, LocationServiceHelper.class);
+			bindService(intent, locationServiceConnection, Context.BIND_AUTO_CREATE);
+		}
+	}
+	
+	private void stopLocationUpdates() {
+		if (locationServiceConnection != null) {
+			unbindService(locationServiceConnection);
+			locationServiceConnection = null;
+		}
+	}
+	
+	public void onLocationChanged(Location location) {
+		if (surveyViewModel.getLocation() == null) {
+			Toast.makeText(this, R.string.locationSelectedByGPS, Toast.LENGTH_SHORT).show();
+			surveyViewModel.setLocation(location);
+		}
+		stopLocationUpdates();
+	}
+
+	public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+	public void onProviderEnabled(String provider) {}
+
+	public void onProviderDisabled(String provider) {}
+	
+	@Override
+	public void onResume() {
+		Log.i("GPSFragment", "onResume");
+		super.onResume();
+		startLocationUpdates();
+	}
+	
+	@Override
+	public void onPause() {
+		Log.i("GPSFragment", "onPause");
+		super.onPause();
+		
+		stopLocationUpdates();
 	}
 
 	private void buildCustomActionBar() {
@@ -179,11 +232,11 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		leftArrow.setVisibility(leftVisiblity);
 		rightArrow.setVisibility(rightVisibility);
 
-		if (firstInvalidAttribute != null) {
-			Log.d("CollectSurveyData", "Invalid: " + firstInvalidAttribute + ", Pager scrolling");
-			final Attribute invalid = firstInvalidAttribute;
+		if (autoScrollAttribute != null) {
+			Log.d("CollectSurveyData", "Invalid: " + autoScrollAttribute + ", Pager scrolling");
+			final Attribute invalid = autoScrollAttribute;
 			scrollTo(invalid);
-			firstInvalidAttribute = null;
+			autoScrollAttribute = null;
 		}
 
 	}
@@ -253,14 +306,15 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			if (result.valid()) {
 				new SaveRecordTask(this).execute(surveyViewModel.getRecord());
 			} else {
+				Toast.makeText(this, R.string.validationMessage, Toast.LENGTH_LONG).show();
 				Attribute firstInvalid = result.invalidAttributes().get(0).getAttribute();
 				int firstInvalidPage = surveyViewModel.pageOf(firstInvalid);
 				if (pager.getCurrentItem() != firstInvalidPage) {
 					pager.setCurrentItem(firstInvalidPage);
 				}
 				else {
-					firstInvalidAttribute = firstInvalid;
-					scrollTo(firstInvalidAttribute);
+					autoScrollAttribute = firstInvalid;
+					scrollTo(autoScrollAttribute);
 				}
 
 			}
@@ -448,7 +502,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			if (resultCode == RESULT_OK) {
 				Location location = (Location) data.getExtras().get(
 						LocationSelectionActivity.LOCATION_BUNDLE_KEY);
-				surveyViewModel.locationSelected(location);
+				surveyViewModel.setLocation(location);
 			}
 		} else if (requestCode == TAKE_PHOTO_REQUEST) {
 			if (resultCode == RESULT_OK) {

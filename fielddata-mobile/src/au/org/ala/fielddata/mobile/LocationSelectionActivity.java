@@ -54,10 +54,18 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_location_selection);
-
+		boolean setZoom = true;
+		Location location = null;
+		if (savedInstanceState != null) {
+			setZoom = false;
+			location = (Location)savedInstanceState.getParcelable(LOCATION_BUNDLE_KEY);
+		}
+		else {
+		    location = (Location)getIntent().getParcelableExtra(LOCATION_BUNDLE_KEY);
+		}
 		mapView = (MapView) findViewById(R.id.mapview);
 		initialiseOverlays();
-		initialiseMap();
+		initialiseMap(location, setZoom);
 		addEventHandlers();
 
 	}
@@ -72,7 +80,7 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 				marker.getIntrinsicHeight());
 
 		ImageView dragImage = (ImageView) findViewById(R.id.drag);
-		selectionOverlay = new SingleSelectionOverlay(marker, dragImage, this);
+		selectionOverlay = new SingleSelectionOverlay(mapView, marker, dragImage, this);
 		
 		mapView.getOverlays().add(selectionOverlay);
 	}
@@ -81,24 +89,26 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 	 * Adds the overlay, and the previously selected point.
 	 * Sets the map zoom and centre.
 	 */
-	private void initialiseMap() {
+	private void initialiseMap(Location location, boolean setZoom) {
 		mapView.setBuiltInZoomControls(true);
 		
 		
-		Location location = (Location)getIntent().getParcelableExtra(LOCATION_BUNDLE_KEY);
 		if (location != null) {
 			selectionOverlay.selectLocation(location);
-			
-			mapView.getController().setZoom(16);
-			mapView.getController().setCenter(selectionOverlay.getItem(0).getPoint());
+			if (setZoom) {
+				mapView.getController().setZoom(16);
+				mapView.getController().setCenter(selectionOverlay.getItem(0).getPoint());
+			}
 		}
 		else {
-			MapDefaults mapDefaults = (MapDefaults)getIntent().getParcelableExtra(MAP_DEFAULTS_BUNDLE_KEY);
-			if (mapDefaults != null) {
-				mapView.getController().setZoom(mapDefaults.zoom);
-				
-				mapView.getController().setCenter(
-						new GeoPoint((int)(mapDefaults.center.y*1000000), (int)(mapDefaults.center.x*1000000)));
+			if (setZoom) {
+				MapDefaults mapDefaults = (MapDefaults)getIntent().getParcelableExtra(MAP_DEFAULTS_BUNDLE_KEY);
+				if (mapDefaults != null) {
+					mapView.getController().setZoom(mapDefaults.zoom);
+					
+					mapView.getController().setCenter(
+							new GeoPoint((int)(mapDefaults.center.y*1000000), (int)(mapDefaults.center.x*1000000)));
+				}
 			}
 		}
 	
@@ -112,6 +122,13 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		return super.onCreateOptionsMenu(menu);
 	}
 	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(LOCATION_BUNDLE_KEY, selectedLocation);
+		
+	}
+
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -136,7 +153,7 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 
 			}
 		});
-		button.setEnabled(false);
+		button.setEnabled(selectedLocation !=  null);
 
 		ImageButton gps = (ImageButton) findViewById(R.id.mapCurrentLocation);
 		gps.setOnClickListener(new OnClickListener() {

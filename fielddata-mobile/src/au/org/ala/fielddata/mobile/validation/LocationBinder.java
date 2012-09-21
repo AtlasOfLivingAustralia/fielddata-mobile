@@ -3,6 +3,7 @@ package au.org.ala.fielddata.mobile.validation;
 import java.text.DecimalFormat;
 
 import android.location.Location;
+import android.location.LocationManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -81,7 +82,9 @@ public class LocationBinder extends AbsBinder {
 			builder.append("\u00B0 N\n");
 			builder.append(format.format(location.getLongitude()));
 			builder.append("\u00B0 W ");
-			
+			if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+				builder.append("("+location.getAccuracy()+"m)");
+			}
 			locationText = builder.toString();
 		}
 		locationTextView.setText(locationText);

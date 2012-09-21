@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import com.google.gson.annotations.SerializedName;
 
+import android.location.Location;
 import android.net.Uri;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 
@@ -41,6 +42,7 @@ public class Record extends Persistent {
 	public Integer number;
 	public Integer taxon_id; // Server id of the taxon.
 	public String scientificName;
+	private Location pointLocation;
 	
 	private List<AttributeValue> attributeValues;
 	
@@ -324,5 +326,27 @@ public class Record extends Persistent {
 		return photo;
 	}
 	
+	public void setLocation(Location location) {
+		this.pointLocation = location;
+		
+		if (location != null) {
+			longitude = location.getLongitude();
+			latitude = location.getLatitude();
+			if (location.hasAccuracy()) {
+				accuracy = Double.valueOf(location.getAccuracy());
+			}
+			else {
+				accuracy = null;
+			}
+		}
+		else {
+			longitude = null;
+			latitude = null;
+		}
+	}
+	
+	public Location getLocation() {
+		return pointLocation;
+	}
 	
 }

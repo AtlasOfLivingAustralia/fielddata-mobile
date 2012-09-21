@@ -16,47 +16,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <com.google.android.maps.MapView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/mapview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:apiKey="0NauErRk5QyvVskuCQOspHRai_Nwj_KclqQLuRw"
-        android:clickable="true" />
-
-    <ImageView
-        android:id="@+id/drag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/marker"
-        android:visibility="gone" />
-
+   
     <LinearLayout 
+        android:id="@+id/toolbar"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/roundedrectangle4"
+        android:background="@drawable/action_bar_background"
         android:gravity="right">
    
-    <ImageButton
-        android:id="@+id/mapCurrentLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:gravity="right"
-        android:src="@drawable/ic_menu_mylocation" />
-    
-    <Button
-        android:id="@+id/mapNext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:gravity="right"
-        android:textColor="@drawable/selector"
-        android:text="Done" />
+	    <ImageButton
+	        android:id="@+id/mapCurrentLocation"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="right"
+	        android:gravity="right"
+	        android:src="@drawable/ic_menu_mylocation" />
+	    
+	    <Button
+	        android:id="@+id/mapNext"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="right"
+	        android:gravity="right"
+	        android:textColor="#DDFFFFFF"
+	        android:text="Done" />
 
-       
+  
     </LinearLayout>
     
+      <com.google.android.maps.MapView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/toolbar"
+        android:apiKey="0NauErRk5QyvVskuCQOspHRai_Nwj_KclqQLuRw"
+        android:clickable="true" />
+    
+ 
+    <ImageView
+        android:id="@+id/drag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/iconr"
+        android:visibility="gone" />
+      
 </RelativeLayout>

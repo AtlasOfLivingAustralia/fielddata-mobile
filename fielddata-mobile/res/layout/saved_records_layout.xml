@@ -33,14 +33,24 @@
         android:layout_width="48dp"
         android:layout_toRightOf="@id/checkbox"
         android:layout_marginRight="3dp"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/photo_icon"
         />
 
+    <TextView
+        android:id="@+id/survey_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/record_image"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    
     <TextView
         android:id="@+id/record_description_species"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/record_image"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_below="@id/survey_name"
+        style="@style/ScientificName"/>
 
 	<TextView
         android:id="@+id/record_description_time"

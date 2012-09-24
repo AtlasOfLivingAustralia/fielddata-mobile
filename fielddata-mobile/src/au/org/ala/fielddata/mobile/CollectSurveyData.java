@@ -572,22 +572,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		}
 
 		@Override
-		public void onPause() {
-			super.onPause();
-			Log.d("SurveyDataCollection", "Pausing view for page: " + pageNum);
-			binder.bindAll();
-			scroller.setTag(null);
-
-		}
-
-		@Override
-		public void onResume() {
-			super.onResume();
-			Log.d("SurveyDataCollection", "onResume for page: " + pageNum);
-			scroller.setTag(binder);
-		}
-
-		@Override
 		public void onDestroyView() {
 			Log.d("SurveyDataCollection", "onDestroyView for page: " + pageNum);
 

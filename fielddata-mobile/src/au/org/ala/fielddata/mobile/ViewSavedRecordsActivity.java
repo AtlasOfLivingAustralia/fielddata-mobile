@@ -17,6 +17,7 @@ package au.org.ala.fielddata.mobile;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,9 +35,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
+import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.service.UploadService;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 import au.org.ala.fielddata.mobile.ui.SavedRecordHolder;
+import au.org.ala.fielddata.mobile.ui.SavedRecordHolder.RecordView;
 
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.ActionMode;
@@ -52,7 +55,9 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 
 	private List<Record> records;
 	private ActionMode actionMode;
-
+	private List<Survey> surveys;
+	private ProgressDialog dialog;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,6 +77,9 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 							.show();
 				}
 				refresh();
+				if (dialog != null) {
+					dialog.dismiss();
+				}
 			}
 		}, filter);
 		refresh();
@@ -89,6 +97,7 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getItemId() == R.id.upload) {
+			
 			Intent intent = new Intent(this, UploadService.class);
 			startService(intent);
 		}
@@ -107,30 +116,48 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 	private void refresh() {
 		new GetRecordsTask().execute();
 	}
+	
+	class GetRecordsTask extends AsyncTask<Void, Void, List<RecordView>> {
 
-	class GetRecordsTask extends AsyncTask<Void, Void, List<Record>> {
-
-		protected List<Record> doInBackground(Void... ignored) {
+		protected List<RecordView> doInBackground(Void... ignored) {
 			GenericDAO<Record> dao = new GenericDAO<Record>(getApplicationContext());
 
-			records = new ArrayList<Record>();
-			try {
-				records.addAll(dao.loadAll(Record.class));
-			} catch (Exception e) {
-				e.printStackTrace();
+			records = dao.loadAll(Record.class);
+			
+			GenericDAO<Survey> surveyDao = new GenericDAO<Survey>(getApplicationContext());
+			surveys = surveyDao.loadAll(Survey.class);
+			
+			List<RecordView> recordViews = new ArrayList<RecordView>();
+			for (Record record : records) {
+				
+				Survey survey = null;
+				for (Survey tmpSurvey : surveys) {
+					if (tmpSurvey.server_id.equals(record.survey_id)) {
+						survey = tmpSurvey;
+						break;
+					}
+				}
+				
+				recordViews.add(new RecordView(record, survey));
+				
 			}
-			return records;
+			
+			
+			return recordViews;
 		}
 
-		protected void onPostExecute(List<Record> records) {
+		protected void onPostExecute(List<RecordView> records) {
+			
+			
+			
 			RecordAdapter adapter = new RecordAdapter(ViewSavedRecordsActivity.this, records);
 
 			setListAdapter(adapter);
 		}
 	}
 
-	public static class RecordAdapter extends ArrayAdapter<Record> {
-		public RecordAdapter(Context ctx, List<Record> records) {
+	public static class RecordAdapter extends ArrayAdapter<RecordView> {
+		public RecordAdapter(Context ctx, List<RecordView> records) {
 			super(ctx, R.layout.saved_records_layout, R.id.record_description_species, records);
 		}
 
@@ -167,13 +194,17 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 			}
 		}
 		else {
-			if (actionMode != null) {
-				actionMode.finish();
-				actionMode = null;
-			}
+			finishActionMode();
 		}
 		
 		Log.d("ViewSavedRecordsActivity", "OnCheckboxClicked:"+countSelected());
+	}
+	
+	private void finishActionMode() {
+		if (actionMode != null) {
+			actionMode.finish();
+			actionMode = null;
+		}
 	}
 	
 	private int countSelected() {
@@ -223,6 +254,7 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 	
 	
 	private void deleteSelectedRecords() {
+		ProgressDialog dialog = ProgressDialog.show(this, "", "", true);
 		GenericDAO<Record> recordDao = new GenericDAO<Record>(this);
 		SparseBooleanArray selected = getListView().getCheckedItemPositions();
 		int deleteCount = 0;
@@ -238,11 +270,15 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 				
 		}
 		
-		actionMode.finish();
+		finishActionMode();
+		
 		refresh();
+		dialog.dismiss();
 	}
 	
 	private void uploadSelectedRecords() {
+		dialog = ProgressDialog.show(this, "", "", true);
+		
 		SparseBooleanArray selected = getListView().getCheckedItemPositions();
 		int count = countSelected();
 		int index = 0;
@@ -258,7 +294,7 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 		intent.putExtra(UploadService.RECORD_IDS_EXTRA, recordIds);
 		startService(intent);
 		
-		actionMode.finish();
+		finishActionMode();
 	}
 	
 	

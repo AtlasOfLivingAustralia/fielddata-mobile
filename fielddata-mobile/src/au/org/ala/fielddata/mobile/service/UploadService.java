@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import au.org.ala.fielddata.mobile.ViewSavedRecordsActivity;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
@@ -86,6 +91,7 @@ public class UploadService extends IntentService {
 			if (result.valid()) {
 				service.sync(tmp);
 				resultCode = SUCCESS;
+				notify("Uploaded", "1 record");
 				
 			}
 			else {
@@ -100,6 +106,25 @@ public class UploadService extends IntentService {
 		return resultCode;
 	}
 	
+	private void notify(String title, String subject) {
+		
+		NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		Intent savedActivity = new Intent(this, ViewSavedRecordsActivity.class);
+		PendingIntent intent = PendingIntent.getActivity(this, START_NOT_STICKY, savedActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		Notification notification = builder.setContentTitle(title)
+		       .setContentText(subject)
+		       .setAutoCancel(true)
+		       .setContentInfo("blah blah")
+		       .setSmallIcon(android.R.drawable.stat_notify_sync)
+		       .setContentIntent(intent)
+		       .getNotification();
+		
+		
+		notificationManager.notify(SUCCESS, notification);
+		Log.i("UploadService", "sending notification: "+title);
+	}
+
 	
 
 }

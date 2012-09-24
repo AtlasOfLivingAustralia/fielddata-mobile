@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Record;
+import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.service.StorageManager;
 
 /**
@@ -21,9 +22,22 @@ import au.org.ala.fielddata.mobile.service.StorageManager;
  */
 public class SavedRecordHolder {
 
+	
+	public static class RecordView {
+		
+		public RecordView(Record record, Survey survey) {
+			this.record = record;
+			this.survey = survey;
+		}
+		
+		public Record record;
+		public Survey survey;
+	}
+	
 	ImageView icon = null;
 	TextView recordSpecies = null;
 	TextView recordTime = null;
+	TextView surveyName = null;
 	public CheckBox checkbox = null;
 	
 	private StorageManager storageManager;
@@ -33,13 +47,14 @@ public class SavedRecordHolder {
 		recordTime = (TextView)row.findViewById(R.id.record_description_time);
 		icon = (ImageView)row.findViewById(R.id.record_image);
 		checkbox = (CheckBox)row.findViewById(R.id.checkbox);
-		
+		surveyName = (TextView)row.findViewById(R.id.survey_name);
 		storageManager = new StorageManager(row.getContext());
 		
 	}
 	
-	public void populate(Record record) {
+	public void populate(RecordView recordView) {
 		
+		Record record = recordView.record;
 		Uri image = record.getFirstImageUri();
 		if (image != null) {
 		
@@ -59,6 +74,7 @@ public class SavedRecordHolder {
 		else {
 			recordSpecies.setText("No species recorded");
 		}
+		surveyName.setText(recordView.survey.name);
 		Date created = new Date(record.when);
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		recordTime.setText(format.format(created));

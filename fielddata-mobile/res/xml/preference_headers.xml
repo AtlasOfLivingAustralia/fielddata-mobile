@@ -17,6 +17,14 @@
     
 <header
     android:fragment="au.org.ala.fielddata.mobile.pref.PreferenceFragment"
+    android:summary="Preferences relating to network access"
+    android:title="Network">
+    <extra
+        android:name="resource"
+        android:value="network_preferences"/>
+</header>
+<header
+    android:fragment="au.org.ala.fielddata.mobile.pref.PreferenceFragment"
     android:summary="Advanced preferences"
     android:title="Advanced">
     <extra

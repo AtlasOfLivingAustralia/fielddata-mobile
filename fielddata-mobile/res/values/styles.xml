@@ -101,4 +101,8 @@
         <item name="android:padding">4dp</item>
     </style>
     
+    <style name="ScientificName" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textStyle">italic</item>
+    </style>
+    
 </resources>

@@ -31,7 +31,9 @@ public class EditPreferences extends SherlockPreferenceActivity {
         super.onCreate(savedInstanceState);
         
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+        	addPreferencesFromResource(R.xml.network_preferences);
         	addPreferencesFromResource(R.xml.preference1);
+        	
         }
     }
 

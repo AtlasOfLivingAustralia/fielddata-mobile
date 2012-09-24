@@ -29,12 +29,25 @@ import com.actionbarsherlock.app.SherlockActivity;
 public class LoginActivity extends SherlockActivity implements OnClickListener {
 
 	private ProgressDialog pd;
+	private String[] portals; 
+	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_login);
-
+		portals = getResources().getStringArray(R.array.portals);
+		if (portals.length > 1) {
+			findViewById(R.id.portalLbl).setVisibility(View.VISIBLE);
+			findViewById(R.id.portal).setVisibility(View.VISIBLE);	
+		}
+		else {
+		
+			Preferences preferences = new Preferences(this);
+			preferences.setFieldDataPortalName(portals[0]);
+		}
+		
 		Button button = (Button) findViewById(R.id.loginBtn);
 		button.setOnClickListener(this);
 	}
@@ -55,7 +68,15 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 			final EditText username = (EditText) findViewById(R.id.username);
 			final EditText password = (EditText) findViewById(R.id.userPassword);
 			Spinner portal = (Spinner) findViewById(R.id.portal);
-			final String portalName = (String)portal.getSelectedItem();
+			final String portalName;
+			if (portals.length > 1) {
+				portalName = (String)portal.getSelectedItem();
+				preferences.setFieldDataPortalName(portalName);
+				
+			}
+			else {
+				portalName = preferences.getFieldDataPortalName();
+			}
 			
 			pd = ProgressDialog.show(LoginActivity.this, "Logging in", 
 					preferences.getFieldDataServerUrl(), true, false, null);

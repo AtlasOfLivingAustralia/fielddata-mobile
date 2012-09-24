@@ -23,9 +23,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,8 +82,16 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	@Override
 	public void onStart() {
 		super.onStart();
+		
+		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)) {
+			LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+			if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+				showNoGpsDialog();
+			}
+		}
 		Intent locationIntent = new Intent(this, LocationServiceHelper.class);
 		startService(locationIntent);
+		
 	}
 	
 	@Override
@@ -89,6 +100,24 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		Intent locationIntent = new Intent(MobileFieldDataDashboard.this, LocationServiceHelper.class);
 		
 		stopService(locationIntent);
+	}
+	
+	private void showNoGpsDialog() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setTitle("Enable GPS?")
+	           .setMessage("The GPS on this device is currently disabled, do you want to enable it? \nEnabling GPS will allow accurate survey locations to be recorded.")
+	           .setCancelable(false)
+	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	               public void onClick(final DialogInterface dialog, final int id) {
+	                   startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+	               }
+	           })
+	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	               public void onClick(final DialogInterface dialog, final int id) {
+	                    dialog.cancel();
+	               }
+	           });
+	    builder.create().show();
 	}
 
 	class Model {

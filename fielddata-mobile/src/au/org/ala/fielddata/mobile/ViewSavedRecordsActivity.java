@@ -260,7 +260,7 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 		int deleteCount = 0;
 		for (int i=0; i<selected.size(); i++) {
 			if (selected.valueAt(i) == true) {
-				Record record = (Record)getListAdapter().getItem(i);
+				Record record = ((RecordView)getListAdapter().getItem(i)).record;
 				recordDao.delete(Record.class, record.getId());
 				deleteCount++;
 			}
@@ -285,7 +285,7 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 		int[] recordIds = new int[count];
 		for (int i=0; i<selected.size(); i++) {
 			if (selected.valueAt(i) == true) {
-				Record record = (Record)getListAdapter().getItem(i);
+				Record record = ((RecordView)getListAdapter().getItem(i)).record;
 				recordIds[index++] = record.getId();
 			}
 		}

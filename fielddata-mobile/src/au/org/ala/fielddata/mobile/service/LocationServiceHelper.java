@@ -70,7 +70,7 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	private void requestLocationUpdates(boolean active) {
 		if (active) {
 			final int TEN_SECONDS = 10000;
-			if (hasGps && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			if (hasGps) {
 				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TEN_SECONDS, DISTANCE_CHANGE, this);
 			}
 			if (hasNetwork) {

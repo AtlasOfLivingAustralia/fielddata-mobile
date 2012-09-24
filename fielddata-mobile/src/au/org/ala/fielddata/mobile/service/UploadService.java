@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.ViewSavedRecordsActivity;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
@@ -53,17 +54,30 @@ public class UploadService extends IntentService {
 				records.add(recordDao.load(Record.class, id));
 			}
 		}
-		boolean success = true;
+		int successCount = 0;
+		int invalidCount = 0;
+		int failedCount = 0;
 		for (Record record : records) {
 			int result = upload(record);
 			if (result == SUCCESS) {
+				successCount++;
 				recordDao.delete(Record.class, record.getId());
 			}
-			success = success && result == SUCCESS;
+			else if (result == FAILED_INVALID) {
+				invalidCount++;
+			}
+			else if (result == FAILED_SERVER) {
+				failedCount++;
+			}
 		}
-		String action = UPLOADED;
-		if (!success) {
+		String action = null;
+		if (failedCount > 0) {
 			action = UPLOAD_FAILED;
+			notifyFailed(failedCount);
+		}
+		else {
+			action = UPLOADED;
+			notifiySuccess(successCount);
 		}
 		
 		intent = new Intent(action);
@@ -91,8 +105,6 @@ public class UploadService extends IntentService {
 			if (result.valid()) {
 				service.sync(tmp);
 				resultCode = SUCCESS;
-				notify("Uploaded", "1 record");
-				
 			}
 			else {
 				Log.w("UploadService", "Not uploading due to validation error");
@@ -106,22 +118,33 @@ public class UploadService extends IntentService {
 		return resultCode;
 	}
 	
-	private void notify(String title, String subject) {
+	private void notifiySuccess(int numSuceeded) {
+		String message = numSuceeded == 1 ? " record uploaded" : " records uploaded";
+		notify(numSuceeded + message, "", true);
+		
+	}
+	
+	private void notifyFailed(int numFailed) {
+		notify(numFailed + " records failed to upload", "Touch to view saved records", false);
+	}
+	
+	private void notify(String title, String subject, boolean success) {
 		
 		NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		Intent savedActivity = new Intent(this, ViewSavedRecordsActivity.class);
 		PendingIntent intent = PendingIntent.getActivity(this, START_NOT_STICKY, savedActivity, PendingIntent.FLAG_CANCEL_CURRENT);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		Notification notification = builder.setContentTitle(title)
+		builder.setContentTitle(title)
 		       .setContentText(subject)
+		       .setTicker(title)
 		       .setAutoCancel(true)
-		       .setContentInfo("blah blah")
-		       .setSmallIcon(android.R.drawable.stat_notify_sync)
-		       .setContentIntent(intent)
-		       .getNotification();
-		
-		
-		notificationManager.notify(SUCCESS, notification);
+		       .setSmallIcon(R.drawable.ala_notification);
+		if (!success) {
+		    builder.setContentIntent(intent);
+		}
+		Notification notification = builder.getNotification();
+		notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		notificationManager.notify(success ? SUCCESS : FAILED_SERVER, notification);
 		Log.i("UploadService", "sending notification: "+title);
 	}
 

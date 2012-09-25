@@ -15,13 +15,16 @@
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <ListPreference
-        android:key="upload"
-        android:summary="Whether records should be uploaded automatically after being created."
-        android:title="Uploading Records"
-        android:defaultValue="wifi" 
-        android:entries="@array/upload_preference_names"
-        android:entryValues="@array/upload_preference_values"/>
+    <CheckBoxPreference
+        android:key="AutomaticUpload"
+        android:summary="Records will be uploaded automatically when saved."
+        android:title="Automatic Upload"
+        android:defaultValue="true"/>
     
+    <CheckBoxPreference
+        android:key="WifiOnly"
+        android:summary="Records will only be uploaded when connected to a WIFI network."
+        android:title="WIFI Only"
+        android:defaultValue="true"/>
 
 </PreferenceScreen>

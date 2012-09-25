@@ -96,24 +96,11 @@
     
     <!--  Portal names -->
 	<string-array name="portals">
-	    <item>Condamine NRM</item>
+	    <!-- <item>Condamine NRM</item> -->
 	    <item>SA Koala Count</item>
 	</string-array>
 	
 	<!-- Saved records page -->
 	<string name="photo_icon">Record photo</string>
 	
-	
-	<string-array name="upload_preference_names">
-	    <item>Manual</item>
-	    <item>Automatically</item>
-	    <!--  Need a third entry for automatically if in WIFI range -->
-	</string-array>
-	<string-array name="upload_preference_values">
-	    <item>Manual</item>
-	    <item>Automatically</item>
-	    <!--  Need a third entry for automatically if in WIFI range -->
-	</string-array>
-	
-
 </resources>

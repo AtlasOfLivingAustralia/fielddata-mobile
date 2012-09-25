@@ -254,7 +254,6 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 	
 	
 	private void deleteSelectedRecords() {
-		ProgressDialog dialog = ProgressDialog.show(this, "", "", true);
 		GenericDAO<Record> recordDao = new GenericDAO<Record>(this);
 		SparseBooleanArray selected = getListView().getCheckedItemPositions();
 		int deleteCount = 0;
@@ -273,11 +272,10 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 		finishActionMode();
 		
 		refresh();
-		dialog.dismiss();
+		
 	}
 	
 	private void uploadSelectedRecords() {
-		dialog = ProgressDialog.show(this, "", "", true);
 		
 		SparseBooleanArray selected = getListView().getCheckedItemPositions();
 		int count = countSelected();

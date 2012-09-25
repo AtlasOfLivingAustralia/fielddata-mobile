@@ -3,11 +3,23 @@ package au.org.ala.fielddata.mobile.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Binder;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Process;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -16,13 +28,14 @@ import au.org.ala.fielddata.mobile.ViewSavedRecordsActivity;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.validation.RecordValidator;
 import au.org.ala.fielddata.mobile.validation.RecordValidator.RecordValidationResult;
 
 /**
  * Uploads Records to the Field Data server.
  */
-public class UploadService extends IntentService {
+public class UploadService extends Service {
 
 	public static final String UPLOADED = "Upload";
 	public static final String UPLOAD_FAILED = "UploadFailed";
@@ -32,18 +45,115 @@ public class UploadService extends IntentService {
 	private int SUCCESS = 0;
 	private int FAILED_INVALID = 1;
 	private int FAILED_SERVER = 2;
+
+	private static final String START_ID = "startId";
 	
-	public UploadService() {
-		super("Upload Service");
+	
+	private UploadServiceHandler serviceHandler;
+	private Looper serviceLooper;
+	private UploadWakeup networkStatusReceiver;
+	
+	private List<Bundle> deferredWorkQueue;
+		
+	private final class UploadServiceHandler extends Handler {
+		public UploadServiceHandler(Looper looper) {
+			super(looper);
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			Log.i("UploadService", "Handling message: "+msg.getData());
+			Bundle msgData = msg.getData();
+			if (canUpload()) {
+				Log.i("UploadService", "Able to upload!");
+				int startId = msgData.getInt(START_ID);
+				int[] recordIds = msgData.getIntArray(RECORD_IDS_EXTRA);
+				uploadRecords(recordIds);
+				Log.d("UploadService", "Stopping with id: "+startId);
+				stopSelf(startId);
+			}
+			else {
+				Log.i("UploadService", "Unable to upload, requeuing message");
+				notifyQueued();
+				synchronized(deferredWorkQueue) {
+					deferredWorkQueue.add(msgData);
+				}
+			}
+		}
+		
+		
+	}
+	
+	class UploadWakeup extends BroadcastReceiver {
+		
+		public void onReceive(Context context, Intent intent) {
+			Log.i("UploadService", "Network status changed: "+intent+" Context: "+context);
+			synchronized(deferredWorkQueue) {
+				for (int i=0; i<deferredWorkQueue.size(); i++) {
+					Message msg = serviceHandler.obtainMessage();
+					msg.setData(deferredWorkQueue.get(i));
+					serviceHandler.sendMessage(msg);
+				}
+				deferredWorkQueue.clear();
+			}
+			
+			
+		}
 	}
 	
 	@Override
-	protected void onHandleIntent(Intent intent) {
+	public Binder onBind(Intent intent) {
+		return null;
+	}
+	
+	@Override
+	public void onCreate() {
+		Log.i("UploadService", "Upload Service Started.");
 		
-		Log.i("UploadService", "Uploading records...");
+		deferredWorkQueue = new ArrayList<Bundle>();
 		
+		HandlerThread thread = new HandlerThread("UploadThread", Process.THREAD_PRIORITY_BACKGROUND);
+		thread.start();
+		
+		serviceLooper = thread.getLooper();
+		serviceHandler = new UploadServiceHandler(serviceLooper);
+		
+		networkStatusReceiver = new UploadWakeup();
+		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+		registerReceiver(networkStatusReceiver, filter);
+	}
+	
+	@Override
+	public void onDestroy() {
+		Log.i("UploadService", "Upload Service Stopped.");
+		serviceLooper.quit();
+		unregisterReceiver(networkStatusReceiver);
+	}
+	
+	
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
 		int[] recordIds = intent.getIntArrayExtra(RECORD_IDS_EXTRA);
 		
+		Log.i("UploadService", "Upload requested for "+ (recordIds == null ? "all" : recordIds.length) +" records, startId="+startId);
+		
+		Bundle messageArgs = new Bundle();
+		messageArgs.putInt(START_ID, startId);
+		messageArgs.putIntArray(RECORD_IDS_EXTRA, recordIds);
+		Message message = serviceHandler.obtainMessage();
+		message.setData(messageArgs);
+		serviceHandler.sendMessage(message);
+		
+		return START_REDELIVER_INTENT;
+	}
+	
+	/**
+	 * Uploads the records identified by the supplied array of ids.
+	 * @param recordIds the ids of the records to upload.
+	 * @return the action to broadcast after the upload is complete
+	 * (SUCCESS, FAILED_INVALID or FAILED_SERVER).
+	 */
+	private void uploadRecords(int[] recordIds) {
 		GenericDAO<Record> recordDao = new GenericDAO<Record>(this);
 		List<Record> records = new ArrayList<Record>();
 		if (recordIds == null) {
@@ -51,7 +161,10 @@ public class UploadService extends IntentService {
 		}
 		else {
 			for (int id : recordIds) {
-				records.add(recordDao.load(Record.class, id));
+				Record record = recordDao.loadIfExists(Record.class, id);
+				if (record != null) {
+					records.add(record);
+				}
 			}
 		}
 		int successCount = 0;
@@ -79,10 +192,28 @@ public class UploadService extends IntentService {
 			action = UPLOADED;
 			notifiySuccess(successCount);
 		}
+		Intent broadcastIntent = new Intent(action);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
 		
-		intent = new Intent(action);
-		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-		stopSelf();
+	}
+	
+	private boolean canUpload() {
+		
+		Preferences prefs = new Preferences(this);
+		ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+		
+		
+		boolean needsWifi = prefs.getUploadOverWifiOnly();
+		Log.d("UploadService", "Can upload, WIFI only is: "+needsWifi);
+		
+		NetworkInfo networkInfo;
+		if (needsWifi) {
+			networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		}
+		else {
+			networkInfo = connectivityManager.getActiveNetworkInfo();
+		}
+		return networkInfo != null && networkInfo.isConnected();
 	}
 	
 	/**
@@ -128,6 +259,10 @@ public class UploadService extends IntentService {
 		notify(numFailed + " records failed to upload", "Touch to view saved records", false);
 	}
 	
+	private void notifyQueued() {
+		notify("Upload pending - no network", "Records will be uploaded when network service is available.", true);
+	}
+	
 	private void notify(String title, String subject, boolean success) {
 		
 		NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
@@ -147,6 +282,8 @@ public class UploadService extends IntentService {
 		notificationManager.notify(success ? SUCCESS : FAILED_SERVER, notification);
 		Log.i("UploadService", "sending notification: "+title);
 	}
+	
+	
 
 	
 

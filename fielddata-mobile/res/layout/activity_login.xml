@@ -49,7 +49,8 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/userPassword"
         android:layout_marginTop="15dp"
-        android:text="@string/portal" />
+        android:text="@string/portal"
+        android:visibility="gone" />
     
     <Spinner
         android:id="@+id/portal"
@@ -60,6 +61,7 @@
         android:entries="@array/portals"
         android:layout_marginTop="5dp"
         android:ems="10"
+        android:visibility="gone"
         />
         
 

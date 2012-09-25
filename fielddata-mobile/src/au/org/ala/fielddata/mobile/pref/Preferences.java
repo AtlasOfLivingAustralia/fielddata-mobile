@@ -19,13 +19,21 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
+/**
+ * Manages access to the application preferences.
+ */
 public class Preferences {
 
 	private static final String SURVEY_KEY = "SurveyPreference";
 	private static final String SURVEY_NAME_KEY = "SurveyNamePreference";
 	private static final String SESSION_KEY = "Session";
-	private Context ctx; 
+	private static final String AUTO_UPLOAD_PREFERENCE_KEY = "AutomaticUpload";
+	private static final Boolean DEFAULT_AUTO_UPLOAD_PREFERENCE = Boolean.TRUE;
+	private static final String WIFI_ONLY_PREFERENCE_KEY = "WifiOnly";
+	private static final Boolean DEFAULT_WIFI_ONLY_PREFERENCE = Boolean.TRUE;
 	
+	private Context ctx; 
+
 	public Preferences(Context ctx) {
 		this.ctx = ctx;
 	}
@@ -112,4 +120,15 @@ public class Preferences {
 		preferences.putString(SESSION_KEY, sessionKey).commit();
 	
 	}
+	
+	public boolean getUploadAutomatically() {
+		return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(
+				AUTO_UPLOAD_PREFERENCE_KEY, DEFAULT_AUTO_UPLOAD_PREFERENCE);
+	}
+	
+	public boolean getUploadOverWifiOnly() {
+		return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(
+				WIFI_ONLY_PREFERENCE_KEY, DEFAULT_WIFI_ONLY_PREFERENCE);
+	}
+	
 }

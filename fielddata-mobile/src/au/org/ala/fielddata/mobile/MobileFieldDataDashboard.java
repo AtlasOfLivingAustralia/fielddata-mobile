@@ -224,6 +224,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		
 		
 		PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preference1, true);
+		PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.network_preferences, true);
+		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		

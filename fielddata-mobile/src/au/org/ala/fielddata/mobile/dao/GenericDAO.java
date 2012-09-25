@@ -44,6 +44,10 @@ public class GenericDAO<T extends Persistent> {
 	public T load(Class<T> modelClass, Integer id) {
 		return findByColumn(modelClass, "_id", Integer.toString(id), false);
 	}
+	
+	public T loadIfExists(Class<T> modelClass, Integer id) {
+		return findByColumn(modelClass, "_id", Integer.toString(id), true);
+	}
 
 	private T findByColumn(Class<T> modelClass, String column, String value, boolean allowNoResults) {
 		synchronized(helper) {

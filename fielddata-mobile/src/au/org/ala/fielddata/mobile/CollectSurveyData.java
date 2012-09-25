@@ -55,9 +55,11 @@ import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel.TempValue;
+import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.LocationServiceHelper;
 import au.org.ala.fielddata.mobile.service.LocationServiceHelper.LocationServiceConnection;
 import au.org.ala.fielddata.mobile.service.StorageManager;
+import au.org.ala.fielddata.mobile.service.UploadService;
 import au.org.ala.fielddata.mobile.ui.MultiSpinner;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
 import au.org.ala.fielddata.mobile.ui.ValidatingViewPager;
@@ -633,6 +635,12 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 				GenericDAO<Record> recordDao = new GenericDAO<Record>(ctx.getApplicationContext());
 				recordDao.save(ctx.getViewModel().getRecord());
+				
+				Preferences prefs = new Preferences(ctx);
+				if (prefs.getUploadAutomatically()) {
+					Intent upload = new Intent(ctx, UploadService.class);
+					ctx.startService(upload);
+				}
 
 			} catch (Exception e) {
 				success = false;

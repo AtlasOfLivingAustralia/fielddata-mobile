@@ -3,7 +3,7 @@ package au.org.ala.fielddata.mobile.validation;
 import java.text.DecimalFormat;
 
 import android.location.Location;
-import android.location.LocationManager;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -17,14 +17,24 @@ import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class LocationBinder extends AbsBinder {
 
-	private TextView locationTextView;
+	private TextView latitude;
+	private TextView longitude;
+	private TextView accuracy;
+	private TextView noLocation;
+	private TextView time;
+	
 	private SurveyViewModel model;
 	private CollectSurveyData ctx;
 	
 	public LocationBinder(CollectSurveyData context, View locationView, Attribute locationAttribute, SurveyViewModel model) {
 		super(locationAttribute, locationView);
 		
-		locationTextView = (TextView)locationView.findViewById(R.id.latlong);
+		latitude = (TextView)locationView.findViewById(R.id.latitude);
+		longitude = (TextView)locationView.findViewById(R.id.longitude);
+		accuracy = (TextView)locationView.findViewById(R.id.accuracy);
+		noLocation = (TextView)locationView.findViewById(R.id.noLocation);
+		time = (TextView)locationView.findViewById(R.id.time);
+		
 		this.model = model;
 		this.ctx = context;
 		
@@ -63,31 +73,45 @@ public class LocationBinder extends AbsBinder {
 //			return;
 //		}
 		if (result.isValid()) {
-			locationTextView.setError(null);
+			noLocation.setError(null);
 		}
 		else {
-			locationTextView.setError("Select a location"); 	//result.getMessage(ctx));
+			noLocation.setError("Select a location"); 	//result.getMessage(ctx));
 		}
 		
 	}
 	private void updateText() {
 		
-		String locationText = "";
 		Location location = model.getLocation();
 		if (location != null) {
 			DecimalFormat format = new DecimalFormat("###.000000");
-			StringBuilder builder = new StringBuilder();
 			
-			builder.append(format.format(location.getLatitude()));
-			builder.append("\u00B0 N\n");
-			builder.append(format.format(location.getLongitude()));
-			builder.append("\u00B0 W ");
-			if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
-				builder.append("("+location.getAccuracy()+"m)");
+			latitude.setText("lat: "+format.format(location.getLatitude()));
+			longitude.setText("lon: "+format.format(location.getLongitude()));
+			if (location.hasAccuracy()) {
+				accuracy.setText("accuracy: "+location.getAccuracy()+ " m");
 			}
-			locationText = builder.toString();
+			else {
+				accuracy.setText("accuracy: unknown");
+			}	
+			
+			time.setText("Updated at: "+DateFormat.getTimeFormat(ctx).format(location.getTime()));
+			
+			noLocation.setVisibility(View.GONE);
+			latitude.setVisibility(View.VISIBLE);
+			longitude.setVisibility(View.VISIBLE);
+			accuracy.setVisibility(View.VISIBLE);
+			time.setVisibility(View.VISIBLE);
 		}
-		locationTextView.setText(locationText);
+		else {
+			noLocation.setVisibility(View.VISIBLE);
+			latitude.setVisibility(View.GONE);
+			longitude.setVisibility(View.GONE);
+			accuracy.setVisibility(View.GONE);
+			time.setVisibility(View.GONE);
+			
+		}
+		
 	}
 	
 	/**

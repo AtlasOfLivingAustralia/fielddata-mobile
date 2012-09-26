@@ -92,6 +92,7 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	public void onDestroy() {
 		Log.i("LocationServiceHelper", "Stopping location updates");
 		locationManager.removeUpdates(this);
+		listener = null;
 	}
 	
 	/**
@@ -232,7 +233,7 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	    } else if (isNewer && !isSignificantlyLessAccurate && isFromSameProvider) {
 	        return true;
 	    }
-	    return false;
+	    return true;
 	}
 
 	

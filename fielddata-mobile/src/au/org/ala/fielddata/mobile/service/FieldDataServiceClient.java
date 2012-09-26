@@ -31,7 +31,6 @@ import org.springframework.web.client.RestTemplate;
 
 import android.content.Context;
 import android.util.Log;
-import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
@@ -58,6 +57,21 @@ public class FieldDataServiceClient extends WebServiceClient {
 	
 
 	private String ident;
+	
+	/**
+	 * Because the Survey web service also downloads species, this is 
+	 * just a holder for the results of the download.
+	 */
+	public class SurveysAndSpecies {
+		
+		public SurveysAndSpecies(List<Survey> surveys, List<Species> species) {
+			this.surveys = surveys;
+			this.species = species;
+		}
+		
+		public List<Survey> surveys;
+		public List<Species> species;
+	}
 
 	public FieldDataServiceClient(Context ctx) {
 		super(ctx);
@@ -80,7 +94,7 @@ public class FieldDataServiceClient extends WebServiceClient {
 		System.out.println(result);
 	}
 
-	public List<Survey> downloadSurveys() {
+	public SurveysAndSpecies downloadSurveys() {
 
 		String url = getServerUrl() + surveyUrl + ident;
 
@@ -92,41 +106,34 @@ public class FieldDataServiceClient extends WebServiceClient {
 
 		url = getServerUrl() + surveyDetails;
 		List<Survey> surveys = new ArrayList<Survey>();
-		List<Species> speciesList;
+		List<Species> speciesList = new ArrayList<Species>();
 		
 		for (UserSurveyResponse userSurvey : result) {
 			String downloadedSurveys = jsonSurveyIds(surveys);
 			DownloadSurveyResponse surveyResponse = restTemplate.getForObject(
 					String.format(url, userSurvey.id, ident, downloadedSurveys),
 					DownloadSurveyResponse.class);
-			Survey survey = new Survey();
-
-			survey.server_id = surveyResponse.details.id;
-			survey.lastSync = System.currentTimeMillis();
-			survey.name = surveyResponse.details.name;
-			survey.attributes = surveyResponse.attributes;
-			survey.recordProperties = surveyResponse.recordProperties;
-			survey.map = surveyResponse.map;
-			survey.description = surveyResponse.details.description;
-
+			
+			Survey survey = mapSurvey(surveyResponse);
 			surveys.add(survey);
 
-			speciesList = surveyResponse.indicatorSpecies;
-			GenericDAO<Species> dao = new GenericDAO<Species>(ctx);
-			StorageManager manager = new StorageManager(ctx);
-			for (Species species : speciesList) {
-				dao.save(species);
-				try {
-					// Instruct the cache manager to download and cache the file
-					manager.getProfileImage(species);
-				} catch (Exception e) {
-					Log.e("Service", "Error downloading profile image", e);
-				}
-
-			}
+			speciesList.addAll(surveyResponse.indicatorSpecies);
 		}
 
-		return surveys;
+		return new SurveysAndSpecies(surveys, speciesList);
+	}
+
+	private Survey mapSurvey(DownloadSurveyResponse surveyResponse) {
+		Survey survey = new Survey();
+
+		survey.server_id = surveyResponse.details.id;
+		survey.lastSync = System.currentTimeMillis();
+		survey.name = surveyResponse.details.name;
+		survey.attributes = surveyResponse.attributes;
+		survey.recordProperties = surveyResponse.recordProperties;
+		survey.map = surveyResponse.map;
+		survey.description = surveyResponse.details.description;
+		return survey;
 	}
 	
 	private String jsonSurveyIds(List<Survey> surveys) {

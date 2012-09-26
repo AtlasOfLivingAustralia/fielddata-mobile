@@ -42,6 +42,19 @@ public class StorageManager {
 	 * does not have a defined profile image.
 	 */
 	public File getProfileImage(Species species) {
+		return getProfileImage(species, false);
+	}
+	
+	/**
+	 * Returns the profile image, potentially downloading it if necessary.
+	 * Must be called from a background thread.
+	 * @param species the species to get the image for.
+	 * @param forceDownload if true, if the image already exists in the cache
+	 * it will be deleted and re-downloaded.
+	 * @return the File containing the profile image, null if the species
+	 * does not have a defined profile image.
+	 */
+	public File getProfileImage(Species species, boolean forceDownload) {
 		
 		String fileName = species.getImageFileName(); 
 		if (fileName == null) {
@@ -52,7 +65,7 @@ public class StorageManager {
 		File cacheDir = ctx.getCacheDir();
 		File profileImage = new File(cacheDir, fileName+".jpg");
 		
-		if (!profileImage.exists()) {
+		if (!profileImage.exists() || forceDownload) {
 			try {
 				downloadService.downloadSpeciesProfileImage(fileName, profileImage);
 			}
@@ -60,6 +73,7 @@ public class StorageManager {
 				// If we are offline the download will fail.
 			}
 		}
+		
 		return profileImage;
 	}
 	

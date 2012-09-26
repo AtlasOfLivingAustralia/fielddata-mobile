@@ -19,8 +19,10 @@ import java.util.List;
 import android.content.Context;
 import android.util.Log;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.pref.Preferences;
+import au.org.ala.fielddata.mobile.service.FieldDataServiceClient.SurveysAndSpecies;
 
 public class FieldDataService {
 
@@ -40,7 +42,8 @@ public class FieldDataService {
 	 */
 	public List<Survey> downloadSurveys() {
 		
-		List<Survey> surveys = webServiceClient.downloadSurveys();
+		SurveysAndSpecies results = webServiceClient.downloadSurveys(); 
+		List<Survey> surveys = results.surveys;
 
 		if (surveys.size() > 0) {
 			Preferences prefs = new Preferences(ctx);
@@ -58,6 +61,27 @@ public class FieldDataService {
 				survey.setId(existingSurvey.getId());
 			}
 			surveyDAO.save(survey);
+		}
+		
+		List<Species> speciesList = results.species;
+		GenericDAO<Species> dao = new GenericDAO<Species>(ctx);
+		StorageManager manager = new StorageManager(ctx);
+		for (Species species : speciesList) {
+			Log.d("FieldDataService", "Have species with id: "+species.server_id);
+			// If we already have a species with the same id, replace it.
+			Species existingSpecies = dao.findByServerId(Species.class, species.server_id);
+			if (existingSpecies != null) {
+				Log.i("FieldDataService", "Replacing species with id: "+existingSpecies.server_id);
+				species.setId(existingSpecies.getId());
+			}
+			dao.save(species);
+			try {
+				// Instruct the cache manager to download and cache the file
+				manager.getProfileImage(species);
+			} catch (Exception e) {
+				Log.e("Service", "Error downloading profile image", e);
+			}
+
 		}
 		
 		return surveys;

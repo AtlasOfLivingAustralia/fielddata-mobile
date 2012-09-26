@@ -91,7 +91,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	public static final String SPECIES = "species";
 	
 	/** The accuracy required to auto-populate the location from GPS */
-	private static final float ACCURACY_THESHOLD = 20f;
+	private static final float ACCURACY_THESHOLD = 2000f;
 
 	/**
 	 * Used to identify a request to the LocationSelectionActivity when a result
@@ -160,11 +160,11 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	}
 	
 	public void onLocationChanged(Location location) {
-		if (surveyViewModel.getLocation() == null) {
+		//if (surveyViewModel.getLocation() == null) {
 			Toast.makeText(this, R.string.locationSelectedByGPS, Toast.LENGTH_SHORT).show();
 			surveyViewModel.setLocation(location);
-		}
-		stopLocationUpdates();
+		//}
+		//stopLocationUpdates();
 	}
 
 	public void onStatusChanged(String provider, int status, Bundle extras) {}

@@ -67,7 +67,7 @@
         
     </style>
    
-    <style name="FieldData.HeaderLabel" parent="@android:style/Widget.Holo.Light.TextView">
+    <style name="FieldData.HeaderLabel" parent="@android:style/Widget.TextView">
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
         <item name="android:singleLine">false</item>
       

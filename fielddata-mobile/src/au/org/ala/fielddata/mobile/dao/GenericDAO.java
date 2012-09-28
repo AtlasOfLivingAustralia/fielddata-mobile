@@ -73,7 +73,8 @@ public class GenericDAO<T extends Persistent> {
 			else {
 				result.moveToFirst();
 				String json = result.getString(5);
-				Gson gson = new Gson();
+				Log.d("GenericDAO", "loadin: "+json);
+				Gson gson = Mapper.getGson(context);
 				modelObject = (T) gson.fromJson(json, modelClass);
 				modelObject.setId(result.getInt(0));
 			}

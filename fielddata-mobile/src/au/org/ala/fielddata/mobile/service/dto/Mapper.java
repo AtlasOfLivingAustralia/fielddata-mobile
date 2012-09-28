@@ -12,11 +12,16 @@ import com.google.gson.GsonBuilder;
 public class Mapper {
 
 	public static Gson getGson(Context ctx) {
+		return getGson(ctx, false);
+	}
+	
+	public static Gson getGson(Context ctx, boolean forUpload) {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setFieldNamingPolicy(FieldNamingPolicy.IDENTITY);
-		builder.registerTypeHierarchyAdapter(StringValue.class, new StringValueAdapter(ctx));
+		if (forUpload) {
+			builder.registerTypeHierarchyAdapter(StringValue.class, new StringValueAdapter(ctx));
+		}
 		builder.registerTypeAdapter(Location.class, new LocationSerializer());
 		return builder.create();
 	}
-	
 }

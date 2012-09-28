@@ -62,7 +62,7 @@ public class WebServiceClient {
 	}
 	
 	protected Gson getGson() {
-		return Mapper.getGson(ctx);
+		return Mapper.getGson(ctx, true);
 	}
 	
 	protected void close(Closeable stream) {

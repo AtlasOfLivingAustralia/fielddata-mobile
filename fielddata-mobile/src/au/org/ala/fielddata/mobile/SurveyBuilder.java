@@ -180,9 +180,16 @@ public class SurveyBuilder {
 		AttributeOption[] options = new AttributeOption[attribute.options.length+1];
 		options[0] = empty;
 		System.arraycopy(attribute.options, 0, options, 1, attribute.options.length);
-		 ArrayAdapter<AttributeOption> adapter = new  ArrayAdapter<AttributeOption>(viewContext,
-				android.R.layout.simple_spinner_item, options);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		ArrayAdapter<AttributeOption> adapter = new  ArrayAdapter<AttributeOption>(viewContext,
+				R.layout.multiline_spinner_item, options) {
+			 @Override
+			    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+				 View dropDown = super.getDropDownView(position, convertView, parent);
+				 
+				 return dropDown;
+			 }
+		};
+		adapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
 		
 		return spinner;

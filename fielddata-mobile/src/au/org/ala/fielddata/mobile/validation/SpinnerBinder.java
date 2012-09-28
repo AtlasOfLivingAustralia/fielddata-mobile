@@ -21,10 +21,12 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
+import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, OnTouchListener {
@@ -41,9 +43,10 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 		this.model = model;
 		updating = false;
 		bindEnabled = false;
+		update();
 		view.setOnItemSelectedListener(this);
 		view.setOnTouchListener(this);
-
+		
 	}
 
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
@@ -78,15 +81,30 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 		if (attribute.getServerId() != this.attribute.getServerId()) {
 			return;
 		}
+		update();
+	}
+
+	private void update() {
 		try {
 			updating = true;
-			bind();
+			Spinner spinner = (Spinner)view;
+			String value = model.getValue(attribute);
+			if (value != null) {
+				ArrayAdapter<AttributeOption> adapter = (ArrayAdapter<AttributeOption>)spinner.getAdapter();
+				for (int i=0; i<adapter.getCount(); i++) {
+					AttributeOption option = adapter.getItem(i);
+					if (value.equals(option.value)) {
+						spinner.setSelection(i);
+						break;
+					}
+				}
+			}
 		}
 		finally {
 			updating = false;
 		}
 	}
-
+	
 	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
 		Log.d("SpinnerBinder", "onValidationStatusChange: "+attribute+", "+result.isValid());
 		if (attribute.getServerId() != this.attribute.getServerId()) {
@@ -114,10 +132,6 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 			Log.d("SpinnerBinder", "bind - not updating");
 			bind(nullSafeText());
 		}
-	}
-	
-	public View getView() {
-		return view;
 	}
 	
 	private void bind(String value) {

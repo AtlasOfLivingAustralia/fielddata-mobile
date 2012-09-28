@@ -105,7 +105,6 @@ public class SurveyBuilder {
 	}
 
 	public View buildLabel(Attribute attribute, ViewGroup parent) {
-		// TextView view = new TextView(viewContext);
 		ViewGroup view = (ViewGroup) viewContext.getLayoutInflater().inflate(
 				R.layout.label_text_view, parent);
 		TextView textView = (TextView) view.findViewById(R.id.fieldLabel);

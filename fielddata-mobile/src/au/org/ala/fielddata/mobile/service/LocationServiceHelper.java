@@ -1,5 +1,8 @@
 package au.org.ala.fielddata.mobile.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -28,6 +31,7 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	private float locationListenerRequiredAccuracy;
 	private boolean hasGps;
 	private boolean hasNetwork;
+	private List<Location> locationHistory;
 	
 	public class LocationServiceBinder extends Binder {
 		public LocationServiceHelper getService() {
@@ -39,7 +43,7 @@ public class LocationServiceHelper extends Service implements LocationListener {
 		
 		private LocationListener listener;
 		private float accuracyThreshold;
-		
+		private LocationServiceBinder locationBinder;
 		public LocationServiceConnection(LocationListener listener, float accuracyThreshold) {
 			this.listener = listener;
 			this.accuracyThreshold = accuracyThreshold;
@@ -49,14 +53,18 @@ public class LocationServiceHelper extends Service implements LocationListener {
 		}
 		
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			LocationServiceBinder locationBinder = (LocationServiceBinder)service;
+			locationBinder = (LocationServiceBinder)service;
 			locationBinder.getService().registerLocationListener(listener, accuracyThreshold);
+		}
+		
+		public List<Location> getLocationHistory() {
+			return locationBinder.getService().getLocationHistory();
 		}
 	};
 	
 	@Override
 	public void onCreate() {
-	
+		locationHistory = new ArrayList<Location>();
 		Log.i("LocationServiceHelper", "Starting location updates");
 		hasGps = getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS);
 		hasNetwork = getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_NETWORK);
@@ -73,17 +81,17 @@ public class LocationServiceHelper extends Service implements LocationListener {
 			if (hasGps) {
 				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TEN_SECONDS, DISTANCE_CHANGE, this);
 			}
-			if (hasNetwork) {
-				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TEN_SECONDS, DISTANCE_CHANGE, this);
-			}
+//			if (hasNetwork) {
+//				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TEN_SECONDS, DISTANCE_CHANGE, this);
+//			}
 		}
 		else {
 			if (hasGps) {
 				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TWO_MINUTES, DISTANCE_CHANGE, this);
 			}
-			if (hasNetwork) {
-				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TWO_MINUTES, DISTANCE_CHANGE, this);
-			}
+//			if (hasNetwork) {
+//				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TWO_MINUTES, DISTANCE_CHANGE, this);
+//			}
 		}
 	}
 	
@@ -163,8 +171,13 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	public void onProviderDisabled(String provider) {
 		
 	}
+	
+	public List<Location> getLocationHistory() {
+		return locationHistory;
+	}
 
 	public void onLocationChanged(Location location) {
+		locationHistory.add(new Location(location));
 		Log.d("LocationServiceHelper", "Location update received: "+location);
 		if (isBetterLocation(location, bestLocation)) {
 			bestLocation = location;

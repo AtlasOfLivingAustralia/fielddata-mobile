@@ -16,9 +16,9 @@
 
     <string name="app_name">ALA FieldData</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_mobile_field_data">SA Koala Count</string>
+    <string name="title_activity_mobile_field_data">ALA FieldData</string>
     <string name="submitButtonText">Save</string>
-    <string name="title_activity_mobile_data_dashboard">SA Koala Count</string>
+    <string name="title_activity_mobile_data_dashboard">ALA FieldData</string>
     <string name="species_label">Species</string>
     <string name="date_label">Date</string>
     <string name="comments_label">Comments</string>
@@ -96,7 +96,7 @@
     
     <!--  Portal names -->
 	<string-array name="portals">
-	    <!-- <item>Condamine NRM</item> -->
+	  <item>Condamine Alliance</item>
 	    <item>SA Koala Count</item>
 	</string-array>
 	

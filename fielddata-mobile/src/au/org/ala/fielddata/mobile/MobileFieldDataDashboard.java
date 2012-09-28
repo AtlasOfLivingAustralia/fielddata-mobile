@@ -204,6 +204,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	
 	@Override
 	protected void onResume() {
+		Log.i("MobileFieldDataDashboard", "onResume");
 		
 		super.onResume();
 		
@@ -213,6 +214,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	
 	@Override
 	public void onPause() {
+		Log.i("MobileFieldDataDashboard", "onPause");
+		
 		super.onPause();
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -220,6 +223,13 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		
 	}
 
+	@Override
+	public void onStop() {
+		Log.i("MobileFieldDataDashboard", "onStop");
+		
+		super.onStop();
+	}
+	
 	private void refreshPage() {
 		
 		

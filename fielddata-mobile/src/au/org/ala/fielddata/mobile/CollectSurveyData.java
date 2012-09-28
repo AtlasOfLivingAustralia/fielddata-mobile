@@ -174,15 +174,21 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	public void onProviderDisabled(String provider) {}
 	
 	@Override
+	public void onStart() {
+		Log.i("CollectSurveyData", "onStart");
+		super.onStart();
+	}
+	
+	@Override
 	public void onResume() {
-		Log.i("GPSFragment", "onResume");
+		Log.i("CollectSurveyData", "onResume");
 		super.onResume();
 		startLocationUpdates();
 	}
 	
 	@Override
 	public void onPause() {
-		Log.i("GPSFragment", "onPause");
+		Log.i("CollectSurveyData", "onPause");
 		super.onPause();
 		
 		stopLocationUpdates();

@@ -23,18 +23,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Persistent;
+import au.org.ala.fielddata.mobile.service.dto.Mapper;
 
 import com.google.gson.Gson;
 
 public class GenericDAO<T extends Persistent> {
 
 	protected DatabaseHelper helper;
-
+	protected Context context;
+	
 	public static final String SELECT_BY_ID = "SELECT json FROM %s WHERE _id=?";
 
 	public GenericDAO(Context ctx) {
 		helper = DatabaseHelper.getInstance(ctx);
-
+		context = ctx;
 	}
 
 	public T findByServerId(Class<T> modelClass, Integer id) {
@@ -115,7 +117,10 @@ public class GenericDAO<T extends Persistent> {
 		long now = System.currentTimeMillis();
 		values.put("updated", now);
 		modelObject.updated = now;
-		values.put("json", modelObject.asJson());
+		Gson gson = Mapper.getGson(context);
+		String value = gson.toJson(modelObject);
+		Log.d("GenericDAO", "saving: "+value);
+		values.put("json", value);
 		values.put("server_id", modelObject.server_id);
 
 		if (modelObject.getId() != null) {
@@ -149,7 +154,8 @@ public class GenericDAO<T extends Persistent> {
 				result.moveToFirst();
 				while (!result.isAfterLast()) {
 					String json = result.getString(5);
-					Gson gson = new Gson();
+					Log.d("GenericDAO", "value="+json);
+					Gson gson = Mapper.getGson(context);
 					modelObject = (T) gson.fromJson(json, modelClass);
 					modelObject.setId(result.getInt(0));
 					results.add(modelObject);

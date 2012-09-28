@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +29,7 @@ import au.org.ala.fielddata.mobile.ViewSavedRecordsActivity;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.validation.RecordValidator;
 import au.org.ala.fielddata.mobile.validation.RecordValidator.RecordValidationResult;
@@ -250,33 +252,44 @@ public class UploadService extends Service {
 	}
 	
 	private void notifiySuccess(int numSuceeded) {
+		Preferences prefs = new Preferences(this);
+		GenericDAO<User> userDao = new GenericDAO<User>(this);
+		List<User> user = userDao.loadAll(User.class);
+		String reviewUrl = String.format(prefs.getReviewUrl(), user.get(0).server_id);
+		Uri records = Uri.parse(reviewUrl);
+		Intent viewRecords = new Intent(Intent.ACTION_VIEW, records);
+		PendingIntent intent = PendingIntent.getActivity(this, START_NOT_STICKY, viewRecords, PendingIntent.FLAG_CANCEL_CURRENT);
+		
 		String message = numSuceeded == 1 ? " record uploaded" : " records uploaded";
-		notify(numSuceeded + message, "", true);
+		notify(numSuceeded + message, "", intent, true);
 		
 	}
 	
 	private void notifyFailed(int numFailed) {
-		notify(numFailed + " records failed to upload", "Touch to view saved records", false);
+		Intent savedActivity = new Intent(this, ViewSavedRecordsActivity.class);
+		PendingIntent intent = PendingIntent.getActivity(this, START_NOT_STICKY, savedActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+		
+		notify(numFailed + " records failed to upload", "Touch to view saved records", intent, false);
 	}
 	
 	private void notifyQueued() {
-		notify("Upload pending - no network", "Records will be uploaded when network service is available.", true);
-	}
-	
-	private void notify(String title, String subject, boolean success) {
-		
-		NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		Intent savedActivity = new Intent(this, ViewSavedRecordsActivity.class);
 		PendingIntent intent = PendingIntent.getActivity(this, START_NOT_STICKY, savedActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+		
+		notify("Upload pending - no network", "Records will be uploaded when network service is available.", intent, true);
+	}
+	
+	private void notify(String title, String subject, PendingIntent intent, boolean success) {
+		
+		NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 		builder.setContentTitle(title)
 		       .setContentText(subject)
 		       .setTicker(title)
 		       .setAutoCancel(true)
-		       .setSmallIcon(R.drawable.ala_notification);
-		if (!success) {
-		    builder.setContentIntent(intent);
-		}
+		       .setSmallIcon(R.drawable.ala_notification)
+			  .setContentIntent(intent);
+		
 		Notification notification = builder.getNotification();
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notificationManager.notify(success ? SUCCESS : FAILED_SERVER, notification);

@@ -77,6 +77,30 @@ public class Preferences {
 		return url.toString();
 	}
 	
+	/**
+	 * Returns the URL of the un-proxied field data server. (this should really
+	 * be downloaded by the proxy, but it's not at this point).
+	 */
+	public String getUnproxiedFieldDataServerUrl() {
+		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
+		String hostName = prefs.getString("serverHostName", "");
+		String context = "bdrs-core";//prefs.getString("contextName", "");
+		String path = prefs.getString("path", "");
+		
+		StringBuilder url = new StringBuilder();
+		url.append("http://").append(hostName).append("/").append(context);
+		
+		if (path.length() > 0) {
+			url.append("/").append(path);
+		}
+		
+		return url.toString();
+	}
+	
+	public String getReviewUrl() {
+		return getUnproxiedFieldDataServerUrl()+"/review/sightings/advancedReview.htm?u=%s";
+	}
+	
 	public String getFieldDataServerHostName() {
 		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
 		String hostName = prefs.getString("serverHostName", "");

@@ -18,6 +18,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:hint="@string/no_location_supplied" />
 
+    
     <TextView
         android:id="@+id/latitude"
         android:layout_width="wrap_content"
@@ -64,16 +65,7 @@
         />
     
     
-    <ImageButton
-        android:id="@+id/gpsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/currentLocationLabel"
-        android:src="@drawable/select_current_location_icon"
-        android:background="@null"
-        android:visibility="gone">
-    </ImageButton>
-
+    
     <ImageButton
         android:id="@+id/showMapButton"
         android:layout_width="wrap_content"
@@ -84,4 +76,49 @@
         android:src="@drawable/select_map_location_icon" 
         android:background="@null"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/showMapButton"
+        android:gravity="center_horizontal"
+        android:paddingRight="7dp"
+        android:text="Map"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    
+    <TextView
+        android:id="@+id/stopGpsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/showMapButton"
+        android:gravity="center_horizontal"
+        android:text="Stop GPS"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    
+    <ImageButton
+        android:id="@+id/gpsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/currentLocationLabel"
+        android:src="@drawable/select_current_location_icon"
+        android:background="@null"
+        android:paddingRight="5dp"
+        android:layout_toLeftOf="@id/showMapButton"
+        android:layout_above="@id/stopGpsButton"
+       >
+    </ImageButton>
+     <TextView
+         android:id="@+id/tracking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/gpsButton"
+        android:layout_alignLeft="@id/gpsButton"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Tracking..."
+        android:drawableLeft="@drawable/stat_sys_gps_on"
+        />
+   
+    
 </RelativeLayout>

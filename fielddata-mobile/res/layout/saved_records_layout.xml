@@ -22,7 +22,6 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignParentLeft="true"
-        android:onClick="onCheckboxClicked"
         android:focusable="false"
         android:clickable="true"
         />

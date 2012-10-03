@@ -31,14 +31,15 @@
         android:required="false" />
 
     <application
-        android:icon="@drawable/koala"
+        android:icon="@drawable/kc_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <uses-library android:name="com.google.android.maps" />
 
         <activity
             android:name=".MobileFieldDataDashboard"
-            android:label="@string/title_activity_mobile_data_dashboard" >
+            android:label="@string/title_activity_mobile_data_dashboard"
+            android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

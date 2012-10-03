@@ -27,7 +27,9 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.MenuInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -37,43 +39,44 @@ import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.service.UploadService;
-import au.org.ala.fielddata.mobile.ui.MenuHelper;
 import au.org.ala.fielddata.mobile.ui.SavedRecordHolder;
 import au.org.ala.fielddata.mobile.ui.SavedRecordHolder.RecordView;
 
-import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 /**
  * Allows the user to view records that have been created but not
  * yet uploaded to the FieldData server.
  */
-public class ViewSavedRecordsActivity extends SherlockListActivity implements ActionMode.Callback {
+public class ViewSavedRecordsActivity extends SherlockListFragment implements ActionMode.Callback, OnClickListener {
 
 	private List<Record> records;
 	private ActionMode actionMode;
 	private List<Survey> surveys;
 	private ProgressDialog dialog;
 	
+	
+	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		setHasOptionsMenu(true);
 		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(UploadService.UPLOAD_FAILED);
 		filter.addAction(UploadService.UPLOADED);
 		
-		LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(new BroadcastReceiver() {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				if (UploadService.UPLOAD_FAILED.equals(intent.getAction())) {
-					Toast.makeText(getApplicationContext(), "Upload failed!", Toast.LENGTH_SHORT)
+					Toast.makeText(getActivity().getApplicationContext(), "Upload failed!", Toast.LENGTH_SHORT)
 							.show();
 				}
 				refresh();
@@ -86,29 +89,29 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 
 	}
 
+	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = new MenuInflater(this);
+	public void onCreateOptionsMenu(Menu menu, com.actionbarsherlock.view.MenuInflater inflater) {
 		inflater.inflate(R.menu.saved_records_layout, menu);
-		inflater.inflate(R.menu.common_menu_items, menu);
-		return true;
 	}
 
+	
+
 	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.upload) {
 			
-			Intent intent = new Intent(this, UploadService.class);
-			startService(intent);
+			Intent intent = new Intent(getActivity(), UploadService.class);
+			getActivity().startService(intent);
+			return true;
 		}
-		
-		return new MenuHelper(this).handleMenuItemSelection(item);
+		return false;
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	public void onListItemClick(ListView l, View v, int position, long id) {
 		int recordId = records.get(position).getId();
-		Intent intent = new Intent(this, CollectSurveyData.class);
+		Intent intent = new Intent(getActivity(), CollectSurveyData.class);
 		intent.putExtra(CollectSurveyData.RECORD_BUNDLE_KEY, recordId);
 		startActivity(intent);
 	}
@@ -120,11 +123,11 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 	class GetRecordsTask extends AsyncTask<Void, Void, List<RecordView>> {
 
 		protected List<RecordView> doInBackground(Void... ignored) {
-			GenericDAO<Record> dao = new GenericDAO<Record>(getApplicationContext());
+			GenericDAO<Record> dao = new GenericDAO<Record>(getActivity().getApplicationContext());
 
 			records = dao.loadAll(Record.class);
 			
-			GenericDAO<Survey> surveyDao = new GenericDAO<Survey>(getApplicationContext());
+			GenericDAO<Survey> surveyDao = new GenericDAO<Survey>(getActivity().getApplicationContext());
 			surveys = surveyDao.loadAll(Survey.class);
 			
 			List<RecordView> recordViews = new ArrayList<RecordView>();
@@ -157,8 +160,12 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 	}
 
 	public static class RecordAdapter extends ArrayAdapter<RecordView> {
-		public RecordAdapter(Context ctx, List<RecordView> records) {
-			super(ctx, R.layout.saved_records_layout, R.id.record_description_species, records);
+		
+		private ViewSavedRecordsActivity fragment;
+		
+		public RecordAdapter(ViewSavedRecordsActivity fragment, List<RecordView> records) {
+			super(fragment.getActivity(), R.layout.saved_records_layout, R.id.record_description_species, records);
+			this.fragment = fragment;
 		}
 
 		@Override
@@ -168,7 +175,9 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 			SavedRecordHolder viewHolder = (SavedRecordHolder) row.getTag();
 			if (viewHolder == null) {
 				viewHolder = new SavedRecordHolder(row);
+				viewHolder.checkbox.setOnClickListener(fragment);
 				row.setTag(viewHolder);
+				
 			}
 			boolean checked = ((ListView)parent).getCheckedItemPositions().get(position);
 			viewHolder.checkbox.setChecked(checked);
@@ -179,7 +188,7 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 
 	}
 	
-	public void onCheckboxClicked(View view) {
+	public void onClick(View view) {
 		CheckBox checkBox = (CheckBox)view;
 		Log.d("ViewSavedRecordsActivity", "Checkbox at position "+checkBox.getTag()+" is "+checkBox.isChecked());
 		getListView().setItemChecked((Integer)view.getTag(), checkBox.isChecked());
@@ -187,7 +196,7 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 		int count = countSelected();
 		if (count > 0) {
 			if (actionMode == null) {
-				startActionMode(this);
+				getSherlockActivity().startActionMode(this);
 			}
 			else {
 				actionMode.setTitle(count+" selected");
@@ -254,7 +263,7 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 	
 	
 	private void deleteSelectedRecords() {
-		GenericDAO<Record> recordDao = new GenericDAO<Record>(this);
+		GenericDAO<Record> recordDao = new GenericDAO<Record>(getActivity());
 		SparseBooleanArray selected = getListView().getCheckedItemPositions();
 		int deleteCount = 0;
 		for (int i=0; i<selected.size(); i++) {
@@ -265,7 +274,7 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 			}
 		}
 		if (deleteCount > 0) {
-			Toast.makeText(this, deleteCount + " records deleted", Toast.LENGTH_SHORT).show();	
+			Toast.makeText(getActivity(), deleteCount + " records deleted", Toast.LENGTH_SHORT).show();	
 				
 		}
 		
@@ -288,9 +297,9 @@ public class ViewSavedRecordsActivity extends SherlockListActivity implements Ac
 			}
 		}
 		
-		Intent intent = new Intent(this, UploadService.class);
+		Intent intent = new Intent(getActivity(), UploadService.class);
 		intent.putExtra(UploadService.RECORD_IDS_EXTRA, recordIds);
-		startService(intent);
+		getActivity().startService(intent);
 		
 		finishActionMode();
 	}

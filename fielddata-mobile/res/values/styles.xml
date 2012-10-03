@@ -72,6 +72,13 @@
         <item name="android:singleLine">false</item>
       
     </style>
+    <style name="FieldData.CategoryHeader" parent="@android:style/Widget.TextView">
+        <item name="android:singleLine">false</item>
+      	<item name="android:background">#888888</item>
+      	<item name="android:textColor">#FFFFFF</item>
+      	<item name="android:textStyle">bold</item>
+    </style>
+    
     
     <style name="FieldData.ActionButton" parent="@android:style/Widget.Holo.Light.ImageButton">
            </style>

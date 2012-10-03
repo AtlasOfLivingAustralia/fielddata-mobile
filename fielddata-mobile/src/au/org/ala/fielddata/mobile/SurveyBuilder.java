@@ -27,10 +27,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
+import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
+import au.org.ala.fielddata.mobile.ui.CategorizedSpinner;
 import au.org.ala.fielddata.mobile.ui.MultiSpinner;
+
+import com.commonsware.cwac.merge.MergeSpinnerAdapter;
 
 public class SurveyBuilder {
 
@@ -55,7 +59,12 @@ public class SurveyBuilder {
 	public View buildInput(Attribute attribute, ViewGroup parent) {
 		Record record = model.getRecord();
 		View view;
-		switch (attribute.getType()) {
+		AttributeType type = attribute.getType();
+		if (attribute.name.equals("Treatment_Method")) {
+			type = AttributeType.CATEGORIZED_MULTI_SELECT;
+		}
+		
+		switch (type) {
 		case STRING:
 			view = buildEditText(InputType.TYPE_CLASS_TEXT, parent);
 			break;
@@ -71,6 +80,9 @@ public class SurveyBuilder {
 		case MULTI_SELECT:
 		case STRING_WITH_VALID_VALUES:
 			view = buildSpinner(attribute, parent);
+			break;
+		case CATEGORIZED_MULTI_SELECT:
+			view = buildCategorizedSpinner(attribute, parent);
 			break;
 		case NOTES:
 			view = buildEditText(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE,
@@ -180,21 +192,45 @@ public class SurveyBuilder {
 		AttributeOption[] options = new AttributeOption[attribute.options.length+1];
 		options[0] = empty;
 		System.arraycopy(attribute.options, 0, options, 1, attribute.options.length);
+		
 		ArrayAdapter<AttributeOption> adapter = new  ArrayAdapter<AttributeOption>(viewContext,
-				R.layout.multiline_spinner_item, options) {
-			 @Override
-			    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-				 View dropDown = super.getDropDownView(position, convertView, parent);
-				 
-				 return dropDown;
-			 }
-		};
+				R.layout.multiline_spinner_item, options);
+		
+		MergeSpinnerAdapter masterAdapter = new MergeSpinnerAdapter();
+		masterAdapter.addAdapter(adapter);
+		
+		ArrayAdapter<String> stinky = new ArrayAdapter<String>(viewContext, R.layout.label_text_view, new String[]{"test"});
+		
+		masterAdapter.addAdapter(stinky);
+		
 		adapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-		spinner.setAdapter(adapter);
+		spinner.setAdapter(masterAdapter);
+		
+		
 		
 		return spinner;
 	}
 
+	private Spinner buildCategorizedSpinner(Attribute attribute, ViewGroup parent) {
+
+		ViewGroup row = (ViewGroup) viewContext.getLayoutInflater().inflate(
+				R.layout.categorized_spinner_view, parent);
+
+		CategorizedSpinner spinner = (CategorizedSpinner) row.findViewById(R.id.spinner);
+		spinner.setPrompt("Select " + attribute.description);
+		
+		AttributeOption empty = new AttributeOption();
+		AttributeOption[] options = new AttributeOption[attribute.options.length+1];
+		options[0] = empty;
+		System.arraycopy(attribute.options, 0, options, 1, attribute.options.length);
+		
+		spinner.setItems(options);
+		
+		return spinner;
+	}
+
+	
+	
 	private MultiSpinner buildMultiSpinner(Attribute attribute, ViewGroup parent) {
 
 		ViewGroup row = (ViewGroup) viewContext.getLayoutInflater().inflate(

@@ -29,17 +29,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
-import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.EditPreferences;
 import au.org.ala.fielddata.mobile.pref.Preferences;
@@ -47,7 +42,11 @@ import au.org.ala.fielddata.mobile.service.FieldDataService;
 import au.org.ala.fielddata.mobile.service.FieldDataServiceClient;
 import au.org.ala.fielddata.mobile.service.LocationServiceHelper;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
+import au.org.ala.fielddata.mobile.ui.SpeciesListFragment;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.app.ActionBar.TabListener;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -58,11 +57,10 @@ import com.actionbarsherlock.view.Window;
  * This class is the main activity for the Mobile Field Data application.
  */
 public class MobileFieldDataDashboard extends SherlockFragmentActivity
-		implements OnSharedPreferenceChangeListener {
+		implements OnSharedPreferenceChangeListener, TabListener {
 
 	private Preferences preferences;
 	private TextView status;
-	private ListView surveyList;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -74,11 +72,66 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		
 		preferences = new Preferences(this);
 		
-		surveyList = (ListView)findViewById(R.id.surveyList);
 		status = (TextView)findViewById(R.id.status);
+		
+		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        String[] titles = new String[] {"Surveys", "Species", "Records"};
+        
+        for (String title: titles) {
+			ActionBar.Tab tab = getSupportActionBar().newTab();
+	        tab.setText(title);
+	        tab.setTabListener(this);
+	        Fragment frag = getSupportFragmentManager().findFragmentByTag(title);
+	        if (frag != null) {
+	        	getSupportFragmentManager().beginTransaction().remove(frag).commit();
+	        }
+	        getSupportActionBar().addTab(tab);
+        }
+        
+        if (savedInstanceState != null) {
+            getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
+        }
 		
 	}
 	
+	
+	
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		
+		Fragment frag = null;
+		if (tab.getText().equals("Species")) {
+			frag = new SpeciesListFragment();
+		}
+		else if (tab.getText().equals("Records")) {
+			frag = new ViewSavedRecordsActivity();
+		}
+		else if (tab.getText().equals("Surveys")) {
+			frag = new SurveyListFragment();
+		}
+		if (frag != null) {
+			ft.replace(R.id.tabContent, frag, tab.getText().toString());
+		}
+	}
+
+
+
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		FragmentManager manager = getSupportFragmentManager();
+		Fragment frag = manager.findFragmentByTag(tab.getText().toString()); 
+		if (frag != null) {
+			ft.remove(frag);
+		}
+	}
+
+
+
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -121,17 +174,13 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	}
 
 	class Model {
-		private List<Survey> surveys;
 		private User user;
 		private String portal;
-		public Model(List<Survey> surveys, User user, String portal) {
-			this.surveys = surveys;
+		public Model(User user, String portal) {
 			this.user = user;
 			this.portal = portal;
 		}
-		public List<Survey> getSurveys() {
-			return surveys;
-		}
+		
 		public User getUser() {
 			return user;
 		}
@@ -145,9 +194,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		
 		@Override
 		protected Model doInBackground(Void... params) {
-			GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(getApplicationContext());
-			List<Survey> surveys = surveyDAO.loadAll(Survey.class);
-			
 			GenericDAO<User> userDAO = new GenericDAO<User>(getApplicationContext());
 			List<User> users = userDAO.loadAll(User.class);
 			User user = null;
@@ -157,7 +203,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			}
 			String portal = preferences.getFieldDataPortalName();
 			
-			return new Model(surveys, user, portal);
+			return new Model(user, portal);
 		}
 		@Override
 		protected void onPostExecute(Model model) {
@@ -167,7 +213,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			if (user != null) {
 				getSupportActionBar().setSubtitle(Utils.bold("Welcome " + user.firstName + " " + user.lastName));
 			}
-			updateSurveyList(model.getSurveys());
 			
 		}
 	}
@@ -229,6 +274,14 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		
 		super.onStop();
 	}
+
+	
+	@Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("tab", getSupportActionBar().getSelectedNavigationIndex());
+    }
+
 	
 	private void refreshPage() {
 		
@@ -334,11 +387,16 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		return success;
 	}
     
+	private MenuItem newRecordMenuItem;
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = new MenuInflater(this);
     	inflater.inflate(R.menu.common_menu_items, menu);
     	inflater.inflate(R.menu.dashboard_menu, menu);
+    	
+    	newRecordMenuItem = menu.add("New Record");
+    	
+    	newRecordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -365,42 +423,15 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			refreshPage();
 			return true;
 		}
+		else if (item == newRecordMenuItem) {
+			Intent intent = new Intent(this, CollectSurveyData.class);
+			intent.putExtra(CollectSurveyData.SURVEY_BUNDLE_KEY, new Preferences(this).getCurrentSurvey());
+			startActivity(intent);
+		}
 		return new MenuHelper(this).handleMenuItemSelection(item);
     }
 
-	private void updateSurveyList(List<Survey> surveys) {
-		final Survey[] surveyArray = surveys
-				.toArray(new Survey[surveys.size()]);
-
-		if (surveys.size() > 0) {
-			SurveyListAdapter items = new SurveyListAdapter(this, surveys);
-			surveyList.setAdapter(items);
-			surveyList.setOnItemClickListener(new OnItemClickListener() {
-			
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					Survey survey = surveyArray[position];
-					if (survey != null) {
-						preferences.setCurrentSurveyName(survey.name);
-						preferences.setCurrentSurvey(survey.server_id);
-						((SurveyListAdapter)surveyList.getAdapter()).refresh();
-						
-					}
-				}
-			});
-			Integer selected = preferences.getCurrentSurvey();
-			if (selected == null || selected <= 0) {
-				preferences.setCurrentSurvey(surveyArray[0].server_id);
-				preferences.setCurrentSurveyName(surveyArray[0].name);
-			}
-		} else {
-			ArrayAdapter<String> items = new ArrayAdapter<String>(
-					MobileFieldDataDashboard.this,
-					R.layout.sherlock_spinner_item,
-					new String[] { "No surveys" });
-			surveyList.setAdapter(items);
-			
-		}
-	}
+	
 	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		if (key.equals("serverHostName") || 
@@ -410,37 +441,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	}
 
 	
-	class SurveyListAdapter extends ArrayAdapter<Survey> {
-		public SurveyListAdapter(Context context, List<Survey> surveys) {
-			super(context, R.layout.survey_row, R.id.surveyName, surveys);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			
-			Survey survey = getItem(position);
-			View row = super.getView(position, convertView, parent);
-			TextView name = (TextView)row.findViewById(R.id.surveyName);
-			name.setText(survey.name);
-			TextView description = (TextView)row.findViewById(R.id.surveyDescription);
-			description.setText(survey.description);
-			
-			ImageView defaultIcon = (ImageView)row.findViewById(R.id.defaulticon);
-			if (survey.server_id.equals(preferences.getCurrentSurvey())) {
-				defaultIcon.setVisibility(View.VISIBLE);
-			}
-			else {
-				defaultIcon.setVisibility(View.GONE);
-			}
-			
-			return row;
-			
-		}
-		
-		public void refresh() {
-			notifyDataSetChanged();
-		}
-		
-	}
+	
 	
 }

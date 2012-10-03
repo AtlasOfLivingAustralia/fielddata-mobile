@@ -42,6 +42,7 @@ public class Attribute extends SurveyProperty {
 	    SINGLE_CHECKBOX("SC", "Single Checkbox"),
 	    MULTI_CHECKBOX("MC", "Multi Checkbox"),
 	    MULTI_SELECT("MS", "Multi Select"),
+	    CATEGORIZED_MULTI_SELECT("CS", "Categorized Multi Select"),
 
 	    IMAGE("IM", "Image File"),
 	    AUDIO("AU", "Audio File"),

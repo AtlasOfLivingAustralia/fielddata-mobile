@@ -58,8 +58,11 @@ public class FieldGuideActivity extends SherlockActivity {
 				try {
 					Connection con = Jsoup.connect(fieldDataUrl);
 					Document doc = con.timeout(100000).get();
-
+					Elements forms = doc.select("form");
+					forms.remove();
+					
 					Elements contentDiv = doc.select("#content");
+					
 					contentBuffer.append(contentDiv.html());
 
 				} catch (IOException e) {

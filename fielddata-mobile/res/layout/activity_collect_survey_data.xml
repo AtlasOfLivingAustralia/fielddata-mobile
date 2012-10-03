@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        app:clipPadding="12dp"
+        app:clipPadding="18dp"
         android:visibility="gone" />
     <ImageView
         android:id="@+id/leftArrow"
@@ -36,6 +36,9 @@
         android:src="@drawable/indicator_prev_arrow"
         android:contentDescription="@string/previous"
         android:visibility="gone"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        
         />
     <ImageView
         android:id="@+id/rightArrow"
@@ -47,6 +50,9 @@
         android:src="@drawable/indicator_next_arrow"
         android:contentDescription="@string/next"
         android:visibility="gone"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        
         />
     
     <au.org.ala.fielddata.mobile.ui.ValidatingViewPager

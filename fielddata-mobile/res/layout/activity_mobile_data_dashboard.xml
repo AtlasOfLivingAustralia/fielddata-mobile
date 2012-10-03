@@ -19,53 +19,29 @@
     android:layout_centerVertical="true" 
     android:background="@drawable/background_image_2">
 
-    <TextView 
-        android:id="@+id/surveyListTitle"
-     	android:layout_width="fill_parent"
+    <FrameLayout 
+        android:id="@+id/tabContent"
+       android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="#66FFFFFF" 
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true" 
-        android:text="@string/survey_list_title"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="15dp"
-        
-        android:paddingLeft="5dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        
-    />   
-    <View
-        android:id="@+id/listTop"
-        android:layout_width="fill_parent"
-        android:layout_height="3dp"
-        android:layout_below="@id/surveyListTitle"
         android:layout_alignParentLeft="true"
-        android:layout_margin="0dp"
-        android:background="@color/headerLabelBackgroundStart"
-        
-        />
-   
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:paddingLeft="5dp"
+        ></FrameLayout>
     
     <ListView
         android:id="@+id/surveyList"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="#66FFFFFF" 
-        android:layout_below="@id/listTop"
-        android:layout_alignLeft="@id/surveyListTitle"
-        android:paddingBottom="5dp"
-    ></ListView>
-    <View
-        android:id="@+id/listBottom"
-        android:layout_width="fill_parent"
-        android:layout_height="3dp"
-        android:layout_below="@id/surveyList"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_margin="0dp"
-        android:background="@color/headerLabelBackgroundStart"
-        
-        />
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:paddingLeft="5dp"
+    ></ListView>
    
      <TextView 
         android:id="@+id/status"
@@ -74,7 +50,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:background="#DDDDDD"/>
+        android:background="#DDDDDD"
+        android:visibility="gone"/>
      
     <LinearLayout
         android:layout_height="wrap_content"
@@ -84,10 +61,10 @@
         android:layout_gravity="center_horizontal"
         >
         
-        <fragment class="au.org.ala.fielddata.mobile.ActionBarFragment"
+        <!-- <fragment class="au.org.ala.fielddata.mobile.ActionBarFragment"
             android:layout_height="wrap_content"
         	android:layout_width="fill_parent"
-        />
-        
+        /> -->
+      
     </LinearLayout>
 </RelativeLayout>

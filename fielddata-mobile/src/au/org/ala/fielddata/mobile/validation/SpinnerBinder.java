@@ -21,12 +21,12 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
-import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
+import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, OnTouchListener {
@@ -51,7 +51,6 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
-		Log.d("SpinnerBinder", "onItemSelected");
 		if (bindEnabled) {
 			bind();
 		}
@@ -72,7 +71,6 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 	 * interacted with the Spinner (or the user has pressed Save).
 	 */
 	public boolean onTouch(View v, MotionEvent event) {
-		Log.d("SpinnerBinder", "onTouch");
 		bindEnabled = true;
 		return false;
 	}
@@ -90,12 +88,15 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 			Spinner spinner = (Spinner)view;
 			String value = model.getValue(attribute);
 			if (value != null) {
-				ArrayAdapter<AttributeOption> adapter = (ArrayAdapter<AttributeOption>)spinner.getAdapter();
+				BaseAdapter adapter = (BaseAdapter)spinner.getAdapter();
 				for (int i=0; i<adapter.getCount(); i++) {
-					AttributeOption option = adapter.getItem(i);
-					if (value.equals(option.value)) {
-						spinner.setSelection(i);
-						break;
+					Object tmpValue = adapter.getItem(i);
+					if (tmpValue instanceof AttributeOption) {
+						AttributeOption option = (AttributeOption)adapter.getItem(i);
+						if (value.equals(option.value)) {
+							spinner.setSelection(i);
+							break;
+						}
 					}
 				}
 			}
@@ -125,11 +126,9 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 	}
 	
 	public void bind() {
-		Log.d("SpinnerBinder", "bind");
 		if (!updating) {
 			
 			bindEnabled = true;
-			Log.d("SpinnerBinder", "bind - not updating");
 			bind(nullSafeText());
 		}
 	}

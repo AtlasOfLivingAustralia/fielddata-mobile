@@ -43,7 +43,6 @@ import au.org.ala.fielddata.mobile.service.FieldDataService;
 import au.org.ala.fielddata.mobile.service.FieldDataServiceClient;
 import au.org.ala.fielddata.mobile.service.LocationServiceHelper;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
-import au.org.ala.fielddata.mobile.ui.SpeciesListFragment;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -103,7 +102,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 			ViewPager.OnPageChangeListener {
 
 		private String[] tabClasses = { SurveyListFragment.class.getName(),
-				SpeciesListFragment.class.getName(), ViewSavedRecordsActivity.class.getName() };
+				SpeciesListActivity.class.getName(), ViewSavedRecordsActivity.class.getName() };
 
 		private SherlockFragmentActivity ctx;
 		private ViewPager viewPager;

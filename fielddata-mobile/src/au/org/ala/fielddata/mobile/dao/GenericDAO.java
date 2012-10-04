@@ -73,7 +73,7 @@ public class GenericDAO<T extends Persistent> {
 			else {
 				result.moveToFirst();
 				String json = result.getString(5);
-				Log.d("GenericDAO", "loadin: "+json);
+				Log.v("GenericDAO", "loading: "+json);
 				Gson gson = Mapper.getGson(context);
 				modelObject = (T) gson.fromJson(json, modelClass);
 				modelObject.setId(result.getInt(0));
@@ -120,7 +120,7 @@ public class GenericDAO<T extends Persistent> {
 		modelObject.updated = now;
 		Gson gson = Mapper.getGson(context);
 		String value = gson.toJson(modelObject);
-		Log.d("GenericDAO", "saving: "+value);
+		Log.v("GenericDAO", "saving: "+value);
 		values.put("json", value);
 		values.put("server_id", modelObject.server_id);
 
@@ -155,7 +155,7 @@ public class GenericDAO<T extends Persistent> {
 				result.moveToFirst();
 				while (!result.isAfterLast()) {
 					String json = result.getString(5);
-					Log.d("GenericDAO", "value="+json);
+					Log.v("GenericDAO", "value="+json);
 					Gson gson = Mapper.getGson(context);
 					modelObject = (T) gson.fromJson(json, modelClass);
 					modelObject.setId(result.getInt(0));

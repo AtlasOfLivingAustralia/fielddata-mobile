@@ -17,9 +17,10 @@
     <style name="AppTheme" parent="@style/Theme.Sherlock.Light">
         <item name="vpiTitlePageIndicatorStyle">@style/CustomTitlePageIndicator</item>
         <item name="android:actionBarStyle">@style/FieldData.ActionBar</item>
-         <item name="actionBarStyle">@style/FieldData.ActionBar</item>
-         <item name="android:windowBackground">@drawable/roundedrectangle</item>
-         
+        <item name="actionBarStyle">@style/FieldData.ActionBar</item>
+        <item name="android:windowBackground">@drawable/roundedrectangle</item>
+        <item name="android:actionBarTabStyle">@style/FieldData.ActionBarTab</item>
+        <item name="actionBarTabStyle">@style/FieldData.ActionBarTab</item> 
     </style>
        
       <style name="CustomTitlePageIndicator">
@@ -53,6 +54,10 @@
         <item name="indeterminateProgressStyle">@style/Widget.Sherlock.Light.ProgressBar</item>
     </style>
     
+    <style name="FieldData.ActionBarTab" parent="@style/Widget.Sherlock.ActionBar.TabView">
+         <item name="android:background">@drawable/abs__tab_indicator_ab_holo</item>
+    </style>
+    
     <style name="FieldData.ActionBar.Title" parent="@style/TextAppearance.Sherlock.Widget.ActionBar.Title">
        
         <item name="android:colorBackground">#3d5978</item>
@@ -83,7 +88,7 @@
     <style name="FieldData.ActionButton" parent="@android:style/Widget.Holo.Light.ImageButton">
            </style>
            
-    <style name="EditEventCustomActionButton" parent="android:style/Widget.Holo.Light.ActionButton">
+    <style name="EditEventCustomActionButton" parent="@style/Widget.Sherlock.Light.ActionButton">
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>

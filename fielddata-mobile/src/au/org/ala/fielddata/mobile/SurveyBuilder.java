@@ -27,7 +27,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
-import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
@@ -59,12 +58,8 @@ public class SurveyBuilder {
 	public View buildInput(Attribute attribute, ViewGroup parent) {
 		Record record = model.getRecord();
 		View view;
-		AttributeType type = attribute.getType();
-		if (attribute.name.equals("Treatment_Method")) {
-			type = AttributeType.CATEGORIZED_MULTI_SELECT;
-		}
 		
-		switch (type) {
+		switch (attribute.getType()) {
 		case STRING:
 			view = buildEditText(InputType.TYPE_CLASS_TEXT, parent);
 			break;
@@ -78,6 +73,7 @@ public class SurveyBuilder {
 					parent);
 			break;
 		case MULTI_SELECT:
+		case POINT_SOURCE:
 		case STRING_WITH_VALID_VALUES:
 			view = buildSpinner(attribute, parent);
 			break;

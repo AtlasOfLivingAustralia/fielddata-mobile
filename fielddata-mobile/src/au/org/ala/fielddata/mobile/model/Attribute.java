@@ -53,6 +53,8 @@ public class Attribute extends SurveyProperty {
 	    CENSUS_METHOD_ROW("CR", "Data Matrix Rows"),
 	    CENSUS_METHOD_COL("CC", "Data Matrix Columns"),
 		
+	    POINT_SOURCE("PS", "The method by which the Point property was obtained"),
+	    
 		// record properties
 		SPECIES_P("Species", "Species"),
 		NUMBER("Number", "Number"),
@@ -106,6 +108,10 @@ public class Attribute extends SurveyProperty {
 	
 	public AttributeType getType() {
 		return AttributeType.fromCode(typeCode);
+	}
+	
+	public void setType(AttributeType type) {
+		typeCode = type.getCode();
 	}
 	
 	public boolean isModeratorAttribute() {

@@ -142,6 +142,7 @@ public class StorageManager {
 		// Check if we already have a thumbnail.
 		Bitmap bitmap = getThumb(name);
 		if (bitmap == null) {
+			Log.d("StorageManager", "Creating bitmap from :"+path.toString());
 			
 			BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 			bmOptions.inJustDecodeBounds = true;
@@ -188,7 +189,6 @@ public class StorageManager {
 	}
 	
 	public Bitmap bitmapFromUri(Uri uri, int targetW, int targetH) {
-		Log.d("StorageManager", "Creating bitmap from :"+uri.toString());
 		Bitmap bitmap = null;
 		if ("file".equals(uri.getScheme())) {
 			bitmap = bitmapFromFile(uri, targetW, targetH);

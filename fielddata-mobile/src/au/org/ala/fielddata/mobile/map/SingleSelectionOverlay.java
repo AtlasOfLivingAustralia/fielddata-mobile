@@ -18,7 +18,10 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 import com.readystatesoftware.mapviewballoons.BalloonItemizedOverlay;
-
+/**
+ * Allows the selection of a single point and enables that point to be
+ * touched and dragged to a different location on the map.
+ */
 public class SingleSelectionOverlay extends BalloonItemizedOverlay<OverlayItem> {
 
 	private LocationListener listener;
@@ -170,7 +173,8 @@ public class SingleSelectionOverlay extends BalloonItemizedOverlay<OverlayItem> 
 	}
 	
 	private Location pointToLocation(GeoPoint point) {
-		Location selectedLocation = new Location("User Selection");
+		Location selectedLocation = new Location("Web map");
+		selectedLocation.setTime(System.currentTimeMillis());
 		selectedLocation.setLatitude(point.getLatitudeE6()/1000000d);
 		selectedLocation.setLongitude(point.getLongitudeE6()/1000000d);
 		

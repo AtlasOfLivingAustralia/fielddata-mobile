@@ -24,6 +24,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.util.Log;
 import android.util.SparseArray;
+import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.validation.RecordValidator;
 import au.org.ala.fielddata.mobile.validation.RecordValidator.RecordValidationResult;
@@ -51,6 +52,8 @@ public class SurveyViewModel {
 	private SparseArray<ValidationResult> validationStatus;
 	
 	private TempValue tempValue;
+	
+	private Attribute pointSourceAttribute;
 
 	
 	/**
@@ -115,9 +118,25 @@ public class SurveyViewModel {
 	
 	public void setLocation(Location location) {
 		record.setLocation(location);
+		
 		Attribute changed = survey.propertyByType(AttributeType.POINT);
 		fireAttributeChanged(changed);
 		validate(changed);
+		
+		updateLocationSource(location);
+	}
+	
+	private void updateLocationSource(Location location) {
+		if (pointSourceAttribute != null) {
+			for (AttributeOption option : pointSourceAttribute.options) {
+				String value = option.value == null ? "" : option.value;
+				if (value.equalsIgnoreCase(location.getProvider())) {
+					record.setValue(pointSourceAttribute, value);
+					fireAttributeChanged(pointSourceAttribute);
+					break;
+				}
+			}
+		}
 	}
 
 	public Species getSelectedSpecies() {
@@ -176,6 +195,15 @@ public class SurveyViewModel {
 
 		for (Attribute attribute : allAttributes) {
 			if (supports(attribute)) {
+				
+				if (attribute.name.equals("Treatment_Method")) {
+					attribute.setType(AttributeType.CATEGORIZED_MULTI_SELECT);
+				}
+				else if (attribute.name.equals("Location_Source")) {
+					attribute.setType(AttributeType.POINT_SOURCE);
+					pointSourceAttribute = attribute;
+				}
+				
 				filteredAttributes.add(attribute);
 			}
 			if (attribute.getType() == AttributeType.HTML_HORIZONTAL_RULE) {
@@ -210,6 +238,8 @@ public class SurveyViewModel {
 		case LOCATION:
 			return false; // We dont' support locations yet, but if we did we'd have to 
 			// check if there were any defined for the survey or user.
+		case ACCURACY:
+			return false; // Accuracy is recorded as a part of the POINT property.
 		}
 		return true;
 	}
@@ -224,7 +254,7 @@ public class SurveyViewModel {
 		if (!result.valid()) {
 			for (ValidationResult attr : result.invalidAttributes()) {
 				
-				Log.i("SurveyViewModel", "Attribute invalid: "+attr.getAttribute());
+				Log.i("SurveyViewModel", "Attribute invalid: "+attr.getAttribute()+", "+attr.getAttribute().description);
 				fireAttributeValidated(attr);
 			}
 			

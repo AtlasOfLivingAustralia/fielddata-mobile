@@ -16,55 +16,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_centerVertical="true" 
-    android:background="@drawable/background_image_2">
+    android:layout_centerVertical="true"
+    android:background="@drawable/background_image_2" >
 
-    <FrameLayout 
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/tabContent"
-       android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="#66FFFFFF" 
-        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:paddingLeft="5dp"
-        ></FrameLayout>
-    
-    <ListView
-        android:id="@+id/surveyList"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="#66FFFFFF" 
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:paddingLeft="5dp"
-    ></ListView>
-   
-     <TextView 
+        android:layout_marginBottom="5dp" />
+
+    <TextView
         android:id="@+id/status"
-        android:layout_alignParentBottom="true"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#DDDDDD"
         android:gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:background="#DDDDDD"
-        android:visibility="gone"/>
-     
+        android:visibility="gone" />
+
     <LinearLayout
-        android:layout_height="wrap_content"
         android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@id/status"
-        android:layout_alignParentLeft="true" 
-        android:layout_gravity="center_horizontal"
-        >
-        
-        <!-- <fragment class="au.org.ala.fielddata.mobile.ActionBarFragment"
+        android:layout_alignParentLeft="true"
+        android:layout_gravity="center_horizontal" >
+
+        <!--
+        <fragment class="au.org.ala.fielddata.mobile.ActionBarFragment"
             android:layout_height="wrap_content"
         	android:layout_width="fill_parent"
-        /> -->
-      
+        />
+        -->
+
     </LinearLayout>
+
 </RelativeLayout>

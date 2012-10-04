@@ -30,8 +30,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
@@ -46,7 +47,6 @@ import au.org.ala.fielddata.mobile.ui.SpeciesListFragment;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.ActionBar.TabListener;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -56,142 +56,163 @@ import com.actionbarsherlock.view.Window;
 /**
  * This class is the main activity for the Mobile Field Data application.
  */
-public class MobileFieldDataDashboard extends SherlockFragmentActivity
-		implements OnSharedPreferenceChangeListener, TabListener {
+public class MobileFieldDataDashboard extends SherlockFragmentActivity implements
+		OnSharedPreferenceChangeListener {
 
 	private Preferences preferences;
 	private TextView status;
-	
+	private ViewPager viewPager;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		
+
 		setContentView(R.layout.activity_mobile_data_dashboard);
-		
+
 		preferences = new Preferences(this);
-		
-		status = (TextView)findViewById(R.id.status);
-		
+
+		status = (TextView) findViewById(R.id.status);
+
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        String[] titles = new String[] {"Surveys", "Species", "Records"};
-        
-        for (String title: titles) {
+		String[] titles = new String[] { "Surveys", "Species", "Records" };
+
+		viewPager = (ViewPager) findViewById(R.id.tabContent);
+		TabsAdapter tabsAdapter = new TabsAdapter(this, viewPager);
+		viewPager.setAdapter(tabsAdapter);
+
+		for (String title : titles) {
 			ActionBar.Tab tab = getSupportActionBar().newTab();
-	        tab.setText(title);
-	        tab.setTabListener(this);
-	        Fragment frag = getSupportFragmentManager().findFragmentByTag(title);
-	        if (frag != null) {
-	        	getSupportFragmentManager().beginTransaction().remove(frag).commit();
-	        }
-	        getSupportActionBar().addTab(tab);
-        }
-        
-        if (savedInstanceState != null) {
-            getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
-        }
-		
-	}
-	
-	
-	
-	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		
-		Fragment frag = null;
-		if (tab.getText().equals("Species")) {
-			frag = new SpeciesListFragment();
+			tab.setText(title);
+			tab.setTabListener(tabsAdapter);
+			Fragment frag = getSupportFragmentManager().findFragmentByTag(title);
+			if (frag != null) {
+				getSupportFragmentManager().beginTransaction().remove(frag).commit();
+			}
+			getSupportActionBar().addTab(tab);
 		}
-		else if (tab.getText().equals("Records")) {
-			frag = new ViewSavedRecordsActivity();
+
+		if (savedInstanceState != null) {
+			getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}
-		else if (tab.getText().equals("Surveys")) {
-			frag = new SurveyListFragment();
-		}
-		if (frag != null) {
-			ft.replace(R.id.tabContent, frag, tab.getText().toString());
-		}
+
 	}
 
+	public static class TabsAdapter extends FragmentPagerAdapter implements ActionBar.TabListener,
+			ViewPager.OnPageChangeListener {
 
+		private String[] tabClasses = { SurveyListFragment.class.getName(),
+				SpeciesListFragment.class.getName(), ViewSavedRecordsActivity.class.getName() };
 
-	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		FragmentManager manager = getSupportFragmentManager();
-		Fragment frag = manager.findFragmentByTag(tab.getText().toString()); 
-		if (frag != null) {
-			ft.remove(frag);
+		private SherlockFragmentActivity ctx;
+		private ViewPager viewPager;
+
+		public TabsAdapter(SherlockFragmentActivity ctx, ViewPager viewPager) {
+			super(ctx.getSupportFragmentManager());
+			this.ctx = ctx;
+			this.viewPager = viewPager;
+
+			viewPager.setOnPageChangeListener(this);
 		}
+
+		public void onTabSelected(Tab tab, FragmentTransaction ft) {
+
+			viewPager.setCurrentItem(tab.getPosition());
+		}
+
+		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		}
+
+		public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		}
+
+		@Override
+		public Fragment getItem(int arg0) {
+			return Fragment.instantiate(ctx, tabClasses[arg0]);
+		}
+
+		@Override
+		public int getCount() {
+			return tabClasses.length;
+		}
+
+		public void onPageScrollStateChanged(int arg0) {
+		}
+
+		public void onPageScrolled(int arg0, float arg1, int arg2) {
+		}
+
+		public void onPageSelected(int arg0) {
+			ctx.getSupportActionBar().setSelectedNavigationItem(arg0);
+
+		}
+
 	}
-
-
-
-	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		
+
 		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)) {
-			LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+			LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 			if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 				showNoGpsDialog();
 			}
 		}
 		Intent locationIntent = new Intent(this, LocationServiceHelper.class);
 		startService(locationIntent);
-		
+
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		Intent locationIntent = new Intent(MobileFieldDataDashboard.this, LocationServiceHelper.class);
-		
+		Intent locationIntent = new Intent(MobileFieldDataDashboard.this,
+				LocationServiceHelper.class);
+
 		stopService(locationIntent);
 	}
-	
+
 	private void showNoGpsDialog() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    builder.setTitle("Enable GPS?")
-	           .setMessage("The GPS on this device is currently disabled, do you want to enable it? \nEnabling GPS will allow accurate survey locations to be recorded.")
-	           .setCancelable(false)
-	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-	               public void onClick(final DialogInterface dialog, final int id) {
-	                   startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-	               }
-	           })
-	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
-	               public void onClick(final DialogInterface dialog, final int id) {
-	                    dialog.cancel();
-	               }
-	           });
-	    builder.create().show();
+		builder.setTitle("Enable GPS?")
+				.setMessage(
+						"The GPS on this device is currently disabled, do you want to enable it? \nEnabling GPS will allow accurate survey locations to be recorded.")
+				.setCancelable(false)
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					public void onClick(final DialogInterface dialog, final int id) {
+						startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+					}
+				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+					public void onClick(final DialogInterface dialog, final int id) {
+						dialog.cancel();
+					}
+				});
+		builder.create().show();
 	}
 
 	class Model {
 		private User user;
 		private String portal;
+
 		public Model(User user, String portal) {
 			this.user = user;
 			this.portal = portal;
 		}
-		
+
 		public User getUser() {
 			return user;
 		}
+
 		public String getPortal() {
 			return portal;
 		}
-		
+
 	}
-	
+
 	class InitDataTask extends AsyncTask<Void, Void, Model> {
-		
+
 		@Override
 		protected Model doInBackground(Void... params) {
 			GenericDAO<User> userDAO = new GenericDAO<User>(getApplicationContext());
@@ -199,24 +220,26 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			User user = null;
 			if (users.size() > 0) {
 				user = users.get(0);
-				
+
 			}
 			String portal = preferences.getFieldDataPortalName();
-			
+
 			return new Model(user, portal);
 		}
+
 		@Override
 		protected void onPostExecute(Model model) {
 			getSupportActionBar().setTitle(Utils.bold(model.getPortal()));
-			
+
 			User user = model.getUser();
 			if (user != null) {
-				getSupportActionBar().setSubtitle(Utils.bold("Welcome " + user.firstName + " " + user.lastName));
+				getSupportActionBar().setSubtitle(
+						Utils.bold("Welcome " + user.firstName + " " + user.lastName));
 			}
-			
+
 		}
 	}
-	
+
 	class StatusTask extends AsyncTask<Void, Void, AppStatus> {
 
 		@Override
@@ -230,84 +253,78 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			if (result.isInitialised()) {
 				if (result.isOnline()) {
 					status.setText("Online");
-				}
-				else {
+				} else {
 					status.setText("Offline");
-				}				
+				}
 			} else {
 				if (!result.isOnline()) {
 					showConnectionError();
-				}
-				else {
+				} else {
 					redirectToLogin();
 				}
 			}
 			setSupportProgressBarIndeterminateVisibility(false);
 		}
-		
+
 	}
-	
+
 	@Override
 	protected void onResume() {
 		Log.i("MobileFieldDataDashboard", "onResume");
-		
+
 		super.onResume();
-		
+
 		refreshPage();
-		
+
 	}
-	
+
 	@Override
 	public void onPause() {
 		Log.i("MobileFieldDataDashboard", "onPause");
-		
+
 		super.onPause();
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.unregisterOnSharedPreferenceChangeListener(this);
-		
+
 	}
 
 	@Override
 	public void onStop() {
 		Log.i("MobileFieldDataDashboard", "onStop");
-		
+
 		super.onStop();
 	}
 
-	
 	@Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("tab", getSupportActionBar().getSelectedNavigationIndex());
-    }
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt("tab", getSupportActionBar().getSelectedNavigationIndex());
+	}
 
-	
 	private void refreshPage() {
-		
-		
+
 		PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preference1, true);
-		PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.network_preferences, true);
-		
+		PreferenceManager
+				.setDefaultValues(getApplicationContext(), R.xml.network_preferences, true);
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
-		
+
 		// check if the preferences are set if not redirect
-		if (preferences.getFieldDataServerHostName().equals("") ||
-			preferences.getFieldDataContextName().equals("")) {
+		if (preferences.getFieldDataServerHostName().equals("")
+				|| preferences.getFieldDataContextName().equals("")) {
 			redirectToPreferences();
-		}
-		else {
+		} else {
 			setSupportProgressBarIndeterminateVisibility(true);
-			
+
 			new InitDataTask().execute();
 			new StatusTask().execute();
 		}
 	}
-	
-	
+
 	class AppStatus {
-		
+
 		private boolean online;
 		private boolean initialised;
 
@@ -315,19 +332,19 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			this.online = online;
 			this.initialised = initialised;
 		}
-		
+
 		public boolean isOnline() {
 			return online;
 		}
-		
+
 		public boolean isInitialised() {
 			return initialised;
 		}
-		
+
 	}
 
 	private AppStatus checkStatus() {
-		
+
 		boolean online = canAccessFieldDataServer();
 		boolean initialised = isLoggedIn();
 		return new AppStatus(initialised, online);
@@ -336,8 +353,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 	private void showConnectionError() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.initialisationErrorTitle);
-		builder.setMessage(String.format(
-				getResources().getString(R.string.initialisationError),
+		builder.setMessage(String.format(getResources().getString(R.string.initialisationError),
 				preferences.getFieldDataServerUrl()));
 		builder.setNegativeButton(R.string.close, new Dialog.OnClickListener() {
 
@@ -348,17 +364,17 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 		builder.show();
 		return;
 	}
-	
+
 	private void redirectToPreferences() {
 		Intent intent = new Intent(this, EditPreferences.class);
 		startActivity(intent);
 	}
-	
+
 	private void redirectToLogin() {
-		
-        Intent intent = new Intent(this, LoginActivity.class);
-	    startActivity(intent);
-			
+
+		Intent intent = new Intent(this, LoginActivity.class);
+		startActivity(intent);
+
 	}
 
 	private boolean isLoggedIn() {
@@ -374,43 +390,44 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 			FieldDataServiceClient service = new FieldDataServiceClient(this);
 			success = service.ping(5000);
 			if (!success) {
-				Log.i("Status", "Field data server at: " + fieldDataServer
-						+ " is not reachable");
+				Log.i("Status", "Field data server at: " + fieldDataServer + " is not reachable");
 			}
 			// ConnectivityManager manager =
 			// (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
 			// success = manager.requestRouteToHost(networkType, hostAddress)
 		} catch (Exception e) {
-			Log.e("Error", "Unable to location field data server at: "
-					+ preferences.getFieldDataServerHostName(), e);
+			Log.e("Error",
+					"Unable to location field data server at: "
+							+ preferences.getFieldDataServerHostName(), e);
 		}
 		return success;
 	}
-    
+
 	private MenuItem newRecordMenuItem;
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = new MenuInflater(this);
-    	inflater.inflate(R.menu.common_menu_items, menu);
-    	inflater.inflate(R.menu.dashboard_menu, menu);
-    	
-    	newRecordMenuItem = menu.add("New Record");
-    	
-    	newRecordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		inflater.inflate(R.menu.common_menu_items, menu);
+		inflater.inflate(R.menu.dashboard_menu, menu);
+
+		newRecordMenuItem = menu.add("New Record");
+
+		newRecordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
+				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.sync) {
 			setSupportProgressBarIndeterminateVisibility(true);
-			
+
 			new AsyncTask<Void, Void, Void>() {
-				
-				
-			    @Override
+
+				@Override
 				protected Void doInBackground(Void... params) {
-			    	new FieldDataService(MobileFieldDataDashboard.this).downloadSurveys();
+					new FieldDataService(MobileFieldDataDashboard.this).downloadSurveys();
 					return null;
 				}
 
@@ -419,28 +436,22 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity
 					refreshPage();
 				}
 			}.execute();
-			
+
 			refreshPage();
 			return true;
-		}
-		else if (item == newRecordMenuItem) {
+		} else if (item == newRecordMenuItem) {
 			Intent intent = new Intent(this, CollectSurveyData.class);
-			intent.putExtra(CollectSurveyData.SURVEY_BUNDLE_KEY, new Preferences(this).getCurrentSurvey());
+			intent.putExtra(CollectSurveyData.SURVEY_BUNDLE_KEY,
+					new Preferences(this).getCurrentSurvey());
 			startActivity(intent);
 		}
 		return new MenuHelper(this).handleMenuItemSelection(item);
-    }
+	}
 
-	
-	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if (key.equals("serverHostName") || 
-			key.equals("contextName"))  {
+		if (key.equals("serverHostName") || key.equals("contextName")) {
 			preferences.setFieldDataSessionKey(null);
 		}
 	}
 
-	
-	
-	
 }

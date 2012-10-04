@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -57,7 +56,6 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 	private ActionMode actionMode;
 	private List<Survey> surveys;
 	private ProgressDialog dialog;
-	
 	
 	
 	@Override
@@ -300,6 +298,25 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 		
 		finishActionMode();
 	}
+
+
+	/**
+	 * Because this fragment is managed by a ViewPager, the lifecycle
+	 * callbacks aren't a reliable indication of the fragment being visible.
+	 * 
+	 * This callback though seems to do the trick, we can use it to dismiss
+	 * the action mode if this view is paged away.
+	 */
+	@Override
+	public void setMenuVisibility(boolean menuVisible) {
+		
+		super.setMenuVisibility(menuVisible);
+		if (!menuVisible) {
+			finishActionMode();
+		}
+	}
+	
+	
 	
 	
 }

@@ -443,7 +443,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 		@Override
 		public String getPageTitle(int page) {
-			return "Page " + (page + 1);
+			return "PAGE " + (page + 1);
 		}
 
 	}

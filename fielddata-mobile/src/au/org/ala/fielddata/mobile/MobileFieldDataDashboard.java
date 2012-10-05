@@ -58,9 +58,16 @@ import com.actionbarsherlock.view.Window;
 public class MobileFieldDataDashboard extends SherlockFragmentActivity implements
 		OnSharedPreferenceChangeListener {
 
+	private static final String SELECTED_TAB_BUNDLE_KEY = "tab";
+	private static final String GPS_QUESTION_BUNDLE_KEY = "gps";
 	private Preferences preferences;
 	private TextView status;
 	private ViewPager viewPager;
+	/** 
+	 * Tracks whether we have asked the user if they want to turn on their
+	 * GPS
+	 */
+	private boolean askedAboutGPS;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +100,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 		}
 
 		if (savedInstanceState != null) {
-			getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
+			askedAboutGPS = savedInstanceState.getBoolean(GPS_QUESTION_BUNDLE_KEY);
+			getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt(SELECTED_TAB_BUNDLE_KEY, 0));
 		}
 
 	}
@@ -152,16 +160,14 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 	@Override
 	public void onStart() {
 		super.onStart();
-
-		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)) {
-			LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-			if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-				showNoGpsDialog();
+		if (!askedAboutGPS) {
+			if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)) {
+				LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+				if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+					showNoGpsDialog();
+				}
 			}
 		}
-		Intent locationIntent = new Intent(this, LocationServiceHelper.class);
-		startService(locationIntent);
-
 	}
 
 	@Override
@@ -189,6 +195,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 					}
 				});
 		builder.create().show();
+		askedAboutGPS = true;
 	}
 
 	class Model {
@@ -298,7 +305,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt("tab", getSupportActionBar().getSelectedNavigationIndex());
+		outState.putInt(SELECTED_TAB_BUNDLE_KEY, getSupportActionBar().getSelectedNavigationIndex());
+		outState.putBoolean(GPS_QUESTION_BUNDLE_KEY, askedAboutGPS);
 	}
 
 	private void refreshPage() {

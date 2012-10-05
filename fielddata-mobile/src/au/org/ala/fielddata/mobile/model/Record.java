@@ -20,11 +20,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.google.gson.annotations.SerializedName;
-
 import android.location.Location;
 import android.net.Uri;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
+
+import com.google.gson.annotations.SerializedName;
 
 public class Record extends Persistent {
 
@@ -45,6 +45,8 @@ public class Record extends Persistent {
 	private Location pointLocation;
 	
 	private List<AttributeValue> attributeValues;
+	
+	private boolean valid;
 	
 	/** Caches a reference to the first image for display purposes */
 	private transient Uri photo;
@@ -208,8 +210,21 @@ public class Record extends Persistent {
 	public Record() {
 		uuid = UUID.randomUUID().toString();
 		attributeValues = new ArrayList<Record.AttributeValue>();
+		valid = false;
 		
-		
+	}
+	
+	/**
+	 * Maintains the validation state of this Record so it doesn't need
+	 * to be re-calculated when displayed in the saved records list.
+	 * @param valid whether this Record is valid or not.
+	 */
+	public void setValid(boolean valid) {
+		this.valid = valid;
+	}
+	
+	public boolean isValid() {
+		return valid;
 	}
 
 	protected AttributeValue valueOf(Attribute attribute) {

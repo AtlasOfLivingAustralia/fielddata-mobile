@@ -250,7 +250,13 @@ public class SurveyViewModel {
 
 	
 	public RecordValidationResult validate() {
-		RecordValidationResult result = validator.validateRecord(survey, record);
+		List<Attribute> allAttributes = new ArrayList<Attribute>();
+		for (List<Attribute> page : attributes) {
+			allAttributes.addAll(page);
+		}
+		
+		RecordValidationResult result = validator.validateAll(allAttributes, record);
+		record.setValid(result.valid());
 		if (!result.valid()) {
 			for (ValidationResult attr : result.invalidAttributes()) {
 				

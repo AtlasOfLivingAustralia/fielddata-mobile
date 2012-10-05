@@ -34,6 +34,7 @@ public class SavedRecordHolder {
 		public Survey survey;
 	}
 	
+	TextView status = null;
 	ImageView icon = null;
 	TextView recordSpecies = null;
 	TextView recordTime = null;
@@ -49,7 +50,7 @@ public class SavedRecordHolder {
 		checkbox = (CheckBox)row.findViewById(R.id.checkbox);
 		surveyName = (TextView)row.findViewById(R.id.survey_name);
 		storageManager = new StorageManager(row.getContext());
-		
+		status = (TextView)row.findViewById(R.id.status);
 	}
 	
 	public void populate(RecordView recordView) {
@@ -78,7 +79,12 @@ public class SavedRecordHolder {
 		Date created = new Date(record.when);
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		recordTime.setText(format.format(created));
-		
+		if (record.isValid()) {
+			status.setVisibility(View.GONE);
+		}
+		else {
+			status.setVisibility(View.VISIBLE);
+		}
 		
 	}
 	

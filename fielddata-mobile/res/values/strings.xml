@@ -96,11 +96,12 @@
     
     <!--  Portal names -->
 	<string-array name="portals">
-	<item>Condamine Alliance</item>
+		<item>Condamine Alliance</item>
 	    <item>Great Koala Count</item>
 	</string-array>
 	
 	<!-- Saved records page -->
 	<string name="photo_icon">Record photo</string>
+	<string name="draft">Draft</string>
 	
 </resources>

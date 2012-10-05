@@ -28,11 +28,8 @@ import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.ViewSavedRecordsActivity;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
-import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.Preferences;
-import au.org.ala.fielddata.mobile.validation.RecordValidator;
-import au.org.ala.fielddata.mobile.validation.RecordValidator.RecordValidationResult;
 
 /**
  * Uploads Records to the Field Data server.
@@ -226,16 +223,13 @@ public class UploadService extends Service {
 	private int upload(Record record) {
 	
 		int resultCode = SUCCESS;
-		GenericDAO<Survey> surveyDao = new GenericDAO<Survey>(this);
-		Survey survey = surveyDao.findByServerId(Survey.class, record.survey_id);
 		FieldDataServiceClient service = new FieldDataServiceClient(getApplicationContext());
 		
-		RecordValidator validator = new RecordValidator();
 		List<Record> tmp = new ArrayList<Record>();
 		tmp.add(record);
 		try {
-			RecordValidationResult result = validator.validateRecord(survey, record);
-			if (result.valid()) {
+			
+			if (record.isValid()) {
 				service.sync(tmp);
 				resultCode = SUCCESS;
 			}

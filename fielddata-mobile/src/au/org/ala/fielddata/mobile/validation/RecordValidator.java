@@ -5,7 +5,6 @@ import java.util.List;
 
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Record;
-import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class RecordValidator {
@@ -26,10 +25,10 @@ public class RecordValidator {
 		}
 	}
 	
-	public RecordValidationResult validateRecord(Survey survey, Record record) {
+	public RecordValidationResult validateAll(List<Attribute> attributes, Record record) {
 		
-		List<ValidationResult> results = new ArrayList<Validator.ValidationResult>(survey.attributes.size());
-		for (Attribute attribute : survey.allAttributes()) {
+		List<ValidationResult> results = new ArrayList<Validator.ValidationResult>(attributes.size());
+		for (Attribute attribute : attributes) {
 			
 			ValidationResult result = validateRecordAttribute(attribute, record); 
 			if (!result.isValid()) {

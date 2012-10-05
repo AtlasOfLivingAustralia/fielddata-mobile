@@ -249,13 +249,15 @@ public class UploadService extends Service {
 		Preferences prefs = new Preferences(this);
 		GenericDAO<User> userDao = new GenericDAO<User>(this);
 		List<User> user = userDao.loadAll(User.class);
+		
 		String reviewUrl = String.format(prefs.getReviewUrl(), user.get(0).server_id);
 		Uri records = Uri.parse(reviewUrl);
 		Intent viewRecords = new Intent(Intent.ACTION_VIEW, records);
 		PendingIntent intent = PendingIntent.getActivity(this, START_NOT_STICKY, viewRecords, PendingIntent.FLAG_CANCEL_CURRENT);
 		
 		String message = numSuceeded == 1 ? " record uploaded" : " records uploaded";
-		notify(numSuceeded + message, "", intent, true);
+		
+		notify(numSuceeded + message, reviewUrl, intent, true);
 		
 	}
 	

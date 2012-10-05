@@ -17,7 +17,6 @@ package au.org.ala.fielddata.mobile;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -55,8 +54,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 	private List<Record> records;
 	private ActionMode actionMode;
 	private List<Survey> surveys;
-	private ProgressDialog dialog;
-	
+	private BroadcastReceiver uploadReceiver;
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -64,29 +62,38 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 
 		setHasOptionsMenu(true);
 		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+	}
+	
+
+	@Override
+	public void onResume() {
+		super.onResume();
 		
+		refresh();
+		
+		uploadReceiver = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				refresh();
+			}
+		};
+	
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(UploadService.UPLOAD_FAILED);
 		filter.addAction(UploadService.UPLOADED);
 		
-		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(new BroadcastReceiver() {
-
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				if (UploadService.UPLOAD_FAILED.equals(intent.getAction())) {
-					Toast.makeText(getActivity().getApplicationContext(), "Upload failed!", Toast.LENGTH_SHORT)
-							.show();
-				}
-				refresh();
-				if (dialog != null) {
-					dialog.dismiss();
-				}
-			}
-		}, filter);
-		refresh();
-
+		
+		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(uploadReceiver, filter);
 	}
-
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		
+		LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(uploadReceiver);
+		uploadReceiver = null;
+	}
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, com.actionbarsherlock.view.MenuInflater inflater) {
@@ -121,6 +128,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 	class GetRecordsTask extends AsyncTask<Void, Void, List<RecordView>> {
 
 		protected List<RecordView> doInBackground(Void... ignored) {
+			
 			GenericDAO<Record> dao = new GenericDAO<Record>(getActivity().getApplicationContext());
 
 			records = dao.loadAll(Record.class);

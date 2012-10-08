@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -79,7 +80,7 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 			}
 			
 			pd = ProgressDialog.show(LoginActivity.this, "Logging in", 
-					preferences.getFieldDataServerUrl(), true, false, null);
+					preferences.getFieldDataServerUrl(false), true, false, null);
 			
 			new AsyncTask<Void, Void, Void>() {
 				private Exception e;
@@ -99,6 +100,7 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 
 					} catch (Exception e) {
 						this.e = e;
+						Log.e("LoginActivity", "Login failed, ",e);
 					}
 					return null;
 				}

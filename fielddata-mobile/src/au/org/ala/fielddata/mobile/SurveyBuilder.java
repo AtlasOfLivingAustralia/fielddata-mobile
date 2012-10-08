@@ -33,8 +33,6 @@ import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.ui.CategorizedSpinner;
 import au.org.ala.fielddata.mobile.ui.MultiSpinner;
 
-import com.commonsware.cwac.merge.MergeSpinnerAdapter;
-
 public class SurveyBuilder {
 
 	private FragmentActivity viewContext;

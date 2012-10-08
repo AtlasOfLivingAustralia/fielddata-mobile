@@ -62,10 +62,17 @@ public class Preferences {
 	}
 
 	public String getFieldDataServerUrl() {
+		return getFieldDataServerUrl(true);
+	}
+	
+	public String getFieldDataServerUrl(boolean includePortalPath) {
 		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
 		String hostName = prefs.getString("serverHostName", "");
 		String context = prefs.getString("contextName", "");
-		String path = prefs.getString("path", "");
+		String path = "";
+		if (includePortalPath) {
+			path = prefs.getString("path", "");
+		}
 		
 		StringBuilder url = new StringBuilder();
 		url.append("http://").append(hostName).append("/").append(context);
@@ -76,6 +83,7 @@ public class Preferences {
 		
 		return url.toString();
 	}
+	
 	
 	/**
 	 * Returns the URL of the un-proxied field data server. (this should really

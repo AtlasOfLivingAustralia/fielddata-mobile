@@ -107,6 +107,7 @@ public class SurveyListFragment extends SherlockListFragment {
 		
 		@Override
 		protected List<Survey> doInBackground(Void... params) {
+			
 			GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(getActivity().getApplicationContext());
 			List<Survey> surveys = surveyDAO.loadAll(Survey.class);
 			

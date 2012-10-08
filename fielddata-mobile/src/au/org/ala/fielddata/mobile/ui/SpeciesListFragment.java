@@ -27,8 +27,7 @@ public class SpeciesListFragment extends SherlockListFragment {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        init();
+       
     }
 
 	@Override
@@ -40,7 +39,7 @@ public class SpeciesListFragment extends SherlockListFragment {
 		}
 	}
 	
-    private void init() {
+    protected void init() {
     	SpeciesListAdapter adapter = new SpeciesListAdapter(getActivity());
     	setListAdapter(adapter);
     	

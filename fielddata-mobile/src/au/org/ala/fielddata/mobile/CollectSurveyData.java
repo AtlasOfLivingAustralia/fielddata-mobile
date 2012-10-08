@@ -86,12 +86,13 @@ import com.viewpagerindicator.TitlePageIndicator;
 public class CollectSurveyData extends SherlockFragmentActivity implements
 		SpeciesSelectionListener, OnPageChangeListener, LocationListener {
 
+	private static final String GPS_TRACKING_BUNDLE_KEY = "Gps";
 	public static final String SURVEY_BUNDLE_KEY = "SurveyIdKey";
 	public static final String RECORD_BUNDLE_KEY = "RecordIdKey";
 	public static final String SPECIES = "species";
 	
 	/** The accuracy required to auto-populate the location from GPS */
-	private static final float ACCURACY_THESHOLD = 2000f;
+	private static final float ACCURACY_THESHOLD = 21f;
 
 	/**
 	 * Used to identify a request to the LocationSelectionActivity when a result
@@ -115,6 +116,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	private View leftArrow;
 	private View rightArrow;
 	private Attribute autoScrollAttribute;
+	private boolean gpsTrackingOn;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -127,6 +129,9 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction().add(new SurveyModelHolder(), "model")
 					.commit();
+		}
+		else {
+			gpsTrackingOn = savedInstanceState.getBoolean(GPS_TRACKING_BUNDLE_KEY);
 		}
 
 		pagerAdapter = new SurveyPagerAdapter(getSupportFragmentManager());
@@ -144,18 +149,29 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	}
 	
 	private LocationServiceConnection locationServiceConnection;
-	private void startLocationUpdates() {
-		if (surveyViewModel.getLocation() == null) {
+	public void startLocationUpdates() {
+		Log.i("CollectSurveyData", "startLocationUpdates");
+		if (locationServiceConnection == null) {
 			locationServiceConnection = new LocationServiceConnection(this, ACCURACY_THESHOLD);
 			Intent intent = new Intent(this, LocationServiceHelper.class);
 			bindService(intent, locationServiceConnection, Context.BIND_AUTO_CREATE);
 		}
+		gpsTrackingOn = true;
 	}
 	
-	private void stopLocationUpdates() {
+	public void stopLocationUpdates() {
+		stopLocationUpdates(false);
+	}
+	
+	private void stopLocationUpdates(boolean systemChange) {
+		Log.i("CollectSurveyData", "stopLocationUpdates");
+		
 		if (locationServiceConnection != null) {
 			unbindService(locationServiceConnection);
 			locationServiceConnection = null;
+		}
+		if (!systemChange) {
+			gpsTrackingOn = false;
 		}
 	}
 	
@@ -166,6 +182,10 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		//}
 		//stopLocationUpdates();
 	}
+	
+	public boolean isGpsTrackingEnabled() {
+		return gpsTrackingOn;
+	}
 
 	public void onStatusChanged(String provider, int status, Bundle extras) {}
 
@@ -174,24 +194,30 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	public void onProviderDisabled(String provider) {}
 	
 	@Override
-	public void onStart() {
-		Log.i("CollectSurveyData", "onStart");
-		super.onStart();
-	}
-	
-	@Override
 	public void onResume() {
 		Log.i("CollectSurveyData", "onResume");
 		super.onResume();
-		startLocationUpdates();
+		
+		if (gpsTrackingOn) {
+			startLocationUpdates();
+		}
 	}
 	
 	@Override
 	public void onPause() {
 		Log.i("CollectSurveyData", "onPause");
 		super.onPause();
+		if (gpsTrackingOn) {
+			stopLocationUpdates(true);
+		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Log.i("CollectSurveyData", "Saving gpsTracking: "+gpsTrackingOn);
 		
-		stopLocationUpdates();
+		outState.putBoolean(GPS_TRACKING_BUNDLE_KEY, gpsTrackingOn);
 	}
 
 	private void buildCustomActionBar() {

@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+import au.org.ala.fielddata.mobile.SurveyListFragment.InitDataTask;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.ui.SpeciesListFragment;
@@ -37,6 +38,14 @@ public class SpeciesListActivity extends SpeciesListFragment implements SpeciesS
 		super.onCreate(savedInstanceState);
 		
 		preferences = new Preferences(getActivity());
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		preferences = new Preferences(getActivity());
+		
+		init();
 	}
 	
 	@Override

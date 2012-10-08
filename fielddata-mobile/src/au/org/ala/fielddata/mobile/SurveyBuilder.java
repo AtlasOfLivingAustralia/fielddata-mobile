@@ -191,18 +191,8 @@ public class SurveyBuilder {
 		
 		ArrayAdapter<AttributeOption> adapter = new  ArrayAdapter<AttributeOption>(viewContext,
 				R.layout.multiline_spinner_item, options);
-		
-		MergeSpinnerAdapter masterAdapter = new MergeSpinnerAdapter();
-		masterAdapter.addAdapter(adapter);
-		
-		ArrayAdapter<String> stinky = new ArrayAdapter<String>(viewContext, R.layout.label_text_view, new String[]{"test"});
-		
-		masterAdapter.addAdapter(stinky);
-		
 		adapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-		spinner.setAdapter(masterAdapter);
-		
-		
+		spinner.setAdapter(adapter);
 		
 		return spinner;
 	}

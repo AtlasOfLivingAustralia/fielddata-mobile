@@ -76,7 +76,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
 		setContentView(R.layout.activity_mobile_data_dashboard);
-
 		preferences = new Preferences(this);
 
 		status = (TextView) findViewById(R.id.status);

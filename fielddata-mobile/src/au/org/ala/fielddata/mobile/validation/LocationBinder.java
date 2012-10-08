@@ -6,13 +6,12 @@ import android.location.Location;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.CollectSurveyData;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
-import au.org.ala.fielddata.mobile.ui.GPSFragment;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class LocationBinder extends AbsBinder {
@@ -22,9 +21,11 @@ public class LocationBinder extends AbsBinder {
 	private TextView accuracy;
 	private TextView noLocation;
 	private TextView time;
-	
 	private SurveyViewModel model;
 	private CollectSurveyData ctx;
+	private boolean gpsTrackingOn;
+	private Button gpsButton;
+	
 	
 	public LocationBinder(CollectSurveyData context, View locationView, Attribute locationAttribute, SurveyViewModel model) {
 		super(locationAttribute, locationView);
@@ -38,23 +39,31 @@ public class LocationBinder extends AbsBinder {
 		this.model = model;
 		this.ctx = context;
 		
+		gpsTrackingOn = ctx.isGpsTrackingEnabled();
 		addEventHandlers(locationView);
 		updateText();
 		
 	}
 	
 	private void addEventHandlers(View view) {
-	ImageButton gpsButton = (ImageButton)view.findViewById(R.id.gpsButton);
+	gpsButton = (Button)view.findViewById(R.id.gpsButton);
 	gpsButton.setOnClickListener(new OnClickListener() {
 		
 		public void onClick(View v) {
-			GPSFragment fragment = new GPSFragment();
-			fragment.show(ctx.getSupportFragmentManager(), "gpsDialog");
-			
+			if (!gpsTrackingOn) {
+				ctx.startLocationUpdates();
+				gpsTrackingOn = true;
+				updateText();
+			}
+			else {
+				ctx.stopLocationUpdates();
+				gpsTrackingOn = false;
+				updateText();
+			}
 		}
 	});
 	
-	ImageButton showOnMapButton = (ImageButton)view.findViewById(R.id.showMapButton);
+	Button showOnMapButton = (Button)view.findViewById(R.id.showMapButton);
 	showOnMapButton.setOnClickListener(new OnClickListener() {
 		
 		public void onClick(View v) {
@@ -63,15 +72,15 @@ public class LocationBinder extends AbsBinder {
 	});
 	}
 	
+	
+	
 	public void onAttributeChange(Attribute attribute) {
-
+		ctx.stopLocationUpdates();
+		gpsTrackingOn = false;
 		updateText();
 	}
 
 	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
-//		if (attribute.getServerId() != this.attribute.getServerId()) {
-//			return;
-//		}
 		if (result.isValid()) {
 			noLocation.setError(null);
 		}
@@ -83,7 +92,7 @@ public class LocationBinder extends AbsBinder {
 	private void updateText() {
 		
 		Location location = model.getLocation();
-		if (location != null) {
+		if (location != null && !gpsTrackingOn) {
 			DecimalFormat format = new DecimalFormat("###.000000");
 			
 			latitude.setText("lat: "+format.format(location.getLatitude()));
@@ -95,7 +104,7 @@ public class LocationBinder extends AbsBinder {
 				accuracy.setText("accuracy: unknown");
 			}	
 			
-			time.setText("Updated at: "+DateFormat.getTimeFormat(ctx).format(location.getTime()));
+			time.setText("time: "+DateFormat.getTimeFormat(ctx).format(location.getTime()));
 			
 			noLocation.setVisibility(View.GONE);
 			latitude.setVisibility(View.VISIBLE);
@@ -104,12 +113,24 @@ public class LocationBinder extends AbsBinder {
 			time.setVisibility(View.VISIBLE);
 		}
 		else {
+			if (gpsTrackingOn) {
+				noLocation.setHint("Acquiring location...");
+			}
+			else {
+				noLocation.setHint("No location supplied");
+			}
 			noLocation.setVisibility(View.VISIBLE);
 			latitude.setVisibility(View.GONE);
 			longitude.setVisibility(View.GONE);
 			accuracy.setVisibility(View.GONE);
 			time.setVisibility(View.GONE);
 			
+		}
+		if (gpsTrackingOn) {
+			gpsButton.setText("Cancel");
+		}
+		else {
+			gpsButton.setText("Start GPS");
 		}
 		
 	}

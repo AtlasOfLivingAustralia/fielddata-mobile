@@ -62,18 +62,18 @@ public class Record extends Persistent {
 	}
 
 	
-	static class AttributeValue {
+	public static class AttributeValue {
 		public Integer id = 1;
 		public Integer server_id;
 		public Integer attribute_id;
 		
 		protected StringValue value = new StringValue();
 		
-		public void setValue(String value) {
+		void setValue(String value) {
 			this.value.value = value;
 		}
 		
-		public void setUri(Uri uri) {
+		void setUri(Uri uri) {
 			value.uri = true;
 			
 			if (uri == null) {
@@ -147,7 +147,7 @@ public class Record extends Persistent {
 			}
 		}
 		
-		public void setValue(String value) {
+		void setValue(String value) {
 			
 			this.value.value = value;
 			
@@ -281,6 +281,9 @@ public class Record extends Persistent {
 		return attrValue.getUri();
 	}
 	
+	public List<AttributeValue> getAttributeValues() {
+		return attributeValues;
+	}
 	
 	private void checkUriSupport(Attribute attribute) {
 		

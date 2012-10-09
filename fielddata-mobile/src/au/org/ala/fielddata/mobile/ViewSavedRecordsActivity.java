@@ -122,18 +122,23 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 	}
 
 	private void refresh() {
-		new GetRecordsTask().execute();
+		new GetRecordsTask(getActivity().getApplicationContext()).execute();
 	}
 	
 	class GetRecordsTask extends AsyncTask<Void, Void, List<RecordView>> {
 
+		private Context ctx;
+		
+		public GetRecordsTask(Context ctx) {
+			this.ctx = ctx;
+		}
 		protected List<RecordView> doInBackground(Void... ignored) {
 			
-			GenericDAO<Record> dao = new GenericDAO<Record>(getActivity().getApplicationContext());
+			GenericDAO<Record> dao = new GenericDAO<Record>(ctx);
 
 			records = dao.loadAll(Record.class);
 			
-			GenericDAO<Survey> surveyDao = new GenericDAO<Survey>(getActivity().getApplicationContext());
+			GenericDAO<Survey> surveyDao = new GenericDAO<Survey>(ctx);
 			surveys = surveyDao.loadAll(Survey.class);
 			
 			List<RecordView> recordViews = new ArrayList<RecordView>();

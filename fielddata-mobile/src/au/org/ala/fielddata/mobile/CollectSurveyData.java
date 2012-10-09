@@ -335,11 +335,16 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 	public void onActionBarItemSelected(int itemId) {
 		if (itemId == R.id.action_done) {
+			
 			RecordValidationResult result = surveyViewModel.validate();
 
-			if (result.valid()) {
-				new SaveRecordTask(this).execute(surveyViewModel.getRecord());
+			if (result.valid()) {	
+				new SaveRecordTask(this, true).execute(surveyViewModel.getRecord());
+				
+				finish();
 			} else {
+				new SaveRecordTask(this, false).execute(surveyViewModel.getRecord());
+				
 				Toast.makeText(this, R.string.validationMessage, Toast.LENGTH_LONG).show();
 				Attribute firstInvalid = result.invalidAttributes().get(0).getAttribute();
 				int firstInvalidPage = surveyViewModel.pageOf(firstInvalid);
@@ -633,10 +638,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				Attribute attribute = pageAttributes.get(i);
 
 				View inputView = builder.buildFields(attribute, row);
-				// View inputView = builder.buildInput(attribute, row);
 				binder.configureBindings(inputView, attribute);
-				// row.addView(inputView);
-
+				
 				addRow(tableLayout, row);
 			}
 
@@ -655,9 +658,11 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	static class SaveRecordTask extends AsyncTask<Record, Void, Boolean> {
 
 		private CollectSurveyData ctx;
+		private boolean upload;
 
-		public SaveRecordTask(CollectSurveyData ctx) {
+		public SaveRecordTask(CollectSurveyData ctx, boolean upload) {
 			this.ctx = ctx;
+			this.upload = upload;
 		}
 
 		@Override
@@ -668,10 +673,12 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				GenericDAO<Record> recordDao = new GenericDAO<Record>(ctx.getApplicationContext());
 				recordDao.save(ctx.getViewModel().getRecord());
 				
-				Preferences prefs = new Preferences(ctx);
-				if (prefs.getUploadAutomatically()) {
-					Intent upload = new Intent(ctx, UploadService.class);
-					ctx.startService(upload);
+				if (upload) {
+					Preferences prefs = new Preferences(ctx);
+					if (prefs.getUploadAutomatically()) {
+						Intent upload = new Intent(ctx, UploadService.class);
+						ctx.startService(upload);
+					}
 				}
 
 			} catch (Exception e) {
@@ -679,12 +686,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				Log.e("SurveyUpload", "Upload failed", e);
 			}
 			return success;
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {
-
-			ctx.finish();
 		}
 
 	}

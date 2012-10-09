@@ -14,18 +14,11 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -33,7 +26,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import au.org.ala.fielddata.mobile.map.SingleSelectionOverlay;
 import au.org.ala.fielddata.mobile.model.MapDefaults;
-import au.org.ala.fielddata.mobile.service.LocationServiceHelper;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
@@ -43,8 +35,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.OverlayItem;
-import com.readystatesoftware.mapviewballoons.BalloonItemizedOverlay;
 
 /**
  * Displays a map that allows the user to select the location of their 
@@ -59,61 +49,6 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 	private SingleSelectionOverlay selectionOverlay;
 	private Location selectedLocation;
 	private MyLocationOverlay myLocationOverlay;
-
-	private Tmp tmp;
-	
-	class Tmp extends LocationServiceHelper.LocationServiceConnection {
-		public Tmp() {
-			super(LocationSelectionActivity.this, 3000f);
-		}
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			super.onServiceConnected(name, service);
-			serviceConnected(getLocationHistory());
-		}
-		
-	}
-	
-
-	class HistoryOverlay extends BalloonItemizedOverlay<OverlayItem> {
-		
-		private List<Location> locationHistory;
-		public HistoryOverlay(List<Location> history, Drawable marker) {
-			super(marker, mapView);
-			
-			locationHistory = new ArrayList<Location>(history);
-			populate();
-		}
-		@Override
-		protected OverlayItem createItem(int arg0) {
-			Log.d("LocationSelectionActivity", "Created item: "+arg0);
-			Location loc = locationHistory.get(arg0);
-			GeoPoint point = new GeoPoint((int)(loc.getLatitude()*1000000d), (int)(loc.getLongitude()*1000000d));
-			OverlayItem item = new OverlayItem(point, "Accuracy: "+loc.getAccuracy(), "");
-			return item;
-		}
-
-		@Override
-		public int size() {
-			return locationHistory.size();
-		}
-		
-		
-	}
-	
-	public void serviceConnected(List<Location> history) {
-		
-		Drawable marker = getResources().getDrawable(R.drawable.marker);
-		marker.setBounds(0, 0, marker.getIntrinsicWidth(), marker.getIntrinsicHeight());
-		final List<Location> locationHistory = history;
-		HistoryOverlay historyOverlay = new HistoryOverlay(locationHistory, marker);
-		
-		Log.d("LocationSelectionActivity", "serviceconnected, history= "+history.size());
-		mapView.getOverlays().add(historyOverlay);
-		if (historyOverlay.getCenter() != null) {
-			mapView.getController().setCenter(historyOverlay.getCenter());
-		}
-		
-	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -133,10 +68,6 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		initialiseOverlays();
 		initialiseMap(location, setZoom);
 		addEventHandlers();
-		
-		tmp = new Tmp();
-		Intent intent = new Intent(this, LocationServiceHelper.class);
-		bindService(intent, tmp, Context.BIND_AUTO_CREATE);
 
 	}
 	

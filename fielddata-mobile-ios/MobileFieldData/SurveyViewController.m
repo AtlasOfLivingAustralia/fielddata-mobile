@@ -66,7 +66,7 @@
 // Save the survey to disk
 -(void)saveSurvey:(id)sender {
     
-    [fieldDataService createRecord:attributes inputFields:inputFields];
+    [fieldDataService createRecord:attributes survey:survey inputFields:inputFields];
     
 }
 

@@ -75,7 +75,7 @@
 -(NSArray*)loadSurveys;
 -(NSArray*)loadSpecies;
 -(void)deleteAllEntities:(NSString*)entityName;
--(void)createRecord:(NSArray*)attributes survey:(Survey*)survey inputFields:(NSMutableDictionary*)inputFields
+-(void)createRecord:(NSArray*)attributes survey:(Survey*)survey inputFields:(NSMutableDictionary*)inputFields;
 -(NSArray*)loadRecords;
 
 @end

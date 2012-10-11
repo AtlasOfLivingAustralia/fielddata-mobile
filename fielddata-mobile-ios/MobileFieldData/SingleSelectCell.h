@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface SingleSelectCell : UITableViewCell <UIPickerViewDelegate, UIPickerViewDataSource> {
-    
+       
 }
 
 @property (nonatomic, retain) UILabel* label;
@@ -18,5 +18,6 @@
 @property (nonatomic, retain) NSMutableString* value;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier options:(NSArray*)o;
+- (void)setSelectedValue:(NSString*)value;
 
 @end

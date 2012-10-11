@@ -49,6 +49,17 @@
     // Configure the view for the selected state
 }
 
+- (void)setSelectedValue:(NSString*)inputValue
+{
+    for (int i=0; i<options.count; i++) {
+        SurveyAttributeOption* option = [options objectAtIndex:i];
+        if ([option.value isEqualToString:inputValue]) {
+            [picker selectRow:i+1 inComponent:0 animated:NO];
+            break;
+        }
+    }
+}
+
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
     return 1;
 }
@@ -68,7 +79,10 @@
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     if (row == 0) {
-        [value setString:@""];
+        //[value setString:@""];
+        SurveyAttributeOption* selectedOption = [options objectAtIndex:1];
+        [value setString:selectedOption.value];
+        [picker selectRow:1 inComponent:0 animated:YES];
     } else {
         SurveyAttributeOption* selectedOption = [options objectAtIndex:row-1];
         [value setString:selectedOption.value];

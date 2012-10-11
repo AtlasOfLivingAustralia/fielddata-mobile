@@ -52,6 +52,37 @@
     // Configure the view for the selected state
 }
 
+
+
+
+- (void)setImage:(NSString*)imagePath
+{
+    ALAssetsLibraryAssetForURLResultBlock resultblock = ^(ALAsset *myasset)
+    {
+        /*
+         ALAssetRepresentation *rep = [myasset defaultRepresentation];
+         CGImageRef iref = [rep fullResolutionImage];
+         if (iref) {
+         // Gets the full size image
+         self.fullSizeImage = [UIImage imageWithCGImage:iref];
+         }*/
+        
+        // Gets the thumbnail
+        [cameraImage setImage:[UIImage imageWithCGImage:[myasset thumbnail]]];
+    };
+    
+    ALAssetsLibraryAccessFailureBlock failureblock = ^(NSError *myerror)
+    {
+        NSLog(@"in failureblock, got an error: %@",[myerror localizedDescription]);
+    };
+    
+    ALAssetsLibrary *assetsLib = [[ALAssetsLibrary alloc] init];
+    NSURL* urlForImage = [NSURL URLWithString:imagePath];
+    [assetsLib assetForURL:urlForImage resultBlock:resultblock failureBlock:failureblock];
+}
+
+     
+     
 - (IBAction)showCameraUI:(id)sender {
     [self startCameraControllerFromViewController: parentController usingDelegate: self];
 }
@@ -91,42 +122,6 @@
     
     [[picker parentViewController] dismissModalViewControllerAnimated: YES];
 }
-
-// For responding to the user accepting a newly-captured picture or movie
-/*
-- (void) imagePickerController: (UIImagePickerController *) picker
-            didFinishPickingMediaWithInfo: (NSDictionary *) info {
-    
-    NSString *mediaType = [info objectForKey: UIImagePickerControllerMediaType];
-    UIImage *originalImage, *editedImage, *imageToSave;
-    
-    // Handle a still image capture
-    if (CFStringCompare ((CFStringRef) mediaType, kUTTypeImage, 0) == kCFCompareEqualTo) {
-                
-        editedImage = (UIImage *) [info objectForKey:UIImagePickerControllerEditedImage];
-        originalImage = (UIImage *) [info objectForKey:UIImagePickerControllerOriginalImage];
-        
-        if (editedImage) {
-            imageToSave = editedImage;
-        } else {
-            imageToSave = originalImage;
-        }
-        
-        // Save the new image (original or edited) to the Camera Roll
-        UIImageWriteToSavedPhotosAlbum (imageToSave, nil, nil, nil);
-        //UIImageWriteToSavedPhotosAlbum (imageToSave, self, @selector(image:) , nil);
-    }
-    // Handle a movie capture
-    if (CFStringCompare ((CFStringRef) mediaType, kUTTypeMovie, 0) == kCFCompareEqualTo) {
-        NSString *moviePath = [[info objectForKey:UIImagePickerControllerMediaURL] path];
-        
-        if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum (moviePath)) {
-            UISaveVideoAtPathToSavedPhotosAlbum(moviePath, nil, nil, nil);
-        }
-        
-    }
-    [[picker parentViewController] dismissModalViewControllerAnimated: YES];
-}*/
 
 -(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     UIImage *image = [info valueForKey:UIImagePickerControllerOriginalImage];

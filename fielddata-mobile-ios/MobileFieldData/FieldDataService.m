@@ -282,7 +282,7 @@
     [context save:&saveError];
 }
 
--(void)createRecord:(NSArray*)attributes survey:(Survey*)survey inputFields:(NSMutableDictionary*)inputFields {
+-(Record*)createRecord:(NSArray*)attributes survey:(Survey*)survey inputFields:(NSMutableDictionary*)inputFields {
     
     Record *record = [NSEntityDescription insertNewObjectForEntityForName:@"Record" inManagedObjectContext:context];
     record.date = [NSDate date];
@@ -335,6 +335,58 @@
         NSLog(@"Error saving Record: %@", [error localizedDescription]);
     }
     
+    return record;
+}
+
+-(void)updateRecord:(Record*)record attributes:(NSArray*)attributes inputFields:(NSMutableDictionary*)inputFields {
+    
+    for (NSNumber* weight in inputFields.keyEnumerator) {
+        
+        RecordAttribute* recordAttribute;
+        
+        for (RecordAttribute* recAtt in record.recordAttributes) {
+            
+            if ([recAtt.surveyAttribute.weight isEqualToNumber:weight]) {
+                recordAttribute = recAtt;
+                NSLog(@"%@", recAtt.surveyAttribute.weight);
+                break;
+            }
+        }
+        
+        if ([recordAttribute.surveyAttribute.typeCode isEqualToString:kIntegerType] ||
+            [recordAttribute.surveyAttribute.typeCode isEqualToString:kText]) {
+            
+            UITextField* textField = [inputFields objectForKey:recordAttribute.surveyAttribute.weight];
+            recordAttribute.value = textField.text;
+            
+        } else if ([recordAttribute.surveyAttribute.typeCode isEqualToString:kMultiSelect] ||
+                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kMultiCheckbox] ||
+                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kSpeciesRP] ||
+                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kPoint]) {
+            
+            NSMutableString* value = [inputFields objectForKey:recordAttribute.surveyAttribute.weight];
+            if (![value isEqualToString:@""]) {
+                recordAttribute.value = value;
+            }
+            
+        } else if ([recordAttribute.surveyAttribute.typeCode isEqualToString:kImage]) {
+            
+            NSMutableString* filePath = [inputFields objectForKey:recordAttribute.surveyAttribute.weight];
+            if (![filePath isEqualToString:@""]) {
+                recordAttribute.value = filePath;
+            }
+        } else {
+            
+            UITextField* textField = [inputFields objectForKey:recordAttribute.surveyAttribute.weight];
+            recordAttribute.value = textField.text;
+        }
+        
+    }
+    
+    NSError *error;
+    if (![context save:&error]) {
+        NSLog(@"Error saving Record: %@", [error localizedDescription]);
+    }
 }
       
 

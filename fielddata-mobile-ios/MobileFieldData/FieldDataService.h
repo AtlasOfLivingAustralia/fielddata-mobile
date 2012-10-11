@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "Preferences.h"
 #import "Survey.h"
+#import "Record.h"
 
 // record properties
 #define kSpeciesRP @"Species"
@@ -75,7 +76,8 @@
 -(NSArray*)loadSurveys;
 -(NSArray*)loadSpecies;
 -(void)deleteAllEntities:(NSString*)entityName;
--(void)createRecord:(NSArray*)attributes survey:(Survey*)survey inputFields:(NSMutableDictionary*)inputFields;
+-(Record*)createRecord:(NSArray*)attributes survey:(Survey*)survey inputFields:(NSMutableDictionary*)inputFields;
+-(void)updateRecord:(Record*)record attributes:(NSArray*)attributes inputFields:(NSMutableDictionary*)inputFields;
 -(NSArray*)loadRecords;
 
 @end

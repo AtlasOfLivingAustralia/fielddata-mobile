@@ -11,18 +11,20 @@
 #import "Survey.h"
 #import "SurveyAttribute.h"
 #import "SurveyAttributeOption.h"
+#import "Record.h"
 
 @interface SurveyViewController : UITableViewController {
     
     @private
     FieldDataService* fieldDataService;
     Survey* survey;
+    Record* record;
     NSArray* attributes;
     NSMutableDictionary* inputFields;
+    NSMutableDictionary* loadedValues;
 }
 
-@property (nonatomic, retain) NSMutableDictionary* loadedValues;
 
-- (id)initWithStyle:(UITableViewStyle)style survey:(Survey*)s;
+- (id)initWithStyle:(UITableViewStyle)style survey:(Survey*)s record:(Record*)r;
 
 @end

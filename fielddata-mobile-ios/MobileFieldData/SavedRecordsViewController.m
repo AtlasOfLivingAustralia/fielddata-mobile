@@ -128,52 +128,11 @@
 
     Record* record = [recordList objectAtIndex:indexPath.row];
     
-    NSMutableDictionary* inputFields = [NSMutableDictionary dictionaryWithCapacity:record.recordAttributes.count];
-    
-    for (RecordAttribute* recordAttribute in record.recordAttributes) {
-        
-        NSString* value = [NSString stringWithFormat:@"%@", recordAttribute.value];
-        [inputFields setObject:value forKey:recordAttribute.surveyAttribute.weight];
-        
-        /*
-        if ([attribute.typeCode isEqualToString:kIntegerType] ||
-            [attribute.typeCode isEqualToString:kText]) {
-            
-            UITextField* textField = [inputFields objectForKey:attribute.weight];
-            NSLog(@"%@ %@", attribute.question, textField.text);
-            
-            recordAttribute.value = textField.text;
-            
-        } else if ([attribute.typeCode isEqualToString:kMultiSelect] ||
-                   [attribute.typeCode isEqualToString:kMultiCheckbox] ||
-                   [attribute.typeCode isEqualToString:kSpeciesRP] ||
-                   [attribute.typeCode isEqualToString:kPoint]) {
-            
-            NSMutableString* value = [inputFields objectForKey:attribute.weight];
-            NSLog(@"%@ %@", attribute.question, value);
-            
-            recordAttribute.value = value;
-            
-        } else if ([attribute.typeCode isEqualToString:kImage]) {
-            
-            NSMutableString* filePath = [inputFields objectForKey:attribute.weight];
-            NSLog(@"%@ %@", attribute.question, filePath);
-            
-            recordAttribute.value = filePath;
-            
-        } else {
-            
-            UITextField* textField = [inputFields objectForKey:attribute.weight];
-            NSLog(@"%@ %@", attribute.question, textField.text);
-            
-            recordAttribute.value = textField.text;
-        }*/
-        
-    }
-    
     // Navigation logic may go here. Create and push another view controller.
     SurveyViewController* surveyViewController =
-    [[SurveyViewController alloc] initWithStyle:UITableViewStylePlain survey:record.survey];
+    [[SurveyViewController alloc] initWithStyle:UITableViewStylePlain
+                                         survey:record.survey
+                                         record:record];
     
     [self.navigationController pushViewController:surveyViewController animated:YES];
     

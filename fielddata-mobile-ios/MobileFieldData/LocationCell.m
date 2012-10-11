@@ -59,6 +59,18 @@
     // Configure the view for the selected state
 }
 
+-(void)setLocation:(NSString*)locationString
+{
+    NSArray* locDescArr = [locationString componentsSeparatedByString:@","];
+    
+    if (locDescArr.count == 3) {
+        latitude.text = [NSString stringWithFormat:@"Latitude: %@", [locDescArr objectAtIndex:0]];
+        longitude.text = [NSString stringWithFormat:@"Latitude: %@", [locDescArr objectAtIndex:1]];
+        accuracy.text = [NSString stringWithFormat:@"Accuracy: %@", [locDescArr objectAtIndex:2]];
+    }
+    
+}
+
 -(void)showProgressIndicator
 {
     // add the progress indicator to the view
@@ -105,14 +117,8 @@
                                                      fromLocation:(CLLocation *)oldLocation {
     if (newLocation.horizontalAccuracy <= 20.0) {
         
-        latitude.text = [NSString stringWithFormat:@"Latitude: %f", newLocation.coordinate.latitude];
-        longitude.text = [NSString stringWithFormat:@"Latitude: %f", newLocation.coordinate.longitude];
-        accuracy.text = [NSString stringWithFormat:@"Accuracy: %.1fm", newLocation.horizontalAccuracy];
-        
+        [self setFoundLocation:newLocation];
         [timer invalidate];
-        [locMgr stopUpdatingLocation];
-        [self hideProgressIndicator];
-        [value setString:newLocation.description];
         
     } else {
         tempLocation = newLocation;
@@ -127,15 +133,27 @@
 
 -(void) gpsTimeout:(NSTimer*) theTimer {
     
-    latitude.text = [NSString stringWithFormat:@"Latitude: %f", tempLocation.coordinate.latitude];
-    longitude.text = [NSString stringWithFormat:@"Latitude: %f", tempLocation.coordinate.longitude];
-    accuracy.text = [NSString stringWithFormat:@"Accuracy: %.1fm", tempLocation.horizontalAccuracy];
+    [self setFoundLocation:tempLocation];
+    [AlertService DisplayMessageWithTitle:@"GPS Accuracy Error" message:@"GPS Location not within 20m, please try again."];
+}
+
+-(void)setFoundLocation:(CLLocation*)location {
+    
+    latitude.text = [NSString stringWithFormat:@"Latitude: %f", location.coordinate.latitude];
+    longitude.text = [NSString stringWithFormat:@"Latitude: %f", location.coordinate.longitude];
+    accuracy.text = [NSString stringWithFormat:@"Accuracy: %.1fm", location.horizontalAccuracy];
     
     [locMgr stopUpdatingLocation];
     [self hideProgressIndicator];
-    [value setString:tempLocation.description];
     
-    [AlertService DisplayMessageWithTitle:@"GPS Accuracy Error" message:@"GPS Location not within 20m, please try again."];
+    NSString* locDescription = [NSString stringWithFormat:@"%f,%f,%.1fm",
+                                    location.coordinate.latitude,
+                                    location.coordinate.longitude,
+                                    location.horizontalAccuracy];
+    
+    [value setString:locDescription];
 }
+
+
 
 @end

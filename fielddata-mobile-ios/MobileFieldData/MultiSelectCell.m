@@ -51,6 +51,20 @@
     // Configure the view for the selected state
 }
 
+- (void)setSelectedValues:(NSString*)inputValues
+{
+    NSArray *selectedArray = [inputValues componentsSeparatedByString:@","];
+    
+    for (int i=0; i<options.count; i++) {
+        SurveyAttributeOption* option = [options objectAtIndex:i];
+        if ([selectedArray containsObject:option.value]) {
+            NSNumber *row = [NSNumber numberWithInt:i];
+            [selectedItems addObject:row];
+        }
+    }
+}
+
+
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
     return 1;
 }

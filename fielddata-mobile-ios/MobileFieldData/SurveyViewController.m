@@ -14,6 +14,8 @@
 #import "ImageCell.h"
 #import "SpeciesCell.h"
 #import "LocationCell.h"
+#import "AlertService.h"
+#import "RecordAttribute.h"
 
 @interface SurveyViewController ()
 
@@ -21,9 +23,7 @@
 
 @implementation SurveyViewController
 
-@synthesize loadedValues;
-
-- (id)initWithStyle:(UITableViewStyle)style survey:(Survey*)s
+- (id)initWithStyle:(UITableViewStyle)style survey:(Survey*)s record:(Record*)r
 {
     self = [super initWithStyle:style];
     if (self) {
@@ -31,10 +31,27 @@
         fieldDataService = [[FieldDataService alloc]init];
         survey = s;
         
-        NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"weight" ascending:YES]];
+        NSArray *sortDescriptors = [NSArray arrayWithObject:
+                                [NSSortDescriptor sortDescriptorWithKey:@"weight" ascending:YES]];
+        
         attributes = [[survey.attributes allObjects] sortedArrayUsingDescriptors:sortDescriptors];
         
         inputFields = [NSMutableDictionary dictionaryWithCapacity:attributes.count];
+        
+        if (r == NULL) {
+            loadedValues = [[NSMutableDictionary alloc]init];
+        } else {
+            record = r;
+            loadedValues = [NSMutableDictionary dictionaryWithCapacity:record.recordAttributes.count];
+            
+            for (RecordAttribute* recordAttribute in record.recordAttributes) {
+                NSString* value = recordAttribute.value;
+                if (value == NULL) {
+                    value = @"";
+                }
+                [loadedValues setObject:value forKey:recordAttribute.surveyAttribute.weight];
+            }
+        }
         
     }
     return self;
@@ -66,8 +83,14 @@
 // Save the survey to disk
 -(void)saveSurvey:(id)sender {
     
-    [fieldDataService createRecord:attributes survey:survey inputFields:inputFields];
+    if (record == NULL) {
+        record = [fieldDataService createRecord:attributes survey:survey inputFields:inputFields];
+    } else {
+        [fieldDataService updateRecord:record attributes:attributes inputFields:inputFields];
+    }
     
+    [AlertService DisplayMessageWithTitle:@"Observation Saved"
+                                  message:@"Please go to the \"Saved Records\" menu to upload your observations to the server."];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -99,9 +122,10 @@
     
     if (cell == nil) {
         if ([attribute.typeCode isEqualToString:kIntegerType]) {
-            IntegerInputCell* intCell = [[IntegerInputCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+            IntegerInputCell* intCell = [[IntegerInputCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                                                  reuseIdentifier:CellIdentifier];
             intCell.label.text = attribute.question;
-            //intCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            intCell.inputField.text = [loadedValues objectForKey:attribute.weight];
             cell = intCell;
             [inputFields setObject:intCell.inputField forKey:attribute.weight];
             
@@ -110,6 +134,7 @@
                                                                      reuseIdentifier:CellIdentifier
                                                                      options:attribute.options.allObjects];
             singleCell.label.text = attribute.question;
+            [singleCell setSelectedValue:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
             cell = singleCell;
             [inputFields setObject:singleCell.value forKey:attribute.weight];
             
@@ -118,29 +143,33 @@
                                                                     reuseIdentifier:CellIdentifier
                                                                     options:attribute.options.allObjects];
             multiCell.label.text = attribute.question;
+            [multiCell setSelectedValues:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
             cell = multiCell;
             [inputFields setObject:multiCell.value forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kImage]) {
             ImageCell* imageCell = [[ImageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
             imageCell.label.text = attribute.question;
             imageCell.parentController = self;
+            [imageCell setImage:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
             cell = imageCell;
             [inputFields setObject:imageCell.filePath forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {
             NSArray* species = [fieldDataService loadSpecies];
-            SpeciesCell* speciesCell = [[SpeciesCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier species:species];
+            SpeciesCell* speciesCell = [[SpeciesCell alloc]initWithStyle:UITableViewCellStyleDefault
+                                                           reuseIdentifier:CellIdentifier species:species];
             speciesCell.label.text = attribute.question;
             cell = speciesCell;
             [inputFields setObject:speciesCell.value forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kPoint]) {
-            LocationCell* locationCell = [[LocationCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+            LocationCell* locationCell = [[LocationCell alloc]initWithStyle:UITableViewCellStyleDefault
+                                                            reuseIdentifier:CellIdentifier];
+            [locationCell setLocation:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
             cell = locationCell;
             [inputFields setObject:locationCell.value forKey:attribute.weight];
         } else {
             TextInputCell* textCell = [[TextInputCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             textCell.label.text = attribute.question;
-            //textCell.label.text = [NSString stringWithFormat:@"%@ %@", attribute.question, attribute.weight];
-            //textCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            textCell.inputField.text = [loadedValues objectForKey:attribute.weight];
             cell = textCell;
             [inputFields setObject:textCell.inputField forKey:attribute.weight];
         }

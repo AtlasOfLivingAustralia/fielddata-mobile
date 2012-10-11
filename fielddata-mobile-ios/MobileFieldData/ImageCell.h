@@ -18,4 +18,6 @@
 @property (nonatomic, retain) NSMutableString* filePath;
 @property (nonatomic, retain) UITableViewController* parentController;
 
+- (void)setImage:(NSString*)imagePath;
+
 @end

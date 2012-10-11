@@ -23,7 +23,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.title = NSLocalizedString(@"Field Data Mobile", @"Field Data Mobile");
+        self.title = NSLocalizedString(@"Great Koala Count", @"Great Koala Count");
         
         preferences = [[Preferences alloc]init];
     }
@@ -148,12 +148,6 @@
                 break;
         }
     }
-    
-    /*
-    NSManagedObject *object = [[self fetchedResultsController] objectAtIndexPath:indexPath];
-    self.detailViewController.detailItem = object;
-    [self.navigationController pushViewController:self.detailViewController animated:YES];
-     */
 }
 
 -(void)openSavedRecordsPage
@@ -174,8 +168,9 @@
     } else if (surveys.count != 0) {
         Survey* survey = [surveys objectAtIndex:0];
         
-        SurveyViewController* surveyViewController =
-            [[SurveyViewController alloc] initWithStyle:UITableViewStylePlain survey:survey];
+        SurveyViewController* surveyViewController = [[SurveyViewController alloc] initWithStyle:UITableViewStylePlain
+                                                                                          survey:survey
+                                                                                          record:NULL];
         [self.navigationController pushViewController:surveyViewController animated:YES];
     }
     

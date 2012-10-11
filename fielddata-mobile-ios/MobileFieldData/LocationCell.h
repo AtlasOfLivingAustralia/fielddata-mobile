@@ -26,4 +26,6 @@
 @property (nonatomic, retain) UIButton* startGPS;
 @property (nonatomic, retain) NSMutableString* value;
 
+-(void)setLocation:(NSString*)locationString;
+
 @end

@@ -2,6 +2,7 @@ package au.org.ala.fielddata.mobile;
 
 import android.os.Bundle;
 import android.util.Log;
+import au.org.ala.fielddata.mobile.dao.DraftRecordDAO;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.dao.RecordDAO;
 import au.org.ala.fielddata.mobile.model.Attribute;
@@ -46,7 +47,7 @@ public class SurveyModelHolder extends SherlockFragment {
 		}
 		
 		setRetainInstance(true);
-		updateModel(surveyId, recordId);
+		updateModel(surveyId, recordId, savedInstanceState != null);
 		
 		// Now restore the default value if required
 		if (savedInstanceState != null) {
@@ -72,7 +73,7 @@ public class SurveyModelHolder extends SherlockFragment {
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		RecordDAO recordDao = new RecordDAO(getActivity());
+		DraftRecordDAO recordDao = new DraftRecordDAO(getActivity());
 		recordDao.save(model.getRecord());
 		Log.i("SurveyModelHolder", this+"Saving survey: "+model.getSurvey().server_id);
 		Log.i("SurveyModelHolder", this+"Saving record: "+model.getRecord().getId());
@@ -89,12 +90,12 @@ public class SurveyModelHolder extends SherlockFragment {
 
 
 
-	private synchronized void updateModel(int surveyId, int recordId) {
+	private synchronized void updateModel(int surveyId, int recordId, boolean updateFromDraft) {
 		if (model == null) {
 			Record record = null;
 			Survey survey;
 			if (recordId > 0) {
-				record = initRecord(recordId, surveyId);
+				record = initRecord(recordId, surveyId, updateFromDraft);
 				surveyId = record.survey_id;
 				
 			}
@@ -105,7 +106,7 @@ public class SurveyModelHolder extends SherlockFragment {
 			}
 			
 			if (recordId <= 0) {
-				record = initRecord(recordId, surveyId);
+				record = initRecord(recordId, surveyId, updateFromDraft);
 			}
 			
 			model = new SurveyViewModel(survey, record,
@@ -125,7 +126,7 @@ public class SurveyModelHolder extends SherlockFragment {
 	}
 	
 	
-	private Record initRecord(int recordId, int surveyId) {
+	private Record initRecord(int recordId, int surveyId, boolean draft) {
 		Record record;
 		if (recordId <= 0) {
 			record = new Record();
@@ -142,7 +143,12 @@ public class SurveyModelHolder extends SherlockFragment {
 			Log.d("SurveyModelHolder", "Creating new record for survey: "+surveyId);
 
 		} else {
-			RecordDAO recordDAO = new RecordDAO(getActivity().getApplicationContext());
+			RecordDAO recordDAO;
+			if (draft) {
+				recordDAO = new DraftRecordDAO(getActivity().getApplicationContext());
+			} else {
+				 recordDAO = new RecordDAO(getActivity().getApplicationContext());
+			}
 			record = recordDAO.load(Record.class, recordId);
 			Log.d("SurveyModelHolder", "Loaded record with id: "+recordId+", record="+new Gson().toJson(record));
 		}

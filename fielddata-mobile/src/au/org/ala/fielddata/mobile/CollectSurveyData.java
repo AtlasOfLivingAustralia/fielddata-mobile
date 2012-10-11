@@ -48,6 +48,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+import au.org.ala.fielddata.mobile.dao.DraftRecordDAO;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.dao.RecordDAO;
 import au.org.ala.fielddata.mobile.model.Attribute;
@@ -362,6 +363,16 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			finish();
 		}
 	}
+	
+	@Override
+	public void finish() {
+		// Delete our draft.
+		DraftRecordDAO recordDAO = new DraftRecordDAO(getApplicationContext());
+		recordDAO.deleteAll(Record.class);
+		
+		super.finish();
+	}
+	
 
 	static class BinderManager {
 		private List<Binder> binders;

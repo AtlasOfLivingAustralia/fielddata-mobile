@@ -20,6 +20,8 @@ import au.org.ala.fielddata.mobile.model.Record.PropertyAttributeValue;
 public class RecordDAO extends GenericDAO<Record> {
 
 	public static final String ATTRIBUTE_VALUE_TABLE = "ATTRIBUTE_VALUE";
+	public static final String RECORD_TABLE = "RECORD";
+	
 	
 	// Shared column indexes (select *)
 	public static final int ID_COLUMN = 0;
@@ -52,30 +54,30 @@ public class RecordDAO extends GenericDAO<Record> {
 	private static final int TYPE_TEXT = 0;
 	private static final int TYPE_URI = 1;
 	
+	protected static final String RECORD_COLUMNS = 
+		"server_id INTEGER, " +
+	    "created INTEGER, " +
+	    "updated INTEGER, " +
+	    "uuid TEXT, " +
+	    "number INTEGER, "+
+	    "when_millis INTEGER, "+
+	    "notes TEXT, "+
+	    "latitude REAL, " +
+	    "longitude REAL, " +
+	    "accuracy REAL, " +
+	    "point_millis INTEGER, " +
+	    "point_source TEXT, " +
+	    "location_id INTEGER, " +
+	    "survey_id INTEGER, "+
+	    "taxon_id INTEGER, "+
+	    "status INTEGER, " +
+	    "scientific_name TEXT";
+		
+    public static final String RECORD_TABLE_DDL = "CREATE TABLE "+RECORD_TABLE+
+	" (_id INTEGER PRIMARY KEY AUTOINCREMENT, "+ RECORD_COLUMNS+ ")";
 	
-	public static final String RECORD_TABLE_DDL = "CREATE TABLE RECORD "+
-	"(_id INTEGER PRIMARY KEY AUTOINCREMENT, "+
-	"server_id INTEGER, " +
-    "created INTEGER, " +
-    "updated INTEGER, " +
-    "uuid TEXT, " +
-    "number INTEGER, "+
-    "when_millis INTEGER, "+
-    "notes TEXT, "+
-    "latitude REAL, " +
-    "longitude REAL, " +
-    "accuracy REAL, " +
-    "point_millis INTEGER, " +
-    "point_source TEXT, " +
-    "location_id INTEGER, " +
-    "survey_id INTEGER, "+
-    "taxon_id INTEGER, "+
-    "status INTEGER, " +
-    "scientific_name TEXT)";
 	
-	
-	public static final String ATTRIBUTE_VALUE_TABLE_DDL = "CREATE TABLE "+ATTRIBUTE_VALUE_TABLE+" "+
-	"(_id INTEGER PRIMARY KEY AUTOINCREMENT, "+
+    protected static final String ATTRIBUTE_VALUE_COLUMNS =  " (_id INTEGER PRIMARY KEY AUTOINCREMENT, "+
 	"server_id INTEGER, "+
 	"created INTEGER, " +
     "updated INTEGER, " +
@@ -84,8 +86,18 @@ public class RecordDAO extends GenericDAO<Record> {
     "value TEXT, " +
     "type INTEGER)";
 	
+	public static final String ATTRIBUTE_VALUE_TABLE_DDL = 
+		"CREATE TABLE "+ATTRIBUTE_VALUE_TABLE+ ATTRIBUTE_VALUE_COLUMNS;
+	
+	
+	protected String recordTable;
+	protected String attributeValueTable;
+	
 	public RecordDAO(Context ctx) {
 		super(ctx);
+		
+		recordTable = RECORD_TABLE;
+		attributeValueTable = ATTRIBUTE_VALUE_TABLE;
 	}
 	
 	public Integer save(Record record, SQLiteDatabase db) {
@@ -130,22 +142,22 @@ public class RecordDAO extends GenericDAO<Record> {
 			record.created = now;
 			values.put("created", now);
 		
-			id = (int)db.insertOrThrow(Record.class.getSimpleName(), null, values);
+			id = (int)db.insertOrThrow(recordTable, null, values);
 	
 			record.setId(id);
 		}
 		else {
 			String whereClause = "_id=?";
 			String[] params = new String[] { id.toString()};
-			db.update(Record.class.getSimpleName(), values, whereClause, params);
+			db.update(recordTable, values, whereClause, params);
 		
 			// Since the number of attributes is fairly small we can probably 
 			// get away with re-writing the attributes.
 			whereClause = "record_id=?";
-			db.delete(ATTRIBUTE_VALUE_TABLE, whereClause, params);
+			db.delete(attributeValueTable, whereClause, params);
 		}
 		
-		InsertHelper insertHelper = new InsertHelper(db, ATTRIBUTE_VALUE_TABLE);
+		InsertHelper insertHelper = new InsertHelper(db, attributeValueTable);
 		for (AttributeValue attrValue : record.getAttributeValues()) {
 			// PropertyAttributeValues have already been inserted as columns of the RECORD table.
 			if (!(attrValue instanceof PropertyAttributeValue)) {
@@ -200,7 +212,7 @@ public class RecordDAO extends GenericDAO<Record> {
 		record.setValid(status == 0);
 		record.scientificName = result.getString(SCIENTIFIC_NAME_COLUMN);
 		
-		Cursor values = db.query(false, ATTRIBUTE_VALUE_TABLE, new String[]{"_id", "attribute_id", "value", "type"}, "record_id = ?", new String[] {Integer.toString(record.getId())}, null, null, null, null);
+		Cursor values = db.query(false, attributeValueTable, new String[]{"_id", "attribute_id", "value", "type"}, "record_id = ?", new String[] {Integer.toString(record.getId())}, null, null, null, null);
 		try {
 			values.moveToFirst();
 			List<AttributeValue> attrValues = record.getAttributeValues();
@@ -216,6 +228,42 @@ public class RecordDAO extends GenericDAO<Record> {
 			values.close();
 		}
 		return record;
+	}
+	
+	public void deleteAll(Class<Record> recordClass) {
+		synchronized(helper) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		try {
+			db.delete(recordTable, null, null);
+			db.delete(attributeValueTable, null, null);
+		}
+		finally {
+			if (db != null) {
+				helper.close();
+			}
+		}
+		}
+	}
+
+	public void delete(Class<Record> recordClass, Integer id) {
+		synchronized(helper) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		
+		try {
+			String[] recordId = new String[] {Integer.toString(id)};
+			db.delete(recordTable, "_id=?", recordId);
+			db.delete(attributeValueTable, "record_id=?", recordId);
+		}
+		finally {
+			if (db != null) {
+				helper.close();
+			}
+		}
+		}
+	}
+	
+	protected String tableName(Class<Record> modelClass) {
+		return recordTable;
 	}
 
 }

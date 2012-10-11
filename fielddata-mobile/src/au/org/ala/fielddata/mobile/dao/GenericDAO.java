@@ -59,14 +59,14 @@ public class GenericDAO<T extends Persistent> {
 		try {
 			db = helper.getReadableDatabase();
 			db.beginTransaction();
-			result = db.query(true, modelClass.getSimpleName(), null, column + " = ?",
+			result = db.query(true, tableName(modelClass), null, column + " = ?",
 					new String[] { value }, null, null, null, null);
 
 			
 			if (result.getCount() != 1) {
 				
 				if (!allowNoResults) {
-					Log.e("GenericDAO", "Expected 1 "+modelClass.getSimpleName()+", found: "+result.getCount());
+					Log.e("GenericDAO", "Expected 1 "+tableName(modelClass)+", found: "+result.getCount());
 					throw new DatabaseException("Expected 1 result, found: " + result.getCount());
 				}
 			}
@@ -120,13 +120,15 @@ public class GenericDAO<T extends Persistent> {
 		values.put("json", value);
 		values.put("server_id", modelObject.server_id);
 
+		@SuppressWarnings("unchecked")
+		Class<T> class1 = (Class<T>)modelObject.getClass();
 		if (modelObject.getId() != null) {
-			db.update(modelObject.getClass().getSimpleName(), values, "_id=?",
+			db.update(tableName(class1), values, "_id=?",
 					new String[] { Integer.toString(modelObject.getId()) });
 		} else {
 			values.put("created", now);
 			modelObject.created = now;
-			long id = db.insertOrThrow(modelObject.getClass().getSimpleName(), null, values);
+			long id = db.insertOrThrow(tableName(class1), null, values);
 			if (id == -1) {
 				throw new RuntimeException("Error saving object: " + modelObject);
 			}
@@ -143,7 +145,7 @@ public class GenericDAO<T extends Persistent> {
 		T modelObject = null;
 		try {
 			db.beginTransaction();
-			result = db.query(false, modelClass.getSimpleName(), null, null, null, null, null,
+			result = db.query(false, tableName(modelClass), null, null, null, null, null,
 					null, null);
 
 			if (result.getCount() > 0) {
@@ -182,7 +184,7 @@ public class GenericDAO<T extends Persistent> {
 			db.beginTransaction();
 
 			result = db.rawQuery(
-					String.format("SELECT count(*) from %s", modelClass.getSimpleName()), null);
+					String.format("SELECT count(*) from %s", tableName(modelClass)), null);
 			if (result.getCount() != 1) {
 				throw new DatabaseException("Error performing query");
 			}
@@ -218,7 +220,7 @@ public class GenericDAO<T extends Persistent> {
 		synchronized(helper) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		try {
-			db.delete(modelClass.getSimpleName(), null, null);
+			db.delete(tableName(modelClass), null, null);
 		}
 		finally {
 			if (db != null) {
@@ -233,7 +235,7 @@ public class GenericDAO<T extends Persistent> {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		
 		try {
-			db.delete(modelClass.getSimpleName(), "_id=?", new String[] {Integer.toString(id)});
+			db.delete(tableName(modelClass), "_id=?", new String[] {Integer.toString(id)});
 		}
 		finally {
 			if (db != null) {
@@ -241,5 +243,9 @@ public class GenericDAO<T extends Persistent> {
 			}
 		}
 		}
+	}
+	
+	protected String tableName(Class<T> modelClass) {
+		return modelClass.getSimpleName();
 	}
 }

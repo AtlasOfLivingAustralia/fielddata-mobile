@@ -13,6 +13,10 @@ import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Record.AttributeValue;
 import au.org.ala.fielddata.mobile.model.Record.PropertyAttributeValue;
 
+/**
+ * The RecordDAO is responsible for storing and retrieving Records from the 
+ * database.
+ */
 public class RecordDAO extends GenericDAO<Record> {
 
 	public static final String ATTRIBUTE_VALUE_TABLE = "ATTRIBUTE_VALUE";

@@ -17,6 +17,7 @@ package au.org.ala.fielddata.mobile.dao;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.User;
@@ -30,13 +31,11 @@ import au.org.ala.fielddata.mobile.model.User;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "FieldData.db";
-	private static final int SCHEMA_VERSION = 1;
+	private static final int SCHEMA_VERSION = 2;
 
 	private static final String[] TABLES = { Survey.class.getSimpleName(),
 			Species.class.getSimpleName(),
 			User.class.getSimpleName()};
-
-	private Context ctx;
 
 	private static DatabaseHelper instance;
 	
@@ -49,7 +48,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	private DatabaseHelper(Context ctx) {
 		super(ctx, DATABASE_NAME, null, SCHEMA_VERSION);
-		this.ctx = ctx;
 	}
 
 	@Override
@@ -77,8 +75,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		throw new RuntimeException("Upgrade not supported.");
+		version2(db);
 	}
+	
+	private void version2(SQLiteDatabase db) {
+		Log.i("DatabaseHelper", "Upgrading to version 2 of the schema");
+		db.execSQL("DROP TABLE RECORD");
+		createRecordTable(db);
+	}
+	
 
 	private void createRecordTable(SQLiteDatabase db) {
 		

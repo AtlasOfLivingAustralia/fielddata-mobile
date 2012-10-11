@@ -21,9 +21,10 @@ import junit.framework.TestCase;
 import android.test.AndroidTestCase;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
-import au.org.ala.fielddata.mobile.service.LoginResponse;
+import au.org.ala.fielddata.mobile.service.FieldDataServiceClient.SurveysAndSpecies;
 import au.org.ala.fielddata.mobile.service.LoginService;
-import au.org.ala.fielddata.mobile.service.FieldDataService;
+import au.org.ala.fielddata.mobile.service.FieldDataServiceClient;
+import au.org.ala.fielddata.mobile.service.dto.LoginResponse;
 
 /**
  * The class <code>RecordServiceTest</code> contains tests for the class {@link
@@ -35,7 +36,7 @@ public class RecordServiceTest extends AndroidTestCase {
 	
 	
 	protected void setUp() {
-		login = new LoginService(getContext()).login();
+		//login = new LoginService(getContext()).login(username, password, portalName);
 	}
 
 	/**
@@ -44,7 +45,7 @@ public class RecordServiceTest extends AndroidTestCase {
 	public void testSync() throws Exception
 	{
 		// add test code here
-		FieldDataService fixture = new FieldDataService(getContext());
+		FieldDataServiceClient fixture = new FieldDataServiceClient(getContext());
 		List<Record> records = new ArrayList<Record>();
 		Record r = new Record();
 		records.add(r);
@@ -53,8 +54,8 @@ public class RecordServiceTest extends AndroidTestCase {
 	}
 	
 	public void testDownloadSurveys() {
-		FieldDataService fixture = new FieldDataService(getContext());
-		List<Survey> surveys = fixture.downloadSurveys();
+		FieldDataServiceClient fixture = new FieldDataServiceClient(getContext());
+		SurveysAndSpecies surveys = fixture.downloadSurveys();
 		System.out.println("Surveys: "+surveys);
 		
 	}

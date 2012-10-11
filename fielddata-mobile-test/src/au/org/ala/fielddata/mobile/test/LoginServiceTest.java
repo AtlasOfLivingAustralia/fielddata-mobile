@@ -31,7 +31,7 @@ public class LoginServiceTest extends AndroidTestCase {
 	{
 		// add test code here
 		LoginService fixture = new LoginService(getContext());
-		fixture.login();
+		//fixture.login();
 		
 	}
 }

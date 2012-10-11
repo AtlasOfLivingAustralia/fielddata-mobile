@@ -14,30 +14,149 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.test;
 
+import android.location.Location;
+import android.net.Uri;
 import android.test.AndroidTestCase;
-import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.dao.RecordDAO;
+import au.org.ala.fielddata.mobile.model.Attribute;
+import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.model.Record;
 
 public class GenericDaoTest extends AndroidTestCase {
 
-	
-	public void testSaveAndLoadById() throws Exception {
-		GenericDAO<Record> recordDao = new GenericDAO<Record>(getContext());
+	/**
+	 * Tests a new Record can be inserted into the database.
+	 */
+	public void testRecordInsert() throws Exception {
+		RecordDAO recordDao = new RecordDAO(getContext());
 		
+		
+		long now = System.currentTimeMillis();
+				
+		Location location = createLocation(now);
+		Record record = createRecord(now, location);
+		
+		String value = "Test";
+		Attribute attr = addAttribute(record, 1, AttributeType.CATEGORIZED_MULTI_SELECT, value);
+		
+		Attribute attr2 = new Attribute();
+		attr2.server_id = 2;
+		attr2.typeCode = AttributeType.IMAGE.getCode();
+		Uri uri = Uri.parse("file:///test/photo.jpg");
+		record.setUri(attr2, uri);
+		
+		recordDao.save(record);
+		
+		Record record2 = recordDao.load(Record.class, record.getId());
+		
+		Location location2 = record2.getLocation();
+		
+		assertEquals(location.getLatitude(), location2.getLatitude());
+		assertEquals(location.getLongitude(), location2.getLongitude());
+		assertEquals(location.getAccuracy(), location2.getAccuracy());
+		assertEquals(location.getProvider(), location2.getProvider());
+		assertEquals(location.getTime(), location2.getTime());
+		
+		assertEquals(record.notes, record2.notes);
+		assertEquals(record.number, record2.number);
+		assertEquals(record.scientificName, record2.scientificName);
+		assertEquals(record.survey_id, record2.survey_id);
+		assertEquals(record.taxon_id, record2.taxon_id);
+		assertEquals(record.when, record2.when);
+		
+		assertEquals(value, record2.getValue(attr));
+		assertEquals("file:///test/photo.jpg", record2.getUri(attr2).toString());
+	}
+
+	private Attribute addAttribute(Record record, int serverId, AttributeType type, String value) {
+		Attribute attr = new Attribute();
+		attr.server_id = serverId;
+		attr.typeCode = type.getCode();
+		record.setValue(attr, value);
+		return attr;
+	}
+
+	private Record createRecord(long now, Location location) {
 		Record record = new Record();
 		
-		record.latitude = -36.885845;
-		record.longitude = 149.912548;
+		record.setLocation(location);
+		
 		record.notes = "test from android";
+		record.number = 2;
+		record.scientificName = "Test";
+		record.survey_id = 1;
+		record.taxon_id = 2;
+		record.when = now;
+		return record;
+	}
+
+	private Location createLocation(long now) {
+		Location location = new Location("GPS");
+		location.setLatitude(-36.885845);
+		location.setLongitude( 149.912548);
+		location.setAccuracy(10.0f);
+		location.setTime(now);
+		return location;
+	}
+	
+	/**
+	 * Tests a new Record with a null location can be inserted into the database.
+	 */
+	public void testRecordInsertWithNullLocation() throws Exception {
+		RecordDAO recordDao = new RecordDAO(getContext());
 		
-		record.id = recordDao.save(record);
+		long now = System.currentTimeMillis();
+		Record record = createRecord(now, null);
 		
+		String value = "Test";
+		Attribute attr = addAttribute(record, 1, AttributeType.CATEGORIZED_MULTI_SELECT, value);
 		
-		Record record2 = recordDao.load(Record.class, record.id);
+		recordDao.save(record);
 		
-		assertEquals(record.latitude, record2.latitude);
-		assertEquals(record.longitude, record2.longitude);
+		Record record2 = recordDao.load(Record.class, record.getId());
+		
+		assertNull(record2.getLocation());
 		assertEquals(record.notes, record2.notes);
+		assertEquals(record.number, record2.number);
+		assertEquals(record.scientificName, record2.scientificName);
+		assertEquals(record.survey_id, record2.survey_id);
+		assertEquals(record.taxon_id, record2.taxon_id);
+		assertEquals(record.when, record2.when);
 		
+		assertEquals("Test", record2.getValue(attr));
+	}
+	
+	/**
+	 * Tests updating a record.
+	 * Assumes that the save method works correctly.
+	 */
+	public void testRecordUpdate() throws Exception {
+		RecordDAO recordDao = new RecordDAO(getContext());
+		
+		long now = System.currentTimeMillis();
+		Record record = createRecord(now, null);
+		
+		Attribute attr = new Attribute();
+		attr.server_id = 1;
+		attr.typeCode = AttributeType.CATEGORIZED_MULTI_SELECT.getCode();
+		record.setValue(attr, "Test");
+		
+		recordDao.save(record);
+		
+		record.notes = "Test2";
+		recordDao.save(record);
+		
+		Record record2 = recordDao.load(Record.class, record.getId());
+		
+		assertNull(record2.getLocation());
+		assertEquals(record.notes, record2.notes);
+		assertEquals(record.number, record2.number);
+		assertEquals(record.scientificName, record2.scientificName);
+		assertEquals(record.survey_id, record2.survey_id);
+		assertEquals(record.taxon_id, record2.taxon_id);
+		assertEquals(record.when, record2.when);
+		
+		assertEquals(1, record2.getAttributeValues().size());
+		assertEquals("Test", record2.getValue(attr));
 	}
 }

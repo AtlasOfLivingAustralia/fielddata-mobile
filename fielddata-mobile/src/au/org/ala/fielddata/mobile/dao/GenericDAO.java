@@ -72,11 +72,7 @@ public class GenericDAO<T extends Persistent> {
 			}
 			else {
 				result.moveToFirst();
-				String json = result.getString(5);
-				Log.v("GenericDAO", "loading: "+json);
-				Gson gson = Mapper.getGson(context);
-				modelObject = (T) gson.fromJson(json, modelClass);
-				modelObject.setId(result.getInt(0));
+				modelObject = map(db, result, modelClass);
 			}
 			db.setTransactionSuccessful();
 
@@ -154,11 +150,7 @@ public class GenericDAO<T extends Persistent> {
 
 				result.moveToFirst();
 				while (!result.isAfterLast()) {
-					String json = result.getString(5);
-					Log.v("GenericDAO", "value="+json);
-					Gson gson = Mapper.getGson(context);
-					modelObject = (T) gson.fromJson(json, modelClass);
-					modelObject.setId(result.getInt(0));
+					modelObject = map(db, result, modelClass);
 					results.add(modelObject);
 					result.moveToNext();
 
@@ -209,6 +201,17 @@ public class GenericDAO<T extends Persistent> {
 		}
 		return count;
 		}
+	}
+	
+	protected T map(SQLiteDatabase db, Cursor result, Class<T> modelClass) {
+		T modelObject;
+		String json = result.getString(5);
+		Log.v("GenericDAO", "value="+json);
+		Gson gson = Mapper.getGson(context);
+		modelObject = (T) gson.fromJson(json, modelClass);
+		modelObject.setId(result.getInt(0));
+		
+		return modelObject;
 	}
 
 	public void deleteAll(Class<T> modelClass) {

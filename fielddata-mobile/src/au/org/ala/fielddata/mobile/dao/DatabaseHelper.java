@@ -17,7 +17,6 @@ package au.org.ala.fielddata.mobile.dao;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.User;
@@ -34,7 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final int SCHEMA_VERSION = 1;
 
 	private static final String[] TABLES = { Survey.class.getSimpleName(),
-			Record.class.getSimpleName(), Species.class.getSimpleName(),
+			Species.class.getSimpleName(),
 			User.class.getSimpleName()};
 
 	private Context ctx;
@@ -64,7 +63,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 						+ " (_id INTEGER PRIMARY KEY AUTOINCREMENT, server_id INTEGER, " +
 							"created INTEGER, updated INTEGER, last_sync INTEGER" +
 							"name TEXT, json TEXT)");
+				
+				
 			}
+			createRecordTable(db);
 			
 			db.setTransactionSuccessful();
 		} finally {
@@ -78,5 +80,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		throw new RuntimeException("Upgrade not supported.");
 	}
 
+	private void createRecordTable(SQLiteDatabase db) {
+		
+		db.execSQL(RecordDAO.RECORD_TABLE_DDL);
+		db.execSQL(RecordDAO.ATTRIBUTE_VALUE_TABLE_DDL);
+	}
 	
 }

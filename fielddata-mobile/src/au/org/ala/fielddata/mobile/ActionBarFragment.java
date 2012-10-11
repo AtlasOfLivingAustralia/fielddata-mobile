@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.dao.RecordDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.UploadService;
@@ -58,7 +59,7 @@ public class ActionBarFragment extends Fragment implements OnClickListener {
 
 			@Override
 			protected Integer doInBackground(Void... params) {
-				GenericDAO<Record> recordDAO = new GenericDAO<Record>(getActivity());
+				RecordDAO recordDAO = new RecordDAO(getActivity());
 				return recordDAO.count(Record.class);
 			}
 

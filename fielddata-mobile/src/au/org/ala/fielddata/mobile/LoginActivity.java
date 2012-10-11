@@ -93,6 +93,7 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 						LoginResponse response = loginService.login(username.getText().toString(), password.getText()
 								.toString(), portalName);
 
+						publishProgress();
 						clearPersistantData();
 						initialiseUserAndSurveys(response);
 						// return to the main activity
@@ -104,6 +105,15 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 					}
 					return null;
 				}
+
+				
+				
+				@Override
+				protected void onProgressUpdate(Void... values) {
+					pd.setTitle("Downloading surveys...");
+				}
+
+
 
 				protected void onPostExecute(Void result) {
 					

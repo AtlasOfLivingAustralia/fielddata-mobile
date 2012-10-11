@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import android.location.Location;
 import android.net.Uri;
+import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 
 import com.google.gson.annotations.SerializedName;
@@ -31,10 +32,10 @@ public class Record extends Persistent {
 	@SerializedName("id")
 	public String uuid;
 	
-	public Double latitude;
-	public Double longitude;
+	private Double latitude;
+	private Double longitude;
 	public Integer location; // Id of location object on the server.
-	public Double accuracy;
+	private Double accuracy;
 	public Long when;
 	public Date lateDate; // I think last sync date?
 	public String notes;
@@ -56,6 +57,16 @@ public class Record extends Persistent {
 		
 		public boolean uri;
 		
+		public StringValue() {
+			value = null;
+			uri = false;
+		}
+		
+		public StringValue(String value, boolean uri) {
+			this.value = value;
+			this.uri = uri;
+		}
+		
 		public String getValue() {
 			return value;
 		}
@@ -63,11 +74,22 @@ public class Record extends Persistent {
 
 	
 	public static class AttributeValue {
-		public Integer id = 1;
+		public Integer id = -1;
 		public Integer server_id;
 		public Integer attribute_id;
+		protected StringValue value;
 		
-		protected StringValue value = new StringValue();
+		
+		public AttributeValue() {
+			value = new StringValue();
+		}
+		/**
+		 * Intended for use when persisting to the database.
+		 */
+		public AttributeValue(int attribute_id, String value, boolean uri) {
+			this.attribute_id = attribute_id;
+			this.value = new StringValue(value, uri);
+		}
 		
 		void setValue(String value) {
 			this.value.value = value;
@@ -91,6 +113,10 @@ public class Record extends Persistent {
 			return Uri.parse(value.value);
 		}
 		
+		public boolean isUri() {
+			return value.uri;
+		}
+		
 		public String nullSafeValue() {
 			if (value.value == null) {
 				return "";
@@ -101,7 +127,7 @@ public class Record extends Persistent {
 		
 	}
 	
-	class PropertyAttributeValue extends AttributeValue {
+	public class PropertyAttributeValue extends AttributeValue {
 		
 		private AttributeType attributeType;
 		public PropertyAttributeValue(Attribute attribute) {
@@ -229,8 +255,11 @@ public class Record extends Persistent {
 
 	protected AttributeValue valueOf(Attribute attribute) {
 		int id = attribute.getServerId();
+		Log.d("Record", "Looking for attribute with attr=: "+id);
+		
 		for (AttributeValue value : attributeValues) {
 			if (id == value.attribute_id) {
+				Log.d("Record", "Found: "+value.nullSafeValue());
 				return value;
 			}
 		}

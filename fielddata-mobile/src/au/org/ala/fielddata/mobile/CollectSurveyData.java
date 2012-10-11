@@ -49,6 +49,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.dao.RecordDAO;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.MapDefaults;
 import au.org.ala.fielddata.mobile.model.Record;
@@ -670,7 +671,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			boolean success = true;
 			try {
 
-				GenericDAO<Record> recordDao = new GenericDAO<Record>(ctx.getApplicationContext());
+				RecordDAO recordDao = new RecordDAO(ctx.getApplicationContext());
 				recordDao.save(ctx.getViewModel().getRecord());
 				
 				if (upload) {

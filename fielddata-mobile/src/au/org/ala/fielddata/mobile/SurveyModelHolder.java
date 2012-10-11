@@ -3,6 +3,7 @@ package au.org.ala.fielddata.mobile;
 import android.os.Bundle;
 import android.util.Log;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.dao.RecordDAO;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
@@ -71,7 +72,7 @@ public class SurveyModelHolder extends SherlockFragment {
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		GenericDAO<Record> recordDao = new GenericDAO<Record>(getActivity());
+		RecordDAO recordDao = new RecordDAO(getActivity());
 		recordDao.save(model.getRecord());
 		Log.i("SurveyModelHolder", this+"Saving survey: "+model.getSurvey().server_id);
 		Log.i("SurveyModelHolder", this+"Saving record: "+model.getRecord().getId());
@@ -141,7 +142,7 @@ public class SurveyModelHolder extends SherlockFragment {
 			Log.d("SurveyModelHolder", "Creating new record for survey: "+surveyId);
 
 		} else {
-			GenericDAO<Record> recordDAO = new GenericDAO<Record>(getActivity().getApplicationContext());
+			RecordDAO recordDAO = new RecordDAO(getActivity().getApplicationContext());
 			record = recordDAO.load(Record.class, recordId);
 			Log.d("SurveyModelHolder", "Loaded record with id: "+recordId+", record="+new Gson().toJson(record));
 		}

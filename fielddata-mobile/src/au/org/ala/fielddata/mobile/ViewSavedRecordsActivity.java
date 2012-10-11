@@ -34,6 +34,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.dao.RecordDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.service.UploadService;
@@ -134,7 +135,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 		}
 		protected List<RecordView> doInBackground(Void... ignored) {
 			
-			GenericDAO<Record> dao = new GenericDAO<Record>(ctx);
+			RecordDAO dao = new RecordDAO(ctx);
 
 			records = dao.loadAll(Record.class);
 			
@@ -271,7 +272,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 	
 	
 	private void deleteSelectedRecords() {
-		GenericDAO<Record> recordDao = new GenericDAO<Record>(getActivity());
+		RecordDAO recordDao = new RecordDAO(getActivity());
 		SparseBooleanArray selected = getListView().getCheckedItemPositions();
 		int deleteCount = 0;
 		for (int i=0; i<selected.size(); i++) {

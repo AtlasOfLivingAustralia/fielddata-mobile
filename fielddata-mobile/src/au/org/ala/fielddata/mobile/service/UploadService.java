@@ -27,6 +27,7 @@ import android.util.Log;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.ViewSavedRecordsActivity;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.dao.RecordDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.Preferences;
@@ -153,7 +154,7 @@ public class UploadService extends Service {
 	 * (SUCCESS, FAILED_INVALID or FAILED_SERVER).
 	 */
 	private void uploadRecords(int[] recordIds) {
-		GenericDAO<Record> recordDao = new GenericDAO<Record>(this);
+		RecordDAO recordDao = new RecordDAO(this);
 		List<Record> records = new ArrayList<Record>();
 		if (recordIds == null) {
 			records.addAll(recordDao.loadAll(Record.class));

@@ -24,8 +24,8 @@ import android.os.Process;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import au.org.ala.fielddata.mobile.MobileFieldDataDashboard;
 import au.org.ala.fielddata.mobile.R;
-import au.org.ala.fielddata.mobile.ViewSavedRecordsActivity;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.dao.RecordDAO;
 import au.org.ala.fielddata.mobile.model.Record;
@@ -263,14 +263,17 @@ public class UploadService extends Service {
 	}
 	
 	private void notifyFailed(int numFailed) {
-		Intent savedActivity = new Intent(this, ViewSavedRecordsActivity.class);
+		Intent savedActivity = new Intent(this, MobileFieldDataDashboard.class);
+		savedActivity.putExtra(MobileFieldDataDashboard.SELECTED_TAB_BUNDLE_KEY, MobileFieldDataDashboard.RECORDS_TAB_INDEX);
+		
 		PendingIntent intent = PendingIntent.getActivity(this, START_NOT_STICKY, savedActivity, PendingIntent.FLAG_CANCEL_CURRENT);
 		
 		notify(numFailed + " records failed to upload", "Touch to view saved records", intent, false);
 	}
 	
 	private void notifyQueued() {
-		Intent savedActivity = new Intent(this, ViewSavedRecordsActivity.class);
+		Intent savedActivity = new Intent(this, MobileFieldDataDashboard.class);
+		savedActivity.putExtra(MobileFieldDataDashboard.SELECTED_TAB_BUNDLE_KEY, MobileFieldDataDashboard.RECORDS_TAB_INDEX);
 		PendingIntent intent = PendingIntent.getActivity(this, START_NOT_STICKY, savedActivity, PendingIntent.FLAG_CANCEL_CURRENT);
 		
 		notify("Upload pending - no network", "Records will be uploaded when network service is available.", intent, true);

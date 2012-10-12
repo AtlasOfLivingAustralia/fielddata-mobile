@@ -58,7 +58,9 @@ import com.actionbarsherlock.view.Window;
 public class MobileFieldDataDashboard extends SherlockFragmentActivity implements
 		OnSharedPreferenceChangeListener {
 
-	private static final String SELECTED_TAB_BUNDLE_KEY = "tab";
+	public static final String SELECTED_TAB_BUNDLE_KEY = "tab";
+	public static final int RECORDS_TAB_INDEX = 2;
+	
 	private static final String GPS_QUESTION_BUNDLE_KEY = "gps";
 	private Preferences preferences;
 	private TextView status;
@@ -77,7 +79,10 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 
 		setContentView(R.layout.activity_mobile_data_dashboard);
 		preferences = new Preferences(this);
-
+		PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preference1, true);
+		PreferenceManager
+				.setDefaultValues(getApplicationContext(), R.xml.network_preferences, true);
+		
 		status = (TextView) findViewById(R.id.status);
 
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -87,21 +92,22 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 		TabsAdapter tabsAdapter = new TabsAdapter(this, viewPager);
 		viewPager.setAdapter(tabsAdapter);
 
-		for (String title : titles) {
+		int selectedTabIndex = 0;
+		if (savedInstanceState != null) {
+			askedAboutGPS = savedInstanceState.getBoolean(GPS_QUESTION_BUNDLE_KEY);
+			selectedTabIndex = savedInstanceState.getInt(SELECTED_TAB_BUNDLE_KEY, 0);
+		}
+		selectedTabIndex = getIntent().getIntExtra(SELECTED_TAB_BUNDLE_KEY, selectedTabIndex);
+		
+		for (int i=0; i<titles.length; i++) {
+			String title = titles[i];
 			ActionBar.Tab tab = getSupportActionBar().newTab();
 			tab.setText(title);
 			tab.setTabListener(tabsAdapter);
-			Fragment frag = getSupportFragmentManager().findFragmentByTag(title);
-			if (frag != null) {
-				getSupportFragmentManager().beginTransaction().remove(frag).commit();
-			}
 			getSupportActionBar().addTab(tab);
 		}
-
-		if (savedInstanceState != null) {
-			askedAboutGPS = savedInstanceState.getBoolean(GPS_QUESTION_BUNDLE_KEY);
-			getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt(SELECTED_TAB_BUNDLE_KEY, 0));
-		}
+		
+		getSupportActionBar().setSelectedNavigationItem(selectedTabIndex);
 
 	}
 
@@ -280,6 +286,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 
 		super.onResume();
 
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 		refreshPage();
 
 	}
@@ -310,13 +318,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 	}
 
 	private void refreshPage() {
-
-		PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preference1, true);
-		PreferenceManager
-				.setDefaultValues(getApplicationContext(), R.xml.network_preferences, true);
-
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		// check if the preferences are set if not redirect
 		if (preferences.getFieldDataServerHostName().equals("")

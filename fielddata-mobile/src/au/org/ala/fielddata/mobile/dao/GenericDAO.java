@@ -31,7 +31,7 @@ public class GenericDAO<T extends Persistent> {
 
 	protected DatabaseHelper helper;
 	protected Context context;
-	
+
 	public static final String SELECT_BY_ID = "SELECT json FROM %s WHERE _id=?";
 
 	public GenericDAO(Context ctx) {
@@ -46,66 +46,68 @@ public class GenericDAO<T extends Persistent> {
 	public T load(Class<T> modelClass, Integer id) {
 		return findByColumn(modelClass, "_id", Integer.toString(id), false);
 	}
-	
+
 	public T loadIfExists(Class<T> modelClass, Integer id) {
 		return findByColumn(modelClass, "_id", Integer.toString(id), true);
 	}
 
-	private T findByColumn(Class<T> modelClass, String column, String value, boolean allowNoResults) {
-		synchronized(helper) {
-		SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor result = null;
-		T modelObject = null;
-		try {
-			db = helper.getReadableDatabase();
-			db.beginTransaction();
-			result = db.query(true, tableName(modelClass), null, column + " = ?",
-					new String[] { value }, null, null, null, null);
+	protected T findByColumn(Class<T> modelClass, String column, String value,
+			boolean allowNoResults) {
+		synchronized (helper) {
+			SQLiteDatabase db = helper.getReadableDatabase();
+			Cursor result = null;
+			T modelObject = null;
+			try {
+				db = helper.getReadableDatabase();
+				db.beginTransaction();
+				result = db.query(true, tableName(modelClass), null, column + " = ?",
+						new String[] { value }, null, null, null, null);
 
-			
-			if (result.getCount() != 1) {
-				
-				if (!allowNoResults) {
-					Log.e("GenericDAO", "Expected 1 "+tableName(modelClass)+", found: "+result.getCount());
-					throw new DatabaseException("Expected 1 result, found: " + result.getCount());
+				if (result.getCount() != 1) {
+
+					if (!allowNoResults) {
+						Log.e("GenericDAO", "Expected 1 " + tableName(modelClass) + ", found: "
+								+ result.getCount());
+						throw new DatabaseException("Expected 1 result, found: "
+								+ result.getCount());
+					}
+				} else {
+					result.moveToFirst();
+					modelObject = map(db, result, modelClass);
+				}
+				db.setTransactionSuccessful();
+
+			} finally {
+				if (result != null) {
+					result.close();
+				}
+				if (db != null) {
+					db.endTransaction();
+					helper.close();
 				}
 			}
-			else {
-				result.moveToFirst();
-				modelObject = map(db, result, modelClass);
-			}
-			db.setTransactionSuccessful();
 
-		} finally {
-			if (result != null) {
-				result.close();
-			}
-			if (db != null) {
-				db.endTransaction();
-				helper.close();
-			}
-		}
-
-		return modelObject;
+			return modelObject;
 		}
 	}
 
 	public Integer save(T modelObject) {
-		synchronized(helper) {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		try {
-			db.beginTransaction();
+		synchronized (helper) {
+			Integer id = null;
+			SQLiteDatabase db = helper.getWritableDatabase();
+			try {
+				db.beginTransaction();
 
-			modelObject.setId(save(modelObject, db));
+				id = save(modelObject, db);
 
-			db.setTransactionSuccessful();
-		} finally {
-			if (db != null) {
-				db.endTransaction();
-				helper.close();
+				db.setTransactionSuccessful();
+			} finally {
+				if (db != null) {
+					db.endTransaction();
+					helper.close();
+				}
 			}
-		}
-		return modelObject.getId(); 
+			return id;
 		}
 	}
 
@@ -116,12 +118,12 @@ public class GenericDAO<T extends Persistent> {
 		modelObject.updated = now;
 		Gson gson = Mapper.getGson(context);
 		String value = gson.toJson(modelObject);
-		Log.v("GenericDAO", "saving: "+value);
+		Log.v("GenericDAO", "saving: " + value);
 		values.put("json", value);
 		values.put("server_id", modelObject.server_id);
 
 		@SuppressWarnings("unchecked")
-		Class<T> class1 = (Class<T>)modelObject.getClass();
+		Class<T> class1 = (Class<T>) modelObject.getClass();
 		if (modelObject.getId() != null) {
 			db.update(tableName(class1), values, "_id=?",
 					new String[] { Integer.toString(modelObject.getId()) });
@@ -138,113 +140,111 @@ public class GenericDAO<T extends Persistent> {
 	}
 
 	public List<T> loadAll(Class<T> modelClass) {
-		synchronized(helper) {
-		List<T> results = new ArrayList<T>();
-		SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor result = null;
-		T modelObject = null;
-		try {
-			db.beginTransaction();
-			result = db.query(false, tableName(modelClass), null, null, null, null, null,
-					null, null);
+		synchronized (helper) {
+			List<T> results = new ArrayList<T>();
+			SQLiteDatabase db = helper.getReadableDatabase();
+			Cursor result = null;
+			T modelObject = null;
+			try {
+				db.beginTransaction();
+				result = db.query(false, tableName(modelClass), null, null, null, null, null, null,
+						null);
 
-			if (result.getCount() > 0) {
+				if (result.getCount() > 0) {
 
-				result.moveToFirst();
-				while (!result.isAfterLast()) {
-					modelObject = map(db, result, modelClass);
-					results.add(modelObject);
-					result.moveToNext();
+					result.moveToFirst();
+					while (!result.isAfterLast()) {
+						modelObject = map(db, result, modelClass);
+						results.add(modelObject);
+						result.moveToNext();
 
+					}
+				}
+				db.setTransactionSuccessful();
+
+			} finally {
+				if (result != null) {
+					result.close();
+				}
+				if (db != null) {
+					db.endTransaction();
+					helper.close();
 				}
 			}
-			db.setTransactionSuccessful();
 
-		} finally {
-			if (result != null) {
-				result.close();
-			}
-			if (db != null) {
-				db.endTransaction();
-				helper.close();
-			}
-		}
-
-		return results;
+			return results;
 		}
 	}
 
 	public int count(Class<T> modelClass) {
-		synchronized(helper) {
-		SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor result = null;
+		synchronized (helper) {
+			SQLiteDatabase db = helper.getReadableDatabase();
+			Cursor result = null;
 
-		int count = 0;
-		try {
-			db.beginTransaction();
+			int count = 0;
+			try {
+				db.beginTransaction();
 
-			result = db.rawQuery(
-					String.format("SELECT count(*) from %s", tableName(modelClass)), null);
-			if (result.getCount() != 1) {
-				throw new DatabaseException("Error performing query");
+				result = db.rawQuery(
+						String.format("SELECT count(*) from %s", tableName(modelClass)), null);
+				if (result.getCount() != 1) {
+					throw new DatabaseException("Error performing query");
+				}
+				result.moveToFirst();
+				count = result.getInt(0);
+
+				db.setTransactionSuccessful();
+			} finally {
+				if (result != null) {
+					result.close();
+				}
+				if (db != null) {
+					db.endTransaction();
+					helper.close();
+				}
 			}
-			result.moveToFirst();
-			count = result.getInt(0);
-			
-			db.setTransactionSuccessful();
-		} finally {
-			if (result != null) {
-				result.close();
-			}
-			if (db != null) {
-				db.endTransaction();
-				helper.close();
-			}
-		}
-		return count;
+			return count;
 		}
 	}
-	
+
 	protected T map(SQLiteDatabase db, Cursor result, Class<T> modelClass) {
 		T modelObject;
 		String json = result.getString(5);
-		Log.v("GenericDAO", "value="+json);
+		Log.v("GenericDAO", "value=" + json);
 		Gson gson = Mapper.getGson(context);
 		modelObject = (T) gson.fromJson(json, modelClass);
 		modelObject.setId(result.getInt(0));
-		
+
 		return modelObject;
 	}
 
 	public void deleteAll(Class<T> modelClass) {
-		synchronized(helper) {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		try {
-			db.delete(tableName(modelClass), null, null);
-		}
-		finally {
-			if (db != null) {
-				helper.close();
+		synchronized (helper) {
+			SQLiteDatabase db = helper.getWritableDatabase();
+			try {
+				db.delete(tableName(modelClass), null, null);
+			} finally {
+				if (db != null) {
+					helper.close();
+				}
 			}
-		}
 		}
 	}
 
 	public void delete(Class<T> modelClass, Integer id) {
-		synchronized(helper) {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		
-		try {
-			db.delete(tableName(modelClass), "_id=?", new String[] {Integer.toString(id)});
-		}
-		finally {
-			if (db != null) {
-				helper.close();
+		synchronized (helper) {
+			SQLiteDatabase db = helper.getWritableDatabase();
+
+			try {
+				db.delete(tableName(modelClass), "_id=?", new String[] { Integer.toString(id) });
+			} finally {
+				if (db != null) {
+					helper.close();
+				}
 			}
 		}
-		}
 	}
-	
+
 	protected String tableName(Class<T> modelClass) {
 		return modelClass.getSimpleName();
 	}

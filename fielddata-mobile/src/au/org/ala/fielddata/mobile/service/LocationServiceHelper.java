@@ -91,7 +91,9 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	@Override
 	public void onDestroy() {
 		Log.i("LocationServiceHelper", "Stopping location updates");
-		locationManager.removeUpdates(this);
+		if (locationManager != null) {
+			locationManager.removeUpdates(this);
+		}
 		listener = null;
 	}
 	

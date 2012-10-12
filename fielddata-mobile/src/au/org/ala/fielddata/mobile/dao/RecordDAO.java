@@ -55,6 +55,7 @@ public class RecordDAO extends GenericDAO<Record> {
 	private static final int TYPE_URI = 1;
 	
 	protected static final String RECORD_COLUMNS = 
+		"_id INTEGER PRIMARY KEY AUTOINCREMENT, "+
 		"server_id INTEGER, " +
 	    "created INTEGER, " +
 	    "updated INTEGER, " +
@@ -74,7 +75,7 @@ public class RecordDAO extends GenericDAO<Record> {
 	    "scientific_name TEXT";
 		
     public static final String RECORD_TABLE_DDL = "CREATE TABLE "+RECORD_TABLE+
-	" (_id INTEGER PRIMARY KEY AUTOINCREMENT, "+ RECORD_COLUMNS+ ")";
+	" ("+ RECORD_COLUMNS+ ")";
 	
 	
     protected static final String ATTRIBUTE_VALUE_COLUMNS =  " (_id INTEGER PRIMARY KEY AUTOINCREMENT, "+
@@ -102,55 +103,24 @@ public class RecordDAO extends GenericDAO<Record> {
 	
 	public Integer save(Record record, SQLiteDatabase db) {
 		
-		Integer id = record.getId();
-		boolean update = id != null;
-		ContentValues values = new ContentValues();
 		long now = System.currentTimeMillis();
 		
-		values.put("uuid", record.uuid);
-		//values.put("server_id", record.server_id); // Since we delete after upload we don't have to worry about server_id
-		
-		values.put("updated", now);
-		
-		Location location = record.getLocation();
-		if (location != null) {
-			values.put("latitude", location.getLatitude());
-			values.put("longitude", location.getLongitude());
-			values.put("point_source", location.getProvider());
-			values.put("accuracy", location.getAccuracy());
-			values.put("point_millis", location.getTime());
-			Log.d("RecordDAO", "Putting: "+location.getTime());
-		}
-		else if (update) {
-			values.put("latitude", (Double)null);
-			values.put("longitude", (Double)null);
-			values.put("point_source", (String)null);
-			values.put("accuracy", (Float)null);
-			values.put("point_millis", (Long)null);
-		}
-		values.put("when_millis", record.when);
-		values.put("notes", record.notes);
-		values.put("survey_id", record.survey_id);
-		values.put("number", record.number);
-		values.put("taxon_id", record.taxon_id);
-		values.put("status", record.isValid() ? 0 : 1);
-		values.put("scientific_name", record.scientificName);
-		record.updated = now;                                                                                                                                                 
+		ContentValues values = new ContentValues();
+		boolean update = map(record, now, values);                                                                                                                                                 
 	
-		
+		Integer id;
 		if (!update) {
-			record.created = now;
-			values.put("created", now);
-		
 			id = (int)db.insertOrThrow(recordTable, null, values);
-	
 			record.setId(id);
 		}
 		else {
+			id = record.getId();
 			String whereClause = "_id=?";
-			String[] params = new String[] { id.toString()};
-			db.update(recordTable, values, whereClause, params);
-		
+			String[] params = new String[] { Integer.toString(id)};
+			int numRows = db.update(recordTable, values, whereClause, params);
+			if (numRows != 1) {
+				throw new DatabaseException("Update failed for record with id="+id+", table="+recordTable);
+			}
 			// Since the number of attributes is fairly small we can probably 
 			// get away with re-writing the attributes.
 			whereClause = "record_id=?";
@@ -183,6 +153,46 @@ public class RecordDAO extends GenericDAO<Record> {
 		
 		
 		return id;
+	}
+
+	protected boolean map(Record record, long now, ContentValues values) {
+		
+		Integer id = record.getId();
+		boolean update = id != null;
+	
+		values.put("uuid", record.uuid);
+		//values.put("server_id", record.server_id); // Since we delete after upload we don't have to worry about server_id
+		
+		values.put("updated", now);
+		if (!update) {
+			record.created = now;
+			values.put("created", now);
+		}
+		Location location = record.getLocation();
+		if (location != null) {
+			values.put("latitude", location.getLatitude());
+			values.put("longitude", location.getLongitude());
+			values.put("point_source", location.getProvider());
+			values.put("accuracy", location.getAccuracy());
+			values.put("point_millis", location.getTime());
+			Log.d("RecordDAO", "Putting: "+location.getTime());
+		}
+		else if (update) {
+			values.put("latitude", (Double)null);
+			values.put("longitude", (Double)null);
+			values.put("point_source", (String)null);
+			values.put("accuracy", (Float)null);
+			values.put("point_millis", (Long)null);
+		}
+		values.put("when_millis", record.when);
+		values.put("notes", record.notes);
+		values.put("survey_id", record.survey_id);
+		values.put("number", record.number);
+		values.put("taxon_id", record.taxon_id);
+		values.put("status", record.isValid() ? 0 : 1);
+		values.put("scientific_name", record.scientificName);
+		record.updated = now;
+		return update;
 	}
 	
 	protected Record map(SQLiteDatabase db, Cursor result, Class<Record> modelClass) {
@@ -265,5 +275,5 @@ public class RecordDAO extends GenericDAO<Record> {
 	protected String tableName(Class<Record> modelClass) {
 		return recordTable;
 	}
-
+	
 }

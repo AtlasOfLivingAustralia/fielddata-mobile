@@ -22,7 +22,6 @@ import java.util.UUID;
 
 import android.location.Location;
 import android.net.Uri;
-import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 
 import com.google.gson.annotations.SerializedName;
@@ -255,11 +254,9 @@ public class Record extends Persistent {
 
 	protected AttributeValue valueOf(Attribute attribute) {
 		int id = attribute.getServerId();
-		Log.d("Record", "Looking for attribute with attr=: "+id);
 		
 		for (AttributeValue value : attributeValues) {
 			if (id == value.attribute_id) {
-				Log.d("Record", "Found: "+value.nullSafeValue());
 				return value;
 			}
 		}

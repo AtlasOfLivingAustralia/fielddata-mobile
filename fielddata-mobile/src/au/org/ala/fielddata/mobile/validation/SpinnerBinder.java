@@ -85,19 +85,27 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 	private void update() {
 		try {
 			updating = true;
-			Spinner spinner = (Spinner)view;
+			final Spinner spinner = (Spinner)view;
 			String value = model.getValue(attribute);
 			if (value != null) {
 				BaseAdapter adapter = (BaseAdapter)spinner.getAdapter();
 				for (int i=0; i<adapter.getCount(); i++) {
 					Object tmpValue = adapter.getItem(i);
+					
 					if (tmpValue instanceof AttributeOption) {
-						AttributeOption option = (AttributeOption)adapter.getItem(i);
+						AttributeOption option = (AttributeOption)tmpValue;
 						if (value.equals(option.value)) {
-							spinner.setSelection(i);
+							final int selectedIndex = i;
+							spinner.post(new Runnable() {
+								public void run() {
+									spinner.setSelection(selectedIndex);
+							    }
+							});
+								
 							break;
 						}
 					}
+					
 				}
 			}
 		}

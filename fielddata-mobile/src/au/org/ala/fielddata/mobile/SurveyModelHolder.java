@@ -74,12 +74,13 @@ public class SurveyModelHolder extends SherlockFragment {
 		super.onSaveInstanceState(outState);
 		
 		DraftRecordDAO recordDao = new DraftRecordDAO(getActivity());
-		recordDao.save(model.getRecord());
+		int draftId = recordDao.save(model.getRecord());
 		Log.i("SurveyModelHolder", this+"Saving survey: "+model.getSurvey().server_id);
 		Log.i("SurveyModelHolder", this+"Saving record: "+model.getRecord().getId());
 		
 		outState.putInt(CollectSurveyData.SURVEY_BUNDLE_KEY, model.getSurvey().server_id);
-		outState.putInt(CollectSurveyData.RECORD_BUNDLE_KEY, model.getRecord().getId());
+		outState.putInt(CollectSurveyData.RECORD_BUNDLE_KEY, draftId);
+	
 		TempValue toSave = model.getTempValue();
 		if (toSave != null) {
 			Log.i("SurveyModelHolder", "Saving temp: "+toSave.getAttribute()+", value: "+toSave.getValue());
@@ -146,11 +147,14 @@ public class SurveyModelHolder extends SherlockFragment {
 			RecordDAO recordDAO;
 			if (draft) {
 				recordDAO = new DraftRecordDAO(getActivity().getApplicationContext());
+				Log.d("SurveyModelHolder", "Loading record from drafts table with id: "+recordId);
 			} else {
-				 recordDAO = new RecordDAO(getActivity().getApplicationContext());
+				recordDAO = new RecordDAO(getActivity().getApplicationContext());
 			}
 			record = recordDAO.load(Record.class, recordId);
-			Log.d("SurveyModelHolder", "Loaded record with id: "+recordId+", record="+new Gson().toJson(record));
+			if (Log.isLoggable("SurveyModelHolder", Log.DEBUG)) {
+				Log.d("SurveyModelHolder", "Loaded record with id: "+recordId+", record="+new Gson().toJson(record));
+			}
 		}
 		return record;
 	}

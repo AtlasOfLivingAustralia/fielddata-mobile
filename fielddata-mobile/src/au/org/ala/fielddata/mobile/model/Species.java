@@ -25,9 +25,8 @@ public class Species extends Persistent implements Parcelable {
 	public String scientificName;
 	public String commonName;
 	public String imageFileName;
+	private int taxonGroup;
 	
-	public int profileImagePath;
-
 	private List<ProfileElement> infoItems;
 	
 	public static class ProfileElement {
@@ -35,11 +34,12 @@ public class Species extends Persistent implements Parcelable {
 		String type;
 	}
 	
-	public Species(String scientificName, String commonName, int fileName) {
+	public Species(String scientificName, String commonName, int taxonGroupId) {
 		this.scientificName = scientificName;
 		this.commonName = commonName;
-		this.profileImagePath = fileName;
+		this.taxonGroup = taxonGroupId;
 		infoItems = new ArrayList<Species.ProfileElement>();
+		
 	}
 	
 	public String getImageFileName() {
@@ -53,6 +53,10 @@ public class Species extends Persistent implements Parcelable {
 		return null;
 	}
 
+	public int getTaxonGroupId() {
+		return taxonGroup;
+	}
+	
 	public int describeContents() {
 		return 0;
 	}
@@ -66,6 +70,7 @@ public class Species extends Persistent implements Parcelable {
 		dest.writeInt(server_id);
 		dest.writeString(scientificName);
 		dest.writeString(commonName);
+		dest.writeInt(taxonGroup);
 	}
 
 	public static final Parcelable.Creator<Species> CREATOR = new Parcelable.Creator<Species>() {
@@ -83,6 +88,7 @@ public class Species extends Persistent implements Parcelable {
 		server_id = in.readInt();
 		scientificName = in.readString();
 		commonName = in.readString();
+		taxonGroup = in.readInt();
 	}
 
 }

@@ -18,10 +18,14 @@ import au.org.ala.fielddata.mobile.model.Species;
 public class SpeciesListAdapter extends ArrayAdapter<Species> {
 	
 	public SpeciesListAdapter(Context ctx) {
+		this(ctx, -1);
+	}
+	
+	public SpeciesListAdapter(Context ctx, int excludedGroupId) {
 		super(ctx, R.layout.species_row, R.id.scientificName,
 				new ArrayList<Species>());
 		GenericDAO<Species> speciesDao = new GenericDAO<Species>(ctx);
-		new GetSpeciesTask(speciesDao, this).execute();
+		new GetSpeciesTask(speciesDao, this, excludedGroupId).execute();
 	}
 
 	@Override
@@ -42,18 +46,27 @@ public class SpeciesListAdapter extends ArrayAdapter<Species> {
 
 		private GenericDAO<Species> dao;
 		private SpeciesListAdapter adapter;
+		private int excludedGroupId;
 
 		public GetSpeciesTask(GenericDAO<Species> speciesDao,
-				SpeciesListAdapter adapter) {
+				SpeciesListAdapter adapter, int excludedGroupId) {
 			this.dao = speciesDao;
 			this.adapter = adapter;
+			this.excludedGroupId = excludedGroupId;
 		}
 
 		protected List<Species> doInBackground(Void... ignored) {
 
 			List<Species> species = new ArrayList<Species>();
 			try {
-				species.addAll(dao.loadAll(Species.class));
+				List<Species> allSpecies = dao.loadAll(Species.class);
+				for (Species taxon : allSpecies) {
+					if (taxon.getTaxonGroupId()
+							!= excludedGroupId) {
+						species.add(taxon);
+					}
+				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

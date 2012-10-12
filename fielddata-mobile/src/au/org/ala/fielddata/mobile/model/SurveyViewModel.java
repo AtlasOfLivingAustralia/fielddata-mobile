@@ -226,7 +226,10 @@ public class SurveyViewModel {
 		if (attribute.isModeratorAttribute()) {
 			return false;
 		}
-		switch (type) {
+		if ("possible_species".equals(attribute.name)) {
+			return false;
+		}
+ 		switch (type) {
 		case HTML:
 		case HTML_COMMENT:
 		case HTML_HORIZONTAL_RULE:

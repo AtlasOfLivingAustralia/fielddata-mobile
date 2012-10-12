@@ -123,8 +123,9 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 		}
 
 		public void onTabSelected(Tab tab, FragmentTransaction ft) {
-
-			viewPager.setCurrentItem(tab.getPosition());
+			if (viewPager.getCurrentItem() != tab.getPosition()) {
+				viewPager.setCurrentItem(tab.getPosition());
+			}
 		}
 
 		public void onTabUnselected(Tab tab, FragmentTransaction ft) {

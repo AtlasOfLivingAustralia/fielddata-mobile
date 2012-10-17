@@ -125,6 +125,7 @@
     }
     
     for (NSDictionary* attribute in [surveyDict objectForKey:@"attributesAndOptions"]) {
+        NSLog(@"Saving attribute: %@", attribute);
         [self persistAttribute:attribute survey:survey error:e];
     }
     
@@ -153,9 +154,11 @@
 
 -(void)persistAttribute:(NSDictionary*)surveyAttribute survey:(Survey*)survey error:(NSError*)e {
     
-    SurveyAttribute* attribute = [NSEntityDescription insertNewObjectForEntityForName:@"SurveyAttribute" inManagedObjectContext:context];
-
     NSString* typeCode = [surveyAttribute objectForKey:@"typeCode"];
+    if (![self isSupported:typeCode]) {
+        return;
+    }
+    SurveyAttribute* attribute = [NSEntityDescription insertNewObjectForEntityForName:@"SurveyAttribute" inManagedObjectContext:context];
     attribute.typeCode = typeCode;
     
     NSString* visibility = [surveyAttribute objectForKey:@"visibility"];
@@ -195,6 +198,10 @@
     if (![context save:&e]) {
         NSLog(@"Error saving Survey: %@", [e localizedDescription]);
     }
+}
+
+-(BOOL)isSupported:(NSString *)typeCode {
+    return ![typeCode isEqualToString:@"HR"];
 }
 
 -(void)persistSpecies:(NSDictionary*)speciesDict {

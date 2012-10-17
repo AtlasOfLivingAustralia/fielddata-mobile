@@ -79,5 +79,6 @@
 -(Record*)createRecord:(NSArray*)attributes survey:(Survey*)survey inputFields:(NSMutableDictionary*)inputFields;
 -(void)updateRecord:(Record*)record attributes:(NSArray*)attributes inputFields:(NSMutableDictionary*)inputFields;
 -(NSArray*)loadRecords;
+-(BOOL)isSupported:(NSString*)typeCode;
 
 @end

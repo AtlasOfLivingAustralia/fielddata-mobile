@@ -163,8 +163,11 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 
 		protected void onPostExecute(List<RecordView> records) {
 		
-			RecordAdapter adapter = new RecordAdapter(ViewSavedRecordsActivity.this, records);
-			setListAdapter(adapter);
+			Context context = ViewSavedRecordsActivity.this.getActivity();
+			if (context != null) {
+				RecordAdapter adapter = new RecordAdapter(ViewSavedRecordsActivity.this, records);
+				setListAdapter(adapter);
+			}
 		}
 	}
 

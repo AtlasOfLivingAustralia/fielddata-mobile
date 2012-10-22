@@ -40,9 +40,10 @@ public class SpeciesListFragment extends SherlockListFragment {
 	}
 	
     protected void init() {
-    	SpeciesListAdapter adapter = new SpeciesListAdapter(getActivity(), 393);
-    	setListAdapter(adapter);
-    	
+    	if (getActivity() != null) {
+    		SpeciesListAdapter adapter = new SpeciesListAdapter(getActivity(), 393);
+    		setListAdapter(adapter);
+    	}
     }
 	
 	

@@ -276,7 +276,14 @@ public class UploadService extends Service {
 		savedActivity.putExtra(MobileFieldDataDashboard.SELECTED_TAB_BUNDLE_KEY, MobileFieldDataDashboard.RECORDS_TAB_INDEX);
 		PendingIntent intent = PendingIntent.getActivity(this, START_NOT_STICKY, savedActivity, PendingIntent.FLAG_CANCEL_CURRENT);
 		
-		notify("Upload pending - no network", "Records will be uploaded when network service is available.", intent, true);
+		Preferences prefs = new Preferences(this);
+		if (prefs.getUploadOverWifiOnly()) {
+			notify("Upload pending - no WIFI network", "Records will be uploaded when a WIFI network service is available.", intent, true);
+		}
+		else {
+			notify("Upload pending - no network", "Records will be uploaded when network service is available.", intent, true);
+		}
+		
 	}
 	
 	private void notify(String title, String subject, PendingIntent intent, boolean success) {

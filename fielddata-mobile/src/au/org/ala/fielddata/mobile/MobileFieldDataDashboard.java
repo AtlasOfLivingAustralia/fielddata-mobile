@@ -16,6 +16,7 @@ package au.org.ala.fielddata.mobile;
 
 import java.util.List;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -62,9 +64,21 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 	public static final int RECORDS_TAB_INDEX = 2;
 	
 	private static final String GPS_QUESTION_BUNDLE_KEY = "gps";
+	
+	@TargetApi(11)
+	static public <T> void executeAsyncTask(AsyncTask<T, ?, ?> task, T... params) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
+		}
+		else {
+			task.execute(params);
+		}
+	}
+	
 	private Preferences preferences;
 	private TextView status;
 	private ViewPager viewPager;
+	
 	/** 
 	 * Tracks whether we have asked the user if they want to turn on their
 	 * GPS
@@ -166,11 +180,17 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 	@Override
 	public void onStart() {
 		super.onStart();
-		if (!askedAboutGPS) {
-			if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)) {
-				LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-				if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-					showNoGpsDialog();
+		if (isLoggedIn()) {
+			if (!preferences.getAskedAboutWifi()) {
+				showWifiPreferenceDialog();
+			}
+			
+			if (!askedAboutGPS) {
+				if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)) {
+					LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+					if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+						showNoGpsDialog();
+					}
 				}
 			}
 		}
@@ -203,6 +223,25 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 		builder.create().show();
 		askedAboutGPS = true;
 	}
+	
+	private void showWifiPreferenceDialog() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Uploading records")
+				.setMessage("Do you want to use your phone's data connection to upload records? \nIf you select 'No' saved records will only be uploaded when your phone is connected to a WIFI network.")
+				.setCancelable(false)
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					public void onClick(final DialogInterface dialog, final int id) {
+						preferences.setUploadOverWifiOnly(false);
+					}
+				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+					public void onClick(final DialogInterface dialog, final int id) {
+						preferences.setUploadOverWifiOnly(true);
+					}
+				});
+		builder.create().show();
+		preferences.setAskedAboutWifi();
+	}
+
 
 	class Model {
 		private User user;
@@ -326,8 +365,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 		} else {
 			setSupportProgressBarIndeterminateVisibility(true);
 
-			new InitDataTask().execute();
-			new StatusTask().execute();
+			executeAsyncTask(new InitDataTask());
+			executeAsyncTask(new StatusTask());
 		}
 	}
 

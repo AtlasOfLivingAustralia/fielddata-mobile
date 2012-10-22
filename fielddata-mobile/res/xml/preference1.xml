@@ -19,7 +19,7 @@
         android:key="serverHostName"
         android:summary="The host name of the server running the field data software."
         android:title="Server Host Name" 
-        android:defaultValue="root-uat.ala.org.au"/>
+        android:defaultValue="root.ala.org.au"/>
     	
     <EditTextPreference
         android:key="contextName"

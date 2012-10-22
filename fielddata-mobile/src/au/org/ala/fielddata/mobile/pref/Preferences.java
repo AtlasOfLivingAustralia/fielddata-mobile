@@ -31,6 +31,7 @@ public class Preferences {
 	private static final Boolean DEFAULT_AUTO_UPLOAD_PREFERENCE = Boolean.TRUE;
 	private static final String WIFI_ONLY_PREFERENCE_KEY = "WifiOnly";
 	private static final Boolean DEFAULT_WIFI_ONLY_PREFERENCE = Boolean.TRUE;
+	private static final String ASKED_ABOUT_WIFI_PREFERENCE_KEY = "AskedAboutWifi";
 	
 	private Context ctx; 
 
@@ -161,6 +162,22 @@ public class Preferences {
 	public boolean getUploadOverWifiOnly() {
 		return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(
 				WIFI_ONLY_PREFERENCE_KEY, DEFAULT_WIFI_ONLY_PREFERENCE);
+	}
+	
+	public void setUploadOverWifiOnly(boolean wifiOnly) {
+		Editor preferences = preferencesEditor();
+		preferences.putBoolean(WIFI_ONLY_PREFERENCE_KEY, wifiOnly).commit();
+	}
+	
+	public boolean getAskedAboutWifi() {
+		return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(
+				ASKED_ABOUT_WIFI_PREFERENCE_KEY, false);
+	}
+	
+	public void setAskedAboutWifi() {
+		Editor preferences = preferencesEditor();
+		preferences.putBoolean(ASKED_ABOUT_WIFI_PREFERENCE_KEY, true).commit();
+		
 	}
 	
 }

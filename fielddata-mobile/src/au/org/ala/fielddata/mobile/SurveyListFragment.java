@@ -1,5 +1,6 @@
 package au.org.ala.fielddata.mobile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -107,10 +108,12 @@ public class SurveyListFragment extends SherlockListFragment {
 		
 		@Override
 		protected List<Survey> doInBackground(Void... params) {
-			
-			GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(getActivity().getApplicationContext());
-			List<Survey> surveys = surveyDAO.loadAll(Survey.class);
-			
+			List<Survey> surveys = new ArrayList<Survey>();
+			if (getActivity() != null) {
+				GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(getActivity().getApplicationContext());
+				surveys.addAll(surveyDAO.loadAll(Survey.class));
+			}
+					
 			return surveys;
 		}
 		@Override

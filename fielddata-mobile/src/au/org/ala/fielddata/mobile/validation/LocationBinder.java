@@ -17,7 +17,6 @@ import au.org.ala.fielddata.mobile.CollectSurveyData;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
-import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class LocationBinder extends AbsBinder {
 
@@ -120,15 +119,6 @@ public class LocationBinder extends AbsBinder {
 		updateText();
 	}
 
-	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
-		if (result.isValid()) {
-			noLocation.setError(null);
-		}
-		else {
-			noLocation.setError("Select a location"); 	//result.getMessage(ctx));
-		}
-		
-	}
 	private void updateText() {
 		
 		Location location = model.getLocation();

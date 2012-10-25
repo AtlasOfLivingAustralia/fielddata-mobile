@@ -44,6 +44,9 @@ public interface Validator {
 			return valid;
 		}
 		
+		public int getMessageId() {
+			return error;
+		}
 		public CharSequence getMessage(Context context) {
 			
 			return context.getResources().getString(error);

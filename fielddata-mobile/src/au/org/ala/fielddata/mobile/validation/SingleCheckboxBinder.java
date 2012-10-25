@@ -15,23 +15,19 @@
 package au.org.ala.fielddata.mobile.validation;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
-import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class SingleCheckboxBinder extends AbsBinder implements OnCheckedChangeListener {
 
 	private SurveyViewModel model;
-	private Context ctx;
 	
 	public SingleCheckboxBinder(Context ctx, CheckBox view, Attribute attribute, SurveyViewModel model) {
 		super(attribute, view);
 		this.model = model;
-		this.ctx = ctx;
 		view.setChecked(Boolean.valueOf(model.getValue(attribute)));
 		view.setOnCheckedChangeListener(this);
 	}
@@ -47,21 +43,6 @@ public class SingleCheckboxBinder extends AbsBinder implements OnCheckedChangeLi
 			return;
 		}*/
 		
-	}
-
-	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
-		if (!attribute.equals(this.attribute)) {
-			return;
-		}
-		Log.d("Binder", "TextViewBinder: "+result);
-		
-		if (result.isValid()) {
-			((CheckBox)view).setError(null);
-		}
-		else {
-			((CheckBox)view).setError(result.getMessage(ctx));
-			
-		}
 	}
 	
 	public void bind() {

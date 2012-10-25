@@ -15,7 +15,6 @@
 package au.org.ala.fielddata.mobile.validation;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -23,23 +22,23 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
-import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
+/**
+ * The SpinnerBinder is responsible for keeping the state of a Spinner
+ * widget in sync with the attribute value stored in the SurveyViewModel.
+ */
 public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, OnTouchListener {
 
 	private SurveyViewModel model;
-	private Context ctx;
 	private boolean updating;
 	private boolean bindEnabled;
 	
 
 	public SpinnerBinder(Context ctx, Spinner view, Attribute attribute, SurveyViewModel model) {
 		super(attribute, view);
-		this.ctx = ctx;
 		this.model = model;
 		updating = false;
 		bindEnabled = false;
@@ -111,25 +110,6 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 		}
 		finally {
 			updating = false;
-		}
-	}
-	
-	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
-		Log.d("SpinnerBinder", "onValidationStatusChange: "+attribute+", "+result.isValid());
-		if (attribute.getServerId() != this.attribute.getServerId()) {
-			return;
-		}
-		
-		View selected = ((Spinner)view).getSelectedView();
-		if (selected instanceof TextView) {
-			TextView textView = (TextView)selected;
-			if (result.isValid()) {
-				textView.setError(null);
-			}
-			else {
-				
-			    textView.setError(result.getMessage(ctx));
-			}
 		}
 	}
 	

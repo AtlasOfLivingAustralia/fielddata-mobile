@@ -17,23 +17,19 @@ package au.org.ala.fielddata.mobile.validation;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.AttributeChangeListener;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
-import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class TextViewBinder extends AbsBinder implements TextWatcher, AttributeChangeListener {
 
 	private SurveyViewModel model;
-	private Context ctx;
 	private boolean updating;
 	
 	public TextViewBinder(Context ctx, TextView view, Attribute attribute, SurveyViewModel model) {
 		super(attribute, view);
 		this.model = model;
-		this.ctx = ctx;
 		updating = false;
 		view.setText(model.getValue(attribute));
 		view.addTextChangedListener(this);
@@ -41,9 +37,7 @@ public class TextViewBinder extends AbsBinder implements TextWatcher, AttributeC
 	}
 
 	public void beforeTextChanged(CharSequence s, int start, int count,
-			int after) {
-		
-	}
+			int after) {}
 
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		try {
@@ -55,12 +49,7 @@ public class TextViewBinder extends AbsBinder implements TextWatcher, AttributeC
 		}
 	}
 
-	public void afterTextChanged(Editable s) {
-		
-	}
-	
-	
-	
+	public void afterTextChanged(Editable s) {}
 	
 	public void onAttributeChange(Attribute attribute) {
 		if (attribute.getServerId() != this.attribute.getServerId()) {
@@ -68,21 +57,6 @@ public class TextViewBinder extends AbsBinder implements TextWatcher, AttributeC
 		}
 		if (!updating) {	
 			((TextView)view).setText(model.getValue(attribute));
-		}
-	}
-
-	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
-		if (!attribute.equals(this.attribute)) {
-			return;
-		}
-		Log.d("Binder", "TextViewBinder: "+result);
-		
-		if (result.isValid()) {
-			((TextView)view).setError(null);
-		}
-		else {
-			((TextView)view).setError(result.getMessage(ctx));
-			
 		}
 	}
 	

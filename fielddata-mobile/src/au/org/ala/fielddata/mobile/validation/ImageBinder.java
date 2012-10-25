@@ -9,13 +9,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import au.org.ala.fielddata.mobile.CollectSurveyData;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.service.StorageManager;
-import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class ImageBinder extends AbsBinder {
 
@@ -130,15 +128,6 @@ public class ImageBinder extends AbsBinder {
 		Log.d("ImageBinder", "onAttributeChange("+attribute+"), thumbUri="+thumbUri);
 		
 		updateThumbnail();
-	}
-
-	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
-		if (attribute.getServerId() != this.attribute.getServerId()) {
-			return;
-		}
-		if (!result.isValid()) {
-			((TextView)view.findViewById(R.id.noPhotoText)).setError(result.getMessage(ctx));
-		}
 	}
 
 }

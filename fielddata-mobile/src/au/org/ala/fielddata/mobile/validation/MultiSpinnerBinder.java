@@ -18,25 +18,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.view.View;
-import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.ui.MultiSpinner;
 import au.org.ala.fielddata.mobile.ui.MultiSpinner.MultiSpinnerListener;
-import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class MultiSpinnerBinder extends AbsBinder implements MultiSpinnerListener {
 
 	private SurveyViewModel model;
-	private Context ctx;
 	private boolean updating;
 	private List<String> items;
 	
 
 	public MultiSpinnerBinder(Context ctx, MultiSpinner view, Attribute attribute, SurveyViewModel model) {
 		super(attribute, view);
-		this.ctx = ctx;
 		this.model = model;
 		updating = false;
 		
@@ -78,23 +73,6 @@ public class MultiSpinnerBinder extends AbsBinder implements MultiSpinnerListene
 		}
 		finally {
 			updating = false;
-		}
-	}
-
-	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
-		if (attribute.getServerId() != this.attribute.getServerId()) {
-			return;
-		}
-		
-		View selected = mulitSpinner().getSelectedView();
-		if (selected instanceof TextView) {
-			TextView textView = (TextView)selected;
-			if (result.isValid()) {
-				textView.setError(null);
-			}
-			else {
-			    textView.setError(result.getMessage(ctx));
-			}
 		}
 	}
 	

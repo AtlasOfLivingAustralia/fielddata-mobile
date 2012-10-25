@@ -48,6 +48,8 @@ public class SurveyBuilder {
 				R.layout.label_and_field, parent);
 		ViewGroup container = (ViewGroup) layout.getChildAt(0);
 		buildLabel(attribute, container);
+		viewContext.getLayoutInflater().inflate(
+				R.layout.error_label, container).findViewById(R.id.errorLabel);
 		View inputField = buildInput(attribute, container);
 
 		return inputField;

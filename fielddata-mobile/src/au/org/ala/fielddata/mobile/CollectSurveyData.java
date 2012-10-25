@@ -14,7 +14,6 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -41,12 +40,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.CheckBox;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.DraftRecordDAO;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
@@ -62,19 +58,10 @@ import au.org.ala.fielddata.mobile.service.LocationServiceHelper;
 import au.org.ala.fielddata.mobile.service.LocationServiceHelper.LocationServiceConnection;
 import au.org.ala.fielddata.mobile.service.StorageManager;
 import au.org.ala.fielddata.mobile.service.UploadService;
-import au.org.ala.fielddata.mobile.ui.MultiSpinner;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
 import au.org.ala.fielddata.mobile.ui.ValidatingViewPager;
 import au.org.ala.fielddata.mobile.validation.Binder;
-import au.org.ala.fielddata.mobile.validation.DateBinder;
-import au.org.ala.fielddata.mobile.validation.ImageBinder;
-import au.org.ala.fielddata.mobile.validation.LocationBinder;
-import au.org.ala.fielddata.mobile.validation.MultiSpinnerBinder;
 import au.org.ala.fielddata.mobile.validation.RecordValidator.RecordValidationResult;
-import au.org.ala.fielddata.mobile.validation.SingleCheckboxBinder;
-import au.org.ala.fielddata.mobile.validation.SpeciesBinder;
-import au.org.ala.fielddata.mobile.validation.SpinnerBinder;
-import au.org.ala.fielddata.mobile.validation.TextViewBinder;
 
 import com.actionbarsherlock.app.ActionBar.LayoutParams;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -373,94 +360,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		super.finish();
 	}
 	
-
-	static class BinderManager {
-		private List<Binder> binders;
-
-		private SurveyViewModel surveyViewModel;
-		private CollectSurveyData ctx;
-
-		public BinderManager(CollectSurveyData activity) {
-			this.ctx = activity;
-			binders = new ArrayList<Binder>();
-			surveyViewModel = activity.getViewModel();
-		}
-
-		public void configureBindings(View view, Attribute attribute) {
-
-			Binder binder = null;
-			// Some attribute types require special bindings.
-			switch (attribute.getType()) {
-			case WHEN:
-			case TIME:
-				binder = new DateBinder(ctx, view, attribute, surveyViewModel);
-				break;
-			case POINT:
-				binder = new LocationBinder(ctx, view, attribute, surveyViewModel);
-				break;
-			case IMAGE:
-				binder = new ImageBinder(ctx, attribute, view);
-				break;
-			case SPECIES_P:
-				binder = new SpeciesBinder(ctx, attribute, view, surveyViewModel);
-				break;
-			case SINGLE_CHECKBOX:
-				binder = new SingleCheckboxBinder(ctx, (CheckBox) view, attribute, surveyViewModel);
-				break;
-			case MULTI_CHECKBOX:
-				binder = new MultiSpinnerBinder(ctx, (MultiSpinner) view, attribute,
-						surveyViewModel);
-				break;
-			default:
-				binder = bindByViewClass(view, attribute);
-				break;
-			}
-
-			add(attribute, binder);
-
-		}
-
-		private void add(Attribute attribute, Binder binder) {
-			if (binder != null) {
-				binders.add(binder);
-				surveyViewModel.setAttributeChangeListener(binder, attribute);
-			}
-		}
-
-		private Binder bindByViewClass(View view, Attribute attribute) {
-
-			Binder binder = null;
-			if (view instanceof TextView) {
-				binder = new TextViewBinder(ctx, (TextView) view, attribute, surveyViewModel);
-
-			} else if (view instanceof Spinner) {
-				binder = new SpinnerBinder(ctx, (Spinner) view, attribute, surveyViewModel);
-			}
-			return binder;
-		}
-
-		public void bindAll() {
-			for (Binder binder : binders) {
-				binder.bind();
-			}
-		}
-
-		public void clearBindings() {
-			for (Binder binder : binders) {
-				surveyViewModel.removeAttributeChangeListener(binder);
-			}
-			binders.clear();
-		}
-
-		public View getView(Attribute attribute) {
-			for (Binder binder : binders) {
-				if (binder.getAttribute().equals(attribute)) {
-					return binder.getView();
-				}
-			}
-			return null;
-		}
-	}
 
 	class SurveyPagerAdapter extends FragmentPagerAdapter {
 

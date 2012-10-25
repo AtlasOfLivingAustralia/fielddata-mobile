@@ -3,7 +3,9 @@ package au.org.ala.fielddata.mobile.validation;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Attribute;
+import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
@@ -54,9 +56,23 @@ public class RecordValidator {
 	
 	private Validator validatorFor(Attribute attribute) {
 
+		Log.d("RecordValidator", "Creating validator for attribute: "+attribute);
 		Validator validator = null;
 		if (attribute.required != null && attribute.required) {
 			validator = new RequiredValidator();
+		}
+		if (attribute.getType() == AttributeType.WHEN) {
+			if (validator != null) {
+				Log.d("RecordValidator", "Creating a composite date validator");
+				List<Validator> validators = new ArrayList<Validator>();
+				validators.add(validator);
+				validators.add(new DateValidator());
+				
+				validator = new CompositeValidator(validators);
+			}
+			else {
+				validator = new DateValidator();
+			}
 		}
 		return validator;
 

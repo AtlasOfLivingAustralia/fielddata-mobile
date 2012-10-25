@@ -18,6 +18,7 @@ package au.org.ala.fielddata.mobile.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import android.content.pm.PackageManager;
@@ -161,8 +162,13 @@ public class SurveyViewModel {
 		record.setValue(attribute, value);
 		Log.d("SurveyViewModel", "Setting attribute: "+attribute+", value: "+value);
 		fireAttributeChanged(attribute);
+		validate(attribute);	
+	}
+	
+	public void setValue(Attribute attribute, Date value) {
+		record.setValue(attribute, value);
+		fireAttributeChanged(attribute);
 		validate(attribute);
-		
 	}
 
 	public void setAttributeChangeListener(AttributeChangeListener listener, Attribute attribute) {
@@ -199,7 +205,7 @@ public class SurveyViewModel {
 				if (attribute.name.equals("Treatment_Method")) {
 					attribute.setType(AttributeType.CATEGORIZED_MULTI_SELECT);
 				}
-				else if (attribute.name.equals("Location_Source")) {
+				else if (attribute.name.equals("Location_Precision")) {
 					attribute.setType(AttributeType.POINT_SOURCE);
 					pointSourceAttribute = attribute;
 				}

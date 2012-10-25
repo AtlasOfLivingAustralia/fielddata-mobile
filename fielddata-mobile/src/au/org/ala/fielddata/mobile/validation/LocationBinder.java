@@ -1,9 +1,14 @@
 package au.org.ala.fielddata.mobile.validation;
 
 import java.text.DecimalFormat;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import android.location.Location;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -16,6 +21,8 @@ import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
 public class LocationBinder extends AbsBinder {
 
+	private static final int GPS_TIMEOUT = 45; // seconds
+	
 	private TextView latitude;
 	private TextView longitude;
 	private TextView accuracy;
@@ -26,6 +33,8 @@ public class LocationBinder extends AbsBinder {
 	private boolean gpsTrackingOn;
 	private Button gpsButton;
 	
+	private ScheduledFuture<?> timer;
+	private ScheduledExecutorService scheduler;
 	
 	public LocationBinder(CollectSurveyData context, View locationView, Attribute locationAttribute, SurveyViewModel model) {
 		super(locationAttribute, locationView);
@@ -43,6 +52,8 @@ public class LocationBinder extends AbsBinder {
 		addEventHandlers(locationView);
 		updateText();
 		
+		
+		
 	}
 	
 	private void addEventHandlers(View view) {
@@ -51,16 +62,14 @@ public class LocationBinder extends AbsBinder {
 		
 		public void onClick(View v) {
 			if (!gpsTrackingOn) {
-				ctx.startLocationUpdates();
-				gpsTrackingOn = true;
-				updateText();
+				startLocationUpdates();		
 			}
 			else {
-				ctx.stopLocationUpdates();
-				gpsTrackingOn = false;
-				updateText();
+				stopLocationUpdates();
 			}
 		}
+
+		
 	});
 	
 	Button showOnMapButton = (Button)view.findViewById(R.id.showMapButton);
@@ -72,9 +81,40 @@ public class LocationBinder extends AbsBinder {
 	});
 	}
 	
+	private void startLocationUpdates() {
+		Log.d("LocationBinder", "Starting location updates");
+		ctx.startLocationUpdates();
+		gpsTrackingOn = true;
+		updateText();
+		if (scheduler == null) {
+			scheduler = Executors.newScheduledThreadPool(1);
+		}
+		timer = scheduler.schedule(new Runnable() {
+			public void run() {
+				cancelLocationUpdates();
+			}
+		}, GPS_TIMEOUT, TimeUnit.SECONDS);
+	}
+	
+	public void cancelLocationUpdates() {
+		Log.i("LocationBinder", "Cancelling location updates due to timeout!");
+		gpsButton.post(new Runnable() {
+			public void run() {
+				stopLocationUpdates();
+			}
+		});
+	}
 	
 	
 	public void onAttributeChange(Attribute attribute) {
+		stopLocationUpdates();
+	}
+
+	private void stopLocationUpdates() {
+		if (timer != null) {
+			timer.cancel(false);
+			timer = null;
+		}
 		ctx.stopLocationUpdates();
 		gpsTrackingOn = false;
 		updateText();

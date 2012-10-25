@@ -6,6 +6,7 @@ import java.util.Date;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -68,27 +69,29 @@ public class DateBinder extends AbsBinder implements OnClickListener, DatePicker
 		calendar.set(year, month, day);
 		
 		date = calendar.getTime();
-		updateDisplay();
-		
-		
+		bind();
 	}
 	
 	public void onAttributeChange(Attribute attribute) {
 		if (attribute.getServerId() != this.attribute.getServerId()) {
 			return;
 		}
-		bind();
+		date = model.getRecord().getDate(attribute);
+		updateDisplay();
 	}
 
 	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
+		Log.d("DateBinder", "date invalid;");
 		if (attribute.getServerId() != this.attribute.getServerId()) {
 			return;
 		}
+		Log.d("DateBinder", "date invalid, setting error;");
 		
 		holder.text.setError(result.getMessage(ctx));
 	}
 
 	public void bind() {
-		model.getRecord().setValue(attribute, date);
+		
+		model.setValue(attribute, date);
 	}
 }

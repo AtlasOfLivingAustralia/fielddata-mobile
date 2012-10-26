@@ -20,6 +20,11 @@ import au.org.ala.fielddata.mobile.validation.SpeciesBinder;
 import au.org.ala.fielddata.mobile.validation.SpinnerBinder;
 import au.org.ala.fielddata.mobile.validation.TextViewBinder;
 
+/**
+ * The BinderManager is responsible for creating and attaching an appropriate
+ * binder that will be responsible for keeping the record in sync with the
+ * data displayed in a widget.
+ */
 class BinderManager {
 	private List<Binder> binders;
 
@@ -32,7 +37,7 @@ class BinderManager {
 		surveyViewModel = activity.getViewModel();
 	}
 
-	public void configureBindings(View view, Attribute attribute) {
+	public Binder configureBindings(View view, Attribute attribute) {
 
 		Binder binder = null;
 		// Some attribute types require special bindings.
@@ -64,6 +69,7 @@ class BinderManager {
 
 		add(attribute, binder);
 
+		return binder;
 	}
 
 	private void add(Attribute attribute, Binder binder) {

@@ -14,8 +14,6 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -41,8 +39,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.ScrollView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.DraftRecordDAO;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
@@ -516,7 +512,10 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			view.setTag(binder);
 			scroller = (ScrollView) view.findViewById(R.id.tableScroller);
 			scroller.setTag(binder);
-			buildSurveyForm(view);
+			
+			SurveyBuilder builder = new SurveyBuilder(getActivity(), viewModel, binder);
+
+			builder.buildSurveyForm(view, pageNum);
 
 			return view;
 		}
@@ -531,38 +530,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 		}
 
-		private void buildSurveyForm(View page) {
-			SurveyBuilder builder = new SurveyBuilder(getActivity(), viewModel);
-
-			TableLayout tableLayout = (TableLayout) page.findViewById(R.id.surveyGrid);
-			List<Attribute> pageAttributes = viewModel.getPage(pageNum);
-
-			int rowCount = pageAttributes.size();
-			if (pageNum == 0) {
-				TableRow row = new TableRow(getActivity());
-				builder.buildSurveyName(viewModel.getSurvey(), row);
-				addRow(tableLayout, row);
-			}
-			for (int i = 0; i < rowCount; i++) {
-				TableRow row = new TableRow(getActivity());
-
-				Attribute attribute = pageAttributes.get(i);
-
-				View inputView = builder.buildFields(attribute, row);
-				binder.configureBindings(inputView, attribute);
-				
-				addRow(tableLayout, row);
-			}
-
-		}
-
-		private void addRow(TableLayout tableLayout, TableRow row) {
-			TableRow.LayoutParams params = new TableRow.LayoutParams();
-			params.setMargins(5, 5, 10, 10);
-			params.width = TableRow.LayoutParams.MATCH_PARENT;
-			params.height = TableRow.LayoutParams.WRAP_CONTENT;
-			tableLayout.addView(row, params);
-		}
+		
 
 	}
 

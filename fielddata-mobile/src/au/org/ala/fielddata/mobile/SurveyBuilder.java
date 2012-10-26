@@ -14,16 +14,21 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile;
 
+import java.util.List;
+
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
@@ -33,16 +38,76 @@ import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.ui.CategorizedSpinner;
 import au.org.ala.fielddata.mobile.ui.MultiSpinner;
 
+/**
+ * The SurveyBuilder is responsible for selecting and creating the appropriate
+ * input widget for a particular Attribute type.
+ */
 public class SurveyBuilder {
 
 	private FragmentActivity viewContext;
 	private SurveyViewModel model;
-
-	public SurveyBuilder(FragmentActivity viewContext, SurveyViewModel model) {
+	private BinderManager binder;
+	
+	public SurveyBuilder(FragmentActivity viewContext, SurveyViewModel model, BinderManager binder) {
 		this.viewContext = viewContext;
 		this.model = model;
+		this.binder = binder;
 	}
 
+	public void buildSurveyForm(View page, int pageNum) {
+		
+		TableLayout tableLayout = (TableLayout) page.findViewById(R.id.surveyGrid);
+		List<Attribute> pageAttributes = model.getPage(pageNum);
+
+		int rowCount = pageAttributes.size();
+		if (pageNum == 0) {
+			TableRow row = new TableRow(viewContext);
+			buildSurveyName(model.getSurvey(), row);
+			addRow(tableLayout, row);
+		}
+		View previousView = null;
+		for (int i = 0; i < rowCount; i++) {
+			TableRow row = new TableRow(viewContext);
+
+			Attribute attribute = pageAttributes.get(i);
+
+			View inputView = buildFields(attribute, row);
+			
+			configureKeyboardBindings(previousView, inputView);
+			binder.configureBindings(inputView, attribute);
+			
+			addRow(tableLayout, row);
+			previousView = inputView;
+		}
+
+	}
+
+	/**
+	 * The purpose of this method is to configure EditText widgets so that:
+	 * 1) If the next widget is an EditText, the keyboard has a "next" key.
+	 * 2) If the next widget is not an EditText, the keyboard has a "done" key.
+	 * This is to prevent the input sequence from jumping from a text field
+	 * to the next text field, skipping other widgets (such as spinners) in the
+	 * process. 
+	 * @param previousView the previously created widget.
+	 * @param inputView the widget created for the current field.
+	 */
+	private void configureKeyboardBindings(View previousView, View inputView) {
+		if ((previousView instanceof EditText) &&
+			!(inputView instanceof EditText)) {
+			int imeOptions = ((EditText)previousView).getImeOptions();
+			((EditText)previousView).setImeOptions(imeOptions | EditorInfo.IME_ACTION_DONE);
+		}
+	}
+
+	private void addRow(TableLayout tableLayout, TableRow row) {
+		TableRow.LayoutParams params = new TableRow.LayoutParams();
+		params.setMargins(5, 5, 10, 10);
+		params.width = TableRow.LayoutParams.MATCH_PARENT;
+		params.height = TableRow.LayoutParams.WRAP_CONTENT;
+		tableLayout.addView(row, params);
+	}
+	
 	public View buildFields(Attribute attribute, ViewGroup parent) {
 		LinearLayout layout = (LinearLayout) viewContext.getLayoutInflater().inflate(
 				R.layout.label_and_field, parent);

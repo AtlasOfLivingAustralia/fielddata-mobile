@@ -26,17 +26,20 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.dao.RecordDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.UploadService;
 import au.org.ala.fielddata.mobile.ui.SavedRecordHolder;
 import au.org.ala.fielddata.mobile.ui.SavedRecordHolder.RecordView;
@@ -176,28 +179,85 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 		private ViewSavedRecordsActivity fragment;
 		
 		public RecordAdapter(ViewSavedRecordsActivity fragment, List<RecordView> records) {
-			super(fragment.getActivity(), R.layout.saved_records_layout, R.id.record_description_species, records);
+			super(fragment.getActivity(), R.layout.saved_records_layout, R.id.record_description_species);
+			setNotifyOnChange(false);
+			add(null);
+			
+			for (RecordView record : records) {
+				add(record);
+			}
+			notifyDataSetChanged();
 			this.fragment = fragment;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 
-			View row = super.getView(position, convertView, parent);
-			SavedRecordHolder viewHolder = (SavedRecordHolder) row.getTag();
-			if (viewHolder == null) {
-				viewHolder = new SavedRecordHolder(row);
-				viewHolder.checkbox.setOnClickListener(fragment);
-				row.setTag(viewHolder);
-				
+			if (position == 0) {
+				View helpView = convertView;
+				if (helpView == null) {
+					helpView = createHelpView(parent);
+				}
+				setHelpText(helpView);
+				return helpView;
 			}
-			boolean checked = ((ListView)parent).getCheckedItemPositions().get(position);
-			viewHolder.checkbox.setChecked(checked);
-			viewHolder.checkbox.setTag(position);
-			viewHolder.populate(getItem(position));
-			return row;
+			else {
+				View row = super.getView(position, convertView, parent);
+				SavedRecordHolder viewHolder = (SavedRecordHolder) row.getTag();
+				if (viewHolder == null) {
+					viewHolder = new SavedRecordHolder(row);
+					viewHolder.checkbox.setOnClickListener(fragment);
+					row.setTag(viewHolder);
+					
+				}
+				boolean checked = ((ListView)parent).getCheckedItemPositions().get(position);
+				viewHolder.checkbox.setChecked(checked);
+				viewHolder.checkbox.setTag(position);
+				viewHolder.populate(getItem(position));
+				return row;
+			}
+		}
+		
+		private View createHelpView(ViewGroup parent) {
+			LayoutInflater layoutInflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View helpView = layoutInflater.inflate(R.layout.saved_records_help, null);
+			
+			
+			return helpView;
+		}
+		
+		private void setHelpText(View helpView) {
+			TextView helpText = (TextView)helpView.findViewById(R.id.savedRecordsHelp);
+			
+			
+			Preferences prefs = new Preferences(getContext());
+			if (prefs.getUploadAutomatically()) {
+				if (prefs.getUploadOverWifiOnly()) {
+					helpText.setText("Records will be uploaded automatically then deleted when the phone is connected to a WIFI network.\nUploaded records can be edited using the web site.");
+				}
+				else {
+					helpText.setText("Records will be uploaded automatically then deleted when the phone is connected to a data network.\nUploaded records can be can be edited using the web site.");
+				}
+			}
+			else {
+				helpText.setText("Records can be uploaded to the server using the upload icon in the action bar.\nRecords are deleted after being uploaded, however they can be edited using the web site.");
+			}
+			
 		}
 
+		@Override
+		public int getViewTypeCount() {
+			return 2;
+		}
+
+		@Override
+		public int getItemViewType(int position) {
+			return position == 0 ? 0:1;
+		}
+
+		
+		
+		
 	}
 	
 	public void onClick(View view) {

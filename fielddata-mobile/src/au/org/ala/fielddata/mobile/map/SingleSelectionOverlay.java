@@ -173,7 +173,7 @@ public class SingleSelectionOverlay extends BalloonItemizedOverlay<OverlayItem> 
 	}
 	
 	private Location pointToLocation(GeoPoint point) {
-		Location selectedLocation = new Location("Web map");
+		Location selectedLocation = new Location("On-screen map");
 		selectedLocation.setTime(System.currentTimeMillis());
 		selectedLocation.setLatitude(point.getLatitudeE6()/1000000d);
 		selectedLocation.setLongitude(point.getLongitudeE6()/1000000d);

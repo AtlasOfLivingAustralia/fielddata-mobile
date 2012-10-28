@@ -15,13 +15,14 @@
 package au.org.ala.fielddata.mobile.validation;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.BaseAdapter;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
@@ -42,15 +43,18 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 		this.model = model;
 		updating = false;
 		bindEnabled = false;
+		
 		update();
 		view.setOnItemSelectedListener(this);
 		view.setOnTouchListener(this);
-		
 	}
 
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
+		Log.d("SpinnerBinder", "onItemSelected"+position+", "+getAttribute());
 		if (bindEnabled) {
+			Log.d("SpinnerBinder", "onItemSelected-bindEnabled"+position+", "+getAttribute());
+			
 			bind();
 		}
 	}
@@ -87,7 +91,7 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 			final Spinner spinner = (Spinner)view;
 			String value = model.getValue(attribute);
 			if (value != null) {
-				BaseAdapter adapter = (BaseAdapter)spinner.getAdapter();
+				SpinnerAdapter adapter = (SpinnerAdapter)spinner.getAdapter();
 				for (int i=0; i<adapter.getCount(); i++) {
 					Object tmpValue = adapter.getItem(i);
 					

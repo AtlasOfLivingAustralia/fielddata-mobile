@@ -14,6 +14,8 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.support.v4.app.FragmentActivity;
@@ -248,11 +250,8 @@ public class SurveyBuilder {
 
 		Spinner spinner = (Spinner) row.findViewById(R.id.spinner);
 		spinner.setPrompt("Select " + attribute.description);
-		
-		AttributeOption empty = new AttributeOption();
-		AttributeOption[] options = new AttributeOption[attribute.options.length+1];
-		options[0] = empty;
-		System.arraycopy(attribute.options, 0, options, 1, attribute.options.length);
+		ArrayList<AttributeOption> options = new ArrayList<Attribute.AttributeOption>(attribute.options.length+1); 
+		options.addAll(Arrays.asList(attribute.options));
 		
 		ArrayAdapter<AttributeOption> adapter = new  ArrayAdapter<AttributeOption>(viewContext,
 				R.layout.multiline_spinner_item, options);

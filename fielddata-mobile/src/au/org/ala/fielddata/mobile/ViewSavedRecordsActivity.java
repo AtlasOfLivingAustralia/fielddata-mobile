@@ -119,10 +119,13 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		int recordId = records.get(position-1).getId();
-		Intent intent = new Intent(getActivity(), CollectSurveyData.class);
-		intent.putExtra(CollectSurveyData.RECORD_BUNDLE_KEY, recordId);
-		startActivity(intent);
+		// The first item is explanatory text so we just ignore clicks on it.
+		if (position > 0)  {
+			int recordId = records.get(position-1).getId();
+			Intent intent = new Intent(getActivity(), CollectSurveyData.class);
+			intent.putExtra(CollectSurveyData.RECORD_BUNDLE_KEY, recordId);
+			startActivity(intent);
+		}
 	}
 
 	private void refresh() {
@@ -293,8 +296,11 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 		int count = 0;
 		SparseBooleanArray selected = getListView().getCheckedItemPositions();
 		for (int i=0; i<selected.size(); i++) {
-			if (selected.valueAt(i)) {
-				count++;
+			// Ignore the first item as it is help text.
+			if (selected.keyAt(i) > 0) {
+				if (selected.valueAt(i)) {
+					count++;
+				}
 			}
 		}
 		return count;
@@ -339,10 +345,14 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 		SparseBooleanArray selected = getListView().getCheckedItemPositions();
 		int deleteCount = 0;
 		for (int i=0; i<selected.size(); i++) {
-			if (selected.valueAt(i) == true) {
-				Record record = ((RecordView)getListAdapter().getItem(i)).record;
-				recordDao.delete(Record.class, record.getId());
-				deleteCount++;
+			// Ignore the first item as it is help text.
+			if (selected.keyAt(i) > 0) {
+				
+				if (selected.valueAt(i) == true) {
+					Record record = ((RecordView)getListAdapter().getItem(i)).record;
+					recordDao.delete(Record.class, record.getId());
+					deleteCount++;
+				}
 			}
 		}
 		if (deleteCount > 0) {
@@ -363,9 +373,12 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 		int index = 0;
 		int[] recordIds = new int[count];
 		for (int i=0; i<selected.size(); i++) {
-			if (selected.valueAt(i) == true) {
-				Record record = ((RecordView)getListAdapter().getItem(i)).record;
-				recordIds[index++] = record.getId();
+			// Ignore the first item as it is help text.
+			if (selected.keyAt(i) > 0) {
+				if (selected.valueAt(i) == true) {
+					Record record = ((RecordView)getListAdapter().getItem(i)).record;
+					recordIds[index++] = record.getId();
+				}
 			}
 		}
 		

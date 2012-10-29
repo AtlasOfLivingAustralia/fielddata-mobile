@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.DataSetObserver;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -25,7 +26,7 @@ import au.org.ala.fielddata.mobile.R;
  */
 public class NoDefaultSpinner extends Spinner implements DialogInterface.OnClickListener {
 	private SpinnerAdapter originalAdpater;
-	private String hint;
+	protected String hint;
 	
 	public NoDefaultSpinner(Context context) {
 		super(context);
@@ -182,7 +183,7 @@ public class NoDefaultSpinner extends Spinner implements DialogInterface.OnClick
 
         public View getView(int position, View convertView, ViewGroup parent) {
         	if (position == 0) {
-        		return createBlankView();
+        		return createBlankView(convertView, parent);
         	}
         	
             return adapter.getView(position-1, convertView, parent);
@@ -190,18 +191,18 @@ public class NoDefaultSpinner extends Spinner implements DialogInterface.OnClick
 
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
             if (position == 0) {
-            	if (convertView == null) {
-            		convertView = createBlankView();
-            	}
-            	return convertView;
+            	return createBlankView(convertView, parent);
             }
         	return adapter.getDropDownView(position-1, convertView, parent);
         }
         
-        private View createBlankView() {
-        	TextView textView = new TextView(getContext());
-        	textView.setHint(hint);
-        	return textView;
+        private View createBlankView(View convertView, ViewGroup parent) {
+        	if (convertView == null) {
+	        	LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	        	convertView = (TextView)inflater.inflate(R.layout.multiline_spinner_item, parent, false);
+	        	((TextView)convertView).setHint(hint);
+        	}
+	        return convertView;
         }
         
         public int getItemViewType(int position) {

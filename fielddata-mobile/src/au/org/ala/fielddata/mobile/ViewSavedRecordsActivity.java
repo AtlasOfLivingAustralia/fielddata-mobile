@@ -119,7 +119,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		int recordId = records.get(position).getId();
+		int recordId = records.get(position-1).getId();
 		Intent intent = new Intent(getActivity(), CollectSurveyData.class);
 		intent.putExtra(CollectSurveyData.RECORD_BUNDLE_KEY, recordId);
 		startActivity(intent);

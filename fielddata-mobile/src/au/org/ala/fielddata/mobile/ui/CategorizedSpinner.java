@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
@@ -24,7 +23,7 @@ import com.commonsware.cwac.merge.MergeAdapter;
  * Displays the spinner popup as a list containing dividers with a header
  * on them.
  */
-public class CategorizedSpinner extends Spinner implements OnClickListener {
+public class CategorizedSpinner extends NoDefaultSpinner implements OnClickListener {
 
 	private MergeAdapter listAdapter;
 	private ArrayAdapter<String> spinnerAdpater;
@@ -46,7 +45,7 @@ public class CategorizedSpinner extends Spinner implements OnClickListener {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		ListView list = new ListView(getContext());
 		list.setAdapter(listAdapter);
-		builder.setTitle("Select an option");
+		builder.setTitle(hint);
 		builder.setInverseBackgroundForced(true);
 		builder.setView(list);
 		final Dialog dialog = builder.create();
@@ -54,8 +53,8 @@ public class CategorizedSpinner extends Spinner implements OnClickListener {
 		
 			
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				setSelection(position);
-				performItemClick(view, position, listAdapter.getItemId(position));
+				setSelection(position+1);
+				performItemClick(view, position+1, listAdapter.getItemId(position));
 				dialog.dismiss();
 			}
 		});
@@ -72,7 +71,6 @@ public class CategorizedSpinner extends Spinner implements OnClickListener {
 		// never be displayed.
 		listAdapter = new MergeAdapter();
 		spinnerAdpater = new ArrayAdapter<String>(getContext(), R.layout.multiline_spinner_item);
-		
 		List<String> strings = new ArrayList<String>(items.length*2);
 		String currentHeading = "";
 		for (AttributeOption option : items) {

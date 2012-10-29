@@ -269,12 +269,7 @@ public class SurveyBuilder {
 		CategorizedSpinner spinner = (CategorizedSpinner) row.findViewById(R.id.spinner);
 		spinner.setPrompt("Select " + attribute.description);
 		
-		AttributeOption empty = new AttributeOption();
-		AttributeOption[] options = new AttributeOption[attribute.options.length+1];
-		options[0] = empty;
-		System.arraycopy(attribute.options, 0, options, 1, attribute.options.length);
-		
-		spinner.setItems(options);
+		spinner.setItems(attribute.options);
 		
 		return spinner;
 	}

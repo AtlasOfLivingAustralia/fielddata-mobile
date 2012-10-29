@@ -130,11 +130,11 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 	}
 
 	private String nullSafeText() {
-		CharSequence text = ((Spinner)view).getSelectedItem().toString();
-		if (text == null) {
+		Object value =  ((Spinner)view).getSelectedItem();
+		if (value == null) {
 			return "";
 		}
-		return text.toString();
+		return value.toString();
 	}
 
 }

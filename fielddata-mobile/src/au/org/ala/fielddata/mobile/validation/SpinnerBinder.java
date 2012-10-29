@@ -15,7 +15,6 @@
 package au.org.ala.fielddata.mobile.validation;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -51,9 +50,7 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
-		Log.d("SpinnerBinder", "onItemSelected"+position+", "+getAttribute());
 		if (bindEnabled) {
-			Log.d("SpinnerBinder", "onItemSelected-bindEnabled"+position+", "+getAttribute());
 			
 			bind();
 		}
@@ -90,6 +87,7 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 			updating = true;
 			final Spinner spinner = (Spinner)view;
 			String value = model.getValue(attribute);
+			
 			if (value != null) {
 				SpinnerAdapter adapter = (SpinnerAdapter)spinner.getAdapter();
 				for (int i=0; i<adapter.getCount(); i++) {
@@ -98,6 +96,21 @@ public class SpinnerBinder extends AbsBinder implements OnItemSelectedListener, 
 					if (tmpValue instanceof AttributeOption) {
 						AttributeOption option = (AttributeOption)tmpValue;
 						if (value.equals(option.value)) {
+							final int selectedIndex = i;
+							spinner.post(new Runnable() {
+								public void run() {
+									spinner.setSelection(selectedIndex);
+							    }
+							});
+								
+							break;
+						}
+					}
+					// CategorizedSpinners use Strings as they need to store
+					// header labels also.
+					else if (tmpValue instanceof String) {
+						String option = (String)tmpValue;
+						if (value.equals(option)) {
 							final int selectedIndex = i;
 							spinner.post(new Runnable() {
 								public void run() {

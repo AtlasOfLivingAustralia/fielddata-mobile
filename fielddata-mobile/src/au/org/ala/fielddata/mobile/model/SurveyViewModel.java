@@ -127,6 +127,19 @@ public class SurveyViewModel {
 		updateLocationSource(location);
 	}
 	
+	/**
+	 * This method exists to handle the case that the survey will only 
+	 * accept Location data via GPS but for some reason GPS is unavailable
+	 * to the required accuracy.
+	 */
+	public void disableLocationValidation() {
+		Attribute location = survey.propertyByType(AttributeType.POINT);
+		location.required = false;
+		// Force a validation to remove any existing validation message
+		// displayed on the location field.
+		validate(location);
+	}
+	
 	private void updateLocationSource(Location location) {
 		if (pointSourceAttribute != null) {
 			for (AttributeOption option : pointSourceAttribute.options) {

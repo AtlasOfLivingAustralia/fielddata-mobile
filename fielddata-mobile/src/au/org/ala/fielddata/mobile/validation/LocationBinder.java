@@ -1,10 +1,6 @@
 package au.org.ala.fielddata.mobile.validation;
 
 import java.text.DecimalFormat;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import android.location.Location;
 import android.text.format.DateFormat;
@@ -18,10 +14,14 @@ import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 
+/**
+ * Manages the display of the location information and handles Map and GPS
+ * button presses.
+ * State information is managed by the CollectSurveyData activity by 
+ * necessity (because of the activity lifecycle)
+ */
 public class LocationBinder extends AbsBinder {
 
-	private static final int GPS_TIMEOUT = 45; // seconds
-	
 	private TextView latitude;
 	private TextView longitude;
 	private TextView accuracy;
@@ -29,11 +29,7 @@ public class LocationBinder extends AbsBinder {
 	private TextView time;
 	private SurveyViewModel model;
 	private CollectSurveyData ctx;
-	private boolean gpsTrackingOn;
 	private Button gpsButton;
-	
-	private ScheduledFuture<?> timer;
-	private ScheduledExecutorService scheduler;
 	
 	public LocationBinder(CollectSurveyData context, View locationView, Attribute locationAttribute, SurveyViewModel model) {
 		super(locationAttribute, locationView);
@@ -47,12 +43,8 @@ public class LocationBinder extends AbsBinder {
 		this.model = model;
 		this.ctx = context;
 		
-		gpsTrackingOn = ctx.isGpsTrackingEnabled();
 		addEventHandlers(locationView);
 		updateText();
-		
-		
-		
 	}
 	
 	private void addEventHandlers(View view) {
@@ -60,7 +52,7 @@ public class LocationBinder extends AbsBinder {
 	gpsButton.setOnClickListener(new OnClickListener() {
 		
 		public void onClick(View v) {
-			if (!gpsTrackingOn) {
+			if (!ctx.isGpsTrackingEnabled()) {
 				startLocationUpdates();		
 			}
 			else {
@@ -83,44 +75,21 @@ public class LocationBinder extends AbsBinder {
 	private void startLocationUpdates() {
 		Log.d("LocationBinder", "Starting location updates");
 		ctx.startLocationUpdates();
-		gpsTrackingOn = true;
 		updateText();
-		if (scheduler == null) {
-			scheduler = Executors.newScheduledThreadPool(1);
-		}
-		timer = scheduler.schedule(new Runnable() {
-			public void run() {
-				cancelLocationUpdates();
-			}
-		}, GPS_TIMEOUT, TimeUnit.SECONDS);
 	}
-	
-	public void cancelLocationUpdates() {
-		Log.i("LocationBinder", "Cancelling location updates due to timeout!");
-		gpsButton.post(new Runnable() {
-			public void run() {
-				stopLocationUpdates();
-			}
-		});
-	}
-	
 	
 	public void onAttributeChange(Attribute attribute) {
 		stopLocationUpdates();
 	}
 
 	private void stopLocationUpdates() {
-		if (timer != null) {
-			timer.cancel(false);
-			timer = null;
-		}
+		
 		ctx.stopLocationUpdates();
-		gpsTrackingOn = false;
 		updateText();
 	}
 
 	private void updateText() {
-		
+		boolean gpsTrackingOn = ctx.isGpsTrackingEnabled();
 		Location location = model.getLocation();
 		if (location != null && !gpsTrackingOn) {
 			DecimalFormat format = new DecimalFormat("###.000000");

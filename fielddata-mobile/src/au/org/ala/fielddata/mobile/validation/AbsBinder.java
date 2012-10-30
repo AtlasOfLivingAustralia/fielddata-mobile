@@ -8,6 +8,9 @@ import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 
+/**
+ * The base class that is required to be implemented by Binder implementations.
+ */
 public abstract class AbsBinder implements Binder {
 
 	protected Attribute attribute;

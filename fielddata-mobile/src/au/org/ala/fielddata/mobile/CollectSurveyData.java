@@ -14,6 +14,11 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -25,6 +30,7 @@ import android.location.LocationListener;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -72,12 +78,19 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		SpeciesSelectionListener, OnPageChangeListener, LocationListener {
 
 	private static final String GPS_TRACKING_BUNDLE_KEY = "Gps";
+	private static final String GPS_TIMEOUT_BUNDLE_KEY = "Gps";
+	
+	private static final int GPS_TIMEOUT = 45; // seconds
+	
+	
 	public static final String SURVEY_BUNDLE_KEY = "SurveyIdKey";
 	public static final String RECORD_BUNDLE_KEY = "RecordIdKey";
 	public static final String SPECIES = "species";
 	
 	/** The accuracy required to auto-populate the location from GPS */
 	private static final float ACCURACY_THESHOLD = 21f;
+	
+	private static final float FALLBACK_ACCURACY_THRESHOLD = 200f;
 
 	/**
 	 * Used to identify a request to the LocationSelectionActivity when a result
@@ -101,7 +114,15 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	private View leftArrow;
 	private View rightArrow;
 	private Attribute autoScrollAttribute;
+
+	// GPS stuff.
+	private LocationServiceConnection locationServiceConnection;
+	private ScheduledFuture<?> timer;
+	private ScheduledExecutorService scheduler;
+
+	// GPS acquisition state
 	private boolean gpsTrackingOn;
+	private int gpsTimeoutCount;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -112,11 +133,13 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		buildCustomActionBar();
 
 		if (savedInstanceState == null) {
+			// create and attach our model fragment.
 			getSupportFragmentManager().beginTransaction().add(new SurveyModelHolder(), "model")
 					.commit();
 		}
 		else {
 			gpsTrackingOn = savedInstanceState.getBoolean(GPS_TRACKING_BUNDLE_KEY);
+			gpsTimeoutCount = savedInstanceState.getInt(GPS_TIMEOUT_BUNDLE_KEY);
 		}
 
 		pagerAdapter = new SurveyPagerAdapter(getSupportFragmentManager());
@@ -133,15 +156,27 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 	}
 	
-	private LocationServiceConnection locationServiceConnection;
 	public void startLocationUpdates() {
 		Log.i("CollectSurveyData", "startLocationUpdates");
 		if (locationServiceConnection == null) {
-			locationServiceConnection = new LocationServiceConnection(this, ACCURACY_THESHOLD);
+			locationServiceConnection = new LocationServiceConnection(this, getRequiredLocationAccuracy());
 			Intent intent = new Intent(this, LocationServiceHelper.class);
 			bindService(intent, locationServiceConnection, Context.BIND_AUTO_CREATE);
 		}
+		if (scheduler == null) {
+			scheduler = Executors.newScheduledThreadPool(1);
+		}
+		
+		timer = scheduler.schedule(new Runnable() {
+			public void run() {
+				cancelLocationUpdates();
+			}
+		}, GPS_TIMEOUT, TimeUnit.SECONDS);
 		gpsTrackingOn = true;
+	}
+	
+	public float getRequiredLocationAccuracy() {
+		return gpsTimeoutCount == 0 ? ACCURACY_THESHOLD : FALLBACK_ACCURACY_THRESHOLD; 
 	}
 	
 	public void stopLocationUpdates() {
@@ -155,21 +190,58 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			unbindService(locationServiceConnection);
 			locationServiceConnection = null;
 		}
+		if (timer != null) {
+			timer.cancel(false);
+			timer = null;
+		}
 		if (!systemChange) {
 			gpsTrackingOn = false;
 		}
 	}
 	
-	public void onLocationChanged(Location location) {
-		//if (surveyViewModel.getLocation() == null) {
-			Toast.makeText(this, R.string.locationSelectedByGPS, Toast.LENGTH_SHORT).show();
-			surveyViewModel.setLocation(location);
-		//}
-		//stopLocationUpdates();
+	public void cancelLocationUpdates() {
+		Log.i("LocationBinder", "Cancelling location updates due to timeout!");
+		new Handler(getMainLooper()).post(new Runnable() {
+			public void run() {		
+				gpsTimeoutCount++;
+				stopLocationUpdates();
+				// We do this to force the LocationBinder to update the display.
+				surveyViewModel.setLocation(surveyViewModel.getLocation());
+				
+				AlertDialog.Builder builder = new AlertDialog.Builder(CollectSurveyData.this);
+				if (gpsTimeoutCount == 1) {
+				builder.setTitle("GPS timeout")
+				       .setMessage("Unable to acquire a location via GPS.  Please try again.")
+				       .setPositiveButton("Ok", null)
+				       .show();
+				}
+				else {
+					builder.setTitle("GPS timeout")
+				       .setMessage("Unable to acquire a location via GPS.  Please edit the location using the web site after saving this record.")
+				       .setPositiveButton("Ok", null)
+				       .show();
+					surveyViewModel.disableLocationValidation();
+				}
+			}
+		});
 	}
 	
+	public void onLocationChanged(Location location) {
+		Toast.makeText(this, R.string.locationSelectedByGPS, Toast.LENGTH_SHORT).show();
+		surveyViewModel.setLocation(location);
+	}
+	
+	// State management for the GPS acquisition functionality.
 	public boolean isGpsTrackingEnabled() {
 		return gpsTrackingOn;
+	}
+	
+	public int getGpsTimeoutCount() {
+		return gpsTimeoutCount;
+	}
+	
+	public void setGpsTimeoutCount(int gpsTimeoutCount) {
+		this.gpsTimeoutCount = gpsTimeoutCount;
 	}
 
 	public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -203,6 +275,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		Log.i("CollectSurveyData", "Saving gpsTracking: "+gpsTrackingOn);
 		
 		outState.putBoolean(GPS_TRACKING_BUNDLE_KEY, gpsTrackingOn);
+		outState.putInt(GPS_TIMEOUT_BUNDLE_KEY, gpsTimeoutCount);
 	}
 
 	private void buildCustomActionBar() {
@@ -527,11 +600,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			super.onDestroyView();
 
 			binder.clearBindings();
-
 		}
-
-		
-
 	}
 
 	static class SaveRecordTask extends AsyncTask<Record, Void, Boolean> {

@@ -257,10 +257,6 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 		public int getItemViewType(int position) {
 			return position == 0 ? 0:1;
 		}
-
-		
-		
-		
 	}
 	
 	public void onClick(View view) {

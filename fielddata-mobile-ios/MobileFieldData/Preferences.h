@@ -18,5 +18,7 @@
 -(NSString*)getFieldDataURL;
 -(void)setFieldDataSessionKey:(NSString*)sessionKey;
 -(NSString*)getFieldDataSessionKey;
+-(void)setUsersName:(NSString*)name;
+-(NSString*)getUsersName;
 
 @end

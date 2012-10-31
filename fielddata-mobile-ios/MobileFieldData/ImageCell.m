@@ -9,6 +9,8 @@
 #import "ImageCell.h"
 #import <UIKit/UIKit.h>
 #import <AssetsLibrary/AssetsLibrary.h>
+#import "FileService.h"
+#import "UIImage+Resize.h"
 
 @implementation ImageCell
 
@@ -53,19 +55,18 @@
 }
 
 
-
-
 - (void)setImage:(NSString*)imagePath
 {
+    /*
     ALAssetsLibraryAssetForURLResultBlock resultblock = ^(ALAsset *myasset)
     {
-        /*
-         ALAssetRepresentation *rep = [myasset defaultRepresentation];
-         CGImageRef iref = [rep fullResolutionImage];
-         if (iref) {
-         // Gets the full size image
-         self.fullSizeImage = [UIImage imageWithCGImage:iref];
-         }*/
+        
+         //ALAssetRepresentation *rep = [myasset defaultRepresentation];
+         //CGImageRef iref = [rep fullResolutionImage];
+         //if (iref) {
+            // Gets the full size image
+         //   self.fullSizeImage = [UIImage imageWithCGImage:iref];
+         //}
         
         // Gets the thumbnail
         [cameraImage setImage:[UIImage imageWithCGImage:[myasset thumbnail]]];
@@ -74,11 +75,14 @@
     ALAssetsLibraryAccessFailureBlock failureblock = ^(NSError *myerror)
     {
         NSLog(@"in failureblock, got an error: %@",[myerror localizedDescription]);
-    };
+    };*/
     
-    ALAssetsLibrary *assetsLib = [[ALAssetsLibrary alloc] init];
-    NSURL* urlForImage = [NSURL URLWithString:imagePath];
-    [assetsLib assetForURL:urlForImage resultBlock:resultblock failureBlock:failureblock];
+    if (imagePath != NULL && ![imagePath isEqualToString:@""]) {
+        //ALAssetsLibrary *assetsLib = [[ALAssetsLibrary alloc] init];
+        //NSURL* urlForImage = [NSURL URLWithString:imagePath];
+        //[assetsLib assetForURL:urlForImage resultBlock:resultblock failureBlock:failureblock];
+        [cameraImage setImage:[UIImage imageWithContentsOfFile:imagePath]];
+    }
 }
 
      
@@ -124,8 +128,17 @@
 }
 
 -(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
-    UIImage *image = [info valueForKey:UIImagePickerControllerOriginalImage];
+    UIImage* image = [info valueForKey:UIImagePickerControllerOriginalImage];
     
+    UIImage* scaledImage;
+    if (image.size.height > 1200 || image.size.width > 1200) {
+        scaledImage = [image resizedImageWithContentMode:UIViewContentModeScaleAspectFit
+                                                  bounds:CGSizeMake(1200, 1200)
+                                    interpolationQuality:kCGInterpolationHigh];
+    } else {
+        scaledImage = image;
+    }
+    /*
     if(image){
         ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
         [library writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation]
@@ -141,7 +154,17 @@
             cameraImage.frame = CGRectMake(10, 30, 72, 96);
         }
         [cameraImage setImage:image];
+    }*/
+    
+    NSString* fileName = [NSString stringWithFormat:@"%f.jpg", [[NSDate date] timeIntervalSince1970]];
+    [filePath setString:[FileService saveImage:scaledImage withName:fileName]];
+    
+    if ([image imageOrientation] == UIImageOrientationUp) {
+        cameraImage.frame = CGRectMake(10, 30, 96, 72);
+    } else {
+        cameraImage.frame = CGRectMake(10, 30, 72, 96);
     }
+    [cameraImage setImage:scaledImage];
     
     [parentController dismissModalViewControllerAnimated: YES];
 }

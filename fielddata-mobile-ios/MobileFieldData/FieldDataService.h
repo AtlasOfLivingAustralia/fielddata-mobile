@@ -53,6 +53,7 @@
 #define kCensusMethodRow @"CR"
 #define kCensusMethodCol @"CC"
 
+#define kModeratorScope @"SURVEY_MODERATION"
 
 @protocol FieldDataServiceDelegate <NSObject>
 @required
@@ -60,9 +61,15 @@
 - (void)downloadSurveyDetailsSuccessful:(BOOL)success survey:(NSDictionary*)survey;
 @end
 
+@protocol FieldDataServiceUploadDelegate <NSObject>
+@required
+- (void)uploadSurveysSuccessful:(BOOL)success;
+@end
+
 @interface FieldDataService : NSObject {
     
     id <FieldDataServiceDelegate> delegate;
+    id <FieldDataServiceUploadDelegate> uploadDelegate;
     
     @private
     Preferences* preferences;
@@ -70,6 +77,7 @@
 }
 
 @property (retain) id delegate;
+@property (retain) id uploadDelegate;
 
 -(void)downloadSurveys;
 -(void)downloadSurveyDetails:(NSString*)surveyId;
@@ -80,5 +88,7 @@
 -(void)updateRecord:(Record*)record attributes:(NSArray*)attributes inputFields:(NSMutableDictionary*)inputFields;
 -(NSArray*)loadRecords;
 -(BOOL)isSupported:(NSString*)typeCode;
+-(BOOL)isRecordComplete:(Record*)record;
+-(void)uploadRecord:(Record*)record;
 
 @end

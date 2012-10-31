@@ -8,6 +8,7 @@
 
 #import "SpeciesCell.h"
 #import "Species.h"
+#import "SurveyAttributeOption.h"
 
 @implementation SpeciesCell
 
@@ -45,6 +46,7 @@
         [self.contentView addSubview:picker];
 
         value = [[NSMutableString alloc]init];
+        [value setString:firstSpecies.commonName];
     }
     return self;
 }

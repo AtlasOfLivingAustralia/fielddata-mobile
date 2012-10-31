@@ -52,7 +52,6 @@
                 [loadedValues setObject:value forKey:recordAttribute.surveyAttribute.weight];
             }
         }
-        
     }
     return self;
 }
@@ -78,6 +77,7 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+    self.tableView = nil;
 }
 
 // Save the survey to disk
@@ -89,8 +89,15 @@
         [fieldDataService updateRecord:record attributes:attributes inputFields:inputFields];
     }
     
-    [AlertService DisplayMessageWithTitle:@"Observation Saved"
-                                  message:@"Please go to the \"Saved Records\" menu to upload your observations to the server."];
+    // check if all the mandatory fields have been entered
+    if ([fieldDataService isRecordComplete:record]) {
+    
+        [AlertService DisplayMessageWithTitle:@"Observation Saved"
+                                      message:@"Please go to the \"Saved Records\" menu to upload your observations to the server."];
+    } else {
+        [AlertService DisplayMessageWithTitle:@"Observation Draft Saved"
+                                      message:@"All mandatory fields must be entered before your observations can be uploaded to the server."];
+    }
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -121,10 +128,15 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (cell == nil) {
+        NSString* mandatory = @"";
+        if ([attribute.required intValue] == 1) {
+            mandatory = @" *";
+        }
+            
         if ([attribute.typeCode isEqualToString:kIntegerType]) {
             IntegerInputCell* intCell = [[IntegerInputCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                                                   reuseIdentifier:CellIdentifier];
-            intCell.label.text = attribute.question;
+            intCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             intCell.inputField.text = [loadedValues objectForKey:attribute.weight];
             cell = intCell;
             [inputFields setObject:intCell.inputField forKey:attribute.weight];
@@ -133,7 +145,7 @@
             SingleSelectCell* singleCell = [[SingleSelectCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                                                      reuseIdentifier:CellIdentifier
                                                                      options:attribute.options.allObjects];
-            singleCell.label.text = attribute.question;
+            singleCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             [singleCell setSelectedValue:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
             cell = singleCell;
             [inputFields setObject:singleCell.value forKey:attribute.weight];
@@ -142,22 +154,22 @@
             MultiSelectCell* multiCell = [[MultiSelectCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                                                     reuseIdentifier:CellIdentifier
                                                                     options:attribute.options.allObjects];
-            multiCell.label.text = attribute.question;
+            multiCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             [multiCell setSelectedValues:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
             cell = multiCell;
             [inputFields setObject:multiCell.value forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kImage]) {
             ImageCell* imageCell = [[ImageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-            imageCell.label.text = attribute.question;
+            imageCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             imageCell.parentController = self;
-            [imageCell setImage:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
+            [imageCell setImage:[loadedValues objectForKey:attribute.weight]];
             cell = imageCell;
             [inputFields setObject:imageCell.filePath forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {
             NSArray* species = [fieldDataService loadSpecies];
             SpeciesCell* speciesCell = [[SpeciesCell alloc]initWithStyle:UITableViewCellStyleDefault
                                                            reuseIdentifier:CellIdentifier species:species];
-            speciesCell.label.text = attribute.question;
+            speciesCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             cell = speciesCell;
             [inputFields setObject:speciesCell.value forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kPoint]) {
@@ -168,7 +180,7 @@
             [inputFields setObject:locationCell.value forKey:attribute.weight];
         } else {
             TextInputCell* textCell = [[TextInputCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-            textCell.label.text = attribute.question;
+            textCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             textCell.inputField.text = [loadedValues objectForKey:attribute.weight];
             cell = textCell;
             [inputFields setObject:textCell.inputField forKey:attribute.weight];

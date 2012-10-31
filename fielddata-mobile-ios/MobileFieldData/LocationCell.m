@@ -66,7 +66,7 @@
     if (locDescArr.count == 3) {
         latitude.text = [NSString stringWithFormat:@"Latitude: %@", [locDescArr objectAtIndex:0]];
         longitude.text = [NSString stringWithFormat:@"Latitude: %@", [locDescArr objectAtIndex:1]];
-        accuracy.text = [NSString stringWithFormat:@"Accuracy: %@", [locDescArr objectAtIndex:2]];
+        accuracy.text = [NSString stringWithFormat:@"Accuracy: %@m", [locDescArr objectAtIndex:2]];
     }
     
 }
@@ -146,7 +146,7 @@
     [locMgr stopUpdatingLocation];
     [self hideProgressIndicator];
     
-    NSString* locDescription = [NSString stringWithFormat:@"%f,%f,%.1fm",
+    NSString* locDescription = [NSString stringWithFormat:@"%f,%f,%.1f",
                                     location.coordinate.latitude,
                                     location.coordinate.longitude,
                                     location.horizontalAccuracy];

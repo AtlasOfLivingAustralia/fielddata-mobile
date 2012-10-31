@@ -14,6 +14,7 @@
         <attribute name="commonName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="imageFileName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="scientificName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="taxonId" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
     </entity>
     <entity name="Survey" representedClassName="Survey" syncable="YES">
         <attribute name="endDate" optional="YES" attributeType="Date" syncable="YES"/>
@@ -46,11 +47,11 @@
         <relationship name="attribute" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="SurveyAttribute" inverseName="options" inverseEntity="SurveyAttribute" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Species" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="Survey" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="SurveyAttribute" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="SurveyAttributeOption" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="Record" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="RecordAttribute" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Record" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="RecordAttribute" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="Species" positionX="0" positionY="0" width="128" height="105"/>
+        <element name="Survey" positionX="0" positionY="0" width="128" height="195"/>
+        <element name="SurveyAttribute" positionX="0" positionY="0" width="128" height="180"/>
+        <element name="SurveyAttributeOption" positionX="0" positionY="0" width="128" height="105"/>
     </elements>
 </model>

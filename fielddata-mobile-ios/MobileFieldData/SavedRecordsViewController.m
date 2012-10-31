@@ -11,6 +11,7 @@
 #import "RecordAttribute.h"
 #import "FieldDataService.h"
 #import "SurveyViewController.h"
+#import "AlertService.h"
 
 @interface SavedRecordsViewController ()
 
@@ -25,6 +26,8 @@
         // Custom initialization
         fieldDataService = [[FieldDataService alloc]init];
         recordList = [fieldDataService loadRecords];
+        
+        fieldDataService.uploadDelegate = self;
     }
     return self;
 }
@@ -33,11 +36,12 @@
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    UIBarButtonItem *uploadButton = [[UIBarButtonItem alloc]
+                                   initWithBarButtonSystemItem:UIBarButtonSystemItemAction
+                                                        target:self
+                                                        action:@selector(uploadSurveys:)];
+    
+    self.navigationItem.rightBarButtonItem = uploadButton;
 }
 
 - (void)viewDidUnload
@@ -45,6 +49,74 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+    self.tableView = nil;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+}
+
+// Save the survey to disk
+-(void)uploadSurveys:(id)sender {
+    
+    numRecordsToUpload = 0;
+    uploadedRecordCount = 0;
+    uploadsSuccessful = YES;
+    
+    // count the number of records to upload
+    for (Record *record in recordList) {
+        
+        if ([fieldDataService isRecordComplete:record]) {
+            numRecordsToUpload++;
+        }
+    }
+    
+    dispatch_queue_t dispatchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    
+    dispatch_async(dispatchQueue, ^(void){
+        
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            // Show the progress indicator
+            [self showProgressIndicator];
+        });
+        
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            // upload the completed records
+            for (Record *record in recordList) {
+        
+                if ([fieldDataService isRecordComplete:record]) {
+                    [fieldDataService uploadRecord:record];
+                }
+            }
+        });
+    
+    });
+}
+
+- (void)uploadSurveysSuccessful:(BOOL)success {
+    
+    uploadedRecordCount++;
+    uploadsSuccessful = uploadsSuccessful && success;
+    
+    if (uploadedRecordCount == numRecordsToUpload) {
+        // reload the records
+        recordList = [fieldDataService loadRecords];
+        
+        [self hideProgressIndicator];
+        
+        if (uploadsSuccessful) {
+            NSString* message = [NSString stringWithFormat:@"%i completed surveys have been successfully uploaded.",
+                                 numRecordsToUpload];
+            [AlertService DisplayMessageWithTitle:@"Upload Successful" message:message];
+        } else {
+            NSString* message = [NSString stringWithFormat:@"Not all surveys have been successfully uploaded, please try again later."];
+            [AlertService DisplayMessageWithTitle:@"Upload Failed" message:message];
+        }
+    
+        [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    }
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -76,8 +148,20 @@
     }
     // Configure the cell...
     Record* record = [recordList objectAtIndex:indexPath.row];
-    cell.textLabel.text = [NSString stringWithFormat:@"%@", record.date];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"d MMMM y HH:mm"];
+    NSLocale *ausLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_AUS"];
+    [dateFormatter setLocale:ausLocale];
+    
+    cell.textLabel.text = [NSString stringWithFormat:@"%@", [dateFormatter stringFromDate:record.date]];
     cell.detailTextLabel.text = record.survey.surveyDescription;
+    
+    if ([fieldDataService isRecordComplete:record]) {
+        cell.imageView.image = [UIImage imageNamed:@"complete.png"];
+    } else {
+        cell.imageView.image = [UIImage imageNamed:@"incomplete.png"];
+    }
     
     return cell;
 }
@@ -137,5 +221,20 @@
     [self.navigationController pushViewController:surveyViewController animated:YES];
     
 }
+                   
+-(void)showProgressIndicator
+{
+    // add the progress indicator to the view
+    progressIndicator = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        
+    // Set properties
+    progressIndicator.labelText = @"Uploading Surveys";
+}
+                  
+-(void)hideProgressIndicator
+{
+    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+}
+                   
 
 @end

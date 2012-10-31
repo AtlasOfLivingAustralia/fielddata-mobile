@@ -36,8 +36,8 @@
 	// Do any additional setup after loading the view, typically from a nib.
     //self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refreshFieldData:)];
-    self.navigationItem.rightBarButtonItem = addButton;
+    //UIBarButtonItem *refreshButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refreshFieldData:)];
+    //self.navigationItem.rightBarButtonItem = refreshButton;
     
     // if the user is not logged on then redirect to the login page
     if ([preferences getFieldDataSessionKey] == NULL) {
@@ -87,9 +87,9 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section == 0) {
-        return 3;
-    } else {
         return 2;
+    } else {
+        return 1;
     }
 }
 
@@ -108,6 +108,11 @@
     return cell;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+}
+
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
@@ -120,28 +125,34 @@
     return NO;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    
+    if(section == 0) {
+        return [NSString stringWithFormat:@"Welcome  %@", preferences.getUsersName];
+    } else {
+        return @"";
+    }
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0) {
         switch (indexPath.row) {
             case 0:
-                [self openSavedRecordsPage];
-                break;
-            case 1:
                 [self openSurveyPage];
                 break;
-            case 2:
-                [self openSpeciesPage];
+            case 1:
+                [self openSavedRecordsPage];
                 break;
+            //case 2:
+            //    [self openSpeciesPage];
+            //    break;
             default:
                 break;
         }
     } else if (indexPath.section == 1) {
         switch (indexPath.row) {
             case 0:
-                
-                break;
-            case 1:
                 [self openLoginPage];
                 break;
             default:
@@ -193,24 +204,24 @@
     if (indexPath.section == 0) {
         switch (indexPath.row) {
             case 0:
-                cell.textLabel.text = @"Saved Records";
-                break;
-            case 1:
                 cell.textLabel.text = @"New Recording";
                 break;
-            case 2:
-                cell.textLabel.text = @"Species List";
+            case 1:
+                cell.textLabel.text = @"Saved Records";
+                break;
+            //case 2:
+            //    cell.textLabel.text = @"Species List";
             default:
                 break;
         }
     } else if (indexPath.section == 1) {
         switch (indexPath.row) {
             case 0:
-                cell.textLabel.text = @"Settings";
-                break;
-            case 1:
                 cell.textLabel.text = @"Change Login";
                 break;
+            //case 1:
+            //    cell.textLabel.text = @"Settings";
+            //    break;
             default:
                 break;
         }

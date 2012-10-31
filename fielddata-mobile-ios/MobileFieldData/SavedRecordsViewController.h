@@ -8,12 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import "FieldDataService.h"
+#import "MBProgressHUD.h"
 
-@interface SavedRecordsViewController : UITableViewController {
+@interface SavedRecordsViewController : UITableViewController <FieldDataServiceUploadDelegate>{
 
     @private
     FieldDataService* fieldDataService;
     NSArray* recordList;
+    int numRecordsToUpload;
+    int uploadedRecordCount;
+    MBProgressHUD *progressIndicator;
+    BOOL uploadsSuccessful;
 }
 
 @end

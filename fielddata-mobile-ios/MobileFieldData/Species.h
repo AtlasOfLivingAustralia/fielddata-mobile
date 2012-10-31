@@ -2,8 +2,8 @@
 //  Species.h
 //  MobileFieldData
 //
-//  Created by Birks, Matthew (CSIRO IM&T, Yarralumla) on 14/09/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Created by Birks, Matthew (CSIRO IM&T, Yarralumla) on 29/10/12.
+//
 //
 
 #import <Foundation/Foundation.h>
@@ -12,8 +12,9 @@
 
 @interface Species : NSManagedObject
 
-@property (nonatomic, retain) NSString * scientificName;
 @property (nonatomic, retain) NSString * commonName;
 @property (nonatomic, retain) NSString * imageFileName;
+@property (nonatomic, retain) NSString * scientificName;
+@property (nonatomic, retain) NSNumber * taxonId;
 
 @end

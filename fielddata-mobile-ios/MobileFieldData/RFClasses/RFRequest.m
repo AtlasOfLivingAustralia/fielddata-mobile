@@ -225,7 +225,8 @@
 	if (self.requestMethod != RFRequestMethodGet && bData && bData.length > 0) {
 		[urlRequest setValue:[NSString stringWithFormat:@"%d", [bData length]] forHTTPHeaderField:@"Content-Length"];
 		[urlRequest setValue:[self contentTypeToString:self.bodyContentType] forHTTPHeaderField:@"Content-Type"];
-		[urlRequest setHTTPBody:bData];
+        
+        [urlRequest setHTTPBody:bData];
 	}
 	
 	return urlRequest;
@@ -266,7 +267,7 @@
 	{
 		NSMutableData* data = [NSMutableData data];
 		NSData* crlf = [[NSString stringWithString:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding];
-		
+        
 		//plain params
 		for (NSDictionary* pd in self.params) {
 			
@@ -342,7 +343,7 @@
 {
 	switch (bt) {
 		case RFRequestBodyTypeFormUrlEncoded:
-			return @"application/x-www-form-urlencoded";
+			return @"application/x-www-form-urlencoded; charset=utf-8";
 		case RFRequestBodyTypeMultiPartFormData:
 			return [NSString stringWithFormat:@"multipart/form-data; boundary=%@", kRFPostBoundary];
 			/*case RESTRequestBodyTypeJSON:

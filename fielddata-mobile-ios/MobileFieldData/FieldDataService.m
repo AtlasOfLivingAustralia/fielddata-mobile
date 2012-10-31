@@ -17,12 +17,13 @@
 #import "AppDelegate.h"
 #import "Record.h"
 #import "RecordAttribute.h"
+#import "NSData+Base64.h"
 
 @implementation FieldDataService
 
 #define kDownloadUrl @"survey/download?uuid="
 
-@synthesize delegate;
+@synthesize delegate, uploadDelegate;
 
 -(id)init
 {
@@ -121,12 +122,24 @@
     survey.zoom = [mapDefaults objectForKey:@"zoom"];
     
     for (NSDictionary* recordProperty in [surveyDict objectForKey:@"recordProperties"]) {
-        [self persistRecordProperty:recordProperty survey:survey error:e];
+        
+        // dates field is ignored because it is set automatically
+        NSString* type = [recordProperty objectForKey:@"name"];
+        
+        if (![type isEqualToString:kWhen]) {
+            [self persistRecordProperty:recordProperty survey:survey error:e];
+        }
     }
     
     for (NSDictionary* attribute in [surveyDict objectForKey:@"attributesAndOptions"]) {
-        NSLog(@"Saving attribute: %@", attribute);
-        [self persistAttribute:attribute survey:survey error:e];
+        
+        // ignore moderator scoped fields
+        NSString* scope = [attribute objectForKey:@"scope"];
+        
+        if (![scope isEqualToString:kModeratorScope]) {
+            NSLog(@"Saving attribute: %@", attribute);
+            [self persistAttribute:attribute survey:survey error:e];
+        }
     }
     
     if (![context save:&e]) {
@@ -219,6 +232,7 @@
     
     species.scientificName = [speciesDict objectForKey:@"scientificName"];
     species.commonName = [speciesDict objectForKey:@"commonName"];
+    species.taxonId = [speciesDict objectForKey:@"server_id"];
     
     NSString* thumbnailPath;
     NSArray* infoItems = [speciesDict objectForKey:@"infoItems"];
@@ -228,8 +242,6 @@
             thumbnailPath = [infoItem objectForKey:@"content"];
         }
     }
-    
-    //species.imageFileName = thumbnailPath;
     
     // save the image to local storage
     NSString* imageURL = [NSString stringWithFormat:@"%@%@%@", [preferences getFieldDataURL], kDownloadUrl,thumbnailPath];
@@ -407,7 +419,164 @@
     
     return fetchedObjects;
 }
-                      
+
+-(BOOL)isRecordComplete:(Record*)record {
+    
+    BOOL complete = YES;
+    for (RecordAttribute* att in record.recordAttributes) {
+        if ([att.surveyAttribute.required intValue] == 1 &&
+            (att.value == NULL || [att.value isEqualToString:@""])) {
+            NSLog(@"Attribute: %@  Value: %@", att.surveyAttribute.question, att.value);
+            complete = NO;
+            break;
+        }
+    }
+    return complete;
+}
+
+-(void)uploadRecord:(Record*)record {
+    
+    RecordAttribute* species;
+    RecordAttribute* location;
+    RecordAttribute* notes;
+    
+    NSMutableArray* attributeValues = [[NSMutableArray alloc] init];
+    
+    for (RecordAttribute* att in record.recordAttributes) {
+        if ([att.surveyAttribute.typeCode isEqualToString:kSpeciesRP]){
+            species = att;
+        } else if ([att.surveyAttribute.typeCode isEqualToString:kPoint]) {
+            location = att;
+        } else if ([att.surveyAttribute.typeCode isEqualToString:kNotes]) {
+            notes = att;
+        } else {
+        
+            NSNumber* attributeId = att.surveyAttribute.serverId;
+            
+            if (attributeId.intValue != 0) {
+                
+                NSMutableDictionary* attributeValue = [[NSMutableDictionary alloc] init];
+                
+                [attributeValue setObject:attributeId forKey:@"attribute_id"];
+                [attributeValue setObject:[[NSNumber alloc]initWithInt:-1] forKey:@"id"];
+                
+                if ([att.surveyAttribute.typeCode isEqualToString:kImage]) {
+                    NSString* imageUrl = att.value;
+                    if (imageUrl != NULL && ![imageUrl isEqualToString:@""]) {
+                        UIImage* photo = [UIImage imageWithContentsOfFile:imageUrl];
+                        NSData *imageData = UIImageJPEGRepresentation(photo, 0.7);
+                        NSString *imageString = [imageData base64EncodedString];
+                    
+                        [attributeValue setObject:imageString forKey:@"value"];
+                        [attributeValues addObject:attributeValue];
+                    }
+                } else {
+                    if (att.value != NULL) {
+                        [attributeValue setObject:att.value forKey:@"value"];
+                        [attributeValues addObject:attributeValue];
+                    } else {
+                        //[attributeValue setObject:@"NA" forKey:@"value"];
+                    }
+                }
+                //[attributeValues addObject:attributeValue];
+            }
+        }
+    }
+    
+    NSArray* speciesArr = [self loadSpecies];
+    NSString* scientificName;
+    NSNumber* taxonId;
+    for (Species* spec in speciesArr) {
+        if ([spec.commonName isEqualToString:species.value]) {
+            scientificName = spec.scientificName;
+            taxonId = spec.taxonId;
+            break;
+        }
+    }
+    
+    NSArray* locDescArr = [location.value componentsSeparatedByString:@","];
+    
+    NSString* lat;
+    NSString* lon;
+    NSString* accuracy;
+    
+    if (locDescArr.count == 3) {
+        lat = [locDescArr objectAtIndex:0];
+        lon = [locDescArr objectAtIndex:1];
+        accuracy = [locDescArr objectAtIndex:2];
+    }
+    
+    NSMutableDictionary* uploadDict = [[NSMutableDictionary alloc] init];
+    [uploadDict setObject:lat forKey:@"latitude"];
+    [uploadDict setObject:lon forKey:@"longitude"];
+    [uploadDict setObject:accuracy forKey:@"accuracy"];
+    [uploadDict setObject:scientificName forKey:@"scientificName"];
+    [uploadDict setObject:record.survey.id forKey:@"survey_id"];
+    [uploadDict setObject:taxonId forKey:@"taxon_id"];
+    if (notes.value != NULL) {
+        [uploadDict setObject:notes.value forKey:@"notes"];
+    } 
+    
+    // get the long date
+    NSNumber *nowDouble = [NSNumber numberWithDouble: 1000.0 * [record.date timeIntervalSince1970]];
+    NSString *nowString = [NSString stringWithFormat:@"%.0f", nowDouble.doubleValue];
+    
+    [uploadDict setObject:nowString forKey:@"when"];
+    
+    CFUUIDRef newUniqueId = CFUUIDCreate(kCFAllocatorDefault);
+    NSString * uuidString = (__bridge_transfer NSString*)CFUUIDCreateString(kCFAllocatorDefault, newUniqueId);
+    CFRelease(newUniqueId);
+    [uploadDict setObject:uuidString forKey:@"id"];
+    
+    [uploadDict setObject:[[NSNumber alloc]initWithInt:0] forKey:@"location"];
+    //[uploadDict setObject:[[NSNumber alloc]initWithInt:0] forKey:@"number"];
+    [uploadDict setObject:[[NSNumber alloc]initWithInt:0] forKey:@"server_id"];
+    [uploadDict setObject:[[NSNumber alloc]initWithInt:3] forKey:@"_id"];
+    
+    [uploadDict setObject:attributeValues forKey:@"attributeValues"];
+    
+    NSArray* uploadArray = [NSArray arrayWithObject:uploadDict];
+    
+    NSError* error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:uploadArray options:NSJSONWritingPrettyPrinted error:&error];
+    //NSData* jsonData = [NSJSONSerialization dataWithJSONObject:uploadArray options:kNilOptions error:&error];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+    // upload the survey through the REST webservice
+    NSString* url = [preferences getFieldDataURL];
+    
+    RFRequest *r = [RFRequest requestWithURL:[NSURL URLWithString:url] type:RFRequestMethodPost
+                      resourcePathComponents:@"survey", @"upload", nil];
+    
+    [r addParam:[preferences getFieldDataSessionKey] forKey:@"ident"];
+    [r addParam:@"false" forKey:@"inFrame"];
+    
+    //jsonString = [jsonString stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"]; //%2F
+    jsonString = [jsonString stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"];
+    [r addParam:jsonString forKey:@"syncData" alreadyEncoded:YES];
+    
+    //now execute this request and fetch the response in a block
+    [RFService execRequest:r completion:^(RFResponse *response){
+        
+        NSError * error = nil;
+        NSDictionary* respDict =  [NSJSONSerialization JSONObjectWithData:response.dataValue
+                                                                options:kNilOptions error:&error];
+        
+        NSNumber* status = [respDict objectForKey:@"status"];
+        if (status.intValue == 200) {
+            // delete the record
+            NSError * saveError = nil;
+            [context deleteObject:record];
+            [context save:&saveError];
+            [uploadDelegate uploadSurveysSuccessful:YES];
+        } else {
+            [uploadDelegate uploadSurveysSuccessful:NO];
+            NSLog(@"%@", respDict);
+        }
+        
+    }];
+}
+
                           
 
 @end

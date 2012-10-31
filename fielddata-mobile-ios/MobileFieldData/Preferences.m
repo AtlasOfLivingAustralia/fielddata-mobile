@@ -13,7 +13,8 @@
 -(id)init
 {
     defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@"root-uat.ala.org.au" forKey:@"baseURL"];
+    [defaults setObject:@"root.ala.org.au" forKey:@"baseURL"];
+    //[defaults setObject:@"152.83.195.62:8081" forKey:@"baseURL"];
     [defaults setObject:@"fielddata-proxy" forKey:@"context"];
     [defaults setObject:@"koalacount" forKey:@"path"];
     [defaults setObject:@"Great+Koala+Count" forKey:@"portal"];
@@ -45,6 +46,16 @@
 -(NSString*)getFieldDataSessionKey
 {
     return [defaults objectForKey:@"sessionKey"];
+}
+
+-(void)setUsersName:(NSString*)name
+{
+    [defaults setObject:name forKey:@"name"];
+}
+
+-(NSString*)getUsersName
+{
+    return [defaults objectForKey:@"name"];
 }
 
 @end

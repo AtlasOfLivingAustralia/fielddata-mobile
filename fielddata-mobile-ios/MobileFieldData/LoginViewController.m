@@ -37,6 +37,11 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    if ([preferences getFieldDataSessionKey]) {
+        [AlertService DisplayMessageWithTitle:@"Warning"
+                                      message:@"Changing the logged in user will delete any survey recordings that have not yet been uploaded."];
+    }
+    
 }
 
 - (void)viewDidUnload
@@ -76,7 +81,7 @@
             
             NSString *url = [preferences getFieldDataURL];
             
-            RFRequest *r = [RFRequest requestWithURL:[NSURL URLWithString:url] type:RFRequestMethodPost
+            RFRequest *r = [RFRequest requestWithURL:[NSURL URLWithString:url] type:RFRequestMethodGet
                               resourcePathComponents:@"survey", @"login", nil];
             
             [r addParam:portalName forKey:@"portalName"];
@@ -101,6 +106,11 @@
     NSString *ident = [dictionary valueForKey:@"ident"];
     NSLog(@"%@", ident);
     
+    NSDictionary *user = [dictionary valueForKey:@"user"];
+    
+    NSString *name = [NSString stringWithFormat:@"%@ %@",
+                      [user valueForKey:@"firstName"],
+                      [user valueForKey:@"lastName"]];
     
     
     if (ident == NULL) {
@@ -108,6 +118,7 @@
         [AlertService DisplayMessageWithTitle:@"Login Failed" message:@"Username or Password not recognised"];
     } else {
         [preferences setFieldDataSessionKey:ident];
+        [preferences setUsersName:name];
         
         // delete all the existing entities
         [fieldDataService deleteAllEntities:@"Species"];
@@ -129,8 +140,9 @@
         
         for (NSDictionary* survey in surveys) {
          
-            NSString* surveyId = [survey objectForKey:@"id"];
-            [fieldDataService downloadSurveyDetails:surveyId];
+            //NSString* surveyId = [survey objectForKey:@"id"];
+            NSNumber* surveyId = [survey objectForKey:@"id"];
+            [fieldDataService downloadSurveyDetails:surveyId.stringValue];
         }
     }
 }

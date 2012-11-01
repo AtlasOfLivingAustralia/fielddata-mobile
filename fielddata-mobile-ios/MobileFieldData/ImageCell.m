@@ -57,36 +57,11 @@
 
 - (void)setImage:(NSString*)imagePath
 {
-    /*
-    ALAssetsLibraryAssetForURLResultBlock resultblock = ^(ALAsset *myasset)
-    {
-        
-         //ALAssetRepresentation *rep = [myasset defaultRepresentation];
-         //CGImageRef iref = [rep fullResolutionImage];
-         //if (iref) {
-            // Gets the full size image
-         //   self.fullSizeImage = [UIImage imageWithCGImage:iref];
-         //}
-        
-        // Gets the thumbnail
-        [cameraImage setImage:[UIImage imageWithCGImage:[myasset thumbnail]]];
-    };
-    
-    ALAssetsLibraryAccessFailureBlock failureblock = ^(NSError *myerror)
-    {
-        NSLog(@"in failureblock, got an error: %@",[myerror localizedDescription]);
-    };*/
-    
     if (imagePath != NULL && ![imagePath isEqualToString:@""]) {
-        //ALAssetsLibrary *assetsLib = [[ALAssetsLibrary alloc] init];
-        //NSURL* urlForImage = [NSURL URLWithString:imagePath];
-        //[assetsLib assetForURL:urlForImage resultBlock:resultblock failureBlock:failureblock];
         [cameraImage setImage:[UIImage imageWithContentsOfFile:imagePath]];
     }
 }
 
-     
-     
 - (IBAction)showCameraUI:(id)sender {
     [self startCameraControllerFromViewController: parentController usingDelegate: self];
 }
@@ -130,41 +105,23 @@
 -(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     UIImage* image = [info valueForKey:UIImagePickerControllerOriginalImage];
     
-    UIImage* scaledImage;
-    if (image.size.height > 1200 || image.size.width > 1200) {
-        scaledImage = [image resizedImageWithContentMode:UIViewContentModeScaleAspectFit
-                                                  bounds:CGSizeMake(1200, 1200)
-                                    interpolationQuality:kCGInterpolationHigh];
-    } else {
-        scaledImage = image;
-    }
-    /*
-    if(image){
-        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-        [library writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation]
-            completionBlock:^
-            (NSURL *assetURL, NSError *error){
-                if (!error) {
-                    [filePath setString:[NSString stringWithFormat:@"%@",assetURL]];
-                }
-            }];
-        if ([image imageOrientation] == UIImageOrientationUp) {
-            cameraImage.frame = CGRectMake(10, 30, 96, 72);
-        } else {
-            cameraImage.frame = CGRectMake(10, 30, 72, 96);
-        }
-        [cameraImage setImage:image];
-    }*/
+    UIImageOrientation orientation = [image imageOrientation];
+    
+    if (image.size.height > 1024 || image.size.width > 1024) {
+        image = [image resizedImageWithContentMode:UIViewContentModeScaleAspectFit
+                                            bounds:CGSizeMake(1024, 1024)
+                              interpolationQuality:kCGInterpolationMedium];
+    } 
     
     NSString* fileName = [NSString stringWithFormat:@"%f.jpg", [[NSDate date] timeIntervalSince1970]];
-    [filePath setString:[FileService saveImage:scaledImage withName:fileName]];
+    [filePath setString:[FileService saveImage:image withName:fileName]];
     
-    if ([image imageOrientation] == UIImageOrientationUp) {
+    if (orientation == UIImageOrientationUp) {
         cameraImage.frame = CGRectMake(10, 30, 96, 72);
     } else {
         cameraImage.frame = CGRectMake(10, 30, 72, 96);
     }
-    [cameraImage setImage:scaledImage];
+    [cameraImage setImage:image];
     
     [parentController dismissModalViewControllerAnimated: YES];
 }

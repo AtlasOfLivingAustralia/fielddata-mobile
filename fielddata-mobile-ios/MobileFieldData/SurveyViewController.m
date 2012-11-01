@@ -16,6 +16,7 @@
 #import "LocationCell.h"
 #import "AlertService.h"
 #import "RecordAttribute.h"
+#import "MasterViewController.h"
 
 @interface SurveyViewController ()
 
@@ -29,6 +30,8 @@
     if (self) {
         // Custom initialization
         fieldDataService = [[FieldDataService alloc]init];
+        fieldDataService.uploadDelegate = self;
+        
         survey = s;
         
         NSArray *sortDescriptors = [NSArray arrayWithObject:
@@ -85,19 +88,34 @@
     
     if (record == NULL) {
         record = [fieldDataService createRecord:attributes survey:survey inputFields:inputFields];
+        
+        // check if all the mandatory fields have been entered
+        if ([fieldDataService isRecordComplete:record]) {
+            
+            UIAlertView *alertView =[[UIAlertView alloc]
+                                     initWithTitle:@"Upload Survey"
+                                           message:@"Would you like to upload this survey immediately?"
+                                          delegate:self
+                                 cancelButtonTitle:@"No"
+                                 otherButtonTitles:@"Yes", nil];
+            
+            [alertView show];
+            
+        } else {
+            [AlertService DisplayMessageWithTitle:@"Observation Draft Saved"
+                                          message:@"All mandatory fields must be entered before your observations can be uploaded to the server."];
+            [[self navigationController] popViewControllerAnimated:YES];
+        }
+        
     } else {
         [fieldDataService updateRecord:record attributes:attributes inputFields:inputFields];
-    }
-    
-    // check if all the mandatory fields have been entered
-    if ([fieldDataService isRecordComplete:record]) {
-    
+        
         [AlertService DisplayMessageWithTitle:@"Observation Saved"
-                                      message:@"Please go to the \"Saved Records\" menu to upload your observations to the server."];
-    } else {
-        [AlertService DisplayMessageWithTitle:@"Observation Draft Saved"
-                                      message:@"All mandatory fields must be entered before your observations can be uploaded to the server."];
+                                      message:@"Observation has been successfully updated."];
+        
+        [[self navigationController] popViewControllerAnimated:YES];
     }
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -229,5 +247,57 @@
     return nil;
 }
 
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0) {
+        [AlertService DisplayMessageWithTitle:@"Observation Saved"
+                                      message:@"Please go to the \"Saved Records\" menu to upload your observations to the server."];
+        
+        [[self navigationController] popViewControllerAnimated:YES];
+    } else {
+        dispatch_queue_t dispatchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        
+        dispatch_async(dispatchQueue, ^(void) {
+            
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                // Show the progress indicator
+                [self showProgressIndicator];
+            });
+            
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [fieldDataService uploadRecord:record];
+            });
+        });
+    }
+}
+
+- (void)uploadSurveysSuccessful:(BOOL)success {
+    
+    [self hideProgressIndicator];
+    
+    if (success) {
+        NSString* message = [NSString stringWithFormat:@"Survey has been successfully uploaded."];
+        [AlertService DisplayMessageWithTitle:@"Upload Successful" message:message];
+    } else {
+        NSString* message = [NSString stringWithFormat:@"Survey upload failed, please try again later."];
+        [AlertService DisplayMessageWithTitle:@"Upload Failed" message:message];
+    }
+    
+    [[self navigationController] popViewControllerAnimated:YES];
+}
+
+-(void)showProgressIndicator
+{
+    // add the progress indicator to the view
+    progressIndicator = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    // Set properties
+    progressIndicator.labelText = @"Uploading Survey";
+}
+
+-(void)hideProgressIndicator
+{
+    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+}
 
 @end

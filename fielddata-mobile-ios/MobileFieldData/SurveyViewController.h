@@ -12,8 +12,9 @@
 #import "SurveyAttribute.h"
 #import "SurveyAttributeOption.h"
 #import "Record.h"
+#import "MBProgressHUD.h"
 
-@interface SurveyViewController : UITableViewController {
+@interface SurveyViewController : UITableViewController <UIAlertViewDelegate, FieldDataServiceUploadDelegate> {
     
     @private
     FieldDataService* fieldDataService;
@@ -22,6 +23,7 @@
     NSArray* attributes;
     NSMutableDictionary* inputFields;
     NSMutableDictionary* loadedValues;
+    MBProgressHUD *progressIndicator;
 }
 
 

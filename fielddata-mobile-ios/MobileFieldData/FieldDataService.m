@@ -464,7 +464,7 @@
                     NSString* imageUrl = att.value;
                     if (imageUrl != NULL && ![imageUrl isEqualToString:@""]) {
                         UIImage* photo = [UIImage imageWithContentsOfFile:imageUrl];
-                        NSData *imageData = UIImageJPEGRepresentation(photo, 0.7);
+                        NSData *imageData = UIImageJPEGRepresentation(photo, 0.8);
                         NSString *imageString = [imageData base64EncodedString];
                     
                         [attributeValue setObject:imageString forKey:@"value"];
@@ -538,8 +538,8 @@
     NSArray* uploadArray = [NSArray arrayWithObject:uploadDict];
     
     NSError* error;
-    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:uploadArray options:NSJSONWritingPrettyPrinted error:&error];
-    //NSData* jsonData = [NSJSONSerialization dataWithJSONObject:uploadArray options:kNilOptions error:&error];
+    //NSData* jsonData = [NSJSONSerialization dataWithJSONObject:uploadArray options:NSJSONWritingPrettyPrinted error:&error];
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:uploadArray options:kNilOptions error:&error];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     
     // upload the survey through the REST webservice

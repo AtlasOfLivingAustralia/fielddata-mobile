@@ -24,6 +24,8 @@
     self = [super initWithStyle:style];
     if (self) {
         // Custom initialization
+        //self.title = NSLocalizedString(@"Saved Records", @"Saved Records");
+        
         fieldDataService = [[FieldDataService alloc]init];
         recordList = [fieldDataService loadRecords];
         

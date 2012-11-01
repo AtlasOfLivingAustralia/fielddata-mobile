@@ -672,7 +672,8 @@
 					"-all_load",
 					"-ObjC",
 				);
-				PROVISIONING_PROFILE = "6C860579-2882-4356-A24A-3011528573CF";
+				PROVISIONING_PROFILE = "8AC7E264-64BD-4178-94E0-2248F7D15863";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -683,8 +684,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: CSIRO";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Commonwealth Scientific and Industrial Research Organisation";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Commonwealth Scientific and Industrial Research Organisation";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -698,7 +699,8 @@
 					"-all_load",
 					"-ObjC",
 				);
-				PROVISIONING_PROFILE = "C36C73C9-9AB9-4AF7-851B-5DBAD20A013B";
+				PROVISIONING_PROFILE = "8839EF60-0EFB-4EA0-938A-27D5463A2F94";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "8839EF60-0EFB-4EA0-938A-27D5463A2F94";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};

@@ -87,7 +87,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section == 0) {
-        return 2;
+        return 3;
     } else {
         return 1;
     }
@@ -144,7 +144,11 @@
             case 1:
                 [self openSavedRecordsPage];
                 break;
-            //case 2:
+            case 2:
+                [self openWeblink:indexPath];
+                
+                break;
+            //case 3:
             //    [self openSpeciesPage];
             //    break;
             default:
@@ -193,6 +197,13 @@
     [self.navigationController pushViewController:speciesListViewController animated:YES];
 }
 
+-(void)openWeblink:(NSIndexPath *)indexPath
+{
+    [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+    NSURL *url = [NSURL URLWithString:@"http://root.ala.org.au/bdrs-core/koalacount/map/mySightings.htm"];
+    [[UIApplication sharedApplication] openURL:url];
+}
+
 - (void)openLoginPage
 {
     LoginViewController *loginViewController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
@@ -209,7 +220,9 @@
             case 1:
                 cell.textLabel.text = @"Saved Records";
                 break;
-            //case 2:
+            case 2:
+                cell.textLabel.text = @"View My Records Online";
+            //case 3:
             //    cell.textLabel.text = @"Species List";
             default:
                 break;

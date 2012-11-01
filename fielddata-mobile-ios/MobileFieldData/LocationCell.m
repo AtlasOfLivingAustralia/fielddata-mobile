@@ -21,7 +21,7 @@
         label = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, self.bounds.size.width-20, 24)];
         label.font = [UIFont boldSystemFontOfSize:12.0];
         label.numberOfLines = 0;
-        label.text = @"My Current Location";
+        label.text = @"My Current Location *";
         [self.contentView addSubview:label];
         
         latitude = [[UILabel alloc] initWithFrame:CGRectMake(10, 24, 200, 24)];

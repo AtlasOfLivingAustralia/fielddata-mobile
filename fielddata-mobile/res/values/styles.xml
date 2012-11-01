@@ -124,4 +124,8 @@
         <item name="android:textStyle">italic</item>
     </style>
     
+    <style name="DateSpinner" parent="@android:style/Widget.Spinner">
+        <item name="android:paddingBottom">5dp</item>
+    </style>
+    
 </resources>

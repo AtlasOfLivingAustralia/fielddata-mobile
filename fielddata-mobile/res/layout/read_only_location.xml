@@ -64,35 +64,40 @@
         
         />
     
-    <Button
-        android:id="@+id/showMapButton"
+    <LinearLayout 
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:contentDescription="@string/mapLabel"
-        android:drawableTop="@drawable/select_map_location_icon"
-        android:gravity="center_vertical|center_horizontal"
-        android:text="Map"
-        android:background="@null"
-        android:textAppearance="?android:attr/textAppearanceSmall" 
-        />
-   
-    <Button
-        android:id="@+id/gpsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/showMapButton"
-        
-        
-        android:contentDescription="@string/currentLocationLabel"
-        android:drawableTop="@drawable/select_current_location_icon"
-        android:gravity="center_horizontal|center_vertical"
-        android:paddingRight="5dp"
-        android:text="Set With GPS"
-        android:background="@null"
-        android:textAppearance="?android:attr/textAppearanceSmall" >
-
-    </Button>
-    
+        >
+	    
+	    <Button
+	        android:id="@+id/gpsButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+	        android:contentDescription="@string/currentLocationLabel"
+	        android:drawableTop="@drawable/select_current_location_icon"
+	        android:gravity="center_horizontal|center_vertical"
+	        android:paddingRight="5dp"
+	        android:text="Set With GPS"
+	        android:background="@null"
+	        android:textAppearance="?android:attr/textAppearanceSmall" >
+	
+	    </Button>
+	    
+	    <Button
+	        android:id="@+id/showMapButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:contentDescription="@string/mapLabel"
+	        android:drawableTop="@drawable/select_map_location_icon"
+	        android:gravity="center_vertical|center_horizontal"
+	        android:text="Map"
+	        android:background="@null"
+	        android:textAppearance="?android:attr/textAppearanceSmall" 
+	        />
+	   
+	    
+    </LinearLayout>
     
 </RelativeLayout>

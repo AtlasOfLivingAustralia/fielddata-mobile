@@ -26,8 +26,24 @@ import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * A Record is the result of completing a Survey.  It's structure mirrors
+ * the format required for upload to the FieldData server.
+ */
 public class Record extends Persistent {
 
+	/**
+	 * Defines the lifecycle of a Record.  Note the absence of an UPLOADED
+	 * status - this is because Records are deleted after being uploaded.
+	 */
+	public static enum Status {
+		DRAFT, // A Record is considered a draft until it passes validation.  A draft record cannot be uploaded.
+		COMPLETE,  
+		SCHEDULED_FOR_UPLOAD,
+		UPLOADING,
+		FAILED_TO_UPLOAD
+	}
+	
 	@SerializedName("id")
 	public String uuid;
 	
@@ -46,7 +62,7 @@ public class Record extends Persistent {
 	
 	private List<AttributeValue> attributeValues;
 	
-	private boolean valid;
+	private Status status;
 	
 	/** Caches a reference to the first image for display purposes */
 	private transient Uri photo;
@@ -235,7 +251,7 @@ public class Record extends Persistent {
 	public Record() {
 		uuid = UUID.randomUUID().toString();
 		attributeValues = new ArrayList<Record.AttributeValue>();
-		valid = false;
+		status = Status.DRAFT;
 		
 	}
 	
@@ -244,12 +260,27 @@ public class Record extends Persistent {
 	 * to be re-calculated when displayed in the saved records list.
 	 * @param valid whether this Record is valid or not.
 	 */
-	public void setValid(boolean valid) {
-		this.valid = valid;
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+	
+	public Status getStatus() {
+		return status;
 	}
 	
 	public boolean isValid() {
-		return valid;
+		return status != Status.DRAFT;
+	}
+	
+	public void setValid(boolean valid) {
+		if (!valid) {
+			status = Status.DRAFT;
+		}
+		else {
+			if (status == Status.DRAFT) {
+				status = Status.COMPLETE;
+			}
+		}
 	}
 
 	protected AttributeValue valueOf(Attribute attribute) {

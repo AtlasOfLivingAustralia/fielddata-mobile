@@ -106,6 +106,21 @@ public class Attribute extends SurveyProperty {
 	public String typeCode;
 	public AttributeOption[] options;
 	
+	public String getOptionValue(int index) {
+		return options != null && options.length > index ? options[index].value : null;
+	}
+	
+	public void addOption(String value) {
+		if (options == null) {
+			options = new AttributeOption[1];
+			options[0] = new AttributeOption();
+			options[0].value = value;
+		}
+		else {
+			throw new IllegalArgumentException("Cannot add options to an Attribute with defined options");
+		}
+	}
+	
 	public AttributeType getType() {
 		return AttributeType.fromCode(typeCode);
 	}

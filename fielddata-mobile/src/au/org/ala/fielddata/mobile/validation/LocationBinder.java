@@ -48,28 +48,36 @@ public class LocationBinder extends AbsBinder {
 	}
 	
 	private void addEventHandlers(View view) {
-	gpsButton = (Button)view.findViewById(R.id.gpsButton);
-	gpsButton.setOnClickListener(new OnClickListener() {
-		
-		public void onClick(View v) {
-			if (!ctx.isGpsTrackingEnabled()) {
-				startLocationUpdates();		
+		gpsButton = (Button)view.findViewById(R.id.gpsButton);
+		gpsButton.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				if (!ctx.isGpsTrackingEnabled()) {
+					startLocationUpdates();		
+				}
+				else {
+					stopLocationUpdates();
+				}
 			}
-			else {
-				stopLocationUpdates();
-			}
-		}
-
-		
-	});
 	
-	Button showOnMapButton = (Button)view.findViewById(R.id.showMapButton);
-	showOnMapButton.setOnClickListener(new OnClickListener() {
+			
+		});
 		
-		public void onClick(View v) {
-			ctx.selectLocation();
+		
+		Button showOnMapButton = (Button)view.findViewById(R.id.showMapButton);
+		
+		String option = getAttribute().getOptionValue(0);
+		if (option == null) {
+			showOnMapButton.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					ctx.selectLocation();
+				}
+			});
 		}
-	});
+		else {
+			
+			showOnMapButton.setVisibility(View.GONE);
+		}
 	}
 	
 	private void startLocationUpdates() {

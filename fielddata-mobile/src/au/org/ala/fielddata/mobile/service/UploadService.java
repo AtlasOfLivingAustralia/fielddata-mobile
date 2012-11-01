@@ -39,6 +39,7 @@ public class UploadService extends Service {
 
 	public static final String UPLOADED = "Upload";
 	public static final String UPLOAD_FAILED = "UploadFailed";
+	public static final String STATUS_CHANGE = "StatusChange";
 	
 	public static final String RECORD_IDS_EXTRA = "RecordIds";
 	
@@ -64,16 +65,20 @@ public class UploadService extends Service {
 		public void handleMessage(Message msg) {
 			Log.i("UploadService", "Handling message: "+msg.getData());
 			Bundle msgData = msg.getData();
+			int[] recordIds = msgData.getIntArray(RECORD_IDS_EXTRA);
+			RecordDAO dao = new RecordDAO(UploadService.this);
+			dao.updateStatus(recordIds, Record.Status.SCHEDULED_FOR_UPLOAD);
+			broadcastStatusChange(STATUS_CHANGE);
+			
 			if (canUpload()) {
 				Log.i("UploadService", "Able to upload!");
 				int startId = msgData.getInt(START_ID);
-				int[] recordIds = msgData.getIntArray(RECORD_IDS_EXTRA);
 				uploadRecords(recordIds);
 				Log.d("UploadService", "Stopping with id: "+startId);
 				stopSelf(startId);
 			}
 			else {
-				Log.i("UploadService", "Unable to upload, requeuing message");
+				Log.i("UploadService", "Unable to upload, re-queuing message");
 				notifyQueued();
 				synchronized(deferredWorkQueue) {
 					deferredWorkQueue.add(msgData);
@@ -167,34 +172,41 @@ public class UploadService extends Service {
 				}
 			}
 		}
-		int successCount = 0;
+		List<Integer> success = new ArrayList<Integer>();
+		List<Integer> failed = new ArrayList<Integer>();
+		
 		int invalidCount = 0;
-		int failedCount = 0;
 		for (Record record : records) {
 			int result = upload(record);
 			if (result == SUCCESS) {
-				successCount++;
+				success.add(record.getId());
 				recordDao.delete(Record.class, record.getId());
 			}
 			else if (result == FAILED_INVALID) {
 				invalidCount++;
 			}
 			else if (result == FAILED_SERVER) {
-				failedCount++;
+				failed.add(record.getId());
 			}
 		}
 		String action = null;
-		if (failedCount > 0) {
+		if (failed.size() > 0) {
 			action = UPLOAD_FAILED;
-			notifyFailed(failedCount);
+			recordDao.updateStatus(failed, Record.Status.FAILED_TO_UPLOAD);
+			notifyFailed(failed.size());
 		}
-		else {
+		if (success.size() > 0){
 			action = UPLOADED;
-			notifiySuccess(successCount);
+			notifiySuccess(success.size());
 		}
-		Intent broadcastIntent = new Intent(action);
-		LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
 		
+		
+		broadcastStatusChange(action);
+	}
+	
+	private void broadcastStatusChange(String change) {
+		Intent broadcastIntent = new Intent(change);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
 	}
 	
 	private boolean canUpload() {

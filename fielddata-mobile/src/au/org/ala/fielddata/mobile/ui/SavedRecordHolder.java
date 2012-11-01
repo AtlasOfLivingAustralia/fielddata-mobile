@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.View;
 import android.widget.CheckBox;
@@ -34,7 +35,7 @@ public class SavedRecordHolder {
 		public Survey survey;
 	}
 	
-	TextView status = null;
+	TextView statusLabel = null;
 	ImageView icon = null;
 	TextView recordSpecies = null;
 	TextView recordTime = null;
@@ -50,7 +51,7 @@ public class SavedRecordHolder {
 		checkbox = (CheckBox)row.findViewById(R.id.checkbox);
 		surveyName = (TextView)row.findViewById(R.id.survey_name);
 		storageManager = new StorageManager(row.getContext());
-		status = (TextView)row.findViewById(R.id.status);
+		statusLabel = (TextView)row.findViewById(R.id.status);
 	}
 	
 	public void populate(RecordView recordView) {
@@ -79,11 +80,36 @@ public class SavedRecordHolder {
 		Date created = new Date(record.when);
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		recordTime.setText(format.format(created));
-		if (record.isValid()) {
-			status.setVisibility(View.GONE);
-		}
-		else {
-			status.setVisibility(View.VISIBLE);
+		Record.Status status = record.getStatus();
+		if (status != Record.Status.COMPLETE) {
+			if (status == Record.Status.COMPLETE) {
+				statusLabel.setVisibility(View.GONE);
+			}
+			else {
+				statusLabel.setVisibility(View.VISIBLE);
+				switch (status) {
+				case SCHEDULED_FOR_UPLOAD:
+					statusLabel.setText("Upload pending");
+					statusLabel.setBackgroundColor(Color.parseColor("#32cd32"));
+				    statusLabel.setTextColor(Color.parseColor("#000000"));
+					break;
+				case DRAFT:
+					statusLabel.setText("Draft");
+					statusLabel.setBackgroundColor(Color.parseColor("#FFFFCC"));
+				    statusLabel.setTextColor(Color.parseColor("#555555"));
+					break;
+				case UPLOADING:
+					statusLabel.setText("Uploading...");
+					statusLabel.setBackgroundColor(Color.parseColor("#32cd32"));
+				    statusLabel.setTextColor(Color.parseColor("#000000"));
+					break;
+				case FAILED_TO_UPLOAD:
+					statusLabel.setText("Upload Failed");
+					statusLabel.setBackgroundColor(Color.parseColor("#FF0000"));
+				    statusLabel.setTextColor(Color.parseColor("#000000"));
+					break;
+				}
+			}
 		}
 		
 	}

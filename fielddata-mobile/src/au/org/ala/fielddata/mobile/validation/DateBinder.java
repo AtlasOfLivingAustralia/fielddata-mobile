@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.TextView;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
@@ -23,11 +22,9 @@ public class DateBinder extends AbsBinder implements OnClickListener, DatePicker
 	private Date date;
 	
 	static class DateFieldHolder {
-		public Button button;
-		public TextView text;
+		public Button dateButton;
 		public DateFieldHolder(View container) {
-			text = (TextView)container.findViewById(R.id.dateDisplay);
-			button = (Button)container.findViewById(R.id.changeButton);
+			dateButton = (Button)container.findViewById(R.id.dateDisplay);
 		}
 	}
 	
@@ -39,7 +36,7 @@ public class DateBinder extends AbsBinder implements OnClickListener, DatePicker
 		this.model = model;
 		
 		holder = new DateFieldHolder(view);
-		holder.button.setOnClickListener(this);
+		holder.dateButton.setOnClickListener(this);
 		
 		date = model.getRecord().getDate(attribute);
 		updateDisplay();
@@ -47,10 +44,10 @@ public class DateBinder extends AbsBinder implements OnClickListener, DatePicker
 	
 	private void updateDisplay() {
 		if (date != null) {
-			holder.text.setText(DateFormat.getMediumDateFormat(ctx).format(date));
+			holder.dateButton.setText(DateFormat.getMediumDateFormat(ctx).format(date));
 		}
 		else {
-			holder.text.setText("");
+			holder.dateButton.setText("");
 		}
 	}
 	

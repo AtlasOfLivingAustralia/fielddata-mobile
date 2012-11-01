@@ -189,7 +189,7 @@ public class RecordDAO extends GenericDAO<Record> {
 		values.put("survey_id", record.survey_id);
 		values.put("number", record.number);
 		values.put("taxon_id", record.taxon_id);
-		values.put("status", record.isValid() ? 0 : 1);
+		values.put("status", record.getStatus().ordinal());
 		values.put("scientific_name", record.scientificName);
 		record.updated = now;
 		return update;
@@ -219,7 +219,7 @@ public class RecordDAO extends GenericDAO<Record> {
 		record.survey_id = result.getInt(SURVEY_ID_COLUMN);
 		record.taxon_id = result.getInt(TAXON_ID_COLUMN);
 		int status = result.getInt(STATUS_COLUMN);
-		record.setValid(status == 0);
+		record.setStatus(Record.Status.values()[status]);
 		record.scientificName = result.getString(SCIENTIFIC_NAME_COLUMN);
 		
 		Cursor values = db.query(false, attributeValueTable, new String[]{"_id", "attribute_id", "value", "type"}, "record_id = ?", new String[] {Integer.toString(record.getId())}, null, null, null, null);
@@ -257,18 +257,18 @@ public class RecordDAO extends GenericDAO<Record> {
 
 	public void delete(Class<Record> recordClass, Integer id) {
 		synchronized(helper) {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		
-		try {
-			String[] recordId = new String[] {Integer.toString(id)};
-			db.delete(recordTable, "_id=?", recordId);
-			db.delete(attributeValueTable, "record_id=?", recordId);
-		}
-		finally {
-			if (db != null) {
-				helper.close();
+			SQLiteDatabase db = helper.getWritableDatabase();
+			
+			try {
+				String[] recordId = new String[] {Integer.toString(id)};
+				db.delete(recordTable, "_id=?", recordId);
+				db.delete(attributeValueTable, "record_id=?", recordId);
 			}
-		}
+			finally {
+				if (db != null) {
+					helper.close();
+				}
+			}
 		}
 	}
 	
@@ -276,4 +276,56 @@ public class RecordDAO extends GenericDAO<Record> {
 		return recordTable;
 	}
 	
+	/**
+	 * Updates the status of the Records identified by the supplied ids.
+	 * If the recordIds parameter is null (or length 0), the status change
+	 * will be applied to all records. 
+	 * @param recordIds identifies the Records to be updated.
+	 * @param status the new status for the Records.
+	 */
+	public void updateStatus(int[] recordIds, Record.Status status) {
+		
+		synchronized(helper) {
+			SQLiteDatabase db = helper.getWritableDatabase();
+			
+			try {
+				ContentValues values = new ContentValues();
+				values.put("status", status.ordinal());
+				
+				StringBuilder whereClause = new StringBuilder();
+				String[] recordIdStrings = null;
+				if (recordIds != null && recordIds.length > 0) {
+					recordIdStrings = new String[recordIds.length];
+					
+					whereClause.append("_id in (");
+					for (int i=0; i<recordIds.length; i++) {
+						whereClause.append("?");
+						if (i < recordIds.length-1) {
+							whereClause.append(",");
+						}
+						else {
+							whereClause.append(")");
+						}
+						recordIdStrings[i] = Integer.toString(recordIds[i]);
+					}
+				}
+				
+				db.update(recordTable, values, whereClause.toString(), recordIdStrings);
+			}
+			finally {
+				if (db != null) {
+					helper.close();
+				}
+			}
+		}
+	}
+	
+	public void updateStatus(List<Integer> recordIds, Record.Status status) {
+		int[] ids = new int[recordIds.size()];
+		
+		for (int i=0; i<recordIds.size(); i++) {
+			ids[i] = recordIds.get(i);
+		}
+		updateStatus(ids, status);
+	}
 }

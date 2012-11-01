@@ -80,7 +80,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	private static final String GPS_TRACKING_BUNDLE_KEY = "Gps";
 	private static final String GPS_TIMEOUT_BUNDLE_KEY = "Gps";
 	
-	private static final int GPS_TIMEOUT = 45; // seconds
+	private static final int GPS_TIMEOUT = 60; // seconds
 	
 	
 	public static final String SURVEY_BUNDLE_KEY = "SurveyIdKey";

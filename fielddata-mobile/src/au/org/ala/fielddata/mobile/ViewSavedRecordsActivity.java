@@ -86,6 +86,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(UploadService.UPLOAD_FAILED);
 		filter.addAction(UploadService.UPLOADED);
+		filter.addAction(UploadService.STATUS_CHANGE);
 		
 		
 		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(uploadReceiver, filter);
@@ -345,14 +346,18 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 			if (selected.keyAt(i) > 0) {
 				
 				if (selected.valueAt(i) == true) {
-					Record record = ((RecordView)getListAdapter().getItem(i)).record;
+					Record record = ((RecordView)getListAdapter().getItem(selected.keyAt(i))).record;
 					recordDao.delete(Record.class, record.getId());
 					deleteCount++;
 				}
 			}
 		}
 		if (deleteCount > 0) {
-			Toast.makeText(getActivity(), deleteCount + " records deleted", Toast.LENGTH_SHORT).show();	
+			String message = "%d records deleted";
+			if (deleteCount == 1) {
+				message = "%d record deleted";
+			}
+			Toast.makeText(getActivity(), String.format(message, deleteCount), Toast.LENGTH_SHORT).show();	
 				
 		}
 		
@@ -372,7 +377,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 			// Ignore the first item as it is help text.
 			if (selected.keyAt(i) > 0) {
 				if (selected.valueAt(i) == true) {
-					Record record = ((RecordView)getListAdapter().getItem(i)).record;
+					Record record = ((RecordView)getListAdapter().getItem(selected.keyAt(i))).record;
 					recordIds[index++] = record.getId();
 				}
 			}

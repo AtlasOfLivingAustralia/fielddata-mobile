@@ -21,6 +21,7 @@ import android.util.Log;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.FieldDataServiceClient.SurveysAndSpecies;
 
@@ -59,6 +60,9 @@ public class FieldDataService {
 			if (existingSurvey != null) {
 				Log.i("FieldDataService", "Replacing survey with id: "+existingSurvey.server_id);
 				survey.setId(existingSurvey.getId());
+			}
+			if ("The Great Koala Count".equals(survey.name)) {
+				survey.propertyByType(AttributeType.POINT).addOption("No Map");
 			}
 			surveyDAO.save(survey);
 		}

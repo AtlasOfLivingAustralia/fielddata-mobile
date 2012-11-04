@@ -463,12 +463,19 @@
                 if ([att.surveyAttribute.typeCode isEqualToString:kImage]) {
                     NSString* imageUrl = att.value;
                     if (imageUrl != NULL && ![imageUrl isEqualToString:@""]) {
-                        UIImage* photo = [UIImage imageWithContentsOfFile:imageUrl];
-                        NSData *imageData = UIImageJPEGRepresentation(photo, 0.8);
-                        NSString *imageString = [imageData base64EncodedString];
+                        
+                        @autoreleasepool {
+                        
+                            UIImage* photo = [UIImage imageWithContentsOfFile:imageUrl];
+                            NSData *imageData = UIImageJPEGRepresentation(photo, 0.8);
+                            NSString *imageString = [imageData base64EncodedString];
                     
-                        [attributeValue setObject:imageString forKey:@"value"];
-                        [attributeValues addObject:attributeValue];
+                            photo = nil;
+                            imageData = nil;
+                            
+                            [attributeValue setObject:imageString forKey:@"value"];
+                            [attributeValues addObject:attributeValue];
+                        }
                     }
                 } else {
                     if (att.value != NULL) {

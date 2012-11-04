@@ -116,12 +116,18 @@
     NSString* fileName = [NSString stringWithFormat:@"%f.jpg", [[NSDate date] timeIntervalSince1970]];
     [filePath setString:[FileService saveImage:image withName:fileName]];
     
+    image = nil;
+    
     if (orientation == UIImageOrientationUp) {
         cameraImage.frame = CGRectMake(10, 30, 96, 72);
     } else {
         cameraImage.frame = CGRectMake(10, 30, 72, 96);
     }
-    [cameraImage setImage:image];
+    
+    // reload the image
+    [self setImage:filePath];
+    
+    //[cameraImage setImage:image];
     
     [parentController dismissModalViewControllerAnimated: YES];
 }

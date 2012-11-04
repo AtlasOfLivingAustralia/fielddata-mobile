@@ -38,10 +38,17 @@
 {
     [super viewDidLoad];
 
+    /*
     UIBarButtonItem *uploadButton = [[UIBarButtonItem alloc]
                                    initWithBarButtonSystemItem:UIBarButtonSystemItemAction
                                                         target:self
-                                                        action:@selector(uploadSurveys:)];
+                                                        action:@selector(uploadSurveys:)];*/
+    
+    UIBarButtonItem *uploadButton = [[UIBarButtonItem alloc]
+                                      initWithTitle:@"Upload"
+                                      style:UIBarButtonItemStylePlain
+                                      target:self
+                                     action:@selector(uploadSurveys:)];
     
     self.navigationItem.rightBarButtonItem = uploadButton;
 }
@@ -74,26 +81,30 @@
         }
     }
     
-    dispatch_queue_t dispatchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    if (numRecordsToUpload > 0) {
     
-    dispatch_async(dispatchQueue, ^(void){
+        dispatch_queue_t dispatchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            // Show the progress indicator
-            [self showProgressIndicator];
-        });
-        
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            // upload the completed records
-            for (Record *record in recordList) {
-        
-                if ([fieldDataService isRecordComplete:record]) {
-                    [fieldDataService uploadRecord:record];
+        dispatch_async(dispatchQueue, ^(void){
+            
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                // Show the progress indicator
+                [self showProgressIndicator];
+            });
+            
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                // upload the completed records
+                for (Record *record in recordList) {
+                    
+                    if ([fieldDataService isRecordComplete:record]) {
+                        [fieldDataService uploadRecord:record];
+                    }
                 }
-            }
+            });
         });
-    
-    });
+    } else {
+        [AlertService DisplayMessageWithTitle:@"Upload Failed" message:@"There are no completed surveys to upload."];
+    }
 }
 
 - (void)uploadSurveysSuccessful:(BOOL)success {

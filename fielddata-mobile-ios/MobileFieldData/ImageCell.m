@@ -81,9 +81,9 @@
     
     // Displays a control that allows the user to choose picture or
     // movie capture, if both are available:
-    cameraUI.mediaTypes =
-    [UIImagePickerController availableMediaTypesForSourceType:
-     UIImagePickerControllerSourceTypeCamera];
+    //cameraUI.mediaTypes =
+    //[UIImagePickerController availableMediaTypesForSourceType:
+    // UIImagePickerControllerSourceTypeCamera];
     
     // Hides the controls for moving & scaling pictures, or for
     // trimming movies. To instead show the controls, use YES.
@@ -99,7 +99,7 @@
 
 - (void) imagePickerControllerDidCancel: (UIImagePickerController *) picker {
     
-    [[picker parentViewController] dismissModalViewControllerAnimated: YES];
+    [parentController dismissModalViewControllerAnimated: YES];
 }
 
 -(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{

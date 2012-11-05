@@ -23,7 +23,9 @@
 
 @property (nonatomic, retain) IBOutlet UITextField *username;
 @property (nonatomic, retain) IBOutlet UITextField *password;
+@property (nonatomic, retain) IBOutlet UIButton *cancelButton;
 
 - (IBAction)onClickLogin:(id)sender;
+- (IBAction)onClickCancel:(id)sender;
 
 @end

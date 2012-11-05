@@ -36,10 +36,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     // Do any additional setup after loading the view from its nib.
     if ([preferences getFieldDataSessionKey]) {
         [AlertService DisplayMessageWithTitle:@"Warning"
                                       message:@"Changing the logged in user will delete any survey recordings that have not yet been uploaded."];
+    } else {
+        self.cancelButton.hidden = YES;
     }
     
 }
@@ -94,6 +97,11 @@
             }];
         });
     });
+}
+
+- (IBAction)onClickCancel:(id)sender
+{
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)handleLoginResponse:(RFResponse*)response
@@ -157,7 +165,8 @@
     surveyCount++;
     if (surveyCount >= numSurveys) {
         [self hideProgressIndicator];
-        [self.navigationController popViewControllerAnimated:YES];
+        [self dismissModalViewControllerAnimated:YES];
+        //[self.navigationController popViewControllerAnimated:YES];
     }
 }
 

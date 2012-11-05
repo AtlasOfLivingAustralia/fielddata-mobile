@@ -207,7 +207,8 @@
 - (void)openLoginPage
 {
     LoginViewController *loginViewController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
-    [self.navigationController pushViewController:loginViewController animated:YES];
+    [self presentModalViewController:loginViewController animated:YES];
+    //[self.navigationController pushViewController:loginViewController animated:YES];
 }
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath

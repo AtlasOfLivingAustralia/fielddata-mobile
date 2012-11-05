@@ -565,20 +565,25 @@
     //now execute this request and fetch the response in a block
     [RFService execRequest:r completion:^(RFResponse *response){
         
-        NSError * error = nil;
-        NSDictionary* respDict =  [NSJSONSerialization JSONObjectWithData:response.dataValue
-                                                                options:kNilOptions error:&error];
+        if (response.dataValue) {
         
-        NSNumber* status = [respDict objectForKey:@"status"];
-        if (status.intValue == 200) {
-            // delete the record
-            NSError * saveError = nil;
-            [context deleteObject:record];
-            [context save:&saveError];
-            [uploadDelegate uploadSurveysSuccessful:YES];
+            NSError * error = nil;
+            NSDictionary* respDict =  [NSJSONSerialization JSONObjectWithData:response.dataValue
+                                                                      options:kNilOptions error:&error];
+            
+            NSNumber* status = [respDict objectForKey:@"status"];
+            if (status.intValue == 200) {
+                // delete the record
+                NSError * saveError = nil;
+                [context deleteObject:record];
+                [context save:&saveError];
+                [uploadDelegate uploadSurveysSuccessful:YES];
+            } else {
+                [uploadDelegate uploadSurveysSuccessful:NO];
+                NSLog(@"%@", respDict);
+            }
         } else {
             [uploadDelegate uploadSurveysSuccessful:NO];
-            NSLog(@"%@", respDict);
         }
         
     }];

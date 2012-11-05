@@ -98,34 +98,39 @@
 
 - (void)handleLoginResponse:(RFResponse*)response
 {
-    NSLog(@"%@", response); //print out full response
-   
-    NSError *error;
-    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:response.dataValue 
-                                                               options:kNilOptions error:&error];
-    NSString *ident = [dictionary valueForKey:@"ident"];
-    NSLog(@"%@", ident);
-    
-    NSDictionary *user = [dictionary valueForKey:@"user"];
-    
-    NSString *name = [NSString stringWithFormat:@"%@ %@",
-                      [user valueForKey:@"firstName"],
-                      [user valueForKey:@"lastName"]];
-    
-    
-    if (ident == NULL) {
-        [self hideProgressIndicator];
-        [AlertService DisplayMessageWithTitle:@"Login Failed" message:@"Username or Password not recognised"];
+    if (!response.error) {
+        NSLog(@"%@", response); //print out full response
+        
+        NSError *error;
+        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:response.dataValue
+                                                                   options:kNilOptions error:&error];
+        NSString *ident = [dictionary valueForKey:@"ident"];
+        NSLog(@"%@", ident);
+        
+        NSDictionary *user = [dictionary valueForKey:@"user"];
+        
+        NSString *name = [NSString stringWithFormat:@"%@ %@",
+                          [user valueForKey:@"firstName"],
+                          [user valueForKey:@"lastName"]];
+        
+        
+        if (ident == NULL) {
+            [self hideProgressIndicator];
+            [AlertService DisplayMessageWithTitle:@"Login Failed" message:@"Username or Password not recognised"];
+        } else {
+            [preferences setFieldDataSessionKey:ident];
+            [preferences setUsersName:name];
+            
+            // delete all the existing entities
+            [fieldDataService deleteAllEntities:@"Species"];
+            [fieldDataService deleteAllEntities:@"Survey"];
+            
+            // download the new surveys
+            [fieldDataService downloadSurveys];
+        }
     } else {
-        [preferences setFieldDataSessionKey:ident];
-        [preferences setUsersName:name];
-        
-        // delete all the existing entities
-        [fieldDataService deleteAllEntities:@"Species"];
-        [fieldDataService deleteAllEntities:@"Survey"];
-        
-        // download the new surveys
-        [fieldDataService downloadSurveys];
+        [AlertService DisplayAlertWithError:response.error title:@"Login Error"];
+        [self hideProgressIndicator];
     }
 }
 

@@ -207,7 +207,11 @@
 - (void)openLoginPage
 {
     LoginViewController *loginViewController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
-    [self presentModalViewController:loginViewController animated:YES];
+    if ([preferences getFieldDataSessionKey]) {
+        [self presentModalViewController:loginViewController animated:YES];
+    } else {
+        [self presentModalViewController:loginViewController animated:NO];
+    }
     //[self.navigationController pushViewController:loginViewController animated:YES];
 }
 

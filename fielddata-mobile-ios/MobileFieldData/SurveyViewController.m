@@ -103,16 +103,21 @@
             
         } else {
             [AlertService DisplayMessageWithTitle:@"Observation Draft Saved"
-                                          message:@"All mandatory fields must be entered before your observations can be uploaded to the server."];
+                                          message:@"All mandatory fields (marked *) must be entered before your observations can be uploaded to the server."];
             [[self navigationController] popViewControllerAnimated:YES];
         }
         
     } else {
         [fieldDataService updateRecord:record attributes:attributes inputFields:inputFields];
         
-        [AlertService DisplayMessageWithTitle:@"Observation Saved"
-                                      message:@"Observation has been successfully updated."];
-        
+        if ([fieldDataService isRecordComplete:record]) {
+            [AlertService DisplayMessageWithTitle:@"Observation Saved"
+                                      message:@"Observation has been successfully updated and is ready to be uploaded."];
+        } else {
+            [AlertService DisplayMessageWithTitle:@"Observation Draft Saved"
+                                          message:@"All mandatory fields (marked *) must be entered before your observations can be uploaded to the server."];
+
+        }
         [[self navigationController] popViewControllerAnimated:YES];
     }
     

@@ -86,6 +86,8 @@
 // Save the survey to disk
 -(void)saveSurvey:(id)sender {
     
+    [self.view endEditing:YES];
+    
     if (record == NULL) {
         record = [fieldDataService createRecord:attributes survey:survey inputFields:inputFields];
         
@@ -290,6 +292,7 @@
     
     [[self navigationController] popViewControllerAnimated:YES];
 }
+
 
 -(void)showProgressIndicator
 {

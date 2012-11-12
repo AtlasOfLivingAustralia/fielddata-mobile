@@ -77,8 +77,8 @@ import com.viewpagerindicator.TitlePageIndicator;
 public class CollectSurveyData extends SherlockFragmentActivity implements
 		SpeciesSelectionListener, OnPageChangeListener, LocationListener {
 
-	private static final String GPS_TRACKING_BUNDLE_KEY = "Gps";
-	private static final String GPS_TIMEOUT_BUNDLE_KEY = "Gps";
+	private static final String GPS_TRACKING_BUNDLE_KEY = "GpsTracking";
+	private static final String GPS_TIMEOUT_BUNDLE_KEY = "GpsTimeout";
 	
 	private static final int GPS_TIMEOUT = 60; // seconds
 	
@@ -127,7 +127,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		Log.d("CollectSurveyData", "onCreate");
 		setContentView(R.layout.activity_collect_survey_data);
 
 		buildCustomActionBar();
@@ -397,7 +397,13 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			RecordValidationResult result = surveyViewModel.validate();
 
 			if (result.valid()) {	
-				new SaveRecordTask(this, true).execute(surveyViewModel.getRecord());
+				Preferences prefs = new Preferences(this);
+				boolean attemptUpload = prefs.getUploadAutomatically();
+				
+				new SaveRecordTask(this, attemptUpload).execute(surveyViewModel.getRecord());
+				if (!attemptUpload) {
+					Toast.makeText(this, "Record saved.", Toast.LENGTH_LONG).show();
+				}
 				
 				finish();
 			} else {
@@ -622,11 +628,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				recordDao.save(ctx.getViewModel().getRecord());
 				
 				if (upload) {
-					Preferences prefs = new Preferences(ctx);
-					if (prefs.getUploadAutomatically()) {
-						Intent upload = new Intent(ctx, UploadService.class);
-						ctx.startService(upload);
-					}
+					Intent upload = new Intent(ctx, UploadService.class);
+					ctx.startService(upload);
 				}
 
 			} catch (Exception e) {

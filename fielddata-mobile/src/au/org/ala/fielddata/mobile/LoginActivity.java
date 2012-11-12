@@ -80,7 +80,7 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 			}
 			
 			pd = ProgressDialog.show(LoginActivity.this, "Logging in", 
-					preferences.getFieldDataServerUrl(false), true, false, null);
+					preferences.getFieldDataServerUrl(false, true), true, false, null);
 			
 			new AsyncTask<Void, Void, Void>() {
 				private Exception e;

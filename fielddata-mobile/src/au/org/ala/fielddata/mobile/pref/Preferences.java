@@ -63,10 +63,10 @@ public class Preferences {
 	}
 
 	public String getFieldDataServerUrl() {
-		return getFieldDataServerUrl(true);
+		return getFieldDataServerUrl(true, false);
 	}
 	
-	public String getFieldDataServerUrl(boolean includePortalPath) {
+	public String getFieldDataServerUrl(boolean includePortalPath, boolean secure) {
 		SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(ctx);
 		String hostName = prefs.getString("serverHostName", "");
 		String context = prefs.getString("contextName", "");
@@ -76,7 +76,13 @@ public class Preferences {
 		}
 		
 		StringBuilder url = new StringBuilder();
-		url.append("http://").append(hostName).append("/").append(context);
+		if (secure) {
+			url.append("https://");
+		}
+		else {
+			url.append("http://");
+		}
+		url.append(hostName).append("/").append(context);
 		
 		if (path.length() > 0) {
 			url.append("/").append(path);

@@ -141,7 +141,7 @@ public class SurveyViewModel {
 	}
 	
 	private void updateLocationSource(Location location) {
-		if (pointSourceAttribute != null) {
+		if (location != null && pointSourceAttribute != null) {
 			for (AttributeOption option : pointSourceAttribute.options) {
 				String value = option.value == null ? "" : option.value;
 				if (value.equalsIgnoreCase(location.getProvider())) {

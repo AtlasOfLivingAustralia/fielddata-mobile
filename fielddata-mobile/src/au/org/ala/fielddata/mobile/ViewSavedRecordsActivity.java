@@ -24,6 +24,10 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.style.URLSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -39,6 +43,7 @@ import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.dao.RecordDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.UploadService;
 import au.org.ala.fielddata.mobile.ui.SavedRecordHolder;
@@ -136,6 +141,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 	class GetRecordsTask extends AsyncTask<Void, Void, List<RecordView>> {
 
 		private Context ctx;
+		private int userId = -1;
 		
 		public GetRecordsTask(Context ctx) {
 			this.ctx = ctx;
@@ -164,7 +170,11 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 				
 			}
 			
-			
+			GenericDAO<User> userDao = new GenericDAO<User>(ctx);
+			List<User> user = userDao.loadAll(User.class);
+			if (user.size() > 0) {
+				userId = user.get(0).server_id;
+			}
 			return recordViews;
 		}
 
@@ -172,7 +182,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 		
 			Context context = ViewSavedRecordsActivity.this.getActivity();
 			if (context != null) {
-				RecordAdapter adapter = new RecordAdapter(ViewSavedRecordsActivity.this, records);
+				RecordAdapter adapter = new RecordAdapter(ViewSavedRecordsActivity.this, records, userId);
 				setListAdapter(adapter);
 			}
 		}
@@ -181,9 +191,13 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 	public static class RecordAdapter extends ArrayAdapter<RecordView> {
 		
 		private ViewSavedRecordsActivity fragment;
+		private Preferences prefs;
+		private int userId;
 		
-		public RecordAdapter(ViewSavedRecordsActivity fragment, List<RecordView> records) {
+		public RecordAdapter(ViewSavedRecordsActivity fragment, List<RecordView> records, int userId) {
 			super(fragment.getActivity(), R.layout.saved_records_layout, R.id.record_description_species);
+			this.userId = userId;
+			prefs = new Preferences(fragment.getActivity());
 			setNotifyOnChange(false);
 			add(null);
 			
@@ -231,22 +245,34 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 		}
 		
 		private void setHelpText(View helpView) {
-			TextView helpText = (TextView)helpView.findViewById(R.id.savedRecordsHelp);
+			TextView helpTextView = (TextView)helpView.findViewById(R.id.savedRecordsHelp);
 			
-			
-			Preferences prefs = new Preferences(getContext());
+			Spannable helpText;
 			if (prefs.getUploadAutomatically()) {
 				if (prefs.getUploadOverWifiOnly()) {
-					helpText.setText("Records will be uploaded automatically then deleted when the phone is connected to a WIFI network.\nUploaded records can be edited using the web site.");
+					helpText = buildHelpText("Records will be uploaded automatically then deleted when the phone is connected to a WIFI network.\n" +
+							"Uploaded records can be edited using the ");
 				}
 				else {
-					helpText.setText("Records will be uploaded automatically then deleted when the phone is connected to a data network.\nUploaded records can be can be edited using the web site.");
+					helpText = buildHelpText("Records will be uploaded automatically then deleted when the phone is connected to a data network.\n" +
+							"Uploaded records can be can be edited using the ");
 				}
 			}
 			else {
-				helpText.setText("Records can be uploaded to the server using the upload icon in the action bar.\nRecords are deleted after being uploaded, however they can be edited using the web site.");
+				helpText = buildHelpText("Records can be uploaded to the server using the upload icon in the action bar.\n" +
+						"Records are deleted after being uploaded, however they can be edited using the ");
 			}
+			helpTextView.setMovementMethod(LinkMovementMethod.getInstance());
+			helpTextView.setText(helpText);			
+		}
+		
+		private Spannable buildHelpText(String prefix) {
 			
+			String suffix = prefs.getFieldDataPortalName()+" web site.";
+			Spannable helpText = new SpannableString(prefix+suffix);
+			helpText.setSpan(new URLSpan(String.format(prefs.getReviewUrl(), userId)), prefix.length(), helpText.length(), 0);
+			
+			return helpText;
 		}
 
 		@Override

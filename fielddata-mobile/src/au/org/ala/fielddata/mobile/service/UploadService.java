@@ -24,6 +24,7 @@ import android.os.Process;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 import au.org.ala.fielddata.mobile.MobileFieldDataDashboard;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
@@ -79,6 +80,7 @@ public class UploadService extends Service {
 			}
 			else {
 				Log.i("UploadService", "Unable to upload, re-queuing message");
+				
 				notifyQueued();
 				synchronized(deferredWorkQueue) {
 					deferredWorkQueue.add(msgData);
@@ -126,6 +128,14 @@ public class UploadService extends Service {
 		networkStatusReceiver = new UploadWakeup();
 		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
 		registerReceiver(networkStatusReceiver, filter);
+		
+		if (canUpload()) {
+			Toast.makeText(UploadService.this, "Uploading record...", Toast.LENGTH_LONG).show();
+			
+		}
+		else {
+		Toast.makeText(UploadService.this, "Record scheduled for upload when network is available.", Toast.LENGTH_LONG).show();
+		}
 	}
 	
 	@Override

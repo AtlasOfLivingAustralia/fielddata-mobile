@@ -293,11 +293,12 @@ public class RecordDAO extends GenericDAO<Record> {
 				values.put("status", status.ordinal());
 				
 				StringBuilder whereClause = new StringBuilder();
+				whereClause.append("status != ").append(Record.Status.DRAFT.ordinal());
 				String[] recordIdStrings = null;
 				if (recordIds != null && recordIds.length > 0) {
 					recordIdStrings = new String[recordIds.length];
 					
-					whereClause.append("_id in (");
+					whereClause.append(" and _id in (");
 					for (int i=0; i<recordIds.length; i++) {
 						whereClause.append("?");
 						if (i < recordIds.length-1) {

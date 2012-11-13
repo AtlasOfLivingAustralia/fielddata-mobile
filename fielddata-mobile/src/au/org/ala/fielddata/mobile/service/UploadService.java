@@ -68,6 +68,7 @@ public class UploadService extends Service {
 			Bundle msgData = msg.getData();
 			int[] recordIds = msgData.getIntArray(RECORD_IDS_EXTRA);
 			RecordDAO dao = new RecordDAO(UploadService.this);
+			
 			dao.updateStatus(recordIds, Record.Status.SCHEDULED_FOR_UPLOAD);
 			broadcastStatusChange(STATUS_CHANGE);
 			
@@ -134,7 +135,7 @@ public class UploadService extends Service {
 			
 		}
 		else {
-		Toast.makeText(UploadService.this, "Record scheduled for upload when network is available.", Toast.LENGTH_LONG).show();
+			Toast.makeText(UploadService.this, "Record(s) scheduled for upload when a network is available.", Toast.LENGTH_LONG).show();
 		}
 	}
 	

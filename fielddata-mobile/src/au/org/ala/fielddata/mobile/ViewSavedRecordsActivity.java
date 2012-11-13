@@ -115,9 +115,20 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.upload) {
-			
-			Intent intent = new Intent(getActivity(), UploadService.class);
-			getActivity().startService(intent);
+			boolean allDrafts = true;
+			for (int i=1; i<getListAdapter().getCount(); i++) {
+				Record record = ((RecordView)getListAdapter().getItem(i)).record;
+				if (record.getStatus() != Record.Status.DRAFT) {
+					allDrafts = false;
+				}
+			}
+			if (allDrafts) {
+				showDraftsError();
+			}
+			else {
+				Intent intent = new Intent(getActivity(), UploadService.class);
+				getActivity().startService(intent);
+			}
 			return true;
 		}
 		return false;
@@ -395,6 +406,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 	
 	private void uploadSelectedRecords() {
 		
+		boolean allDrafts = true;
 		SparseBooleanArray selected = getListView().getCheckedItemPositions();
 		int count = countSelected();
 		int index = 0;
@@ -404,16 +416,27 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 			if (selected.keyAt(i) > 0) {
 				if (selected.valueAt(i) == true) {
 					Record record = ((RecordView)getListAdapter().getItem(selected.keyAt(i))).record;
+					if (record.getStatus() != Record.Status.DRAFT) {
+						allDrafts = false;
+					}
 					recordIds[index++] = record.getId();
 				}
 			}
 		}
 		
-		Intent intent = new Intent(getActivity(), UploadService.class);
-		intent.putExtra(UploadService.RECORD_IDS_EXTRA, recordIds);
-		getActivity().startService(intent);
-		
+		if (allDrafts) {
+			showDraftsError();
+		}
+		else {
+			Intent intent = new Intent(getActivity(), UploadService.class);
+			intent.putExtra(UploadService.RECORD_IDS_EXTRA, recordIds);
+			getActivity().startService(intent);
+		}
 		finishActionMode();
+	}
+	
+	private void showDraftsError() {
+		Toast.makeText(getActivity(), "Draft records cannot be uploaded.", Toast.LENGTH_LONG).show();
 	}
 
 

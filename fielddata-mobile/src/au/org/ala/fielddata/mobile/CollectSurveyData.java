@@ -129,9 +129,8 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		super.onCreate(savedInstanceState);
 		Log.d("CollectSurveyData", "onCreate");
 		setContentView(R.layout.activity_collect_survey_data);
-
 		buildCustomActionBar();
-
+		
 		if (savedInstanceState == null) {
 			// create and attach our model fragment.
 			getSupportFragmentManager().beginTransaction().add(new SurveyModelHolder(), "model")

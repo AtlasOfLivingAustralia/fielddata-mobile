@@ -64,7 +64,7 @@
     [super viewDidLoad];
 
     UIBarButtonItem *saveButton = [[UIBarButtonItem alloc]
-            initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveSurvey:)];
+            initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveSurvey:)];
     
     self.navigationItem.rightBarButtonItem = saveButton;
     

@@ -41,9 +41,10 @@
     if ([preferences getFieldDataSessionKey]) {
         [AlertService DisplayMessageWithTitle:@"Warning"
                                       message:@"Changing the logged in user will delete any survey recordings that have not yet been uploaded."];
-    } else {
-        self.cancelButton.hidden = YES;
-    }
+        [self.cancelButton setTitle:@" Cancel" forState:UIControlStateNormal];
+    } //else {
+        //self.cancelButton.hidden = YES;
+    //}
     
 }
 
@@ -101,7 +102,12 @@
 
 - (IBAction)onClickCancel:(id)sender
 {
-    [self dismissModalViewControllerAnimated:YES];
+    if ([preferences getFieldDataSessionKey]) {
+        [self dismissModalViewControllerAnimated:YES];
+    } else {
+        NSURL *url = [NSURL URLWithString:@"http://root.ala.org.au/bdrs-core/koalacount/vanilla/usersignup.htm"];
+        [[UIApplication sharedApplication] openURL:url];
+    }
 }
 
 - (void)handleLoginResponse:(RFResponse*)response

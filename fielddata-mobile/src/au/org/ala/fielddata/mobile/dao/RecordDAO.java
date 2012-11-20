@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Record.AttributeValue;
 import au.org.ala.fielddata.mobile.model.Record.PropertyAttributeValue;
@@ -144,7 +143,7 @@ public class RecordDAO extends GenericDAO<Record> {
 					insertHelper.bind(RECORD_ID_COLUMN+1, id);
 					insertHelper.bind(ATTRIBUTE_VALUE_COLUMN+1, value);
 					insertHelper.bind(TYPE_COLUMN+1, attrValue.isUri() ? TYPE_URI : TYPE_TEXT);
-					Log.d("RecordDAO", "Inserting value: "+attrValue.nullSafeValue()+" for record: "+id);
+			
 					long attr_value_id = insertHelper.execute();
 					attrValue.id = (int)attr_value_id;
 				}
@@ -175,7 +174,6 @@ public class RecordDAO extends GenericDAO<Record> {
 			values.put("point_source", location.getProvider());
 			values.put("accuracy", location.getAccuracy());
 			values.put("point_millis", location.getTime());
-			Log.d("RecordDAO", "Putting: "+location.getTime());
 		}
 		else if (update) {
 			values.put("latitude", (Double)null);
@@ -230,7 +228,6 @@ public class RecordDAO extends GenericDAO<Record> {
 				
 				AttributeValue value = new AttributeValue(values.getInt(1), values.getString(2), values.getInt(3) == TYPE_URI);
 				attrValues.add(value);
-				Log.d("RecordDAO", "Loaded: "+value.attribute_id+", value: "+value.nullSafeValue());
 				values.moveToNext();
 			}
 		}

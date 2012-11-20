@@ -30,7 +30,7 @@
             android:src="@drawable/ic_menu_save"
             style="@style/EditEventCustomActionButtonImage" />
         <TextView
-            android:text="Save"
+            android:text="Done"
             android:textColor="#FFFFFF"
             style="@style/EditEventCustomActionButtonText" />
 

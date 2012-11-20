@@ -83,6 +83,9 @@
     <string name="user_name">Username</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="registrationMessage">or</string>
+    
     <string name="login_failed">Login Failed</string>
     <string name="unknown_user">Username unknown or incorrect password.</string>
     <string name="portal">Portal</string>
@@ -96,8 +99,8 @@
     
     <!--  Portal names -->
 	<string-array name="portals">
-		<item>Condamine Alliance</item>
-	    <item>Great Koala Count</item>
+		<!--  <item>Condamine Alliance</item> -->
+	     <item>Great Koala Count</item>
 	</string-array>
 	
 	<!-- Saved records page -->

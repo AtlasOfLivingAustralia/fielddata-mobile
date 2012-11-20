@@ -3,7 +3,6 @@ package au.org.ala.fielddata.mobile.validation;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -117,15 +116,10 @@ public class ImageBinder extends AbsBinder {
 	}
 
 	public void onAttributeChange(Attribute attribute) {
-		//Log.d("ImageBinder", "onAttributeChange("+attribute+")");
-		if (attribute.getServerId() != this.attribute.getServerId()) {
-			Log.d("ImageBinder", "onAttributeChange("+attribute+") is not ours");
-			
+		if (attribute.getServerId() != this.attribute.getServerId()) {	
 			return;
 		}
 		thumbUri = model.getRecord().getUri(attribute);
-		
-		Log.d("ImageBinder", "onAttributeChange("+attribute+"), thumbUri="+thumbUri);
 		
 		updateThumbnail();
 	}

@@ -74,4 +74,24 @@
         android:layout_marginTop="35dp"
         android:text="@string/login" />
 
+    
+    <TextView
+        android:id="@+id/registrationLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/loginBtn"
+        android:layout_marginTop="15dp"
+        android:text="@string/registrationMessage"
+        />
+    
+    <Button
+        android:id="@+id/registerBtn"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/registrationLbl"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/register" />
+    
 </RelativeLayout>

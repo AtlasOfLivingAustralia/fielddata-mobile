@@ -27,6 +27,7 @@ import android.util.Log;
 import android.widget.Toast;
 import au.org.ala.fielddata.mobile.MobileFieldDataDashboard;
 import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.Utils;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.dao.RecordDAO;
 import au.org.ala.fielddata.mobile.model.Record;
@@ -64,7 +65,6 @@ public class UploadService extends Service {
 
 		@Override
 		public void handleMessage(Message msg) {
-			Log.i("UploadService", "Handling message: "+msg.getData());
 			Bundle msgData = msg.getData();
 			int[] recordIds = msgData.getIntArray(RECORD_IDS_EXTRA);
 			RecordDAO dao = new RecordDAO(UploadService.this);
@@ -73,15 +73,14 @@ public class UploadService extends Service {
 			broadcastStatusChange(STATUS_CHANGE);
 			
 			if (canUpload()) {
-				Log.i("UploadService", "Able to upload!");
 				int startId = msgData.getInt(START_ID);
 				uploadRecords(recordIds);
-				Log.d("UploadService", "Stopping with id: "+startId);
 				stopSelf(startId);
 			}
 			else {
-				Log.i("UploadService", "Unable to upload, re-queuing message");
-				
+				if (Utils.DEBUG) {
+					Log.i("UploadService", "Unable to upload, re-queuing message");
+				}
 				notifyQueued();
 				synchronized(deferredWorkQueue) {
 					deferredWorkQueue.add(msgData);
@@ -95,7 +94,6 @@ public class UploadService extends Service {
 	class UploadWakeup extends BroadcastReceiver {
 		
 		public void onReceive(Context context, Intent intent) {
-			Log.i("UploadService", "Network status changed: "+intent+" Context: "+context);
 			synchronized(deferredWorkQueue) {
 				for (int i=0; i<deferredWorkQueue.size(); i++) {
 					Message msg = serviceHandler.obtainMessage();
@@ -116,7 +114,6 @@ public class UploadService extends Service {
 	
 	@Override
 	public void onCreate() {
-		Log.i("UploadService", "Upload Service Started.");
 		
 		deferredWorkQueue = new ArrayList<Bundle>();
 		
@@ -141,7 +138,6 @@ public class UploadService extends Service {
 	
 	@Override
 	public void onDestroy() {
-		Log.i("UploadService", "Upload Service Stopped.");
 		serviceLooper.quit();
 		unregisterReceiver(networkStatusReceiver);
 	}
@@ -151,8 +147,9 @@ public class UploadService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		int[] recordIds = intent.getIntArrayExtra(RECORD_IDS_EXTRA);
 		
-		Log.i("UploadService", "Upload requested for "+ (recordIds == null ? "all" : recordIds.length) +" records, startId="+startId);
-		
+		if (Utils.DEBUG) {
+			Log.i("UploadService", "Upload requested for "+ (recordIds == null ? "all" : recordIds.length) +" records, startId="+startId);
+		}
 		Bundle messageArgs = new Bundle();
 		messageArgs.putInt(START_ID, startId);
 		messageArgs.putIntArray(RECORD_IDS_EXTRA, recordIds);
@@ -225,9 +222,7 @@ public class UploadService extends Service {
 		Preferences prefs = new Preferences(this);
 		ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
-		
 		boolean needsWifi = prefs.getUploadOverWifiOnly();
-		Log.d("UploadService", "Can upload, WIFI only is: "+needsWifi);
 		
 		NetworkInfo networkInfo;
 		if (needsWifi) {
@@ -258,7 +253,6 @@ public class UploadService extends Service {
 				resultCode = SUCCESS;
 			}
 			else {
-				Log.w("UploadService", "Not uploading due to validation error");
 				resultCode = FAILED_INVALID;
 			}
 		}
@@ -323,11 +317,7 @@ public class UploadService extends Service {
 		Notification notification = builder.getNotification();
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notificationManager.notify(success ? SUCCESS : FAILED_SERVER, notification);
-		Log.i("UploadService", "sending notification: "+title);
+		
 	}
 	
-	
-
-	
-
 }

@@ -1,6 +1,5 @@
 package au.org.ala.fielddata.mobile.validation;
 
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -48,7 +47,6 @@ public abstract class AbsBinder implements Binder {
 	}
 	
 	public void onValidationStatusChange(Attribute attribute, ValidationResult result) {
-		Log.d("AbsBinder", "onValidationStatusChange: "+attribute+", "+result.isValid());
 		if (attribute.getServerId() != this.attribute.getServerId()) {
 			return;
 		}

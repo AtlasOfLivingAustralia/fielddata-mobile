@@ -18,6 +18,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import au.org.ala.fielddata.mobile.Utils;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
@@ -80,7 +81,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 	
 	private void version2(SQLiteDatabase db) {
-		Log.i("DatabaseHelper", "Upgrading to version 2 of the schema");
+		if (Utils.DEBUG) {
+			Log.i("DatabaseHelper", "Upgrading to version 2 of the schema");
+		}
 		db.execSQL("DROP TABLE "+Record.class.getSimpleName());
 		createRecordTable(db);
 	}

@@ -9,7 +9,6 @@ import java.lang.reflect.Method;
 import util.Base64;
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Record.StringValue;
 
@@ -54,12 +53,10 @@ public class StringValueAdapter extends TypeAdapter<Record.StringValue> {
 		if (stringValue.uri && stringValue.value != null && !"".equals(stringValue.value)) {
 			Uri uri = Uri.parse(stringValue.value);
 			InputStream in = ctx.getContentResolver().openInputStream(uri);
-			Log.d("JSON", "Writing URI: "+uri);
-			//File file = new File(uri.getEncodedPath());
 			
 			JsonWriterWrapper wrapper = new JsonWriterWrapper(writer);
 			wrapper.value(in);
-			//wrapper.value(new FileInputStream(file));
+			
 		}
 		else {
 			writer.value(stringValue.value);

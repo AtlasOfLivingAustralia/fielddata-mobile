@@ -12,7 +12,6 @@ import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import au.org.ala.fielddata.mobile.CollectSurveyData;
@@ -74,20 +73,17 @@ public class GPSFragment extends DialogFragment implements LocationListener, Dia
 	
 	@Override
 	public void onResume() {
-		Log.i("GPSFragment", "onResume");
 		super.onResume();
 		startLocationUpdates();
 	}
 	
 	@Override
 	public void onPause() {
-		Log.i("GPSFragment", "onPause");
 		super.onPause();
 		getActivity().unbindService(locationService);
 	}
 
 	public void onLocationChanged(Location location) {
-		Log.d("GPSFragment", "Location update received: "+location);
 		if (bestLocation == null) {
 			bestLocation = location;
 			

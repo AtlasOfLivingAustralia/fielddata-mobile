@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 
 import android.location.Location;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -81,7 +80,6 @@ public class LocationBinder extends AbsBinder {
 	}
 	
 	private void startLocationUpdates() {
-		Log.d("LocationBinder", "Starting location updates");
 		ctx.startLocationUpdates();
 		updateText();
 	}

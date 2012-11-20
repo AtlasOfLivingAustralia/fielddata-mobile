@@ -18,6 +18,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.util.Log;
+import au.org.ala.fielddata.mobile.Utils;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
@@ -58,7 +59,9 @@ public class FieldDataService {
 			// If we already have a survey with the same id, replace it.
 			Survey existingSurvey = surveyDAO.findByServerId(Survey.class, survey.server_id);
 			if (existingSurvey != null) {
-				Log.i("FieldDataService", "Replacing survey with id: "+existingSurvey.server_id);
+				if (Utils.DEBUG) {
+					Log.i("FieldDataService", "Replacing survey with id: "+existingSurvey.server_id);
+				}
 				survey.setId(existingSurvey.getId());
 			}
 			if ("The Great Koala Count".equals(survey.name)) {
@@ -71,11 +74,12 @@ public class FieldDataService {
 		GenericDAO<Species> dao = new GenericDAO<Species>(ctx);
 		StorageManager manager = new StorageManager(ctx);
 		for (Species species : speciesList) {
-			Log.d("FieldDataService", "Have species with id: "+species.server_id);
 			// If we already have a species with the same id, replace it.
 			Species existingSpecies = dao.findByServerId(Species.class, species.server_id);
 			if (existingSpecies != null) {
-				Log.i("FieldDataService", "Replacing species with id: "+existingSpecies.server_id);
+				if (Utils.DEBUG) {
+					Log.i("FieldDataService", "Replacing species with id: "+existingSpecies.server_id);
+				}
 				species.setId(existingSpecies.getId());
 			}
 			dao.save(species);

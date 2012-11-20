@@ -16,7 +16,6 @@ package au.org.ala.fielddata.mobile.validation;
 
 import java.util.Date;
 
-import android.util.Log;
 import au.org.ala.fielddata.mobile.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Record;
@@ -31,13 +30,9 @@ public class DateValidator implements Validator {
 		boolean valid = value.before(new Date());
 		
 		if (valid) {
-			
-			Log.d("DateValidator", "date valid: "+value);
 			return new ValidationResult(attribute);
 		}
 		else {
-			Log.d("DateValidator", "date invalid;");
-			
 			return new ValidationResult(attribute, R.string.futureDateMessage);
 		}
 	}

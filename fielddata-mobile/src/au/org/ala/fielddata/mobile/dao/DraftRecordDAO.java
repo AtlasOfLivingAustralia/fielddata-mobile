@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Record;
 
 public class DraftRecordDAO extends RecordDAO {
@@ -28,7 +27,6 @@ public class DraftRecordDAO extends RecordDAO {
 	
 	protected Record map(SQLiteDatabase db, Cursor result, Class<Record> modelClass) {
 		Record record = super.map(db, result, modelClass);
-		int draftId = record.getId();
 		if (result.isNull(RECORD_ID_COLUMN)) {
 			record.setId(null);
 		}
@@ -36,18 +34,13 @@ public class DraftRecordDAO extends RecordDAO {
 			record.setId(result.getInt(RECORD_ID_COLUMN));
 		}
 		
-		Log.d("DraftRecordDAO", "Loading draft record with id: "+record.getId()+", draft id="+draftId);
-		
 		return record;
 	}
 	
 	public Integer save(Record record, SQLiteDatabase db) {
 		
 		Integer id = record.getId();
-		
 		int draftId = super.save(record, db);
-		
-		Log.d("DraftRecordDAO", "Saving draft record with id: "+id+", draftId="+draftId);
 		record.setId(id);
 		
 		return draftId;

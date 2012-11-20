@@ -58,7 +58,6 @@ public class StorageManager {
 		
 		String fileName = species.getImageFileName(); 
 		if (fileName == null) {
-			Log.i("CacheManager", "Species "+species.scientificName+" does not have a profile image");
 			return null;
 		}
 		
@@ -115,7 +114,7 @@ public class StorageManager {
 	    // Create the storage directory if it does not exist
 	    if (! mediaStorageDir.exists()){
 	        if (! mediaStorageDir.mkdirs()){
-	            Log.d("MyCameraApp", "failed to create directory");
+	            Log.e("StorageManager", "Failed to create directory to store photos.");
 	            return null;
 	        }
 	    }
@@ -142,7 +141,6 @@ public class StorageManager {
 		// Check if we already have a thumbnail.
 		Bitmap bitmap = getThumb(name);
 		if (bitmap == null) {
-			Log.d("StorageManager", "Creating bitmap from :"+path.toString());
 			
 			BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 			bmOptions.inJustDecodeBounds = true;

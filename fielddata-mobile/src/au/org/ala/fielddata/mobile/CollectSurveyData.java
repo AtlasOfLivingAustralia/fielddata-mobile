@@ -127,7 +127,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.d("CollectSurveyData", "onCreate");
 		setContentView(R.layout.activity_collect_survey_data);
 		buildCustomActionBar();
 		
@@ -156,7 +155,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	}
 	
 	public void startLocationUpdates() {
-		Log.i("CollectSurveyData", "startLocationUpdates");
 		if (locationServiceConnection == null) {
 			locationServiceConnection = new LocationServiceConnection(this, getRequiredLocationAccuracy());
 			Intent intent = new Intent(this, LocationServiceHelper.class);
@@ -183,7 +181,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	}
 	
 	private void stopLocationUpdates(boolean systemChange) {
-		Log.i("CollectSurveyData", "stopLocationUpdates");
 		
 		if (locationServiceConnection != null) {
 			unbindService(locationServiceConnection);
@@ -199,7 +196,9 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	}
 	
 	public void cancelLocationUpdates() {
-		Log.i("LocationBinder", "Cancelling location updates due to timeout!");
+		if (Utils.DEBUG) {
+			Log.i("LocationBinder", "Cancelling location updates due to timeout!");	
+		}
 		new Handler(getMainLooper()).post(new Runnable() {
 			public void run() {		
 				gpsTimeoutCount++;
@@ -251,7 +250,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	
 	@Override
 	public void onResume() {
-		Log.i("CollectSurveyData", "onResume");
 		super.onResume();
 		
 		if (gpsTrackingOn) {
@@ -261,7 +259,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	
 	@Override
 	public void onPause() {
-		Log.i("CollectSurveyData", "onPause");
 		super.onPause();
 		if (gpsTrackingOn) {
 			stopLocationUpdates(true);
@@ -271,7 +268,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		Log.i("CollectSurveyData", "Saving gpsTracking: "+gpsTrackingOn);
 		
 		outState.putBoolean(GPS_TRACKING_BUNDLE_KEY, gpsTrackingOn);
 		outState.putInt(GPS_TIMEOUT_BUNDLE_KEY, gpsTimeoutCount);
@@ -324,7 +320,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		rightArrow.setVisibility(rightVisibility);
 
 		if (autoScrollAttribute != null) {
-			Log.d("CollectSurveyData", "Invalid: " + autoScrollAttribute + ", Pager scrolling");
 			final Attribute invalid = autoScrollAttribute;
 			scrollTo(invalid);
 			autoScrollAttribute = null;
@@ -352,19 +347,15 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 				while (parent != null && !(parent instanceof ScrollView)) {
 					parent = parent.getParent();
 				}
-				Log.d("CollectSurveyData", "Bound view; " + boundView + ", parent=" + parent);
-
+				
 				if (parent != null) {
 					final ScrollView view = (ScrollView) parent;
 					final Rect r = new Rect();
 
 					view.offsetDescendantRectToMyCoords((View) boundView.getParent(), r);
-					Log.d("CollectSurveyData", "Invalid: " + attribute + ", Pager scrolling to: "
-							+ boundView.getBottom());
 					view.post(new Runnable() {
 						public void run() {
 							view.scrollTo(0, r.bottom);
-
 						}
 					});
 
@@ -530,7 +521,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 			}
 		} else if (requestCode == TAKE_PHOTO_REQUEST) {
 			if (resultCode == RESULT_OK) {
-				Log.d("CollectSurveyData", "Returned ok from photo request");
 				surveyViewModel.persistTempValue();
 			} else {
 				surveyViewModel.clearTempValue();
@@ -567,8 +557,6 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		public void onAttach(Activity activity) {
 
 			super.onAttach(activity);
-			Log.d("SurveyDataCollection", "Attaching to activity for page: " + pageNum);
-
 			ctx = (CollectSurveyData) activity;
 		}
 
@@ -581,11 +569,9 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			Log.d("SurveyDataCollection", "onCreateView for page: " + pageNum);
-
+			
 			viewModel = ctx.getViewModel();
 			binder = new BinderManager(ctx);
-			Log.d("SurveyDataCollection", "Creating view for page: " + pageNum);
 			View view = inflater.inflate(R.layout.survey_data_page, container, false);
 			view.setTag(binder);
 			scroller = (ScrollView) view.findViewById(R.id.tableScroller);
@@ -600,10 +586,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 
 		@Override
 		public void onDestroyView() {
-			Log.d("SurveyDataCollection", "onDestroyView for page: " + pageNum);
-
 			super.onDestroyView();
-
 			binder.clearBindings();
 		}
 	}

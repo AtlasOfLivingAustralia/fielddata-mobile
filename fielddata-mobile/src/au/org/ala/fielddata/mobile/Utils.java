@@ -1,10 +1,6 @@
 package au.org.ala.fielddata.mobile;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 
@@ -16,5 +12,6 @@ public class Utils {
 		return builder;
 	}
 	
+	public static boolean DEBUG = true;
 	
 }

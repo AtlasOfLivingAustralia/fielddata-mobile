@@ -57,7 +57,6 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	
 	@Override
 	public void onCreate() {
-		Log.i("LocationServiceHelper", "Starting location updates");
 		hasGps = getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS);
 		hasNetwork = getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_NETWORK);
 		
@@ -73,24 +72,17 @@ public class LocationServiceHelper extends Service implements LocationListener {
 			if (hasGps) {
 				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TEN_SECONDS, DISTANCE_CHANGE, this);
 			}
-//			if (hasNetwork) {
-//				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TEN_SECONDS, DISTANCE_CHANGE, this);
-//			}
 		}
 		else {
 			if (hasGps) {
 				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TWO_MINUTES, DISTANCE_CHANGE, this);
 			}
-//			if (hasNetwork) {
-//				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TWO_MINUTES, DISTANCE_CHANGE, this);
-//			}
 		}
 	}
 	
 	
 	@Override
 	public void onDestroy() {
-		Log.i("LocationServiceHelper", "Stopping location updates");
 		if (locationManager != null) {
 			locationManager.removeUpdates(this);
 		}
@@ -121,8 +113,6 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	public IBinder onBind(Intent intent) {
 		// We have an active client, increase the frequency of the updates.
 		
-		Log.i("LocationServiceHelper", "onBind");
-		
 		if (hasGps || hasNetwork) {
 			requestLocationUpdates(true);
 		}
@@ -135,8 +125,6 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	public void onRebind(Intent intent) {
 		// We have an active client, increase the frequency of the updates.
 		
-		Log.i("LocationServiceHelper", "onRebind");
-		
 		requestLocationUpdates(true);
 		notify("Location service bound");
 		
@@ -145,7 +133,6 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	@Override
 	public boolean onUnbind(Intent intent) {
 		
-		Log.i("LocationServiceHelper", "onUnbind");
 		super.onUnbind(intent);
 		notify("Location service unbound");
 		
@@ -167,7 +154,6 @@ public class LocationServiceHelper extends Service implements LocationListener {
 	}
 
 	public void onLocationChanged(Location location) {
-		Log.d("LocationServiceHelper", "Location update received: "+location);
 		if (isBetterLocation(location, bestLocation)) {
 			bestLocation = location;
 			notify("New best location obtained");
@@ -183,7 +169,7 @@ public class LocationServiceHelper extends Service implements LocationListener {
 //		PendingIntent blah2 = PendingIntent.getActivity(this, 0, blah, 0);
 //		notification.setLatestEventInfo(this, message, message, blah2);
 //		notificationManager.notify(1, notification);
-		Log.i("LocationServiceHelper", "State changed: "+message);
+		
 	}
 
 	

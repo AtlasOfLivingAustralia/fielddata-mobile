@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,6 +53,9 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 		
 		Button button = (Button) findViewById(R.id.loginBtn);
 		button.setOnClickListener(this);
+		
+		Button registrationButton = (Button)findViewById(R.id.registerBtn);
+		registrationButton.setOnClickListener(this);
 	}
 	
 	@Override
@@ -138,6 +143,12 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 				}
 
 			}.execute();
+		}
+		else if (v.getId() == R.id.registerBtn) {
+			Preferences prefs = new Preferences(this);
+			String registrationUrl = prefs.getUnproxiedFieldDataServerUrl()+"/koalacount/vanilla/usersignup.htm";
+			Intent registrationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(registrationUrl));
+			startActivity(registrationIntent);
 		}
 	}
 

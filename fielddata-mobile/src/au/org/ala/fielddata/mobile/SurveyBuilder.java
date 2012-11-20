@@ -20,7 +20,6 @@ import java.util.List;
 
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -212,13 +211,9 @@ public class SurveyBuilder {
 	}
 
 	public View buildSpeciesPicker(Attribute attribute, ViewGroup parent) {
-		long start = System.currentTimeMillis();
-
+		
 		ViewGroup row = (ViewGroup) viewContext.getLayoutInflater().inflate(R.layout.species_row,
 				parent);
-
-		long end = System.currentTimeMillis();
-		Log.d("Perf", "SurveyBuilder.buildSpeciesPicker took " + (end - start) + " millis");
 
 		return getFirstNonLabelView(row);
 	}

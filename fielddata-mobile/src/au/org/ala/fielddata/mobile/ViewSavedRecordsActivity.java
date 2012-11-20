@@ -28,7 +28,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -299,7 +298,6 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 	
 	public void onClick(View view) {
 		CheckBox checkBox = (CheckBox)view;
-		Log.d("ViewSavedRecordsActivity", "Checkbox at position "+checkBox.getTag()+" is "+checkBox.isChecked());
 		getListView().setItemChecked((Integer)view.getTag(), checkBox.isChecked());
 		
 		int count = countSelected();
@@ -315,7 +313,6 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 			finishActionMode();
 		}
 		
-		Log.d("ViewSavedRecordsActivity", "OnCheckboxClicked:"+countSelected());
 	}
 	
 	private void finishActionMode() {

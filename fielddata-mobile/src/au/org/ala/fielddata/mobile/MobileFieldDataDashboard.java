@@ -37,6 +37,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.EditPreferences;
@@ -321,8 +322,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 
 	@Override
 	protected void onResume() {
-		Log.i("MobileFieldDataDashboard", "onResume");
-
 		super.onResume();
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -333,8 +332,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 
 	@Override
 	public void onPause() {
-		Log.i("MobileFieldDataDashboard", "onPause");
-
 		super.onPause();
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -344,8 +341,6 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 
 	@Override
 	public void onStop() {
-		Log.i("MobileFieldDataDashboard", "onStop");
-
 		super.onStop();
 	}
 
@@ -437,15 +432,17 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 			FieldDataServiceClient service = new FieldDataServiceClient(this);
 			success = service.ping(5000);
 			if (!success) {
-				Log.i("Status", "Field data server at: " + fieldDataServer + " is not reachable");
+				if (Utils.DEBUG) {
+					Log.i("Status", "Field data server at: " + fieldDataServer + " is not reachable");
+				}
 			}
-			// ConnectivityManager manager =
-			// (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
-			// success = manager.requestRouteToHost(networkType, hostAddress)
+			
 		} catch (Exception e) {
-			Log.e("Error",
+			if (Utils.DEBUG) {
+				Log.e("Error",
 					"Unable to location field data server at: "
 							+ preferences.getFieldDataServerHostName(), e);
+			}
 		}
 		return success;
 	}
@@ -472,14 +469,28 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 
 			new AsyncTask<Void, Void, Void>() {
 
+				private boolean success;
+				
 				@Override
 				protected Void doInBackground(Void... params) {
-					new FieldDataService(MobileFieldDataDashboard.this).downloadSurveys();
+					try {
+						new FieldDataService(MobileFieldDataDashboard.this).downloadSurveys();
+						success = true;
+					}
+					catch (Exception e) {
+						success = false;
+					}
 					return null;
 				}
 
 				@Override
 				protected void onPostExecute(Void result) {
+					if (success) {
+						Toast.makeText(MobileFieldDataDashboard.this, "Surveys refreshed", Toast.LENGTH_SHORT).show();
+					}
+					else {
+						Toast.makeText(MobileFieldDataDashboard.this, "Refresh failed - please check your network", Toast.LENGTH_LONG).show();
+					}
 					refreshPage();
 				}
 			}.execute();

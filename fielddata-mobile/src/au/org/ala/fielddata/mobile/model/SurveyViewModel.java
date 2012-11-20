@@ -23,7 +23,6 @@ import java.util.List;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.util.Log;
 import android.util.SparseArray;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
@@ -173,7 +172,6 @@ public class SurveyViewModel {
 	public void setValue(Attribute attribute, String value) {
 
 		record.setValue(attribute, value);
-		Log.d("SurveyViewModel", "Setting attribute: "+attribute+", value: "+value);
 		fireAttributeChanged(attribute);
 		validate(attribute);	
 	}
@@ -281,8 +279,6 @@ public class SurveyViewModel {
 		record.setValid(result.valid());
 		if (!result.valid()) {
 			for (ValidationResult attr : result.invalidAttributes()) {
-				
-				Log.i("SurveyViewModel", "Attribute invalid: "+attr.getAttribute()+", "+attr.getAttribute().description);
 				fireAttributeValidated(attr);
 			}
 			
@@ -304,11 +300,9 @@ public class SurveyViewModel {
 	public int pageOf(Attribute firstInvalid) {
 		int firstInvalidPage = -1;
 		int pageNum = 0;
-		Log.i("SurveyViewModel", "Invalid attribute "+firstInvalid);
 		for (List<Attribute> page : attributes) {
 			for (Attribute attribute : page) {
 				if (firstInvalid.equals(attribute)) {
-					Log.i("SurveyViewModel", "Invalid attribute "+attribute+" found on page "+pageNum);
 					firstInvalidPage = pageNum;
 					break;
 				}
@@ -348,7 +342,6 @@ public class SurveyViewModel {
 	
 	public void persistTempValue() {
 		
-		Log.d("SurveyViewModel", "persistTempValue, tempValue="+tempValue);
 		if (tempValue != null) {
 			setValue(tempValue.getAttribute(), tempValue.getValue());
 		}

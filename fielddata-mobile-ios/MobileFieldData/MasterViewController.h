@@ -16,6 +16,7 @@
 @interface MasterViewController : UITableViewController {
     @private
     Preferences *preferences;
+    NSArray* surveys;
 }
 
 @end

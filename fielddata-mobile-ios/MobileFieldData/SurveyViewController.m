@@ -10,6 +10,7 @@
 #import "TextInputCell.h"
 #import "IntegerInputCell.h"
 #import "SingleSelectCell.h"
+#import "SingleSelectListCell.h"
 #import "MultiSelectCell.h"
 #import "ImageCell.h"
 #import "SpeciesCell.h"
@@ -17,6 +18,7 @@
 #import "AlertService.h"
 #import "RecordAttribute.h"
 #import "MasterViewController.h"
+#import "SelectionListViewController.h"
 
 @interface SurveyViewController ()
 
@@ -34,11 +36,7 @@
         
         survey = s;
         
-        NSArray *sortDescriptors = [NSArray arrayWithObject:
-                                [NSSortDescriptor sortDescriptorWithKey:@"weight" ascending:YES]];
-        
-        attributes = [[survey.attributes allObjects] sortedArrayUsingDescriptors:sortDescriptors];
-        
+        attributes = [self sortAndFilterAttributes:[survey.attributes allObjects]];
         inputFields = [NSMutableDictionary dictionaryWithCapacity:attributes.count];
         
         if (r == NULL) {
@@ -57,6 +55,22 @@
         }
     }
     return self;
+}
+
+-(NSArray*)sortAndFilterAttributes:(NSArray*)attributesToFilter
+{
+    NSArray* supportedTypes = [NSArray arrayWithObjects:kSpeciesRP, kNumber, kPoint, kWhen, kTimeRP, kNotes,
+                               kIntegerType, kIntegerWithRange, kDecimal, kRegEx, kDate, kTime, kString, kStringAutoComplete, kText, kStringWithValidValues, kSingleCheckbox, kMultiCheckbox, kMultiSelect, kImage, kSpecies, nil];
+    NSPredicate* predicate = [NSPredicate predicateWithFormat:@"typeCode IN %@", supportedTypes];
+    
+    NSArray* filtered = [attributesToFilter filteredArrayUsingPredicate:predicate];
+    
+    NSArray *sortDescriptors = [NSArray arrayWithObject:
+                                [NSSortDescriptor sortDescriptorWithKey:@"weight" ascending:YES]];
+    
+    filtered = [filtered sortedArrayUsingDescriptors:sortDescriptors];
+    return filtered;
+    
 }
 
 - (void)viewDidLoad
@@ -125,6 +139,24 @@
     
 }
 
+-(void)displaySelectionList:(NSIndexPath*)indexPath
+{
+    // Navigation logic may go here. Create and push another view controller.
+    SurveyAttribute* attribute = [attributes objectAtIndex:indexPath.row];
+    BOOL multiSelect = [attribute.typeCode isEqualToString:kMultiCheckbox] ? YES : NO;
+    NSArray *values = [[NSArray alloc] initWithArray:attribute.options.allObjects];
+    
+    SingleSelectListCell* cell = (SingleSelectListCell*)[self.tableView cellForRowAtIndexPath:indexPath];
+    
+    SelectionListViewController *detailViewController =
+    [[SelectionListViewController alloc] initWithValues:UITableViewStylePlain selectionValues:values cell:cell multiSelect:multiSelect];
+    UINavigationController *navigationBar = [[UINavigationController alloc] initWithRootViewController:detailViewController];
+    // ...
+    // Pass the selected object to the new view controller.
+    [self.navigationController presentModalViewController:navigationBar animated:YES];
+
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     //return (interfaceOrientation == UIInterfaceOrientationPortrait);
@@ -175,14 +207,29 @@
             cell = singleCell;
             [inputFields setObject:singleCell.value forKey:attribute.weight];
             
+        } else if ([attribute.typeCode isEqualToString:kStringWithValidValues]) {
+            SingleSelectListCell* listCell = [[SingleSelectListCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                                                         reuseIdentifier:CellIdentifier
+                                                                         options:attribute.options.allObjects];
+            listCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
+            [listCell setSelectedValue:[loadedValues objectForKey:attribute.weight]];
+            cell = listCell;
+            [inputFields setObject:listCell.value forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kMultiCheckbox]) {
-            MultiSelectCell* multiCell = [[MultiSelectCell alloc] initWithStyle:UITableViewCellStyleSubtitle
-                                                                    reuseIdentifier:CellIdentifier
-                                                                    options:attribute.options.allObjects];
-            multiCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
-            [multiCell setSelectedValues:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
-            cell = multiCell;
-            [inputFields setObject:multiCell.value forKey:attribute.weight];
+            SingleSelectListCell* listCell = [[SingleSelectListCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                                                         reuseIdentifier:CellIdentifier
+                                                                                 options:attribute.options.allObjects];
+            listCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
+            [listCell setSelectedValue:[loadedValues objectForKey:attribute.weight]];
+            cell = listCell;
+            [inputFields setObject:listCell.value forKey:attribute.weight];
+//            MultiSelectCell* multiCell = [[MultiSelectCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+//                                                                    reuseIdentifier:CellIdentifier
+//                                                                    options:attribute.options.allObjects];
+//            multiCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
+//            [multiCell setSelectedValues:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
+//            cell = multiCell;
+//            [inputFields setObject:multiCell.value forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kImage]) {
             ImageCell* imageCell = [[ImageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
             imageCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
@@ -220,8 +267,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     SurveyAttribute* attribute = [attributes objectAtIndex:indexPath.row];
-    if ([attribute.typeCode isEqualToString:kMultiSelect] ||
-        [attribute.typeCode isEqualToString:kMultiCheckbox]) {
+    if ([attribute.typeCode isEqualToString:kMultiSelect]) {
         return 200;
     } else if ([attribute.typeCode isEqualToString:kImage]) {
         return 140;
@@ -229,6 +275,9 @@
         return 170;
     } else if ([attribute.typeCode isEqualToString:kPoint]) {
         return 120;
+    } else if ([attribute.typeCode isEqualToString:kStringWithValidValues] ||
+               [attribute.typeCode isEqualToString:kMultiCheckbox]) {
+        return 60;
     } else {
         return 90;
     }
@@ -240,17 +289,20 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    SurveyAttribute* attribute = [attributes objectAtIndex:indexPath.row];
+    if ([attribute.typeCode isEqualToString:kStringWithValidValues] ||
+        [attribute.typeCode isEqualToString:kMultiCheckbox]) {
+        [self displaySelectionList:indexPath];
+    }
 }
 
 - (NSIndexPath *)tableView:(UITableView *)tv willSelectRowAtIndexPath:(NSIndexPath *)path
 {
+    SurveyAttribute* attribute = [attributes objectAtIndex:path.row];
+    if ([attribute.typeCode isEqualToString:kStringWithValidValues] ||
+        [attribute.typeCode isEqualToString:kMultiCheckbox]) {
+        return path;
+    }
     return nil;
 }
 

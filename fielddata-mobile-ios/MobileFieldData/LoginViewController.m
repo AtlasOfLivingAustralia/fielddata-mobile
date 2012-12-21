@@ -127,6 +127,8 @@
                           [user valueForKey:@"firstName"],
                           [user valueForKey:@"lastName"]];
         
+        NSDictionary *portal = [dictionary valueForKey:@"portal"];
+        
         
         if (ident == NULL) {
             [self hideProgressIndicator];
@@ -134,8 +136,11 @@
         } else {
             [preferences setFieldDataSessionKey:ident];
             [preferences setUsersName:name];
+            [preferences setPortalName:[portal valueForKey:@"name"]];
             
             // delete all the existing entities
+            
+            [fieldDataService deleteAllEntities:@"Record"];
             [fieldDataService deleteAllEntities:@"Species"];
             [fieldDataService deleteAllEntities:@"Survey"];
             

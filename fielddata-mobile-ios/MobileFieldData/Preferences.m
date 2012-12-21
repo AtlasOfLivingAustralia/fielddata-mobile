@@ -12,12 +12,16 @@
 
 -(id)init
 {
+    
     defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@"root.ala.org.au" forKey:@"baseURL"];
+    [defaults setObject:@"root-uat.ala.org.au" forKey:@"baseURL"];
     //[defaults setObject:@"152.83.195.62:8081" forKey:@"baseURL"];
     [defaults setObject:@"fielddata-proxy" forKey:@"context"];
-    [defaults setObject:@"koalacount" forKey:@"path"];
-    [defaults setObject:@"Great+Koala+Count" forKey:@"portal"];
+    [defaults setObject:@"condamine" forKey:@"path"];
+    [defaults setObject:@"Condamine+Alliance" forKey:@"portal"];
+    
+//    [defaults setObject:@"koalacount" forKey:@"path"];
+//    [defaults setObject:@"Great+Koala+Count" forKey:@"portal"];
 
     return self;
 }
@@ -27,6 +31,11 @@
 {
     NSString *portal = [defaults objectForKey:@"portal"];
     return portal;
+}
+
+-(void)setPortalName:(NSString*)name
+{
+    [defaults setObject:name forKey:@"portalName"];
 }
 
 -(NSString*)getFieldDataURL
@@ -57,5 +66,6 @@
 {
     return [defaults objectForKey:@"name"];
 }
+
 
 @end

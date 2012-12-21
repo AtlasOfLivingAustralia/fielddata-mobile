@@ -26,8 +26,21 @@
         self.title = NSLocalizedString(@"Great Koala Count", @"Great Koala Count");
         
         preferences = [[Preferences alloc]init];
+        
+        UIImage* background = [MasterViewController imageWithImage:[UIImage imageNamed:@"background_image.jpg" ] scaledToSize:self.tableView.bounds.size ];
+        self.tableView.backgroundColor = [UIColor colorWithPatternImage:background];
+        self.tableView.backgroundView = [[UIImageView alloc] initWithImage:background];
     }
     return self;
+}
+
++ (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
+    //UIGraphicsBeginImageContext(newSize);
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
 }
 							
 - (void)viewDidLoad
@@ -39,10 +52,12 @@
     //UIBarButtonItem *refreshButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refreshFieldData:)];
     //self.navigationItem.rightBarButtonItem = refreshButton;
     
+    
     // if the user is not logged on then redirect to the login page
     if ([preferences getFieldDataSessionKey] == NULL) {
         [self openLoginPage];
     }
+    
 }
 
 - (void)viewDidUnload
@@ -81,14 +96,18 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section == 0) {
+        return surveys.count;
+    }
+    else if (section ==1) {
         return 3;
-    } else {
+    }
+    else if (section == 2) {
         return 1;
     }
 }
@@ -110,6 +129,9 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    self.title = [preferences getPortalName];
+    FieldDataService* fieldDataService = [[FieldDataService alloc] init];
+    surveys = [fieldDataService loadSurveys];
     [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 }
 
@@ -137,24 +159,25 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0) {
+        [self openSurveyPage:indexPath.row];
+    }
+    else if (indexPath.section == 1) {
         switch (indexPath.row) {
             case 0:
-                [self openSurveyPage];
-                break;
-            case 1:
                 [self openSavedRecordsPage];
                 break;
-            case 2:
+            case 1:
                 [self openWeblink:indexPath];
                 
                 break;
-            //case 3:
-            //    [self openSpeciesPage];
-            //    break;
+            case 2:
+                [self openSpeciesPage];
+                break;
             default:
                 break;
         }
-    } else if (indexPath.section == 1) {
+    }
+    else if (indexPath.section == 2) {
         switch (indexPath.row) {
             case 0:
                 [self openLoginPage];
@@ -174,14 +197,10 @@
     
 }
 
--(void)openSurveyPage
+-(void)openSurveyPage:(NSInteger) surveyIndex
 {
-    FieldDataService* fieldDataService = [[FieldDataService alloc] init];
-    NSArray* surveys = [fieldDataService loadSurveys];
-    if (surveys.count > 1) {
-        
-    } else if (surveys.count != 0) {
-        Survey* survey = [surveys objectAtIndex:0];
+    if (surveys != Nil && surveys.count != 0) {
+        Survey* survey = [surveys objectAtIndex:surveyIndex];
         
         SurveyViewController* surveyViewController = [[SurveyViewController alloc] initWithStyle:UITableViewStylePlain
                                                                                           survey:survey
@@ -218,21 +237,25 @@
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0) {
+        Survey *survey = [surveys objectAtIndex:indexPath.row];
+        cell.textLabel.text = survey.name;
+    }
+    else if (indexPath.section ==1) {
         switch (indexPath.row) {
+    
             case 0:
-                cell.textLabel.text = @"New Recording";
-                break;
-            case 1:
                 cell.textLabel.text = @"Saved Records";
                 break;
-            case 2:
+            case 1:
                 cell.textLabel.text = @"View My Records Online";
-            //case 3:
-            //    cell.textLabel.text = @"Species List";
+                break;
+            case 2:
+                cell.textLabel.text = @"Species List";
+                break;
             default:
                 break;
         }
-    } else if (indexPath.section == 1) {
+    } else if (indexPath.section == 2) {
         switch (indexPath.row) {
             case 0:
                 cell.textLabel.text = @"Change Login";

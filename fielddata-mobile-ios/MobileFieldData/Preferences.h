@@ -15,6 +15,7 @@
 }
 
 -(NSString*)getPortalName;
+-(void)setPortalName:(NSString*)name;
 -(NSString*)getFieldDataURL;
 -(void)setFieldDataSessionKey:(NSString*)sessionKey;
 -(NSString*)getFieldDataSessionKey;

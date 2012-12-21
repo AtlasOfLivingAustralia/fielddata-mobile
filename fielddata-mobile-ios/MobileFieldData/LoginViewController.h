@@ -16,6 +16,7 @@
     @private
     Preferences *preferences;
     FieldDataService *fieldDataService;
+    
     int numSurveys;
     int surveyCount;
     MBProgressHUD *progressIndicator;

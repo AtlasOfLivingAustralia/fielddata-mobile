@@ -185,7 +185,8 @@
     attribute.survey = survey;
     
     if ([typeCode isEqualToString:kMultiSelect] ||
-        [typeCode isEqualToString:kMultiCheckbox]) {
+        [typeCode isEqualToString:kMultiCheckbox] ||
+        [typeCode isEqualToString:kStringWithValidValues]) {
         int weight = 100;
         for (NSDictionary* option in [surveyAttribute objectForKey:@"options"]) {
             [self persistAttributeOption:option surveyAttribute:attribute weight:weight error:e];
@@ -324,6 +325,7 @@
             
         } else if ([attribute.typeCode isEqualToString:kMultiSelect] ||
                    [attribute.typeCode isEqualToString:kMultiCheckbox] ||
+                   [attribute.typeCode isEqualToString:kStringWithValidValues] ||
                    [attribute.typeCode isEqualToString:kSpeciesRP] ||
                    [attribute.typeCode isEqualToString:kPoint]) {
             

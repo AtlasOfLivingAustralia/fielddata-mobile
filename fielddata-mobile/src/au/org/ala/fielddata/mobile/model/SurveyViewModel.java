@@ -265,7 +265,8 @@ public class SurveyViewModel {
 	}
 
 	private boolean deviceHasCamera() {
-		return packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA);
+		return packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA) ||
+		packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT);
 	}
 
 	

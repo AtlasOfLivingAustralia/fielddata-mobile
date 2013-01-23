@@ -14,6 +14,7 @@
     // Two arrays are used instead of a dictionary as we need to maintain insertion order.
     NSMutableArray* headers;
     NSMutableArray* groupedOptions;
+    UIBarButtonItem *doneButton;
 }
 
 -(void)determineSelection:(SingleSelectListCell *)cell;
@@ -53,10 +54,11 @@
 {
     [super viewDidLoad];
     
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]
+    doneButton = [[UIBarButtonItem alloc]
                                    initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveSelection:)];
     
     self.navigationItem.rightBarButtonItem = doneButton;
+    doneButton.enabled = (selectedRows.count > 0);
     
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
     
@@ -78,6 +80,7 @@
         }
     }
     
+
 }
 
 - (NSIndexPath*)findValue:(NSString *)value
@@ -246,6 +249,7 @@
         
     }
     [self.tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationFade];
+    doneButton.enabled = YES;
  }
 
 @end

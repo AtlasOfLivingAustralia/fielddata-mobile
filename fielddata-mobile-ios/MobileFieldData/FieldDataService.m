@@ -122,13 +122,7 @@
     survey.zoom = [mapDefaults objectForKey:@"zoom"];
     
     for (NSDictionary* recordProperty in [surveyDict objectForKey:@"recordProperties"]) {
-        
-        // dates field is ignored because it is set automatically
-        NSString* type = [recordProperty objectForKey:@"name"];
-        
-        if (![type isEqualToString:kWhen]) {
-            [self persistRecordProperty:recordProperty survey:survey error:e];
-        }
+        [self persistRecordProperty:recordProperty survey:survey error:e];
     }
     
     for (NSDictionary* attribute in [surveyDict objectForKey:@"attributesAndOptions"]) {
@@ -327,7 +321,8 @@
                    [attribute.typeCode isEqualToString:kMultiCheckbox] ||
                    [attribute.typeCode isEqualToString:kStringWithValidValues] ||
                    [attribute.typeCode isEqualToString:kSpeciesRP] ||
-                   [attribute.typeCode isEqualToString:kPoint]) {
+                   [attribute.typeCode isEqualToString:kPoint] ||
+                   [attribute.typeCode isEqualToString:kWhen]) {
             
             NSMutableString* value = [inputFields objectForKey:attribute.weight];
             NSLog(@"%@ %@", attribute.question, value);
@@ -369,11 +364,10 @@
             
             if ([recAtt.surveyAttribute.weight isEqualToNumber:weight]) {
                 recordAttribute = recAtt;
-                NSLog(@"%@", recAtt.surveyAttribute.weight);
+                NSLog(@"Attribute weight: %@ type: %@", recAtt.surveyAttribute.weight, recAtt.surveyAttribute.typeCode);
                 break;
             }
         }
-        
         if ([recordAttribute.surveyAttribute.typeCode isEqualToString:kIntegerType] ||
             [recordAttribute.surveyAttribute.typeCode isEqualToString:kText]) {
             
@@ -382,8 +376,10 @@
             
         } else if ([recordAttribute.surveyAttribute.typeCode isEqualToString:kMultiSelect] ||
                    [recordAttribute.surveyAttribute.typeCode isEqualToString:kMultiCheckbox] ||
+                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kStringWithValidValues] ||
                    [recordAttribute.surveyAttribute.typeCode isEqualToString:kSpeciesRP] ||
-                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kPoint]) {
+                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kPoint] ||
+                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kWhen]) {
             
             NSMutableString* value = [inputFields objectForKey:recordAttribute.surveyAttribute.weight];
             if (![value isEqualToString:@""]) {

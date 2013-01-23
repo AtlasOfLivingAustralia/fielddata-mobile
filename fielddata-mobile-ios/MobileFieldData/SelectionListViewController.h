@@ -20,6 +20,7 @@
 }
 
 @property (readonly) BOOL multiSelect;
--(id)initWithValues:(UITableViewStyle)style selectionValues:(NSArray*)selectionValues cell:(SingleSelectListCell*)result multiSelect:(BOOL)multiSelec;
+-(id)initWithValues:(UITableViewStyle)style selectionValues:(NSArray*)selectionValues cell:(SingleSelectListCell*)result
+        multiSelect:(BOOL)multiSelec grouped:(BOOL)grouped;
 
 @end

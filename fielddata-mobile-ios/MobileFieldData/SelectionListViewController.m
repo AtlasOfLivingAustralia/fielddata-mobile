@@ -17,7 +17,7 @@
 }
 
 -(void)determineSelection:(SingleSelectListCell *)cell;
--(void)groupAttributeOptions;
+-(void)initialiseAttributeOptions:(NSString*)separator;
 -(NSIndexPath*)findValue:(NSString*)value;
 
 @end
@@ -28,7 +28,8 @@
 @synthesize multiSelect;
 
 
--(id)initWithValues:(UITableViewStyle)style selectionValues:(NSArray*)selectionValues cell:(SingleSelectListCell*)cell multiSelect:(BOOL)multiSelec
+-(id)initWithValues:(UITableViewStyle)style selectionValues:(NSArray*)selectionValues cell:(SingleSelectListCell*)cell
+        multiSelect:(BOOL)multiSelec grouped:(BOOL)grouped
 {
     self = [self initWithStyle:style];
     if (self) {
@@ -41,13 +42,26 @@
         
         headers = [NSMutableArray arrayWithCapacity:values.count];
         groupedOptions = [NSMutableArray arrayWithCapacity:values.count];
-        [self groupAttributeOptions];
+        [self initialiseAttributeOptions:grouped ? @"-" : nil];
         [self determineSelection:cell];
         
     }
     return self;
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]
+                                   initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveSelection:)];
+    
+    self.navigationItem.rightBarButtonItem = doneButton;
+    
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
+    
+    self.navigationItem.leftBarButtonItem = cancelButton;
+}
 
 -(void)determineSelection:(SingleSelectListCell*)cell {
     
@@ -85,16 +99,15 @@
     return nil;
 }
 
--(void)groupAttributeOptions {
+-(void)initialiseAttributeOptions:(NSString*)groupIdentifier {
     
-    NSEnumerator* enumerator = [values objectEnumerator];
-    SurveyAttributeOption* option;
     NSString* header = @"";
     NSString* previousHeader = nil;
     NSMutableArray* optionGroup = [NSMutableArray arrayWithCapacity:values.count];
-    while (option = [enumerator nextObject]) {
-        NSString* optionValue = option.value;
-        NSArray* split = [self splitIntoHeaderAndValue:optionValue];
+    
+    for (SurveyAttributeOption *option in values)  {
+        NSString *optionValue = option.value;
+        NSArray* split = [self splitIntoHeaderAndValue:groupIdentifier value:optionValue];
         header = split[0];
         NSLog(@"Value: %@ Header: %@", header, option.value);
         
@@ -145,19 +158,7 @@
 }
 
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
 
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]
-                                   initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveSelection:)];
-    
-    self.navigationItem.rightBarButtonItem = doneButton;
-    
-    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
-    
-    self.navigationItem.leftBarButtonItem = cancelButton;
-}
 
 - (void)didReceiveMemoryWarning
 {
@@ -165,11 +166,11 @@
     // Dispose of any resources that can be recreated.
 }
 
--(NSArray*)splitIntoHeaderAndValue:(NSString*) value {
+-(NSArray*)splitIntoHeaderAndValue:(NSString*)separator value:(NSString*) value {
     
     NSString* header = @"";
     NSString* rest = [value copy];
-    NSInteger separatorPos = [value rangeOfString:@"-"].location;
+    NSInteger separatorPos = separator ? [value rangeOfString:separator].location : NSNotFound;
     if (separatorPos != NSNotFound) {
         header = [value substringToIndex:separatorPos];
         rest = [value substringFromIndex:separatorPos+1];

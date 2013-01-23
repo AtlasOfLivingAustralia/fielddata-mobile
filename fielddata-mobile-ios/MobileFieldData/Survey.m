@@ -7,6 +7,7 @@
 //
 
 #import "Survey.h"
+#import "SurveyAttribute.h"
 
 
 @implementation Survey
@@ -21,5 +22,14 @@
 @dynamic lastSync;
 @dynamic attributes;
 @dynamic zoom;
+
+-(SurveyAttribute *)getAttributeByType:(NSString *)attributeType
+{
+    NSSet *subset = [self.attributes objectsPassingTest:^BOOL(id obj, BOOL *stop) {
+        return [((SurveyAttribute *)obj).typeCode isEqualToString:attributeType];
+    }];
+    return (SurveyAttribute *)[subset anyObject];
+}
+
 
 @end

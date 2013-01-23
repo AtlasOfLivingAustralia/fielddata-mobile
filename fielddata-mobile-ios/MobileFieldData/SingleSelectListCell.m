@@ -17,11 +17,9 @@
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier options:(NSArray*)o
 {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     if (self) {
         
-        // Initialization code
-        // Initialization code
         label = [[UILabel alloc] initWithFrame:CGRectMake(10, 3, self.bounds.size.width-20, 15)];
         label.font = [UIFont boldSystemFontOfSize:12.0];
         label.numberOfLines = 0;
@@ -31,9 +29,7 @@
         valueLabel.font = [UIFont systemFontOfSize:12.0];
         valueLabel.numberOfLines = 2;
         valueLabel.text = @"";
-        valueLabel.layer.borderColor = [UIColor greenColor].CGColor;
-        valueLabel.layer.borderWidth = 2.0;
-       
+        
         [self.contentView addSubview:valueLabel];
         
         NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"weight" ascending:YES]];

@@ -10,7 +10,7 @@
 
 @implementation TextInputCell
 
-@synthesize label, inputField;
+@synthesize label, inputField, inputView;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -37,10 +37,5 @@
     return NO;
 }
 
-
-/*
-- (void)drawRect:(CGRect)rect {
-    
-}*/
 
 @end

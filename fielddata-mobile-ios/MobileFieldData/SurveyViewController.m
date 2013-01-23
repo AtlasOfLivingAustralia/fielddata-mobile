@@ -5,7 +5,7 @@
 //  Created by Birks, Matthew (CSIRO IM&T, Yarralumla) on 20/09/12.
 //
 //
-
+#import <MapKit/MapKit.h>
 #import "SurveyViewController.h"
 #import "TextInputCell.h"
 #import "IntegerInputCell.h"
@@ -19,8 +19,16 @@
 #import "RecordAttribute.h"
 #import "MasterViewController.h"
 #import "SelectionListViewController.h"
+#import "MapViewController.h"
+#import "DateCell.h"
 
 @interface SurveyViewController ()
+{
+    @private
+    LocationCell *locationCell;
+    //UIView *popupPicker;
+    
+}
 
 @end
 
@@ -82,11 +90,21 @@
     
     self.navigationItem.rightBarButtonItem = saveButton;
     
+    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard:)];
+    gestureRecognizer.cancelsTouchesInView = NO;
+    [self.tableView addGestureRecognizer:gestureRecognizer];
+    
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+}
+
+-(void)hideKeyboard:(UITapGestureRecognizer *)gestureRecognizer
+{
+    [self.tableView endEditing:YES];
+      
 }
 
 - (void)viewDidUnload
@@ -149,7 +167,7 @@
     SingleSelectListCell* cell = (SingleSelectListCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     
     SelectionListViewController *detailViewController =
-    [[SelectionListViewController alloc] initWithValues:UITableViewStylePlain selectionValues:values cell:cell multiSelect:multiSelect];
+    [[SelectionListViewController alloc] initWithValues:UITableViewStylePlain selectionValues:values cell:cell multiSelect:multiSelect grouped:NO];
     UINavigationController *navigationBar = [[UINavigationController alloc] initWithRootViewController:detailViewController];
     // ...
     // Pass the selected object to the new view controller.
@@ -245,12 +263,25 @@
             cell = speciesCell;
             [inputFields setObject:speciesCell.value forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kPoint]) {
-            LocationCell* locationCell = [[LocationCell alloc]initWithStyle:UITableViewCellStyleDefault
-                                                            reuseIdentifier:CellIdentifier];
+            locationCell = [[LocationCell alloc]initWithStyleAndParent:UITableViewCellStyleDefault
+                                                                     reuseIdentifier:CellIdentifier parent:self];
             [locationCell setLocation:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
             cell = locationCell;
             [inputFields setObject:locationCell.value forKey:attribute.weight];
-        } else {
+            
+        } else if ([attribute.typeCode isEqualToString:kWhen]) {
+            
+            DateCell *dateCell = [[DateCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+            dateCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
+            NSString *date = [loadedValues objectForKey:attribute.weight];
+            if (date) {
+                [dateCell setDate:date];
+            }
+            cell = dateCell;
+            
+            [inputFields setObject:dateCell.value forKey:attribute.weight];
+        }
+        else {
             TextInputCell* textCell = [[TextInputCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             textCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             textCell.inputField.text = [loadedValues objectForKey:attribute.weight];
@@ -276,7 +307,8 @@
     } else if ([attribute.typeCode isEqualToString:kPoint]) {
         return 120;
     } else if ([attribute.typeCode isEqualToString:kStringWithValidValues] ||
-               [attribute.typeCode isEqualToString:kMultiCheckbox]) {
+               [attribute.typeCode isEqualToString:kMultiCheckbox] ||
+               [attribute.typeCode isEqualToString:kWhen]) {
         return 60;
     } else {
         return 90;
@@ -300,9 +332,12 @@
 {
     SurveyAttribute* attribute = [attributes objectAtIndex:path.row];
     if ([attribute.typeCode isEqualToString:kStringWithValidValues] ||
-        [attribute.typeCode isEqualToString:kMultiCheckbox]) {
+        [attribute.typeCode isEqualToString:kMultiCheckbox] ||
+        [attribute.typeCode isEqualToString:kWhen]) {
         return path;
     }
+    // Deselect any current selection (this is to effectively cancel a current edit of a date field)
+    [tv deselectRowAtIndexPath:[tv indexPathForSelectedRow] animated:YES];
     return nil;
 }
 
@@ -358,6 +393,74 @@
 -(void)hideProgressIndicator
 {
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+}
+
+-(void)showMap
+{
+    // If a location has already been selected by the user, initialise the Map with that location, otherwise
+    // use the survey defaults to display a region.
+    MapViewController *mapController = nil;
+    CLLocation *location = [self getLocation];
+    if (location) {
+        mapController = [[MapViewController alloc] initWithLocation:location];
+    }
+    else {
+        mapController = [[MapViewController alloc] initWithSurveyDefaults:survey];
+    }
+    mapController.delegate = self;
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:mapController];
+    [self presentModalViewController:navigationController animated:YES];
+    
+}
+
+-(CLLocation *)getLocation
+{
+    SurveyAttribute *locationAttribute = [survey getAttributeByType:kPoint];
+    NSString *locationString = [inputFields objectForKey:locationAttribute.weight];
+    NSLog(@"Location weight=%@, Inputfields=%@", locationAttribute.weight, inputFields);
+    if (locationString) {
+        return [Record stringToLocation:locationString];
+    }
+    
+    return nil;
+}
+
+- (void)locationSelected:(CLLocation *)selectedLocation
+{
+    [locationCell setFoundLocation:selectedLocation];
+    [locationCell setNeedsDisplay];
+}
+
+
+#pragma mark date editing methods
+- (UIToolbar*)accessoryToolbar {
+    //Create and configure toolabr that holds "Done button"
+    UIToolbar *toolBar = [[UIToolbar alloc] init];
+    toolBar.barStyle = UIBarStyleBlackTranslucent;
+    [toolBar sizeToFit];
+    
+    UIBarButtonItem *flexibleSpaceLeft = [[UIBarButtonItem alloc]
+                                          initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                          target:nil
+                                          action:nil];
+    
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                                                   style:UIBarButtonItemStyleBordered
+                                                                  target:self
+                                                                  action:@selector(doneButtonPressed)];
+    
+    [toolBar setItems:[NSArray arrayWithObjects:flexibleSpaceLeft, doneButton, nil]];
+    
+    return toolBar;
+}
+
+- (void) doneButtonPressed {
+    [self.view endEditing:YES];
+}
+
+- (void)dateChanged {
+    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateStyle = NSDateFormatterLongStyle;
 }
 
 @end

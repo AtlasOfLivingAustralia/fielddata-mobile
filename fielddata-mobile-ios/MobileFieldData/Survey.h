@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "SurveyAttribute.h"
 
 
 @interface Survey : NSManagedObject
@@ -30,5 +31,9 @@
 - (void)removeAttributesObject:(NSManagedObject *)value;
 - (void)addAttributes:(NSSet *)values;
 - (void)removeAttributes:(NSSet *)values;
+
+// Returns the first attribute of the specified type.  Mostly useful for unique types
+// (kSpeciesRP ,kNumber, kPointk, kLocation, kAccuracy, kWhen, kTimeRP, kNotes)
+-(SurveyAttribute *)getAttributeByType:(NSString *)attributeType;
 
 @end

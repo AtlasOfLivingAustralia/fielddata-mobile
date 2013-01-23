@@ -13,8 +13,9 @@
 #import "SurveyAttributeOption.h"
 #import "Record.h"
 #import "MBProgressHUD.h"
+#import "MapViewController.h"
 
-@interface SurveyViewController : UITableViewController <UIAlertViewDelegate, FieldDataServiceUploadDelegate> {
+@interface SurveyViewController : UITableViewController <UIAlertViewDelegate, FieldDataServiceUploadDelegate, MapViewControllerDelegate> {
     
     @private
     FieldDataService* fieldDataService;
@@ -26,7 +27,8 @@
     MBProgressHUD *progressIndicator;
 }
 
-
+- (void)showMap;
+- (void)locationSelected:(CLLocation *)selectedLocation;
 - (id)initWithStyle:(UITableViewStyle)style survey:(Survey*)s record:(Record*)r;
 
 @end

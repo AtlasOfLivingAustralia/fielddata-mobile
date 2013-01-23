@@ -13,5 +13,5 @@
 
 @property (nonatomic, retain) UILabel* label;
 @property (nonatomic, retain) UITextField *inputField;
-
+@property (nonatomic, retain) UITextView *inputView;
 @end

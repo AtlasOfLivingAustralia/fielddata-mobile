@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import <MapKit/MapKit.h>
 
 @class RecordAttribute, Survey;
 
@@ -20,9 +21,13 @@
 
 @interface Record (CoreDataGeneratedAccessors)
 
++(CLLocation *)stringToLocation:(NSString *)locationString;
+
 - (void)addRecordAttributesObject:(RecordAttribute *)value;
 - (void)removeRecordAttributesObject:(RecordAttribute *)value;
 - (void)addRecordAttributes:(NSSet *)values;
 - (void)removeRecordAttributes:(NSSet *)values;
+
+-(CLLocation *)getLocation;
 
 @end

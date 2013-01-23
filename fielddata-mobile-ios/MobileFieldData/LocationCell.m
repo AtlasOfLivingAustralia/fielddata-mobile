@@ -8,12 +8,13 @@
 
 #import "LocationCell.h"
 #import "AlertService.h"
+#import "SurveyViewController.h"
 
 @implementation LocationCell
 
-@synthesize label, startGPS, latitude, longitude, accuracy, value;
+@synthesize label, startGPS, latitude, longitude, accuracy, value, showMap;
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+- (id)initWithStyleAndParent:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier parent:(SurveyViewController *)parent
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
@@ -21,7 +22,7 @@
         label = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, self.bounds.size.width-20, 24)];
         label.font = [UIFont boldSystemFontOfSize:12.0];
         label.numberOfLines = 0;
-        label.text = @"My Current Location *";
+        label.text = @"Location *";
         [self.contentView addSubview:label];
         
         latitude = [[UILabel alloc] initWithFrame:CGRectMake(10, 24, 200, 24)];
@@ -43,11 +44,20 @@
         startGPS = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         [startGPS setTitle:@"Find Me" forState:UIControlStateNormal];
         [startGPS addTarget:self action:@selector(findCurrentLocation:) forControlEvents:UIControlEventTouchUpInside];
-        startGPS.frame = CGRectMake(200, 24, 100, 44);
+        startGPS.frame = CGRectMake(200, 10, 100, 44);
         //[startGPS setImage:gpsImg forState:UIControlStateNormal];
         [self.contentView addSubview:startGPS];
         
+        showMap = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        [showMap setTitle:@"Map" forState:UIControlStateNormal];
+        [showMap addTarget:self action:@selector(showMap:) forControlEvents:UIControlEventTouchUpInside];
+        showMap.frame = CGRectMake(200, 64, 100, 44);
+        [self.contentView addSubview:showMap];
+        
+        
         value = [[NSMutableString alloc]init];
+        
+        parentController = parent;
     }
     return self;
 }
@@ -111,6 +121,11 @@
             [locMgr startUpdatingLocation];
         });
     });
+}
+
+-(IBAction)showMap:(id)sender
+{
+    [parentController showMap];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation

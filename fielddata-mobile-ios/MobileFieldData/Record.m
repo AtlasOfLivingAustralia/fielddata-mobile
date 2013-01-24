@@ -12,22 +12,22 @@
 #import "FieldDataService.h"
 #import "SurveyAttribute.h"
 
+#define DATE_FORMAT NSDateFormatterLongStyle
 
-@implementation Record
+@interface Record()
+-(RecordAttribute *)attributeOfType:(NSString*)attributeType;
 
-@dynamic date;
+@end
+
+@implementation Record 
+
 @dynamic survey;
 @dynamic recordAttributes;
 
+
 -(CLLocation *)getLocation
 {
-    RecordAttribute *locationAttribute = nil;
-    for (RecordAttribute* att in self.recordAttributes) {
-        if ([att.surveyAttribute.typeCode isEqualToString:kPoint]) {
-            locationAttribute = att;
-            break;
-        }
-    }
+    RecordAttribute *locationAttribute = [self attributeOfType:kPoint];
     
     if (locationAttribute) {
         return [Record stringToLocation:locationAttribute.value];
@@ -35,6 +35,44 @@
     return nil;
 
 }
+
+-(NSDate *)date
+{
+    RecordAttribute *attribute = [self attributeOfType:kWhen];
+    if (attribute) {
+        NSLog(@"Date is : %@", attribute.value);
+        return [Record stringToDate:attribute.value];
+    }
+    return nil;
+}
+
+-(void)setDate:(NSDate *)date
+{
+    RecordAttribute *attribute = [self attributeOfType:kWhen];
+    if (!attribute)
+    {
+        attribute = [NSEntityDescription insertNewObjectForEntityForName:@"RecordAttribute" inManagedObjectContext:[self managedObjectContext]];
+        attribute.record = self;
+        attribute.surveyAttribute = [self.survey getAttributeByType:kWhen];
+        
+        
+    }
+    attribute.value = [Record dateToString:date];
+}
+
+
+-(RecordAttribute *)attributeOfType:(NSString*)attributeType
+{
+    RecordAttribute *recordAttribute = nil;
+    for (RecordAttribute* att in self.recordAttributes) {
+        if ([att.surveyAttribute.typeCode isEqualToString:attributeType]) {
+            recordAttribute = att;
+            break;
+        }
+    }
+    return recordAttribute;
+}
+
 
 +(CLLocation *)stringToLocation:(NSString *)locationString
 {
@@ -55,9 +93,20 @@
 
 }
 
-+(NSString *)locationToString:(CLLocation *)location
++(NSDate *)stringToDate:(NSString *)dateString
 {
-    return nil;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateStyle = DATE_FORMAT;
+    return [dateFormatter dateFromString:dateString];
+    
 }
++(NSString *)dateToString:(NSDate *)date
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateStyle = DATE_FORMAT;
+    return [dateFormatter stringFromDate:date];
+}
+
+
 
 @end

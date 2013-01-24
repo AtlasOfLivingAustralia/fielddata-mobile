@@ -68,29 +68,37 @@
     [r addParam:[preferences getFieldDataSessionKey] forKey:@"ident"];
     [RFService execRequest:r completion:^(RFResponse *response){
         
-        NSLog(@"%@", response);
-        NSError *error;
-        NSDictionary* survey =  [NSJSONSerialization JSONObjectWithData:response.dataValue 
+        if (response.httpCode == 200) {
+            NSError *error;
+            NSDictionary* survey =  [NSJSONSerialization JSONObjectWithData:response.dataValue
                                                                 options:kNilOptions error:&error];
         
-        // extract the species
-        for (NSDictionary* speciesDict in [survey objectForKey:@"indicatorSpecies"]) {
-            [self persistSpecies:speciesDict];
+            NSLog(@"Downloaded: %@", survey);
+        
+            NSLog(@"Persisting species:");
+            // extract the species
+            for (NSDictionary* speciesDict in [survey objectForKey:@"indicatorSpecies"]) {
+                [self persistSpecies:speciesDict];
+            }
+        
+            NSLog(@"Persisting survey:");
+            [self persistSurvey:survey error:error];
+        
+            if (error == NULL) {
+                [delegate downloadSurveyDetailsSuccessful:YES survey:survey];
+            } else {
+                [delegate downloadSurveyDetailsSuccessful:NO survey:nil];
+            }
         }
-        
-        [self persistSurvey:survey error:error];
-        
-        if (error == NULL) {
-            [delegate downloadSurveyDetailsSuccessful:YES survey:survey];
-        } else {
+        else {
             [delegate downloadSurveyDetailsSuccessful:NO survey:nil];
         }
-        
         /*
         for (NSString* key in [survey keyEnumerator]) {
             NSLog(@"Key: %@ Value: %@", key, [survey objectForKey:key]);
         }*/
     }];
+
 }
 
 -(void)persistSurvey:(NSDictionary*)surveyDict error:(NSError*)e {
@@ -98,7 +106,9 @@
     Survey *survey = [NSEntityDescription insertNewObjectForEntityForName:@"Survey" inManagedObjectContext:context];
     
     NSDictionary* surveyDetails = [surveyDict objectForKey:@"indicatorSpecies_server_ids"]; 
-    
+    if (!surveyDetails) {
+        NSLog(@"No survey details for survey: %@", surveyDict);
+    }
     survey.id = [surveyDetails objectForKey:@"id"];
     survey.name = [surveyDetails objectForKey:@"name"];
     survey.surveyDescription = [surveyDetails objectForKey:@"description"];
@@ -113,14 +123,21 @@
         survey.endDate = [NSDate dateWithTimeIntervalSince1970:([endDate doubleValue] / 1000)];
     }
     // get the map details
-    NSDictionary* mapDefaults = [surveyDict objectForKey:@"map"];
-    NSDictionary* center = [mapDefaults objectForKey:@"center"];
-    NSString* x = [center objectForKey:@"x"];
-    survey.mapX = [NSNumber numberWithDouble:[x doubleValue]];
-    NSString* y = [center objectForKey:@"y"];
-    survey.mapY = [NSNumber numberWithDouble:[y doubleValue]];
-    survey.zoom = [mapDefaults objectForKey:@"zoom"];
+    id mapDefaults = [surveyDict objectForKey:@"map"];
     
+    if ([mapDefaults isKindOfClass:[NSDictionary class]]) {
+        id center = [mapDefaults objectForKey:@"center"];
+        if ([center isKindOfClass:[NSDictionary class]]) {
+            NSString* x = [center objectForKey:@"x"];
+            survey.mapX = [NSNumber numberWithDouble:[x doubleValue]];
+            NSString* y = [center objectForKey:@"y"];
+            survey.mapY = [NSNumber numberWithDouble:[y doubleValue]];
+        }
+        id zoom = [mapDefaults objectForKey:@"zoom"];
+        if ([zoom isKindOfClass:[NSNumber class]]) {
+            survey.zoom = zoom;
+        }
+    }
     for (NSDictionary* recordProperty in [surveyDict objectForKey:@"recordProperties"]) {
         [self persistRecordProperty:recordProperty survey:survey error:e];
     }
@@ -240,6 +257,7 @@
     
     // save the image to local storage
     NSString* imageURL = [NSString stringWithFormat:@"%@%@%@", [preferences getFieldDataURL], kDownloadUrl,thumbnailPath];
+    NSLog(@"Getting image from URL: %@", imageURL);
     UIImage* image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imageURL]]];
     
     NSString* docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -250,8 +268,7 @@
     
     species.imageFileName = pngFilePath;
     
-	NSLog(@"%f,%f",image.size.width,image.size.height);
-    
+	
     NSError *error;
     if (![context save:&error]) {
         NSLog(@"Error saving Species: %@", [error localizedDescription]);
@@ -299,7 +316,6 @@
 -(Record*)createRecord:(NSArray*)attributes survey:(Survey*)survey inputFields:(NSMutableDictionary*)inputFields {
     
     Record *record = [NSEntityDescription insertNewObjectForEntityForName:@"Record" inManagedObjectContext:context];
-    record.date = [NSDate date];
     record.survey = survey;
     
     for (SurveyAttribute* attribute in attributes) {
@@ -336,7 +352,8 @@
             
             recordAttribute.value = filePath;
             
-        } else {
+        } 
+        else {
             
             UITextField* textField = [inputFields objectForKey:attribute.weight];
             NSLog(@"%@ %@", attribute.question, textField.text);
@@ -437,6 +454,9 @@
     RecordAttribute* species;
     RecordAttribute* location;
     RecordAttribute* notes;
+    RecordAttribute* when;
+    RecordAttribute* number;
+    
     
     NSMutableArray* attributeValues = [[NSMutableArray alloc] init];
     
@@ -447,6 +467,13 @@
             location = att;
         } else if ([att.surveyAttribute.typeCode isEqualToString:kNotes]) {
             notes = att;
+        }
+        else if ([att.surveyAttribute.typeCode isEqualToString:kWhen]) {
+            when = att;
+        }
+        else if ([att.surveyAttribute.typeCode isEqualToString:kNumber]) {
+            number = att;
+            
         } else {
         
             NSNumber* attributeId = att.surveyAttribute.serverId;
@@ -522,11 +549,17 @@
         [uploadDict setObject:notes.value forKey:@"notes"];
     } 
     
+    NSDate *date = record.date;
+    if (!date) {
+        date = [NSDate date];
+    }
     // get the long date
-    NSNumber *nowDouble = [NSNumber numberWithDouble: 1000.0 * [record.date timeIntervalSince1970]];
+    NSNumber *nowDouble = [NSNumber numberWithDouble: 1000.0 * [date timeIntervalSince1970]];
     NSString *nowString = [NSString stringWithFormat:@"%.0f", nowDouble.doubleValue];
     
     [uploadDict setObject:nowString forKey:@"when"];
+    
+    [uploadDict setObject: [NSNumber numberWithInteger:[number.value integerValue]] forKey:@"number"];
     
     CFUUIDRef newUniqueId = CFUUIDCreate(kCFAllocatorDefault);
     NSString * uuidString = (__bridge_transfer NSString*)CFUUIDCreateString(kCFAllocatorDefault, newUniqueId);

@@ -159,15 +159,15 @@
 
 -(void)displaySelectionList:(NSIndexPath*)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
     SurveyAttribute* attribute = [attributes objectAtIndex:indexPath.row];
     BOOL multiSelect = [attribute.typeCode isEqualToString:kMultiCheckbox] ? YES : NO;
+    BOOL grouped = [attribute.question isEqualToString:@"Treatment method *"];
     NSArray *values = [[NSArray alloc] initWithArray:attribute.options.allObjects];
     
     SingleSelectListCell* cell = (SingleSelectListCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     
     SelectionListViewController *detailViewController =
-    [[SelectionListViewController alloc] initWithValues:UITableViewStylePlain selectionValues:values cell:cell multiSelect:multiSelect grouped:NO];
+    [[SelectionListViewController alloc] initWithValues:UITableViewStylePlain selectionValues:values cell:cell multiSelect:multiSelect grouped:grouped];
     UINavigationController *navigationBar = [[UINavigationController alloc] initWithRootViewController:detailViewController];
     // ...
     // Pass the selected object to the new view controller.
@@ -204,7 +204,7 @@
     
     if (cell == nil) {
         NSString* mandatory = @"";
-        if ([attribute.required intValue] == 1) {
+        if ([attribute.required intValue] == 1  && ![attribute.question hasSuffix:@"*"]) {
             mandatory = @" *";
         }
             
@@ -241,13 +241,7 @@
             [listCell setSelectedValue:[loadedValues objectForKey:attribute.weight]];
             cell = listCell;
             [inputFields setObject:listCell.value forKey:attribute.weight];
-//            MultiSelectCell* multiCell = [[MultiSelectCell alloc] initWithStyle:UITableViewCellStyleSubtitle
-//                                                                    reuseIdentifier:CellIdentifier
-//                                                                    options:attribute.options.allObjects];
-//            multiCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
-//            [multiCell setSelectedValues:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
-//            cell = multiCell;
-//            [inputFields setObject:multiCell.value forKey:attribute.weight];
+
         } else if ([attribute.typeCode isEqualToString:kImage]) {
             ImageCell* imageCell = [[ImageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
             imageCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
@@ -283,10 +277,22 @@
         }
         else {
             TextInputCell* textCell = [[TextInputCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+            
             textCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             textCell.inputField.text = [loadedValues objectForKey:attribute.weight];
             cell = textCell;
             [inputFields setObject:textCell.inputField forKey:attribute.weight];
+            
+            UIKeyboardType keyboardType = UIKeyboardTypeDefault;
+            
+            if ([attribute.typeCode isEqualToString:kNumber] ||
+                [attribute.typeCode isEqualToString:kIntegerType]) {
+                keyboardType = UIKeyboardTypeNumberPad;
+            }
+            else if ([attribute.typeCode isEqualToString:kDecimal]) {
+                keyboardType = UIKeyboardTypeDecimalPad;
+            }
+            textCell.inputField.keyboardType = keyboardType;
         }
     }
     

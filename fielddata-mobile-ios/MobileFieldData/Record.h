@@ -22,6 +22,8 @@
 @interface Record (CoreDataGeneratedAccessors)
 
 +(CLLocation *)stringToLocation:(NSString *)locationString;
++(NSDate *)stringToDate:(NSString *)dateString;
++(NSString *)dateToString:(NSDate *)date;
 
 - (void)addRecordAttributesObject:(RecordAttribute *)value;
 - (void)removeRecordAttributesObject:(RecordAttribute *)value;

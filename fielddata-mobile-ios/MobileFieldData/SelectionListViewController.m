@@ -10,6 +10,9 @@
 #import "SurveyAttributeOption.h"
 #import "SingleSelectCell.h"
 
+#define kValueSeparator @","
+#define kHeaderSeparator @"-"
+
 @interface SelectionListViewController () {
     // Two arrays are used instead of a dictionary as we need to maintain insertion order.
     NSMutableArray* headers;
@@ -43,7 +46,7 @@
         
         headers = [NSMutableArray arrayWithCapacity:values.count];
         groupedOptions = [NSMutableArray arrayWithCapacity:values.count];
-        [self initialiseAttributeOptions:grouped ? @"-" : nil];
+        [self initialiseAttributeOptions:grouped ? kHeaderSeparator : nil];
         [self determineSelection:cell];
         
     }
@@ -71,7 +74,7 @@
     NSString* selection = [cell getSelectedValue];
     
     if (selection != nil && selection.length > 0) {
-        NSArray* selectedValues = [selection componentsSeparatedByString:@", "];
+        NSArray* selectedValues = [self valueToSelection:selection];
         for (int i=0; i<selectedValues.count; i++) {
             NSIndexPath* row = [self findValue:selectedValues[i]];
             if (row != nil) {
@@ -80,7 +83,27 @@
         }
     }
     
+}
 
+-(NSArray*)valueToSelection:(NSString*)value
+{
+   return [value componentsSeparatedByString:kValueSeparator];
+}
+
+-(NSString*)selectionToValue:(NSArray*)selection
+{
+    if (selection.count == 0) {
+        return [NSString string];
+    }
+    
+    NSMutableString *value = [NSMutableString stringWithString:selection[0]];
+    for (int i=1; i<selection.count; i++) {
+        [value appendString:kValueSeparator];
+        [value appendString:selection[i]];
+    }
+    
+    return value;
+    
 }
 
 - (NSIndexPath*)findValue:(NSString *)value
@@ -93,7 +116,7 @@
                 SurveyAttributeOption* option = [values objectAtIndex:index];
                 if ([option.value isEqualToString:value]) {
                     return [NSIndexPath indexPathForRow:row inSection:section];
-                                    }
+                }
                 index++;
             
             }
@@ -134,13 +157,12 @@
 -(void)saveSelection:(id)sender {
     if (selectedRows != nil) {
         
-        NSMutableString* selectedValue = [NSMutableString stringWithString:[self valueAt:selectedRows[0] fullValue:YES]];
-        for (int i=1; i<selectedRows.count; i++) {
-            [selectedValue appendString: @", "];
-            [selectedValue appendString: [self valueAt:selectedRows[i] fullValue:YES]];
+        NSMutableArray* selectedValues = [[NSMutableArray alloc] init];
+        for (int i=0; i<selectedRows.count; i++) {
+            [selectedValues addObject:[self valueAt:selectedRows[i] fullValue:YES]];
         }
         
-        [parent setSelectedValue:[selectedValue copy]];
+        [parent setSelectedValue:[self selectionToValue:selectedValues]];
     }
     [self dismissModalViewControllerAnimated:YES];
 }
@@ -149,7 +171,7 @@
     NSArray* group  = [groupedOptions objectAtIndex:path.section];
     if (fullValue && headers.count > 1) {
         NSMutableString* result = [NSMutableString stringWithString:[headers objectAtIndex:path.section]];
-        [result appendString:@"-"];
+        [result appendString:kHeaderSeparator];
         [result appendString:[group objectAtIndex: path.row]];
         return result;
     }
@@ -171,7 +193,7 @@
 
 -(NSArray*)splitIntoHeaderAndValue:(NSString*)separator value:(NSString*) value {
     
-    NSString* header = @"";
+    NSString* header = [NSString string];
     NSString* rest = [value copy];
     NSInteger separatorPos = separator ? [value rangeOfString:separator].location : NSNotFound;
     if (separatorPos != NSNotFound) {

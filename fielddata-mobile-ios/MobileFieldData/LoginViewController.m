@@ -166,7 +166,13 @@
          
             //NSString* surveyId = [survey objectForKey:@"id"];
             NSNumber* surveyId = [survey objectForKey:@"id"];
+            @try {
+                NSLog(@"Downloading survey %@",surveyId);
             [fieldDataService downloadSurveyDetails:surveyId.stringValue];
+            }
+            @catch (NSException *e) {
+                NSLog(@"Exception %@", e);
+            }
         }
     }
 }

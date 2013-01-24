@@ -14,7 +14,7 @@
 {
     
     defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@"root.ala.org.au" forKey:@"baseURL"];
+    [defaults setObject:@"127.0.0.1:8081" forKey:@"baseURL"];
     //[defaults setObject:@"152.83.195.62:8081" forKey:@"baseURL"];
     [defaults setObject:@"fielddata-proxy" forKey:@"context"];
     [defaults setObject:@"condamine" forKey:@"path"];

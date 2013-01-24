@@ -10,7 +10,7 @@
 
 @interface DateCell : UITableViewCell {
 
-  
+    
 }
 @property (strong) UILabel *label;
 @property (readonly, strong) NSMutableString* value;

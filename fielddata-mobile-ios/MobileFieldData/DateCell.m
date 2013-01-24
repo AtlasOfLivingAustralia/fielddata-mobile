@@ -1,11 +1,12 @@
 #import <UIKit/UIKit.h>
 #import "DateCell.h"
+#import "Record.h"
 
 @interface DateCell() {
 
     UIDatePicker *picker;
     UIToolbar *inputAccessoryView;
-    NSDateFormatter *dateFormatter;
+    
 }
 @property (strong) UILabel *dateLabel;
 @end
@@ -35,8 +36,6 @@
         picker.datePickerMode = UIDatePickerModeDate;
         picker.autoresizingMask = UIViewAutoresizingFlexibleHeight;
         [picker addTarget:self action:@selector(dateChanged:) forControlEvents:UIControlEventValueChanged];
-        dateFormatter = [[NSDateFormatter alloc] init];
-        dateFormatter.dateStyle = NSDateFormatterLongStyle;
         
         // Initialise to today's date
         [picker setDate:[NSDate date]];
@@ -52,7 +51,7 @@
 
 -(BOOL)becomeFirstResponder
 {
-    NSDate *date = [dateFormatter dateFromString:self.value];
+    NSDate *date = [Record stringToDate:self.value];
     if (date) {
         picker.date = date;
     }
@@ -120,7 +119,7 @@
 -(IBAction)dateChanged:(id)sender
 {
     NSLog(@"The picker date has changed");
-    NSString *dateString = [dateFormatter stringFromDate:picker.date];
+    NSString *dateString = [Record dateToString:picker.date];
     [self setDate:dateString];
 }
 

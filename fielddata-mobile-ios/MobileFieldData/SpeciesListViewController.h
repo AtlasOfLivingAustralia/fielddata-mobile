@@ -11,7 +11,7 @@
 
 @interface SpeciesListViewController : UITableViewController {
     
-    @private
+    @protected
     FieldDataService* fieldDataService;
     NSArray* speciesList;
     

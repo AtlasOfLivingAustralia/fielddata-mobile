@@ -8,9 +8,9 @@
 
 #import "SpeciesListViewController.h"
 #import "Species.h"
+#import "SpeciesTableCell.h"
 
-@interface SpeciesListViewController ()
-
+@interface SpeciesListViewController () 
 @end
 
 @implementation SpeciesListViewController
@@ -22,6 +22,7 @@
     if (self) {
         fieldDataService = [[FieldDataService alloc]init];
         speciesList = [fieldDataService loadSpecies];
+                
     }
     return self;
 }
@@ -31,11 +32,6 @@
     [super viewDidLoad];
     self.title = @"Species List";
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)viewDidUnload
@@ -68,18 +64,18 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    
+    
+    SpeciesTableCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell = [[SpeciesTableCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        //cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         
     }
     
     // Configure the cell...
     Species* species = [speciesList objectAtIndex:indexPath.row];
-    cell.textLabel.text = species.commonName;
-    cell.detailTextLabel.text = species.scientificName;
-    
+    cell.species = species;
     return cell;
 }
 

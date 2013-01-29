@@ -33,6 +33,6 @@
 
 @property (nonatomic, retain) IBOutlet MKMapView *mapView;
 @property (nonatomic, retain) CLLocation *selectedLocation;
-@property (nonatomic, assign) id<MapViewControllerDelegate> delegate;
+@property (nonatomic, weak) id<MapViewControllerDelegate> delegate;
 
 @end

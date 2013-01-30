@@ -25,6 +25,8 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         
+        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+
         label = [[UILabel alloc] initWithFrame:CGRectMake(10, 3, self.bounds.size.width-20, 15)];
         label.font = [UIFont boldSystemFontOfSize:12.0];
         [self.contentView addSubview:label];

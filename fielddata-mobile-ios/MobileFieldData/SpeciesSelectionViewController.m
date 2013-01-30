@@ -11,6 +11,7 @@
 @interface SpeciesSelectionViewController () {
     UIBarButtonItem *doneButton;
     NSInteger selectedRow;
+    Species *initialSelection;
 }
 @end
 
@@ -18,12 +19,14 @@
 
 @synthesize selectedSpecies, delegate;
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (id)initWithStyle:(UITableViewStyle)style selectedSpecies:(Species*)intialSpeciesSelection;
 {
     self = [super initWithStyle:style];
     if (self) {
+        
         selectedRow = NSNotFound;
-        selectedSpecies = nil;
+        initialSelection = intialSpeciesSelection;
+        
     }
     return self;
 }
@@ -34,12 +37,18 @@
     
     doneButton = [[UIBarButtonItem alloc]
                   initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveSelection:)];
+    doneButton.enabled = NO;
     
     self.navigationItem.rightBarButtonItem = doneButton;
     
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
     
     self.navigationItem.leftBarButtonItem = cancelButton;
+    
+    if (initialSelection) {
+        self.selectedSpecies = initialSelection;
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:selectedRow inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+    }
 }
 
 
@@ -59,9 +68,11 @@
     
     if (species == nil) {
         selectedRow = NSNotFound;
+        doneButton.enabled = NO;
     }
     else {
         selectedRow = [speciesList indexOfObject:species];
+        doneButton.enabled = YES;
     }
 
     NSArray *paths = [NSArray arrayWithObjects:[NSIndexPath indexPathForRow:oldSelection inSection:0], [NSIndexPath indexPathForRow:selectedRow inSection:0], nil];

@@ -30,6 +30,13 @@
         UIImage* background = [MasterViewController imageWithImage:[UIImage imageNamed:@"background_image.jpg" ] scaledToSize:self.tableView.bounds.size ];
         self.tableView.backgroundColor = [UIColor colorWithPatternImage:background];
         self.tableView.backgroundView = [[UIImageView alloc] initWithImage:background];
+        
+        UILabel* header = [[UILabel alloc] initWithFrame:CGRectMake(10,10,self.tableView.bounds.size.width-20, 30)];
+        header.textAlignment = NSTextAlignmentCenter;
+        header.backgroundColor = [UIColor clearColor];
+        header.text = [NSString stringWithFormat:@"Welcome %@", preferences.getUsersName];
+        
+        self.tableView.tableHeaderView = header;
     }
     return self;
 }
@@ -150,7 +157,7 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     
     if(section == 0) {
-        return [NSString stringWithFormat:@"Welcome  %@", preferences.getUsersName];
+        return @"Surveys";
     } else {
         return @"";
     }

@@ -17,6 +17,8 @@
 
 @interface SpeciesSelectionViewController : SpeciesListViewController
 
+- (id)initWithStyle:(UITableViewStyle)style selectedSpecies:(Species*)species;
+
 @property (nonatomic, weak) id<SpeciesSelectionDelegate> delegate;
 
 @property (nonatomic, strong) Species* selectedSpecies;

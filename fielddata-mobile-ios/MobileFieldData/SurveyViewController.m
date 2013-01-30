@@ -29,6 +29,7 @@
     @private
     LocationCell *locationCell;
     LabelledSpeciesCell *speciesCell;
+    NSNumber *speciesKey;
 }
 
 @end
@@ -178,7 +179,7 @@
 
 -(void)displaySpeciesList
 {
-    SpeciesSelectionViewController *speciesViewController = [[SpeciesSelectionViewController alloc] initWithStyle:UITableViewStylePlain];
+    SpeciesSelectionViewController *speciesViewController = [[SpeciesSelectionViewController alloc] initWithStyle:UITableViewStylePlain selectedSpecies:speciesCell.species];
     speciesViewController.delegate = self;
     
     UINavigationController *navigationBar = [[UINavigationController alloc] initWithRootViewController:speciesViewController];
@@ -266,9 +267,9 @@
             speciesCell = [[LabelledSpeciesCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             speciesCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             NSString *commonName = [loadedValues objectForKey:attribute.weight];
+            speciesKey = attribute.weight;
             if (commonName) {
-                FieldDataService *service = [[FieldDataService alloc]init];
-                speciesCell.species=[service findSpeciesByCommonName:commonName];
+                speciesCell.species=[fieldDataService findSpeciesByCommonName:commonName];
             }
             cell = speciesCell;
             [inputFields setObject:speciesCell.value forKey:attribute.weight];
@@ -468,7 +469,7 @@
 -(void)speciesSelected:(Species *)species
 {
     [speciesCell setSpecies:species];
-    //[speciesCell setNeedsDisplay];
 }
+
 
 @end

@@ -296,6 +296,22 @@
     return fetchedObjects;
 }
 
+-(Species*)findSpeciesByCommonName:(NSString*)commonName {
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Species" inManagedObjectContext:context];
+    [fetchRequest setEntity:entity];
+    
+    NSPredicate *commonNamePredicate = [NSPredicate predicateWithFormat:@"commonName = %@", commonName];
+    [fetchRequest setPredicate:commonNamePredicate];
+    
+    NSError *error = nil;
+    Species *result = [[context executeFetchRequest:fetchRequest error:&error] lastObject];
+    if (error) {
+        NSLog(@"Error finding species with common name %@ : %@", commonName, error);
+    }
+    return result;
+}
+
 -(void)deleteAllEntities:(NSString*)entityName {
     
     NSFetchRequest * allEntities = [[NSFetchRequest alloc] init];

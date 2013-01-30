@@ -10,6 +10,7 @@
 #import "Preferences.h"
 #import "Survey.h"
 #import "Record.h"
+#import "Species.h"
 
 // record properties
 #define kSpeciesRP @"Species"
@@ -90,5 +91,6 @@
 -(BOOL)isSupported:(NSString*)typeCode;
 -(BOOL)isRecordComplete:(Record*)record;
 -(void)uploadRecord:(Record*)record;
+-(Species*)findSpeciesByCommonName:(NSString*)commonName;
 
 @end

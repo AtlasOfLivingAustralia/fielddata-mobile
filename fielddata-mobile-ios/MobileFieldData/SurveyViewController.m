@@ -263,17 +263,15 @@
             cell = imageCell;
             [inputFields setObject:imageCell.filePath forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {
-            NSArray* species = [fieldDataService loadSpecies];
-//            speciesCell = [[SpeciesCell alloc]initWithStyle:UITableViewCellStyleDefault
-//                                                           reuseIdentifier:CellIdentifier species:species];
-//            speciesCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
-//            cell = speciesCell;
-//            [inputFields setObject:speciesCell.value forKey:attribute.weight];
-            
             speciesCell = [[LabelledSpeciesCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+            speciesCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
+            NSString *commonName = [loadedValues objectForKey:attribute.weight];
+            if (commonName) {
+                FieldDataService *service = [[FieldDataService alloc]init];
+                speciesCell.species=[service findSpeciesByCommonName:commonName];
+            }
             cell = speciesCell;
-            speciesCell.label.text = @"Species";
-            
+            [inputFields setObject:speciesCell.value forKey:attribute.weight];
             
         } else if ([attribute.typeCode isEqualToString:kPoint]) {
             locationCell = [[LocationCell alloc]initWithStyleAndParent:UITableViewCellStyleDefault

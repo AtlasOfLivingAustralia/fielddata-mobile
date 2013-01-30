@@ -14,8 +14,9 @@
 #import "Record.h"
 #import "MBProgressHUD.h"
 #import "MapViewController.h"
+#import "SpeciesSelectionViewController.h"
 
-@interface SurveyViewController : UITableViewController <UIAlertViewDelegate, FieldDataServiceUploadDelegate, MapViewControllerDelegate> {
+@interface SurveyViewController : UITableViewController <UIAlertViewDelegate, FieldDataServiceUploadDelegate, MapViewControllerDelegate, SpeciesSelectionDelegate> {
     
     @private
     FieldDataService* fieldDataService;

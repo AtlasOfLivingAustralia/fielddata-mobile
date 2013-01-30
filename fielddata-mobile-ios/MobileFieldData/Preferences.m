@@ -18,7 +18,7 @@
     //[defaults setObject:@"152.83.195.62:8081" forKey:@"baseURL"];
     [defaults setObject:@"fielddata-proxy" forKey:@"context"];
     [defaults setObject:@"condamine" forKey:@"path"];
-    [defaults setObject:@"Condamine+Alliance" forKey:@"portal"];
+    [defaults setObject:@"Condamine Alliance" forKey:@"portal"];
     
 //    [defaults setObject:@"koalacount" forKey:@"path"];
 //    [defaults setObject:@"Great+Koala+Count" forKey:@"portal"];

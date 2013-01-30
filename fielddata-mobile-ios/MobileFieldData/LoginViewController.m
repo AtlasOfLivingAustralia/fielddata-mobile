@@ -81,8 +81,6 @@
         
             NSString *portalName = [preferences getPortalName];
             
-            //[LoginService doLogin:self.username.text password:self.password.text portalName:portalName];
-            
             NSString *url = [preferences getFieldDataURL];
             
             RFRequest *r = [RFRequest requestWithURL:[NSURL URLWithString:url] type:RFRequestMethodGet
@@ -127,19 +125,14 @@
                           [user valueForKey:@"firstName"],
                           [user valueForKey:@"lastName"]];
         
-        NSDictionary *portal = [dictionary valueForKey:@"portal"];
-        
-        
         if (ident == NULL) {
             [self hideProgressIndicator];
             [AlertService DisplayMessageWithTitle:@"Login Failed" message:@"Username or Password not recognised"];
         } else {
             [preferences setFieldDataSessionKey:ident];
             [preferences setUsersName:name];
-            [preferences setPortalName:[portal valueForKey:@"name"]];
             
             // delete all the existing entities
-            
             [fieldDataService deleteAllEntities:@"Record"];
             [fieldDataService deleteAllEntities:@"Species"];
             [fieldDataService deleteAllEntities:@"Survey"];

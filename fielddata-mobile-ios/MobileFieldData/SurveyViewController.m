@@ -21,13 +21,14 @@
 #import "SelectionListViewController.h"
 #import "MapViewController.h"
 #import "DateCell.h"
+#import "SpeciesSelectionViewController.h"
+#import "LabelledSpeciesCell.h"
 
 @interface SurveyViewController ()
 {
     @private
     LocationCell *locationCell;
-    //UIView *popupPicker;
-    
+    LabelledSpeciesCell *speciesCell;
 }
 
 @end
@@ -175,6 +176,18 @@
 
 }
 
+-(void)displaySpeciesList
+{
+    SpeciesSelectionViewController *speciesViewController = [[SpeciesSelectionViewController alloc] initWithStyle:UITableViewStylePlain];
+    speciesViewController.delegate = self;
+    
+    UINavigationController *navigationBar = [[UINavigationController alloc] initWithRootViewController:speciesViewController];
+    // ...
+    // Pass the selected object to the new view controller.
+    [self.navigationController presentModalViewController:navigationBar animated:YES];
+
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     //return (interfaceOrientation == UIInterfaceOrientationPortrait);
@@ -251,11 +264,17 @@
             [inputFields setObject:imageCell.filePath forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {
             NSArray* species = [fieldDataService loadSpecies];
-            SpeciesCell* speciesCell = [[SpeciesCell alloc]initWithStyle:UITableViewCellStyleDefault
-                                                           reuseIdentifier:CellIdentifier species:species];
-            speciesCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
+//            speciesCell = [[SpeciesCell alloc]initWithStyle:UITableViewCellStyleDefault
+//                                                           reuseIdentifier:CellIdentifier species:species];
+//            speciesCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
+//            cell = speciesCell;
+//            [inputFields setObject:speciesCell.value forKey:attribute.weight];
+            
+            speciesCell = [[LabelledSpeciesCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             cell = speciesCell;
-            [inputFields setObject:speciesCell.value forKey:attribute.weight];
+            speciesCell.label.text = @"Species";
+            
+            
         } else if ([attribute.typeCode isEqualToString:kPoint]) {
             locationCell = [[LocationCell alloc]initWithStyleAndParent:UITableViewCellStyleDefault
                                                                      reuseIdentifier:CellIdentifier parent:self];
@@ -307,9 +326,15 @@
     if ([attribute.typeCode isEqualToString:kMultiSelect]) {
         return 200;
     } else if ([attribute.typeCode isEqualToString:kImage]) {
-        return 140;
+        ImageCell *cell = (ImageCell*)[self tableView:tableView cellForRowAtIndexPath:indexPath];
+        if (cell.imageView.image) {
+            return 140;
+        }
+        else {
+            return 90;
+        }
     } else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {
-        return 170;
+        return 75;
     } else if ([attribute.typeCode isEqualToString:kPoint]) {
         return 120;
     } else if ([attribute.typeCode isEqualToString:kStringWithValidValues] ||
@@ -332,6 +357,9 @@
         [attribute.typeCode isEqualToString:kMultiCheckbox]) {
         [self displaySelectionList:indexPath];
     }
+    else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {
+        [self displaySpeciesList];
+    }
 }
 
 - (NSIndexPath *)tableView:(UITableView *)tv willSelectRowAtIndexPath:(NSIndexPath *)path
@@ -339,7 +367,8 @@
     SurveyAttribute* attribute = [attributes objectAtIndex:path.row];
     if ([attribute.typeCode isEqualToString:kStringWithValidValues] ||
         [attribute.typeCode isEqualToString:kMultiCheckbox] ||
-        [attribute.typeCode isEqualToString:kWhen]) {
+        [attribute.typeCode isEqualToString:kWhen] ||
+        [attribute.typeCode isEqualToString:kSpeciesRP]) {
         return path;
     }
     // Deselect any current selection (this is to effectively cancel a current edit of a date field)
@@ -437,36 +466,11 @@
     [locationCell setNeedsDisplay];
 }
 
-
-#pragma mark date editing methods
-- (UIToolbar*)accessoryToolbar {
-    //Create and configure toolabr that holds "Done button"
-    UIToolbar *toolBar = [[UIToolbar alloc] init];
-    toolBar.barStyle = UIBarStyleBlackTranslucent;
-    [toolBar sizeToFit];
-    
-    UIBarButtonItem *flexibleSpaceLeft = [[UIBarButtonItem alloc]
-                                          initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                          target:nil
-                                          action:nil];
-    
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
-                                                                   style:UIBarButtonItemStyleBordered
-                                                                  target:self
-                                                                  action:@selector(doneButtonPressed)];
-    
-    [toolBar setItems:[NSArray arrayWithObjects:flexibleSpaceLeft, doneButton, nil]];
-    
-    return toolBar;
-}
-
-- (void) doneButtonPressed {
-    [self.view endEditing:YES];
-}
-
-- (void)dateChanged {
-    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateStyle = NSDateFormatterLongStyle;
+#pragma mark SpeciesSelectionDelegate implementation
+-(void)speciesSelected:(Species *)species
+{
+    [speciesCell setSpecies:species];
+    //[speciesCell setNeedsDisplay];
 }
 
 @end

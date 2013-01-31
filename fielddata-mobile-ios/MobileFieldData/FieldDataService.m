@@ -531,15 +531,13 @@
         }
     }
     
-    NSArray* speciesArr = [self loadSpecies];
+    Species *spec = [self findSpeciesByCommonName:species.value];
     NSString* scientificName;
-    NSNumber* taxonId;
-    for (Species* spec in speciesArr) {
-        if ([spec.commonName isEqualToString:species.value]) {
-            scientificName = spec.scientificName;
-            taxonId = spec.taxonId;
-            break;
-        }
+    NSNumber* taxonId = nil;
+    
+    if (spec) {
+        scientificName = spec.scientificName;
+        taxonId = spec.taxonId;
     }
     
     NSArray* locDescArr = [location.value componentsSeparatedByString:@","];
@@ -558,9 +556,14 @@
     [uploadDict setObject:lat forKey:@"latitude"];
     [uploadDict setObject:lon forKey:@"longitude"];
     [uploadDict setObject:accuracy forKey:@"accuracy"];
-    [uploadDict setObject:scientificName forKey:@"scientificName"];
+    if (scientificName) {
+        [uploadDict setObject:scientificName forKey:@"scientificName"];
+    }
     [uploadDict setObject:record.survey.id forKey:@"survey_id"];
-    [uploadDict setObject:taxonId forKey:@"taxon_id"];
+    
+    if (taxonId) {
+        [uploadDict setObject:taxonId forKey:@"taxon_id"];
+    }
     if (notes.value != NULL) {
         [uploadDict setObject:notes.value forKey:@"notes"];
     } 

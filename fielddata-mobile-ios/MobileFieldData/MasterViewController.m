@@ -13,7 +13,10 @@
 #import "SurveyViewController.h"
 #import "SavedRecordsViewController.h"
 
-@interface MasterViewController ()
+@interface MasterViewController () {
+    UILabel *tableHeader;
+
+}
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 @end
 
@@ -31,18 +34,14 @@
         self.tableView.backgroundColor = [UIColor colorWithPatternImage:background];
         self.tableView.backgroundView = [[UIImageView alloc] initWithImage:background];
         
-        UILabel* header = [[UILabel alloc] initWithFrame:CGRectMake(10,10,self.tableView.bounds.size.width-20, 30)];
-        header.textAlignment = NSTextAlignmentCenter;
-        header.backgroundColor = [UIColor clearColor];
-        header.text = [NSString stringWithFormat:@"Welcome %@", preferences.getUsersName];
         
-        self.tableView.tableHeaderView = header;
+        
     }
     return self;
 }
 
 + (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
-    //UIGraphicsBeginImageContext(newSize);
+    
     UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
     [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
@@ -59,12 +58,15 @@
     //UIBarButtonItem *refreshButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refreshFieldData:)];
     //self.navigationItem.rightBarButtonItem = refreshButton;
     
-    
-    // if the user is not logged on then redirect to the login page
-    if ([preferences getFieldDataSessionKey] == NULL) {
-        [self openLoginPage];
-    }
-    
+//    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0,0, self.tableView.frame.size.width, 30)];
+//    header.backgroundColor = [UIColor clearColor];
+//    
+//    tableHeader = [[UILabel alloc] initWithFrame:CGRectMake(10,0,self.tableView.frame.size.width-20, 30)];
+//    tableHeader.backgroundColor = [UIColor clearColor];
+//    [header addSubview:tableHeader];
+//    
+//    self.tableView.tableHeaderView = header;
+//    
 }
 
 - (void)viewDidUnload
@@ -136,9 +138,18 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
+    
+    // If the user hasn't logged in yet display the login page.
+    if ([preferences getFieldDataSessionKey] == NULL) {
+        [self openLoginPage];
+    }
+    
     self.title = [preferences getPortalName];
     FieldDataService* fieldDataService = [[FieldDataService alloc] init];
     surveys = [fieldDataService loadSurveys];
+    tableHeader.text = [NSString stringWithFormat:@"Welcome %@", preferences.getUsersName];
+    
     [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 }
 
@@ -157,7 +168,7 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     
     if(section == 0) {
-        return @"Surveys";
+        return @"Available Surveys";
     } else {
         return @"";
     }
@@ -238,7 +249,6 @@
     } else {
         [self presentModalViewController:loginViewController animated:NO];
     }
-    //[self.navigationController pushViewController:loginViewController animated:YES];
 }
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath

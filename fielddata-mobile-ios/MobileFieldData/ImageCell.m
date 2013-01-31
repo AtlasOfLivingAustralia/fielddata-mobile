@@ -22,7 +22,7 @@
     if (self) {
         
         // Initialization code
-        cameraImage=[[UIImageView alloc] initWithFrame:CGRectMake(10, 30, 72, 96)];
+        cameraImage=[[UIImageView alloc] initWithFrame:CGRectMake(10, 30, 48, 48)];
         cameraImage.autoresizingMask = ( UIViewAutoresizingNone );
         cameraImage.autoresizesSubviews = NO;
         [self.contentView addSubview:cameraImage];
@@ -39,7 +39,8 @@
         UIImage *cameraBtn = [UIImage imageNamed:@"camera.png"];
         startCamera = [UIButton buttonWithType:UIButtonTypeCustom];
         [startCamera addTarget:self action:@selector(showCameraUI:) forControlEvents:UIControlEventTouchUpInside];
-        startCamera.frame = CGRectMake(120, 50, 48, 48);
+        NSInteger width = 48;
+        startCamera.frame = CGRectMake(self.bounds.size.width-30-width, 30, 48, 48);
         [startCamera setImage:cameraBtn forState:UIControlStateNormal];
         [self.contentView addSubview:startCamera];
         

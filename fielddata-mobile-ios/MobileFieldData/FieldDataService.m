@@ -230,9 +230,16 @@
 }
 
 -(void)persistSpecies:(NSDictionary*)speciesDict {
+
     
-    Species *species = [NSEntityDescription insertNewObjectForEntityForName:@"Species" inManagedObjectContext:context];
+    NSLog(@"Finding species with id=%@", [speciesDict objectForKey:@"commonName"]);
     
+    // Check if we have a species with the same id already in the database.
+    Species *species = [self findSpeciesByTaxonId:[speciesDict objectForKey:@"server_id"]];
+
+    if (!species) {
+        species = [NSEntityDescription insertNewObjectForEntityForName:@"Species" inManagedObjectContext:context];
+    }
     /*
     for (NSString* key in [speciesDict keyEnumerator]) {
         NSLog(@"Key: %@ Value: %@", key, [speciesDict objectForKey:key]);
@@ -297,17 +304,27 @@
 }
 
 -(Species*)findSpeciesByCommonName:(NSString*)commonName {
+    return [self findSpeciesByProperty:@"commonName" propertyValue:commonName];
+}
+
+-(Species*)findSpeciesByTaxonId:(NSNumber*)taxonId {
+    return [self findSpeciesByProperty:@"taxonId" propertyValue:taxonId];
+}
+
+-(Species*)findSpeciesByProperty:(NSString*)propertyName propertyValue:(id)propertyValue
+{
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Species" inManagedObjectContext:context];
     [fetchRequest setEntity:entity];
     
-    NSPredicate *commonNamePredicate = [NSPredicate predicateWithFormat:@"commonName = %@", commonName];
-    [fetchRequest setPredicate:commonNamePredicate];
+    NSString* precidateString = [NSString stringWithFormat:@"%@ = %%@", propertyName];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:precidateString, propertyValue];
+    [fetchRequest setPredicate:predicate];
     
     NSError *error = nil;
     Species *result = [[context executeFetchRequest:fetchRequest error:&error] lastObject];
     if (error) {
-        NSLog(@"Error finding species with common name %@ : %@", commonName, error);
+        NSLog(@"Error finding species with %@=%@ : %@", propertyName, propertyValue, error);
     }
     return result;
 }

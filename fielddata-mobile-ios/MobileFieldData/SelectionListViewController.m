@@ -253,12 +253,15 @@
     NSArray* paths = [NSArray arrayWithObject:indexPath];
     
     if (!multiSelect) {
-        if (selectedRows.count > 0) {
-            paths = [paths arrayByAddingObject:selectedRows[0]];
+        
+        if ([selectedRows containsObject:indexPath]) {
+            [selectedRows removeObject:indexPath];
         }
-    
-    
-        selectedRows = [NSArray arrayWithObject:[indexPath copy]];
+        else {
+            paths = [paths arrayByAddingObjectsFromArray:selectedRows];
+            [selectedRows removeAllObjects];
+            [selectedRows addObject:indexPath];
+        }
     }
     else {
         
@@ -271,7 +274,7 @@
         
     }
     [self.tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationFade];
-    doneButton.enabled = YES;
+    doneButton.enabled = (selectedRows.count > 0);
  }
 
 @end

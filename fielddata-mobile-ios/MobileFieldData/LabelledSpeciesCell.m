@@ -57,8 +57,12 @@
     scientificNameLabel.text = species.scientificName;
     
     imageView.image = [UIImage imageWithContentsOfFile:species.imageFileName];
-    
-    [value setString:species.commonName];
+    if (species.commonName) {
+        [value setString:species.commonName];
+    }
+    else {
+        [value setString:@""];
+    }
 }
 
 @end

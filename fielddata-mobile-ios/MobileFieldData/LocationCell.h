@@ -11,6 +11,12 @@
 #import "MBProgressHUD.h"
 @class SurveyViewController;
 
+
+@protocol LocationCellDelegate
+-(void)showMap;
+-(void)locationFound:(CLLocation*)location;
+@end
+
 @interface LocationCell : UITableViewCell <CLLocationManagerDelegate> {
     
     @private
@@ -18,7 +24,6 @@
     CLLocationManager *locMgr;
     CLLocation *tempLocation;
     MBProgressHUD *progressIndicator;
-    SurveyViewController *parentController;
 }
 
 @property (nonatomic, retain) UILabel* label;
@@ -28,9 +33,10 @@
 @property (nonatomic, retain) UIButton* startGPS;
 @property (nonatomic, retain) UIButton* showMap;
 @property (nonatomic, retain) NSMutableString* value;
+@property (nonatomic, weak) id<LocationCellDelegate> delegate;
 
 -(void)setFoundLocation:(CLLocation*)location;
 -(void)setLocation:(NSString*)locationString;
-- (id)initWithStyleAndParent:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier parent:(SurveyViewController *) parent;
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
 
 @end

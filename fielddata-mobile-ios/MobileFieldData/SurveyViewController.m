@@ -275,8 +275,9 @@
             [inputFields setObject:speciesCell.value forKey:attribute.weight];
             
         } else if ([attribute.typeCode isEqualToString:kPoint]) {
-            locationCell = [[LocationCell alloc]initWithStyleAndParent:UITableViewCellStyleDefault
-                                                                     reuseIdentifier:CellIdentifier parent:self];
+            locationCell = [[LocationCell alloc]initWithStyle:UITableViewCellStyleDefault
+                                                                     reuseIdentifier:CellIdentifier];
+            locationCell.delegate = self;
             [locationCell setLocation:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
             cell = locationCell;
             [inputFields setObject:locationCell.value forKey:attribute.weight];
@@ -462,7 +463,7 @@
 - (void)locationSelected:(CLLocation *)selectedLocation
 {
     [locationCell setFoundLocation:selectedLocation];
-    [locationCell setNeedsDisplay];
+    NSLog(@"Found location!=%@", selectedLocation);
 }
 
 #pragma mark SpeciesSelectionDelegate implementation

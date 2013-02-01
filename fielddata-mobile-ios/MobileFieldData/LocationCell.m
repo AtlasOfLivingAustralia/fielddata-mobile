@@ -12,9 +12,9 @@
 
 @implementation LocationCell
 
-@synthesize label, startGPS, latitude, longitude, accuracy, value, showMap;
+@synthesize label, startGPS, latitude, longitude, accuracy, value, showMap, delegate;
 
-- (id)initWithStyleAndParent:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier parent:(SurveyViewController *)parent
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
@@ -56,8 +56,7 @@
         
         
         value = [[NSMutableString alloc]init];
-        
-        parentController = parent;
+       
     }
     return self;
 }
@@ -125,7 +124,7 @@
 
 -(IBAction)showMap:(id)sender
 {
-    [parentController showMap];
+    [delegate showMap];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation
@@ -151,6 +150,7 @@
     [self setFoundLocation:tempLocation];
     [AlertService DisplayMessageWithTitle:@"GPS Accuracy Error" message:@"GPS Location not within 20m, please try again."];
 }
+
 
 -(void)setFoundLocation:(CLLocation*)location {
     

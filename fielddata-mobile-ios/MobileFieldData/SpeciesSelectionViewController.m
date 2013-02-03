@@ -103,17 +103,20 @@
 {
     NSArray* paths = [NSArray arrayWithObject:indexPath];
     
-    if (selectedRow != NSNotFound) {
+    // If we have a current selection (different to the new selection), add that row to the
+    // ones that need to be reloaded / redrawn.
+    if (selectedRow != NSNotFound && selectedRow != indexPath.row) {
         paths = [paths arrayByAddingObject:[NSIndexPath indexPathForRow:selectedRow inSection:0]];
     }
-    selectedRow = indexPath.row;
-    selectedSpecies = [speciesList objectAtIndex:selectedRow];
+    
+    if (selectedRow == indexPath.row) {
+        self.selectedSpecies = nil;
+    }
+    else {
+        self.selectedSpecies = [speciesList objectAtIndex:indexPath.row];
+    }
     
     [self.tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationFade];
-    doneButton.enabled = YES;
 }
-
-
-
 
 @end

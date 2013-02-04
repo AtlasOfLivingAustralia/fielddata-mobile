@@ -113,6 +113,7 @@
     survey.name = [surveyDetails objectForKey:@"name"];
     survey.surveyDescription = [surveyDetails objectForKey:@"description"];
     survey.lastSync = [NSDate date];
+    survey.order = [surveyDetails objectForKey:@"weight"];
     
     NSNumber* startDate = [surveyDetails objectForKey:@"startDate"];
     if (startDate != (id)[NSNull null]) {
@@ -286,6 +287,9 @@
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Survey" inManagedObjectContext:context];
     [fetchRequest setEntity:entity];
+    NSSortDescriptor *sortOrder = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+    [fetchRequest setSortDescriptors:@[sortOrder]];
+    
     NSError *error;
     NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
     

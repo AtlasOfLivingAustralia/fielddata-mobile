@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1487" systemVersion="11G56" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2057" systemVersion="12C60" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Record" representedClassName="Record" syncable="YES">
         <attribute name="date" optional="YES" attributeType="Date" syncable="YES"/>
         <relationship name="recordAttributes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RecordAttribute" inverseName="record" inverseEntity="RecordAttribute" syncable="YES"/>
@@ -23,6 +23,7 @@
         <attribute name="mapX" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="mapY" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="order" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="startDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="surveyDescription" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="zoom" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
@@ -50,7 +51,7 @@
         <element name="Record" positionX="0" positionY="0" width="128" height="90"/>
         <element name="RecordAttribute" positionX="0" positionY="0" width="128" height="90"/>
         <element name="Species" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="Survey" positionX="0" positionY="0" width="128" height="195"/>
+        <element name="Survey" positionX="0" positionY="0" width="128" height="210"/>
         <element name="SurveyAttribute" positionX="0" positionY="0" width="128" height="180"/>
         <element name="SurveyAttributeOption" positionX="0" positionY="0" width="128" height="105"/>
     </elements>

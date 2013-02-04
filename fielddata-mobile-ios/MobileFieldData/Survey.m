@@ -22,6 +22,7 @@
 @dynamic lastSync;
 @dynamic attributes;
 @dynamic zoom;
+@dynamic order;
 
 -(SurveyAttribute *)getAttributeByType:(NSString *)attributeType
 {

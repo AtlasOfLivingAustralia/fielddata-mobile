@@ -23,6 +23,7 @@
 @property (nonatomic, retain) NSNumber * zoom;
 @property (nonatomic, retain) NSDate * lastSync;
 @property (nonatomic, retain) NSSet *attributes;
+@property (nonatomic, retain) NSNumber *order;
 @end
 
 @interface Survey (CoreDataGeneratedAccessors)

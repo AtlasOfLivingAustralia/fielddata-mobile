@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Koala Count</string>
+	<string>NRM Plus</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIcons</key>
@@ -15,13 +15,13 @@
 			<key>CFBundleIconFiles</key>
 			<array>
 				<string>Default@2x.png</string>
-				<string>logo.png</string>
-				<string>logo@2x.png</string>
+				<string>Nrmplus.png</string>
+				<string>Nrmplus@2x.png</string>
 			</array>
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
-	<string>au.org.ala.koalacount</string>
+	<string>au.org.ala.nrmplus</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -41,8 +41,6 @@
 		<string>armv7</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
+	<array/>
 </dict>
 </plist>

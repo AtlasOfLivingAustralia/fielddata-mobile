@@ -12,7 +12,6 @@ import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 
 /**
  * The purpose of this class is to allow activities to turn on the system

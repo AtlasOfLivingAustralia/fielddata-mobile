@@ -14,7 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeOption;
 
 import com.commonsware.cwac.merge.MergeAdapter;

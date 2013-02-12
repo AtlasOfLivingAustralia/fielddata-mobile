@@ -3,7 +3,7 @@ package au.org.ala.fielddata.mobile.validation;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.validation.Validator.ValidationResult;
 

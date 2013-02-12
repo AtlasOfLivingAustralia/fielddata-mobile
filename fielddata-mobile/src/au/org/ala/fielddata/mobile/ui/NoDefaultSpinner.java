@@ -12,7 +12,7 @@ import android.widget.ListAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 
 /**
  * The purpose of the NoDefaultSpinner is to present a spinner with 

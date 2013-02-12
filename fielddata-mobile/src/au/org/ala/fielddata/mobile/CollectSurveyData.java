@@ -46,6 +46,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.ScrollView;
 import android.widget.Toast;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.dao.DraftRecordDAO;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.dao.RecordDAO;

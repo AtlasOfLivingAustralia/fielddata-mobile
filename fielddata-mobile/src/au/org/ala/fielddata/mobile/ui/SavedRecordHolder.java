@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.service.StorageManager;

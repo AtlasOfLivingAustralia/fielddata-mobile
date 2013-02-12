@@ -12,7 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;

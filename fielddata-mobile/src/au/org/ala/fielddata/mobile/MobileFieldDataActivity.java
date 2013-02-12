@@ -15,6 +15,7 @@
 package au.org.ala.fielddata.mobile;
 
 import android.app.AlertDialog;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;

@@ -35,6 +35,7 @@ import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.pref.Preferences;
+import au.org.ala.fielddata.mobile.service.dto.DownloadSpeciesResponse;
 import au.org.ala.fielddata.mobile.service.dto.DownloadSurveyResponse;
 import au.org.ala.fielddata.mobile.service.dto.SyncRecordsResponse;
 import au.org.ala.fielddata.mobile.service.dto.UserSurveyResponse;
@@ -48,6 +49,8 @@ public class FieldDataServiceClient extends WebServiceClient {
 	private String syncUrl = "/survey/upload";
 
 	private String surveyUrl = "/survey/list?ident=";
+	
+	private String speciesUrl = "/species/speciesForSurvey?ident=%s&surveyId=%d&first=%d&maxResults=%d";
 
 	private String surveyDetails = "/survey/get/%d?ident=%s&surveysOnDevice=%s";
 	
@@ -94,7 +97,7 @@ public class FieldDataServiceClient extends WebServiceClient {
 		System.out.println(result);
 	}
 
-	public SurveysAndSpecies downloadSurveys() {
+	public List<Survey> downloadSurveys() {
 
 		String url = getServerUrl() + surveyUrl + ident;
 
@@ -106,8 +109,8 @@ public class FieldDataServiceClient extends WebServiceClient {
 
 		url = getServerUrl() + surveyDetails;
 		List<Survey> surveys = new ArrayList<Survey>();
-		List<Species> speciesList = new ArrayList<Species>();
-		
+		List<Integer> speciesIdList = new ArrayList<Integer>();
+		//List<Species> species = new ArrayList<Species>();
 		for (UserSurveyResponse userSurvey : result) {
 			String downloadedSurveys = jsonSurveyIds(surveys);
 			DownloadSurveyResponse surveyResponse = restTemplate.getForObject(
@@ -117,10 +120,24 @@ public class FieldDataServiceClient extends WebServiceClient {
 			Survey survey = mapSurvey(surveyResponse);
 			surveys.add(survey);
 
-			speciesList.addAll(surveyResponse.indicatorSpecies);
+			List<Integer> speciesIds = surveyResponse.details.speciesIds;
+			if (speciesIds != null) {
+				speciesIdList.addAll(surveyResponse.details.speciesIds);
+			}
+			//species.addAll(downloadSpecies(survey));
 		}
+		System.out.println(speciesIdList);
+		
+		return surveys;
+	}
+	
+	public List<Species> downloadSpecies(Survey survey, int first, int maxResults) {
+		String url = getServerUrl() + String.format(speciesUrl, ident, survey.server_id, first, maxResults);
 
-		return new SurveysAndSpecies(surveys, speciesList);
+		RestTemplate restTemplate = getRestTemplate();
+		DownloadSpeciesResponse response = restTemplate.getForObject(url, DownloadSpeciesResponse.class);
+		
+		return response.list;
 	}
 
 	private Survey mapSurvey(DownloadSurveyResponse surveyResponse) {

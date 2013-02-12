@@ -8,9 +8,9 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import au.org.ala.fielddata.mobile.R;
-import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.dao.SpeciesDAO;
 import au.org.ala.fielddata.mobile.model.Species;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 
 /**
  * A list adapter for displaying lists of Species.
@@ -24,7 +24,7 @@ public class SpeciesListAdapter extends ArrayAdapter<Species> {
 	public SpeciesListAdapter(Context ctx, int excludedGroupId) {
 		super(ctx, R.layout.species_row, R.id.scientificName,
 				new ArrayList<Species>());
-		GenericDAO<Species> speciesDao = new GenericDAO<Species>(ctx);
+		SpeciesDAO speciesDao = new SpeciesDAO(ctx);
 		new GetSpeciesTask(speciesDao, this, excludedGroupId).execute();
 	}
 
@@ -44,11 +44,11 @@ public class SpeciesListAdapter extends ArrayAdapter<Species> {
 
 	static class GetSpeciesTask extends AsyncTask<Void, Void, List<Species>> {
 
-		private GenericDAO<Species> dao;
+		private SpeciesDAO dao;
 		private SpeciesListAdapter adapter;
 		private int excludedGroupId;
 
-		public GetSpeciesTask(GenericDAO<Species> speciesDao,
+		public GetSpeciesTask(SpeciesDAO speciesDao,
 				SpeciesListAdapter adapter, int excludedGroupId) {
 			this.dao = speciesDao;
 			this.adapter = adapter;

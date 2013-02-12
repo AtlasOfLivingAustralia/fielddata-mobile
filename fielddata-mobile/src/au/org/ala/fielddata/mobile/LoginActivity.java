@@ -14,6 +14,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
@@ -71,8 +72,8 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 			
 			Preferences preferences = new Preferences(this);
 			
-			final EditText username = (EditText) findViewById(R.id.username);
-			final EditText password = (EditText) findViewById(R.id.userPassword);
+			final EditText usernameField = (EditText) findViewById(R.id.username);
+			final EditText passwordField = (EditText) findViewById(R.id.userPassword);
 			Spinner portal = (Spinner) findViewById(R.id.portal);
 			final String portalName;
 			if (portals.length > 1) {
@@ -95,8 +96,9 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 					LoginService loginService = new LoginService(LoginActivity.this);
 
 					try {
-						LoginResponse response = loginService.login(username.getText().toString(), password.getText()
-								.toString(), portalName);
+						String username = usernameField.getText().toString();
+						String password = passwordField.getText().toString();
+						LoginResponse response = loginService.login(username, password, portalName);
 
 						publishProgress();
 						clearPersistantData();
@@ -146,7 +148,7 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 		}
 		else if (v.getId() == R.id.registerBtn) {
 			Preferences prefs = new Preferences(this);
-			String registrationUrl = prefs.getUnproxiedFieldDataServerUrl()+"/koalacount/vanilla/usersignup.htm";
+			String registrationUrl = prefs.getUnproxiedFieldDataServerUrl()+"/condamine/vanilla/usersignup.htm";
 			Intent registrationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(registrationUrl));
 			startActivity(registrationIntent);
 		}

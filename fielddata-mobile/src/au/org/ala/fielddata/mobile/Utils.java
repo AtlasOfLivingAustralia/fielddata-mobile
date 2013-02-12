@@ -12,6 +12,6 @@ public class Utils {
 		return builder;
 	}
 	
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 	
 }

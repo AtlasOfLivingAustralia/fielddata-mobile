@@ -33,13 +33,17 @@ import au.org.ala.fielddata.mobile.model.User;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "FieldData.db";
-	private static final int SCHEMA_VERSION = 2;
+	private static final int SCHEMA_VERSION = 3;
 
-	private static final String[] TABLES = { Survey.class.getSimpleName(),
-			Species.class.getSimpleName(),
-			User.class.getSimpleName()};
+	private static final String[] TABLES = { 
+		Survey.class.getSimpleName(),
+		User.class.getSimpleName()};
 
 	private static DatabaseHelper instance;
+	
+	public static interface UpdateWork {
+		public void doUpdate();
+	}
 	
 	public synchronized static DatabaseHelper getInstance(Context ctx) {
 		if (instance == null) {
@@ -67,6 +71,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				
 			}
 			createRecordTable(db);
+			createSpeciesTables(db);
 			
 			db.setTransactionSuccessful();
 		} finally {
@@ -75,9 +80,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		
 	}
 
+	public synchronized void doInTransaction(UpdateWork work) {
+		
+		SQLiteDatabase db =getWritableDatabase();
+		try {
+			db.beginTransaction();
+			
+			work.doUpdate();
+
+			db.setTransactionSuccessful();
+		} finally {
+			if (db != null) {
+				db.endTransaction();
+				close();
+			}
+		}
+	}
+	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		version2(db);
+		for (int version=oldVersion+1; version<=newVersion; version++) {
+			switch (version) {
+			case 2:
+				version2(db);
+				break;
+			
+			case 3:
+				version3(db);
+				break;
+			}
+		}
 	}
 	
 	private void version2(SQLiteDatabase db) {
@@ -88,6 +120,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		createRecordTable(db);
 	}
 	
+	private void version3(SQLiteDatabase db) {
+		if (Utils.DEBUG) {
+			Log.i("DatabaseHelper", "Upgrading to version 3 of the schema");
+		}
+		db.execSQL("DROP TABLE "+Species.class.getSimpleName());
+		createSpeciesTables(db);
+	}
 
 	private void createRecordTable(SQLiteDatabase db) {
 		
@@ -95,6 +134,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(RecordDAO.ATTRIBUTE_VALUE_TABLE_DDL);
 		db.execSQL(DraftRecordDAO.DRAFT_RECORD_TABLE_DDL);
 		db.execSQL(DraftRecordDAO.DRAFT_ATTRIBUTE_TABLE_DDL);
+		
+		
+	}
+	
+	private void createSpeciesTables(SQLiteDatabase db) {
+		db.execSQL(SpeciesDAO.SPECIES_TABLE_DDL);
+		db.execSQL(SpeciesDAO.SURVEY_SPECIES_TABLE_DDL);
+		db.execSQL(SpeciesDAO.SPECIES_GROUP_DDL);
 	}
 	
 }

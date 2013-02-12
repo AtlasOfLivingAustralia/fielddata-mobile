@@ -13,7 +13,7 @@
   rights and limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="au.org.ala.fielddata.mobile"
+    package="au.org.ala.fielddata.mobile.nrmplus"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -26,18 +26,22 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+    <supports-screens
+          android:largeScreens="true"
+          android:normalScreens="true"
+          android:smallScreens="true" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
 
     <application
-        android:icon="@drawable/kc_launcher"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <uses-library android:name="com.google.android.maps" />
 
         <activity
-            android:name=".MobileFieldDataDashboard"
+            android:name="au.org.ala.fielddata.mobile.MobileFieldDataDashboard"
             android:label="@string/title_activity_mobile_data_dashboard"
             android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
@@ -46,46 +50,46 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CollectSurveyData"
+            android:name="au.org.ala.fielddata.mobile.CollectSurveyData"
             android:label="@string/title_activity_mobile_field_data"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
-            android:name=".SpeciesSelectionActivity"
+            android:name="au.org.ala.fielddata.mobile.SpeciesSelectionActivity"
             android:label="@string/title_species_selection" >
         </activity>
         <activity
-            android:name=".SpeciesListActivity"
+            android:name="au.org.ala.fielddata.mobile.SpeciesListActivity"
             android:label="@string/title_species_list" >
         </activity>
         <activity
-            android:name=".LocationSelectionActivity"
+            android:name="au.org.ala.fielddata.mobile.LocationSelectionActivity"
             android:label="@string/title_activity_location_selection" >
         </activity>
         <activity
-            android:name=".ViewSavedRecordsActivity"
+            android:name="au.org.ala.fielddata.mobile.ViewSavedRecordsActivity"
             android:label="@string/title_activity_view_saved_records" >
         </activity>
         <activity
-            android:name=".pref.EditPreferences"
+            android:name="au.org.ala.fielddata.mobile.pref.EditPreferences"
             android:label="@string/title_activity_edit_preferences" >
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name="au.org.ala.fielddata.mobile.LoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
         <activity
-            android:name=".FieldGuideActivity"
+            android:name="au.org.ala.fielddata.mobile.FieldGuideActivity"
             android:label="@string/title_activity_field_guide" 
             android:configChanges="orientation">
         </activity>
         
         <service
-            android:name=".service.UploadService"
+            android:name="au.org.ala.fielddata.mobile.service.UploadService"
             android:label="Upload Service" >
         </service>
         <service
-            android:name=".service.LocationServiceHelper"
+            android:name="au.org.ala.fielddata.mobile.service.LocationServiceHelper"
             android:label="Location Service" >
         </service>
     </application>

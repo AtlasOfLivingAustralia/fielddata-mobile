@@ -14,9 +14,6 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -24,37 +21,48 @@ public class Species extends Persistent implements Parcelable {
 
 	public String scientificName;
 	public String commonName;
-	public String imageFileName;
-	private int taxonGroup;
-	
-	private List<ProfileElement> infoItems;
+	private int taxonGroupId;
+	private String lsid;
+	private String profileImageUUID;
 	
 	public static class ProfileElement {
 		String content;
 		String type;
 	}
 	
+	public Species() {
+		
+	}
+	
 	public Species(String scientificName, String commonName, int taxonGroupId) {
 		this.scientificName = scientificName;
 		this.commonName = commonName;
-		this.taxonGroup = taxonGroupId;
-		infoItems = new ArrayList<Species.ProfileElement>();
+		this.taxonGroupId = taxonGroupId;
 		
 	}
 	
 	public String getImageFileName() {
-		if (infoItems != null) {
-			for (ProfileElement element : infoItems) {
-				if ("thumb".equals(element.type)) {
-					return element.content;
-				}
-			}
-		}
-		return null;
+		return profileImageUUID;
+	}
+	
+	public void setImageFileName(String fileName) {
+		this.profileImageUUID = fileName;
 	}
 
 	public int getTaxonGroupId() {
-		return taxonGroup;
+		return taxonGroupId;
+	}
+	
+	public void setTaxonGroupId(int taxonGroupId) {
+		this.taxonGroupId = taxonGroupId;
+	}
+	
+	public String getLsid() {
+		return lsid;
+	}
+	
+	public void setLsid(String lsid) {
+		this.lsid = lsid;
 	}
 	
 	public int describeContents() {
@@ -70,7 +78,8 @@ public class Species extends Persistent implements Parcelable {
 		dest.writeInt(server_id);
 		dest.writeString(scientificName);
 		dest.writeString(commonName);
-		dest.writeInt(taxonGroup);
+		dest.writeInt(taxonGroupId);
+		dest.writeString(lsid);
 	}
 
 	public static final Parcelable.Creator<Species> CREATOR = new Parcelable.Creator<Species>() {
@@ -88,7 +97,8 @@ public class Species extends Persistent implements Parcelable {
 		server_id = in.readInt();
 		scientificName = in.readString();
 		commonName = in.readString();
-		taxonGroup = in.readInt();
+		taxonGroupId = in.readInt();
+		lsid = in.readString();
 	}
 
 }

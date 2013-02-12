@@ -19,7 +19,7 @@ import java.util.List;
 
 import android.os.Build;
 import android.os.Bundle;
-import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 

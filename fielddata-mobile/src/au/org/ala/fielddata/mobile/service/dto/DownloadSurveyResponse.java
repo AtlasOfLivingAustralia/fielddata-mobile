@@ -31,7 +31,10 @@ public class DownloadSurveyResponse {
 		public Long endDate;
 		public String name;
 		public String description;
+		@SerializedName("species")
+		public List<Integer> speciesIds;
 	}
+	
 	
 	public MapDefaults map;
 	
@@ -44,8 +47,9 @@ public class DownloadSurveyResponse {
 	public List<Attribute> attributes;
 	public List<RecordProperty> recordProperties;
 	
-	@SerializedName("indicatorSpecies_server_ids")
+	@SerializedName("survey")
 	public SurveyDetails details;
+	
 	
 	public boolean hasSpecies() {
 		return true;

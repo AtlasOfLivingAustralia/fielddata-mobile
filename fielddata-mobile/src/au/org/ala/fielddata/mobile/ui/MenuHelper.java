@@ -19,7 +19,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import au.org.ala.fielddata.mobile.LoginActivity;
-import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.pref.EditPreferences;
 
 import com.actionbarsherlock.view.MenuItem;

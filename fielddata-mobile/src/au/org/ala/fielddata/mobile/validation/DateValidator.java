@@ -16,7 +16,7 @@ package au.org.ala.fielddata.mobile.validation;
 
 import java.util.Date;
 
-import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.Record;
 

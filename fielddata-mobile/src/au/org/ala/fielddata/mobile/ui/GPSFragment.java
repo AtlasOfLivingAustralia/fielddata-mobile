@@ -15,7 +15,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.EditText;
 import au.org.ala.fielddata.mobile.CollectSurveyData;
-import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.service.LocationServiceHelper;
 import au.org.ala.fielddata.mobile.service.LocationServiceHelper.LocationServiceConnection;
 

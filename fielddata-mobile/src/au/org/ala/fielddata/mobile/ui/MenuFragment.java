@@ -16,7 +16,7 @@
 package au.org.ala.fielddata.mobile.ui;
 
 import android.os.Bundle;
-import au.org.ala.fielddata.mobile.R;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;

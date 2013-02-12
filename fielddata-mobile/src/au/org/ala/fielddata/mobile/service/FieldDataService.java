@@ -17,14 +17,16 @@ package au.org.ala.fielddata.mobile.service;
 import java.util.List;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import au.org.ala.fielddata.mobile.Utils;
+import au.org.ala.fielddata.mobile.dao.DatabaseHelper;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.dao.SpeciesDAO;
+import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
-import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.pref.Preferences;
-import au.org.ala.fielddata.mobile.service.FieldDataServiceClient.SurveysAndSpecies;
 
 public class FieldDataService {
 
@@ -44,53 +46,91 @@ public class FieldDataService {
 	 */
 	public List<Survey> downloadSurveys() {
 		
-		SurveysAndSpecies results = webServiceClient.downloadSurveys(); 
-		List<Survey> surveys = results.surveys;
-
+		long start = System.currentTimeMillis();
+		List<Survey> surveys = webServiceClient.downloadSurveys(); 
+		long end = System.currentTimeMillis();
+		Log.i("FieldDataService", "downloadSurveys took: "+(end-start));
+		
 		if (surveys.size() > 0) {
 			Preferences prefs = new Preferences(ctx);
 			prefs.setCurrentSurvey(surveys.get(0).server_id);
 			prefs.setCurrentSurveyName(surveys.get(0).name);
 			
 		}
-		GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(ctx);
-		for (Survey survey : surveys) {
-			
-			// If we already have a survey with the same id, replace it.
-			Survey existingSurvey = surveyDAO.findByServerId(Survey.class, survey.server_id);
-			if (existingSurvey != null) {
-				if (Utils.DEBUG) {
-					Log.i("FieldDataService", "Replacing survey with id: "+existingSurvey.server_id);
-				}
-				survey.setId(existingSurvey.getId());
-			}
-			if ("The Great Koala Count".equals(survey.name)) {
-				survey.propertyByType(AttributeType.POINT).addOption("No Map");
-			}
-			surveyDAO.save(survey);
-		}
 		
-		List<Species> speciesList = results.species;
-		GenericDAO<Species> dao = new GenericDAO<Species>(ctx);
-		StorageManager manager = new StorageManager(ctx);
-		for (Species species : speciesList) {
-			// If we already have a species with the same id, replace it.
-			Species existingSpecies = dao.findByServerId(Species.class, species.server_id);
-			if (existingSpecies != null) {
-				if (Utils.DEBUG) {
-					Log.i("FieldDataService", "Replacing species with id: "+existingSpecies.server_id);
+		DatabaseHelper helper = DatabaseHelper.getInstance(ctx);
+		SQLiteDatabase db = helper.getWritableDatabase();
+		try {
+			db.beginTransaction();
+			
+			GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(ctx);
+			for (Survey survey : surveys) {
+				
+				// If we already have a survey with the same id, replace it.
+				Survey existingSurvey = surveyDAO.findByServerId(Survey.class, survey.server_id, db);
+				if (existingSurvey != null) {
+					if (Utils.DEBUG) {
+						Log.i("FieldDataService", "Replacing survey with id: "+existingSurvey.server_id);
+					}
+					survey.setId(existingSurvey.getId());
 				}
-				species.setId(existingSpecies.getId());
-			}
-			dao.save(species);
-			try {
-				// Instruct the cache manager to download and cache the file
-				manager.getProfileImage(species);
-			} catch (Exception e) {
-				Log.e("Service", "Error downloading profile image", e);
+				if ("The Great Koala Count".equals(survey.name)) {
+					survey.propertyByType(AttributeType.POINT).addOption("No Map");
+				}
+				surveyDAO.save(survey, db);
+			
+				int first = 0;
+				int maxResults = 20;
+				
+				List<Species> speciesList;
+				do {	
+				
+					start = System.currentTimeMillis();
+					speciesList = webServiceClient.downloadSpecies(survey, first, maxResults);
+					end = System.currentTimeMillis();
+					Log.i("FieldDataService", "downloadSpecies took: "+(end-start));
+					
+					SpeciesDAO dao = new SpeciesDAO(ctx);
+					StorageManager manager = new StorageManager(ctx);
+					
+					
+					start = System.currentTimeMillis();
+					for (Species species : speciesList) {
+						Log.i("FieldDataService", "saving species: "+species.scientificName);
+						
+						// If we already have a species with the same id, replace it.
+						Species existingSpecies = dao.findByServerId(Species.class, species.server_id, db);
+						if (existingSpecies != null) {
+							if (Utils.DEBUG) {
+								Log.i("FieldDataService", "Replacing species with id: "+existingSpecies.server_id);
+							}
+							species.setId(existingSpecies.getId());
+						}
+						dao.save(species, db);
+						try {
+							// Instruct the cache manager to download and cache the file
+							manager.getProfileImage(species);
+						} catch (Exception e) {
+							Log.e("Service", "Error downloading profile image", e);
+						}
+			
+					}
+					end = System.currentTimeMillis();
+					Log.i("FieldDataService", "save and download images took: "+(end-start));
+					
+					first += maxResults;
+				}
+				while (speciesList.size() == maxResults); 
 			}
 
+			db.setTransactionSuccessful();
+		} finally {
+			if (db != null) {
+				db.endTransaction();
+				helper.close();
+			}
 		}
+		
 		
 		return surveys;
 	}

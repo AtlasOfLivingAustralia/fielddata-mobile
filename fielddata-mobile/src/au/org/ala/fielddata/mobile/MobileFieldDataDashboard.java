@@ -38,6 +38,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.EditPreferences;

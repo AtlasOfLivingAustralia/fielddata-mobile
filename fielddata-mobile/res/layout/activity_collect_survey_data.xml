@@ -16,16 +16,16 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" 
-    android:background="#CCCCCC" xmlns:app="http://schemas.android.com/apk/res/au.org.ala.fielddata.mobile">
+    android:background="#CCCCCC" xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.viewpagerindicator.TitlePageIndicator
+   <com.viewpagerindicator.TitlePageIndicator
         android:id="@+id/titles"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         app:clipPadding="18dp"
-        android:visibility="gone" />
+        android:visibility="gone" /> 
     <ImageView
         android:id="@+id/leftArrow"
         android:layout_width="wrap_content"
@@ -62,6 +62,6 @@
         android:layout_height="match_parent"
          android:layout_marginBottom="5dp"
          android:layout_below="@id/titles"
-         android:layout_alignParentLeft="true" />
+         android:layout_alignParentLeft="true" />   
 
 </RelativeLayout>

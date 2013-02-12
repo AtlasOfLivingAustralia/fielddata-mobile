@@ -24,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.map.SingleSelectionOverlay;
 import au.org.ala.fielddata.mobile.model.MapDefaults;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
@@ -104,7 +105,7 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 		else {
 			if (setZoom) {
 				MapDefaults mapDefaults = (MapDefaults)getIntent().getParcelableExtra(MAP_DEFAULTS_BUNDLE_KEY);
-				if (mapDefaults != null) {
+				if (mapDefaults != null && mapDefaults.center != null) {
 					mapView.getController().setZoom(mapDefaults.zoom);
 					
 					mapView.getController().setCenter(

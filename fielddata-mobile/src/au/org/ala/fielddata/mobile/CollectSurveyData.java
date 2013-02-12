@@ -46,16 +46,16 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.ScrollView;
 import android.widget.Toast;
-import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.dao.DraftRecordDAO;
-import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.dao.RecordDAO;
+import au.org.ala.fielddata.mobile.dao.SpeciesDAO;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.MapDefaults;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel;
 import au.org.ala.fielddata.mobile.model.SurveyViewModel.TempValue;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.LocationServiceHelper;
 import au.org.ala.fielddata.mobile.service.LocationServiceHelper.LocationServiceConnection;
@@ -149,7 +149,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 		Intent i = getIntent();
 		int speciesId = i.getIntExtra(CollectSurveyData.SPECIES, 0);
 		if (speciesId > 0) {
-			GenericDAO<Species> speciesDao = new GenericDAO<Species>(this);
+			SpeciesDAO speciesDao = new SpeciesDAO(this);
 			selectedSpecies = speciesDao.load(Species.class, speciesId);
 		}
 

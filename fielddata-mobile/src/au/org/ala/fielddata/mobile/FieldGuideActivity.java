@@ -13,9 +13,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
-import au.org.ala.fielddata.mobile.nrmplus.R;
-import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.dao.SpeciesDAO;
 import au.org.ala.fielddata.mobile.model.Species;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -33,7 +33,7 @@ public class FieldGuideActivity extends SherlockActivity {
         Intent i = getIntent();
 		int speciesId = i.getIntExtra(CollectSurveyData.SPECIES, 0);
 		if (speciesId > 0) {
-			GenericDAO<Species> speciesDao = new GenericDAO<Species>(this);
+			SpeciesDAO speciesDao = new SpeciesDAO(this);
 			selectedSpecies = speciesDao.load(Species.class, speciesId);
 			showFieldGuide(selectedSpecies);
 		}

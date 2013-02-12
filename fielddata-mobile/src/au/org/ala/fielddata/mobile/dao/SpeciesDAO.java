@@ -140,5 +140,11 @@ public class SpeciesDAO extends GenericDAO<Species> {
 	public Cursor speciesForSurvey(int surveyId) {
 		throw new UnsupportedOperationException();
 	}
+
+	public Cursor loadSpecies() {
+		return helper.getReadableDatabase().query(
+				true, SPECIES_TABLE, new String[] {"_id", SCIENTIFIC_NAME_COLUMN_NAME, COMMON_NAME_COLUMN_NAME, IMAGE_URL_COLUMN_NAME}, 
+				null, null, null, null, "_id", null);
+	}
 	
 }

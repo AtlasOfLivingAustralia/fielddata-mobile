@@ -37,6 +37,7 @@ public class SpeciesListActivity extends SpeciesListFragment implements SpeciesS
 		super.onCreate(savedInstanceState);
 		
 		preferences = new Preferences(getActivity());
+		init();
 	}
 	
 	@Override
@@ -44,13 +45,12 @@ public class SpeciesListActivity extends SpeciesListFragment implements SpeciesS
 		super.onResume();
 		preferences = new Preferences(getActivity());
 		
-		init();
 	}
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		
-		Species species = (Species)l.getAdapter().getItem(position);
+		Species species = ((SpeciesAdapter)l.getAdapter()).getSpecies(position);
 		onSpeciesSelected(species);
 		
 	}

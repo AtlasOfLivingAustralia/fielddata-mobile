@@ -15,19 +15,29 @@
 package au.org.ala.fielddata.mobile.ui;
 
 import android.app.Activity;
+import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.ResourceCursorAdapter;
 import android.view.View;
 import android.widget.ListView;
+import au.org.ala.fielddata.mobile.dao.SpeciesDAO;
 import au.org.ala.fielddata.mobile.model.Species;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.commonsware.cwac.loaderex.acl.AbstractCursorLoader;
 
-public class SpeciesListFragment extends SherlockListFragment {
+public class SpeciesListFragment extends SherlockListFragment implements LoaderCallbacks<Cursor> {
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       
+        
     }
 
 	@Override
@@ -41,9 +51,74 @@ public class SpeciesListFragment extends SherlockListFragment {
 	
     protected void init() {
     	if (getActivity() != null) {
-    		SpeciesListAdapter adapter = new SpeciesListAdapter(getActivity(), 393);
+    		
+    		
+    		SpeciesAdapter adapter = new SpeciesAdapter(getActivity(),  R.layout.species_row, null);
     		setListAdapter(adapter);
+    		LoaderManager manager = getActivity().getSupportLoaderManager();
+    		manager.initLoader(0, null, this);
+    		
+    		//SpeciesListAdapter adapter = new SpeciesListAdapter(getActivity(), 393);
+    		
     	}
+    }
+
+	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		return new SpeciesLoader(getActivity());
+	}
+
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
+		((CursorAdapter)getListAdapter()).swapCursor(cursor);
+	}
+
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		((CursorAdapter)getListAdapter()).swapCursor(null);
+		
+	}
+    
+    static class SpeciesLoader extends AbstractCursorLoader {
+
+    	private SpeciesDAO speciesDAO;
+    	public SpeciesLoader(Context ctx) {
+    		super(ctx);
+    		speciesDAO = new SpeciesDAO(ctx);
+    	}
+		@Override
+		protected Cursor buildCursor() {
+			return speciesDAO.loadSpecies();
+		}
+    	
+    }
+    
+    public static class SpeciesAdapter extends ResourceCursorAdapter {
+
+    	private Context ctx;
+    	
+		public SpeciesAdapter(Context context, int layout, Cursor c) {
+			super(context, layout, c, 0);	
+			ctx = context;
+		}
+
+		@Override
+		public void bindView(View row, Context arg1, Cursor cursor) {
+			SpeciesViewHolder viewHolder = (SpeciesViewHolder) row.getTag();
+			if (viewHolder == null) {
+				viewHolder = new SpeciesViewHolder(row);
+				row.setTag(viewHolder);
+			}
+
+			viewHolder.populate(
+					cursor.getString(cursor.getColumnIndex(SpeciesDAO.SCIENTIFIC_NAME_COLUMN_NAME)), 
+					cursor.getString(cursor.getColumnIndex(SpeciesDAO.COMMON_NAME_COLUMN_NAME)),
+					cursor.getString(cursor.getColumnIndex(SpeciesDAO.IMAGE_URL_COLUMN_NAME)));
+			
+		}
+		
+		public Species getSpecies(int position) {
+			Cursor cursor = (Cursor)super.getItem(position);
+			return new SpeciesDAO(ctx).load(Species.class, cursor.getInt(0));
+		}
+    	
     }
 	
 	

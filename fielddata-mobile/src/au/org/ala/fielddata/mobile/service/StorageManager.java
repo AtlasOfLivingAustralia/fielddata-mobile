@@ -42,21 +42,21 @@ public class StorageManager {
 	 * does not have a defined profile image.
 	 */
 	public File getProfileImage(Species species) {
-		return getProfileImage(species, false);
+		return getProfileImage(species.getImageFileName(), false);
 	}
 	
 	/**
 	 * Returns the profile image, potentially downloading it if necessary.
 	 * Must be called from a background thread.
-	 * @param species the species to get the image for.
+	 * @param fileName the uuid of the species thumbnail - used for the
+	 * download and as the filename for the cached image.
 	 * @param forceDownload if true, if the image already exists in the cache
 	 * it will be deleted and re-downloaded.
 	 * @return the File containing the profile image, null if the species
 	 * does not have a defined profile image.
 	 */
-	public File getProfileImage(Species species, boolean forceDownload) {
+	public File getProfileImage(String fileName, boolean forceDownload) {
 		
-		String fileName = species.getImageFileName(); 
 		if (fileName == null) {
 			return null;
 		}

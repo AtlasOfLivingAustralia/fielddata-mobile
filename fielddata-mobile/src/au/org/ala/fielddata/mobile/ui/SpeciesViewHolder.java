@@ -44,7 +44,19 @@ public class SpeciesViewHolder {
 	 */
 	public void populate(Species species) {
 		// Should *not* be doing this on the UI thread.
-		File profileImage = cacheManager.getProfileImage(species);
+		setImage(species.getImageFileName());
+		scientificName.setText(species.scientificName);
+		commonName.setText(species.commonName);
+	}
+	
+	public void populate(String scientificName, String commonName, String imageFileName) {
+		setImage(imageFileName);
+		this.scientificName.setText(scientificName);
+		this.commonName.setText(commonName);
+	}
+	
+	private void setImage(String fileName) {
+		File profileImage = cacheManager.getProfileImage(fileName, false);
 		
 		if (profileImage != null) {
 			
@@ -56,8 +68,6 @@ public class SpeciesViewHolder {
 		else {
 			icon.setImageResource(R.drawable.ic_action_search);
 		}
-		scientificName.setText(species.scientificName);
-		commonName.setText(species.commonName);
 	}
 	
 	public void setError(CharSequence error) {

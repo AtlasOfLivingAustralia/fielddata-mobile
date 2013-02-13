@@ -38,6 +38,10 @@ public class SurveyListFragment extends SherlockListFragment {
 		final Survey[] surveyArray = surveys
 				.toArray(new Survey[surveys.size()]);
 
+		// This can be called after the activity has been destroyed.
+		if (getActivity() == null) {
+			return;
+		}
 		if (surveys.size() > 0) {
 			SurveyListAdapter items = new SurveyListAdapter(getActivity(), surveys);
 			setListAdapter(items);

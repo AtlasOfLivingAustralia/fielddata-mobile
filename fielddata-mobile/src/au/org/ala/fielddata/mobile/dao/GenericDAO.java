@@ -83,6 +83,7 @@ public class GenericDAO<T extends Persistent> {
 		}
 		return modelObject;
 	}
+	
 
 	protected T findByColumn(Class<T> modelClass, String column, String value,
 			boolean allowNoResults) {
@@ -101,7 +102,7 @@ public class GenericDAO<T extends Persistent> {
 				
 				if (db != null) {
 					db.endTransaction();
-					helper.close();
+
 				}
 			}
 
@@ -122,7 +123,7 @@ public class GenericDAO<T extends Persistent> {
 			} finally {
 				if (db != null) {
 					db.endTransaction();
-					helper.close();
+					
 				}
 			}
 			return id;
@@ -186,7 +187,7 @@ public class GenericDAO<T extends Persistent> {
 				}
 				if (db != null) {
 					db.endTransaction();
-					helper.close();
+					
 				}
 			}
 
@@ -218,7 +219,7 @@ public class GenericDAO<T extends Persistent> {
 				}
 				if (db != null) {
 					db.endTransaction();
-					helper.close();
+					
 				}
 			}
 			return count;
@@ -238,11 +239,14 @@ public class GenericDAO<T extends Persistent> {
 	public void deleteAll(Class<T> modelClass) {
 		synchronized (helper) {
 			SQLiteDatabase db = helper.getWritableDatabase();
+			
 			try {
+				db.beginTransaction();
 				db.delete(tableName(modelClass), null, null);
+				db.setTransactionSuccessful();
 			} finally {
 				if (db != null) {
-					helper.close();
+					db.endTransaction();
 				}
 			}
 		}
@@ -251,12 +255,14 @@ public class GenericDAO<T extends Persistent> {
 	public void delete(Class<T> modelClass, Integer id) {
 		synchronized (helper) {
 			SQLiteDatabase db = helper.getWritableDatabase();
-
+			
 			try {
+				db.beginTransaction();
 				db.delete(tableName(modelClass), "_id=?", new String[] { Integer.toString(id) });
+				db.setTransactionSuccessful();
 			} finally {
 				if (db != null) {
-					helper.close();
+					db.endTransaction();
 				}
 			}
 		}

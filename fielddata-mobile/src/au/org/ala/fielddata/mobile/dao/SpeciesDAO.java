@@ -14,11 +14,16 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import au.org.ala.fielddata.mobile.model.Species;
+import au.org.ala.fielddata.mobile.model.Survey;
 
 public class SpeciesDAO extends GenericDAO<Species> {
 
@@ -117,6 +122,49 @@ public class SpeciesDAO extends GenericDAO<Species> {
 		}
 		return id;
 	}
+	
+	public void saveSpeciesSurveyAssociation(Survey survey, SQLiteDatabase db) {
+		
+		// Delete the old association so we don't get duplicates when
+		// surveys are re-downloaded.
+		deleteSpeciesForSurvey(survey, db);
+		if (survey.speciesIds == null || survey.speciesIds.size() == 0) {
+			return;
+		}
+		
+		Integer surveyId = survey.getId();
+		InsertHelper insertHelper = new InsertHelper(db, SURVEY_SPECIES_TABLE);
+		for (Integer speciesId : survey.speciesIds) {
+			
+			insertHelper.prepareForInsert();
+			insertHelper.bind(1, surveyId);
+			insertHelper.bind(2, speciesId);
+			insertHelper.execute();
+		}
+		
+	}
+	
+	public void deleteSpeciesForSurvey(Survey survey, SQLiteDatabase db) {
+		db.delete(SURVEY_SPECIES_TABLE, "survey_id=?", new String[] {Integer.toString(survey.getId())});
+	}
+	
+	public void deleteAll(Class<Species> modelClass) {
+		synchronized (helper) {
+			SQLiteDatabase db = helper.getWritableDatabase();
+			
+			try {
+				db.beginTransaction();
+				db.delete(SPECIES_TABLE, null, null);
+				db.delete(SURVEY_SPECIES_TABLE, null, null);
+				db.setTransactionSuccessful();
+			} finally {
+				if (db != null) {
+					db.endTransaction();
+				}
+			}
+		}
+	}
+
 
 	private boolean map(Species species, long now, ContentValues values) {
 		Integer id = species.getId();
@@ -137,8 +185,42 @@ public class SpeciesDAO extends GenericDAO<Species> {
 		return update;
 	}
 	
-	public Cursor speciesForSurvey(int surveyId) {
-		throw new UnsupportedOperationException();
+	public List<Species> speciesForSurvey(Integer surveyId) {
+		SQLiteDatabase db = helper.getReadableDatabase();
+		Cursor result = null;
+		List<Species> speciesList = new ArrayList<Species>();
+		try {
+			String sql = "SELECT * from "+SURVEY_SPECIES_TABLE;
+			result = db.rawQuery(sql, null);
+			result.moveToFirst();
+			while (!result.isAfterLast()) {
+				System.out.println("survey id: "+result.getInt(0)+" species id: "+result.getInt(1));
+				result.moveToNext();
+			}
+			System.out.println(result.getCount());
+			
+			
+			String query = "SELECT * from "+SPECIES_TABLE+" s inner join "+SURVEY_SPECIES_TABLE+
+					" ss on s.server_id = ss.species_id where ss.survey_id = ?";
+			result = db.rawQuery(query, new String[] {Integer.toString(surveyId)});
+
+			if (result.getCount() == 0) {
+				speciesList = loadAll(Species.class);
+				
+			} else {
+				result.moveToFirst();
+				while (!result.isAfterLast()) {
+					speciesList.add( map(db, result, Species.class) );
+					result.moveToNext();
+				}
+			}
+		}
+		finally {
+			if (result != null) {
+				result.close();
+			}
+		}
+		return speciesList;
 	}
 
 	public Cursor loadSpecies() {

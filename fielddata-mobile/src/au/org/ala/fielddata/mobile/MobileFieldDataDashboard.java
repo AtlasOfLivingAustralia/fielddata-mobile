@@ -275,7 +275,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 				user = users.get(0);
 
 			}
-			String portal = preferences.getFieldDataPortalName();
+			String portal = "NRM Plus";//preferences.getFieldDataPortalName();
 
 			return new Model(user, portal);
 		}
@@ -475,7 +475,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 				@Override
 				protected Void doInBackground(Void... params) {
 					try {
-						new FieldDataService(MobileFieldDataDashboard.this).downloadSurveys();
+						new FieldDataService(MobileFieldDataDashboard.this).downloadSurveys(null);
 						success = true;
 					}
 					catch (Exception e) {

@@ -150,6 +150,7 @@ public class FieldDataServiceClient extends WebServiceClient {
 		survey.recordProperties = surveyResponse.recordProperties;
 		survey.map = surveyResponse.map;
 		survey.description = surveyResponse.details.description;
+		survey.speciesIds = surveyResponse.details.speciesIds;
 		return survey;
 	}
 	

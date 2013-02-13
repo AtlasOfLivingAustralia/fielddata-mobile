@@ -43,7 +43,7 @@ public class SpeciesBinder extends AbsBinder implements OnClickListener {
 
 	public void onClick(View v) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-		final SpeciesListAdapter adapter = new SpeciesListAdapter(ctx);
+		final SpeciesListAdapter adapter = new SpeciesListAdapter(ctx, model.getSurvey().getId());
 		builder.setAdapter(adapter, new android.content.DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {

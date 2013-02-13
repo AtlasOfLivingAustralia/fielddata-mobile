@@ -58,10 +58,15 @@ public class SpeciesListFragment extends SherlockListFragment implements LoaderC
     		LoaderManager manager = getActivity().getSupportLoaderManager();
     		manager.initLoader(0, null, this);
     		
-    		//SpeciesListAdapter adapter = new SpeciesListAdapter(getActivity(), 393);
-    		
     	}
     }
+    
+    @Override
+	public void onResume() {
+		super.onResume();
+		LoaderManager manager = getActivity().getSupportLoaderManager();
+		manager.restartLoader(0, null, this);
+	}
 
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		return new SpeciesLoader(getActivity());

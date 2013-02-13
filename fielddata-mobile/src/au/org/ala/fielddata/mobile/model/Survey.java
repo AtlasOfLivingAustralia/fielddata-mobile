@@ -39,6 +39,7 @@ public class Survey extends Persistent {
 	@SerializedName("attributesAndOptions")
 	public List<Attribute> attributes;
 	public List<RecordProperty> recordProperties;
+	public List<Integer> speciesIds;
 	
 	@SerializedName("indicatorSpecies_server_ids")
 	public SurveyDetails details;

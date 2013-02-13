@@ -16,12 +16,14 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
+import au.org.ala.fielddata.mobile.dao.SpeciesDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.User;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
+import au.org.ala.fielddata.mobile.service.FieldDataService.SurveyDownloadCallback;
 import au.org.ala.fielddata.mobile.service.LoginService;
 import au.org.ala.fielddata.mobile.service.dto.LoginResponse;
 
@@ -88,11 +90,16 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 			pd = ProgressDialog.show(LoginActivity.this, "Logging in", 
 					preferences.getFieldDataServerUrl(false, true), true, false, null);
 			
-			new AsyncTask<Void, Void, Void>() {
+			new AsyncTask<Void, Integer, Void>() {
 				private Exception e;
 
 				public Void doInBackground(Void... args) {
-					
+					SurveyDownloadCallback callback = new SurveyDownloadCallback() {
+						
+						public void surveysDownloaded(int number, int count) {
+							publishProgress(number);
+						}
+					};
 					LoginService loginService = new LoginService(LoginActivity.this);
 
 					try {
@@ -100,9 +107,9 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 						String password = passwordField.getText().toString();
 						LoginResponse response = loginService.login(username, password, portalName);
 
-						publishProgress();
+						publishProgress(0);
 						clearPersistantData();
-						initialiseUserAndSurveys(response);
+						initialiseUserAndSurveys(response, callback);
 						// return to the main activity
 						finish();
 
@@ -116,11 +123,15 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 				
 				
 				@Override
-				protected void onProgressUpdate(Void... values) {
-					pd.setTitle("Downloading surveys...");
+				protected void onProgressUpdate(Integer... values) {
+					int value = values[0];
+					if (value == 0) {
+						pd.setTitle("Downloading surveys...");
+					}
+					else {
+						pd.setMessage("Downloading survey "+value+"...");
+					}
 				}
-
-
 
 				protected void onPostExecute(Void result) {
 					
@@ -165,7 +176,7 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 		GenericDAO<Record> recordDAO = new GenericDAO<Record>(this);
 		recordDAO.deleteAll(Record.class);
 		
-		GenericDAO<Species> speciesDAO = new GenericDAO<Species>(this);
+		SpeciesDAO speciesDAO = new SpeciesDAO(this);
 		speciesDAO.deleteAll(Species.class);
 	}
 	
@@ -173,12 +184,12 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 	 * Persist the user object and downloaded surveys
 	 * @param response
 	 */
-	private void initialiseUserAndSurveys(LoginResponse response) {
+	private void initialiseUserAndSurveys(LoginResponse response, SurveyDownloadCallback callback) {
 
 		GenericDAO<User> userDAO = new GenericDAO<User>(LoginActivity.this);
 		userDAO.save(response.user);
 		
-		new FieldDataService(this).downloadSurveys();
+		new FieldDataService(this).downloadSurveys(callback);
 
 	}
 }

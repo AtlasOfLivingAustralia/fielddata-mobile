@@ -240,13 +240,16 @@ public class RecordDAO extends GenericDAO<Record> {
 	public void deleteAll(Class<Record> recordClass) {
 		synchronized(helper) {
 		SQLiteDatabase db = helper.getWritableDatabase();
+		
 		try {
+			db.beginTransaction();
 			db.delete(recordTable, null, null);
 			db.delete(attributeValueTable, null, null);
+			db.setTransactionSuccessful();
 		}
 		finally {
 			if (db != null) {
-				helper.close();
+				db.endTransaction();
 			}
 		}
 		}
@@ -257,13 +260,15 @@ public class RecordDAO extends GenericDAO<Record> {
 			SQLiteDatabase db = helper.getWritableDatabase();
 			
 			try {
+				db.beginTransaction();
 				String[] recordId = new String[] {Integer.toString(id)};
 				db.delete(recordTable, "_id=?", recordId);
 				db.delete(attributeValueTable, "record_id=?", recordId);
+				db.setTransactionSuccessful();
 			}
 			finally {
 				if (db != null) {
-					helper.close();
+					db.endTransaction();
 				}
 			}
 		}
@@ -284,7 +289,7 @@ public class RecordDAO extends GenericDAO<Record> {
 		
 		synchronized(helper) {
 			SQLiteDatabase db = helper.getWritableDatabase();
-			
+			db.beginTransaction();
 			try {
 				ContentValues values = new ContentValues();
 				values.put("status", status.ordinal());
@@ -309,10 +314,12 @@ public class RecordDAO extends GenericDAO<Record> {
 				}
 				
 				db.update(recordTable, values, whereClause.toString(), recordIdStrings);
+				db.setTransactionSuccessful();
 			}
 			finally {
 				if (db != null) {
-					helper.close();
+					db.endTransaction();
+					
 				}
 			}
 		}

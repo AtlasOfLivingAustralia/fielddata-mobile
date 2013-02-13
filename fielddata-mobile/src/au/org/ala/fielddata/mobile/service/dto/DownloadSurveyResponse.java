@@ -19,7 +19,6 @@ import java.util.List;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.MapDefaults;
 import au.org.ala.fielddata.mobile.model.RecordProperty;
-import au.org.ala.fielddata.mobile.model.Species;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -37,9 +36,7 @@ public class DownloadSurveyResponse {
 	
 	
 	public MapDefaults map;
-	
-	public List<Species> indicatorSpecies;
-	
+		
 	public String name;
 	public String description;
 	

@@ -14,9 +14,9 @@
 -->
 <resources>
 
-    <string name="app_name">Condamine Alliance</string>
-    <string name="title_activity_mobile_field_data">Condamine Alliance</string>
-    <string name="title_activity_mobile_data_dashboard">Condamine Alliance</string>
+    <string name="app_name">NRM Plus</string>
+    <string name="title_activity_mobile_field_data">NRM Plus</string>
+    <string name="title_activity_mobile_data_dashboard">NRM Plus</string>
     
     <string name="hello_world">Hello world!</string>
     <string name="submitButtonText">Save</string>
@@ -101,7 +101,7 @@
 	<string-array name="portals">
 	     <item>Condamine Alliance</item>
 	      <!-- <item>Great Koala Count</item>  -->
-	     <item>Conservation Volunteers Australia</item>
+	     <!-- <item>Conservation Volunteers Australia</item>  -->
 	</string-array>
 	
 	<!-- Saved records page -->

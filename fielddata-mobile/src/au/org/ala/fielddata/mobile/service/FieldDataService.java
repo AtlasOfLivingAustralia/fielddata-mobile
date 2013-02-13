@@ -21,8 +21,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import au.org.ala.fielddata.mobile.Utils;
 import au.org.ala.fielddata.mobile.dao.DatabaseHelper;
-import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.dao.SpeciesDAO;
+import au.org.ala.fielddata.mobile.dao.SurveyDAO;
 import au.org.ala.fielddata.mobile.model.Attribute.AttributeType;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
@@ -30,6 +30,10 @@ import au.org.ala.fielddata.mobile.pref.Preferences;
 
 public class FieldDataService {
 
+	public static interface SurveyDownloadCallback {
+		public void surveysDownloaded(int number, int count);
+	}
+	
 	private FieldDataServiceClient webServiceClient;
 	private Context ctx;
 	
@@ -42,9 +46,10 @@ public class FieldDataService {
 	/**
 	 * Downloads the Surveys configured in the current Portal and saves
 	 * them to the database.
+	 * @param callback optional callback to provide progress updates.
 	 * @return a List of Surveys configured for the current Portal.
 	 */
-	public List<Survey> downloadSurveys() {
+	public List<Survey> downloadSurveys(SurveyDownloadCallback callback) {
 		
 		long start = System.currentTimeMillis();
 		List<Survey> surveys = webServiceClient.downloadSurveys(); 
@@ -62,8 +67,9 @@ public class FieldDataService {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		try {
 			db.beginTransaction();
-			
-			GenericDAO<Survey> surveyDAO = new GenericDAO<Survey>(ctx);
+			SpeciesDAO speciesDAO = new SpeciesDAO(ctx);
+			SurveyDAO surveyDAO = new SurveyDAO(ctx);
+			int count = 0;
 			for (Survey survey : surveys) {
 				
 				// If we already have a survey with the same id, replace it.
@@ -78,9 +84,10 @@ public class FieldDataService {
 					survey.propertyByType(AttributeType.POINT).addOption("No Map");
 				}
 				surveyDAO.save(survey, db);
-			
+				speciesDAO.saveSpeciesSurveyAssociation(survey, db);
+				
 				int first = 0;
-				int maxResults = 20;
+				int maxResults = 50;
 				
 				List<Species> speciesList;
 				do {	
@@ -90,7 +97,6 @@ public class FieldDataService {
 					end = System.currentTimeMillis();
 					Log.i("FieldDataService", "downloadSpecies took: "+(end-start));
 					
-					SpeciesDAO dao = new SpeciesDAO(ctx);
 					StorageManager manager = new StorageManager(ctx);
 					
 					
@@ -99,14 +105,14 @@ public class FieldDataService {
 						Log.i("FieldDataService", "saving species: "+species.scientificName);
 						
 						// If we already have a species with the same id, replace it.
-						Species existingSpecies = dao.findByServerId(Species.class, species.server_id, db);
+						Species existingSpecies = speciesDAO.findByServerId(Species.class, species.server_id, db);
 						if (existingSpecies != null) {
 							if (Utils.DEBUG) {
 								Log.i("FieldDataService", "Replacing species with id: "+existingSpecies.server_id);
 							}
 							species.setId(existingSpecies.getId());
 						}
-						dao.save(species, db);
+						speciesDAO.save(species, db);
 						try {
 							// Instruct the cache manager to download and cache the file
 							manager.getProfileImage(species);
@@ -119,15 +125,20 @@ public class FieldDataService {
 					Log.i("FieldDataService", "save and download images took: "+(end-start));
 					
 					first += maxResults;
+					
 				}
 				while (speciesList.size() == maxResults); 
+				
+				if (callback != null) {
+					callback.surveysDownloaded(count++, -1);
+				}
 			}
 
 			db.setTransactionSuccessful();
 		} finally {
 			if (db != null) {
 				db.endTransaction();
-				helper.close();
+				
 			}
 		}
 		

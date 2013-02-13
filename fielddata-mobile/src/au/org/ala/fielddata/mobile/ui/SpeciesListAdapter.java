@@ -25,7 +25,14 @@ public class SpeciesListAdapter extends ArrayAdapter<Species> {
 		super(ctx, R.layout.species_row, R.id.scientificName,
 				new ArrayList<Species>());
 		SpeciesDAO speciesDao = new SpeciesDAO(ctx);
-		new GetSpeciesTask(speciesDao, this, excludedGroupId).execute();
+		new GetSpeciesTask(speciesDao, this, excludedGroupId, null).execute();
+	}
+	
+	public SpeciesListAdapter(Context ctx, Integer surveyId) {
+		super(ctx, R.layout.species_row, R.id.scientificName,
+				new ArrayList<Species>());
+		SpeciesDAO speciesDao = new SpeciesDAO(ctx);
+		new GetSpeciesTask(speciesDao, this, -1, surveyId).execute();
 	}
 
 	@Override
@@ -47,19 +54,27 @@ public class SpeciesListAdapter extends ArrayAdapter<Species> {
 		private SpeciesDAO dao;
 		private SpeciesListAdapter adapter;
 		private int excludedGroupId;
+		private Integer surveyId;
 
 		public GetSpeciesTask(SpeciesDAO speciesDao,
-				SpeciesListAdapter adapter, int excludedGroupId) {
+				SpeciesListAdapter adapter, int excludedGroupId, Integer surveyId) {
 			this.dao = speciesDao;
 			this.adapter = adapter;
 			this.excludedGroupId = excludedGroupId;
+			this.surveyId = surveyId;
 		}
 
 		protected List<Species> doInBackground(Void... ignored) {
 
 			List<Species> species = new ArrayList<Species>();
 			try {
-				List<Species> allSpecies = dao.loadAll(Species.class);
+				List<Species> allSpecies;
+				if (surveyId == null) {
+					allSpecies = dao.loadAll(Species.class);
+				}
+				else {
+					allSpecies = dao.speciesForSurvey(surveyId);
+				}
 				for (Species taxon : allSpecies) {
 					if (taxon.getTaxonGroupId()
 							!= excludedGroupId) {

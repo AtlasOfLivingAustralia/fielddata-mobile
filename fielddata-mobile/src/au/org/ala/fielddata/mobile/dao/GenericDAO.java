@@ -137,7 +137,6 @@ public class GenericDAO<T extends Persistent> {
 		modelObject.updated = now;
 		Gson gson = Mapper.getGson(context);
 		String value = gson.toJson(modelObject);
-		Log.v("GenericDAO", "saving: " + value);
 		values.put("json", value);
 		values.put("server_id", modelObject.server_id);
 

@@ -190,15 +190,6 @@ public class SpeciesDAO extends GenericDAO<Species> {
 		Cursor result = null;
 		List<Species> speciesList = new ArrayList<Species>();
 		try {
-			String sql = "SELECT * from "+SURVEY_SPECIES_TABLE;
-			result = db.rawQuery(sql, null);
-			result.moveToFirst();
-			while (!result.isAfterLast()) {
-				System.out.println("survey id: "+result.getInt(0)+" species id: "+result.getInt(1));
-				result.moveToNext();
-			}
-			System.out.println(result.getCount());
-			
 			
 			String query = "SELECT * from "+SPECIES_TABLE+" s inner join "+SURVEY_SPECIES_TABLE+
 					" ss on s.server_id = ss.species_id where ss.survey_id = ?";

@@ -52,7 +52,7 @@ public class FieldDataServiceClient extends WebServiceClient {
 	
 	private String speciesUrl = "/species/speciesForSurvey?ident=%s&surveyId=%d&first=%d&maxResults=%d";
 
-	private String surveyDetails = "/survey/get/%d?ident=%s&surveysOnDevice=%s";
+	private String surveyDetails = "/survey/%d?ident=%s&surveysOnDevice=%s";
 	
 	private String pingUrl = "/survey/ping";
 	
@@ -94,7 +94,7 @@ public class FieldDataServiceClient extends WebServiceClient {
 		RestTemplate restTemplate = getRestTemplate();
 		SyncRecordsResponse result = restTemplate.postForObject(url, params,
 				SyncRecordsResponse.class);
-		System.out.println(result);
+		
 	}
 
 	public List<Survey> downloadSurveys() {
@@ -131,8 +131,12 @@ public class FieldDataServiceClient extends WebServiceClient {
 		return surveys;
 	}
 	
-	public List<Species> downloadSpecies(Survey survey, int first, int maxResults) {
+	public List<Species> downloadSpecies(Survey survey, List<Integer> downloadedSurveys, int first, int maxResults) {
+		
 		String url = getServerUrl() + String.format(speciesUrl, ident, survey.server_id, first, maxResults);
+		for (Integer id : downloadedSurveys) {
+			url += "&surveysOnDevice="+id;
+		}
 
 		RestTemplate restTemplate = getRestTemplate();
 		DownloadSpeciesResponse response = restTemplate.getForObject(url, DownloadSpeciesResponse.class);

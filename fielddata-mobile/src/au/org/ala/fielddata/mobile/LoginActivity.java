@@ -36,7 +36,9 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 
 	private ProgressDialog pd;
 	private String[] portals; 
-	
+	private String dialogTitle;
+	private String dialogMessage;
+	private boolean dialogShowing = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,16 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 		
 		Button registrationButton = (Button)findViewById(R.id.registerBtn);
 		registrationButton.setOnClickListener(this);
+		
+		if (savedInstanceState != null) {
+			dialogShowing = savedInstanceState.getBoolean("dialogVisible"); 
+			if (dialogShowing) {
+				dialogTitle = savedInstanceState.getString("dialogTitle");
+				dialogMessage = savedInstanceState.getString("dialogMessage");
+				pd = ProgressDialog.show(LoginActivity.this, dialogTitle, 
+						dialogMessage, true, false, null);
+			}
+		}
 	}
 	
 	@Override
@@ -67,6 +79,15 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 		if (pd != null && pd.isShowing()) {
 			pd.dismiss();
 		}
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle b) {
+		super.onSaveInstanceState(b);
+		
+		b.putBoolean("dialogVisible", dialogShowing);
+		b.putString("dialogTitle", dialogTitle);
+		b.putString("dialogMessage", dialogMessage);
 	}
 
 	public void onClick(View v) {
@@ -87,9 +108,11 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 				portalName = preferences.getFieldDataPortalName();
 			}
 			
-			pd = ProgressDialog.show(LoginActivity.this, "Logging in", 
-					preferences.getFieldDataServerUrl(false, true), true, false, null);
-			
+			dialogTitle = "Logging in...";
+			dialogMessage = preferences.getFieldDataServerUrl(false, true); 
+			pd = ProgressDialog.show(LoginActivity.this, dialogTitle, 
+					dialogMessage, true, false, null);
+			dialogShowing = true;
 			new AsyncTask<Void, Integer, Void>() {
 				private Exception e;
 
@@ -126,10 +149,12 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 				protected void onProgressUpdate(Integer... values) {
 					int value = values[0];
 					if (value == 0) {
-						pd.setTitle("Downloading surveys...");
+						dialogTitle = "Downloading surveys..."; 
+						pd.setTitle(dialogTitle);
 					}
 					else {
-						pd.setMessage("Downloading survey "+value+"...");
+						dialogMessage = "Downloading survey "+value+"..."; 
+						pd.setMessage(dialogMessage);
 					}
 				}
 
@@ -137,7 +162,9 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 					
 					if (pd.isShowing()) {
 						pd.dismiss();
+						
 					}
+					dialogShowing = false;
 					
 					if (e != null) {
 

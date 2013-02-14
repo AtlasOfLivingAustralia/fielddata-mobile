@@ -58,14 +58,18 @@
     }];
 }
 
--(void)downloadSurveyDetails:(NSString*)surveyId
+-(void)downloadSurveyDetails:(NSString*)surveyId downloadedSurveys:(NSArray*)downloadedSurveys
 {
     NSString* url = [preferences getFieldDataURL];
     
     RFRequest *r = [RFRequest requestWithURL:[NSURL URLWithString:url] type:RFRequestMethodGet 
-                      resourcePathComponents:@"survey", @"get", surveyId, nil];
+                      resourcePathComponents:@"survey", surveyId, nil];
     
     [r addParam:[preferences getFieldDataSessionKey] forKey:@"ident"];
+    for (NSString *downloadedSurvey in downloadedSurveys) {
+        [r addParam:downloadedSurvey forKey:@"surveysOnDevice"];
+    }
+    
     [RFService execRequest:r completion:^(RFResponse *response){
         
         if (response.httpCode == 200) {
@@ -76,10 +80,13 @@
             NSLog(@"Downloaded: %@", survey);
         
             NSLog(@"Persisting species:");
-            // extract the species
-            for (NSDictionary* speciesDict in [survey objectForKey:@"indicatorSpecies"]) {
-                [self persistSpecies:speciesDict];
-            }
+           
+            // Download the species associated with the Survey.
+            [self downloadSpeciesForSurvey:surveyId downloadedSurveys:downloadedSurveys];
+            
+//            for (NSDictionary* speciesDict in [survey objectForKey:@"indicatorSpecies"]) {
+//                [self persistSpecies:speciesDict];
+//            }
         
             NSLog(@"Persisting survey:");
             [self persistSurvey:survey error:error];
@@ -101,11 +108,52 @@
 
 }
 
+
+-(void)downloadSpeciesForSurvey:(NSString*)surveyId downloadedSurveys:(NSArray*)downloadedSurveys {
+    
+    __block NSInteger first = 0;
+    NSInteger maxResults = 50;
+    __block NSInteger count = 0;
+    
+    do {
+        NSString* url = [preferences getFieldDataURL];
+        
+        RFRequest *r = [RFRequest requestWithURL:[NSURL URLWithString:url] type:RFRequestMethodGet
+                          resourcePathComponents:@"species", @"speciesForSurvey", nil];
+        
+        [r addParam:[preferences getFieldDataSessionKey] forKey:@"ident"];
+        [r addParam:surveyId forKey:@"surveyId"];
+        [r addParam:[[NSNumber numberWithInteger:first] stringValue] forKey:@"first"];
+        [r addParam:[[NSNumber numberWithInteger:maxResults] stringValue] forKey:@"maxResults"];
+        
+        for (NSString *downloadedSurvey in downloadedSurveys) {
+            [r addParam:downloadedSurvey forKey:@"surveysOnDevice"];
+        }
+        [RFService execRequest:r completion:^(RFResponse *response){
+            if (response.httpCode == 200) {
+                NSError *error;
+                NSDictionary* speciesResponse =  [NSJSONSerialization JSONObjectWithData:response.dataValue
+                                                                        options:kNilOptions error:&error];
+                
+                for (NSDictionary* speciesDict in [speciesResponse objectForKey:@"list"]) {
+                    [self persistSpecies:speciesDict];
+                    count++;
+                }
+            }
+            else {
+                [delegate downloadSurveyDetailsSuccessful:NO survey:nil];
+            }
+            first+=maxResults;
+        }];
+    }
+    while (count == maxResults);
+}
+
 -(void)persistSurvey:(NSDictionary*)surveyDict error:(NSError*)e {
     
     Survey *survey = [NSEntityDescription insertNewObjectForEntityForName:@"Survey" inManagedObjectContext:context];
     
-    NSDictionary* surveyDetails = [surveyDict objectForKey:@"indicatorSpecies_server_ids"]; 
+    NSDictionary* surveyDetails = [surveyDict objectForKey:@"survey"]; 
     if (!surveyDetails) {
         NSLog(@"No survey details for survey: %@", surveyDict);
     }
@@ -241,27 +289,12 @@
     if (!species) {
         species = [NSEntityDescription insertNewObjectForEntityForName:@"Species" inManagedObjectContext:context];
     }
-    /*
-    for (NSString* key in [speciesDict keyEnumerator]) {
-        NSLog(@"Key: %@ Value: %@", key, [speciesDict objectForKey:key]);
-    }
-    
-    NSLog(@"Scientfic Name: %@", [speciesDict objectForKey:@"scientificName"]);
-    NSLog(@"Common Name: %@", [speciesDict objectForKey:@"commonName"]);
-    */
     
     species.scientificName = [speciesDict objectForKey:@"scientificName"];
     species.commonName = [speciesDict objectForKey:@"commonName"];
     species.taxonId = [speciesDict objectForKey:@"server_id"];
     
-    NSString* thumbnailPath;
-    NSArray* infoItems = [speciesDict objectForKey:@"infoItems"];
-    for (NSDictionary* infoItem in infoItems) {
-        NSString* type = [infoItem objectForKey:@"type"];
-        if ([type isEqualToString:@"thumb"]) {
-            thumbnailPath = [infoItem objectForKey:@"content"];
-        }
-    }
+    NSString* thumbnailPath = [speciesDict objectForKey:@"profileImageUUID"];
     
     // save the image to local storage
     NSString* imageURL = [NSString stringWithFormat:@"%@%@%@", [preferences getFieldDataURL], kDownloadUrl,thumbnailPath];

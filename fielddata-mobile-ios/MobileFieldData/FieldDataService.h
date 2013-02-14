@@ -81,7 +81,7 @@
 @property (retain) id uploadDelegate;
 
 -(void)downloadSurveys;
--(void)downloadSurveyDetails:(NSString*)surveyId;
+-(void)downloadSurveyDetails:(NSString*)surveyId downloadedSurveys:(NSArray*)downloadedSurveys;
 -(NSArray*)loadSurveys;
 -(NSArray*)loadSpecies;
 -(void)deleteAllEntities:(NSString*)entityName;

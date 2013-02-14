@@ -155,13 +155,15 @@
         
         numSurveys = [surveys count];
         
+        NSMutableArray *downloadedSurveys = [[NSMutableArray alloc] init];
         for (NSDictionary* survey in surveys) {
          
             //NSString* surveyId = [survey objectForKey:@"id"];
             NSNumber* surveyId = [survey objectForKey:@"id"];
             @try {
                 NSLog(@"Downloading survey %@",surveyId);
-            [fieldDataService downloadSurveyDetails:surveyId.stringValue];
+                [fieldDataService downloadSurveyDetails:surveyId.stringValue downloadedSurveys:[downloadedSurveys copy]];
+                [downloadedSurveys addObject:surveyId.stringValue];
             }
             @catch (NSException *e) {
                 NSLog(@"Exception %@", e);

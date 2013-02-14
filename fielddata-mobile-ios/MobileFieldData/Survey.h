@@ -24,6 +24,8 @@
 @property (nonatomic, retain) NSDate * lastSync;
 @property (nonatomic, retain) NSSet *attributes;
 @property (nonatomic, retain) NSNumber *order;
+@property (nonatomic, strong) NSArray* speciesIds;
+
 @end
 
 @interface Survey (CoreDataGeneratedAccessors)

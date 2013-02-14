@@ -84,6 +84,8 @@
 -(void)downloadSurveyDetails:(NSString*)surveyId downloadedSurveys:(NSArray*)downloadedSurveys;
 -(NSArray*)loadSurveys;
 -(NSArray*)loadSpecies;
+-(NSArray*)loadSpecies:(NSArray*)speciesIds;
+
 -(void)deleteAllEntities:(NSString*)entityName;
 -(Record*)createRecord:(NSArray*)attributes survey:(Survey*)survey inputFields:(NSMutableDictionary*)inputFields;
 -(void)updateRecord:(Record*)record attributes:(NSArray*)attributes inputFields:(NSMutableDictionary*)inputFields;

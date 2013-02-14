@@ -77,20 +77,12 @@
             NSDictionary* survey =  [NSJSONSerialization JSONObjectWithData:response.dataValue
                                                                 options:kNilOptions error:&error];
         
-            NSLog(@"Downloaded: %@", survey);
+            [self persistSurvey:survey error:error];
         
-            NSLog(@"Persisting species:");
-           
             // Download the species associated with the Survey.
             [self downloadSpeciesForSurvey:surveyId downloadedSurveys:downloadedSurveys];
             
-//            for (NSDictionary* speciesDict in [survey objectForKey:@"indicatorSpecies"]) {
-//                [self persistSpecies:speciesDict];
-//            }
-        
-            NSLog(@"Persisting survey:");
-            [self persistSurvey:survey error:error];
-        
+            
             if (error == NULL) {
                 [delegate downloadSurveyDetailsSuccessful:YES survey:survey];
             } else {
@@ -111,8 +103,8 @@
 
 -(void)downloadSpeciesForSurvey:(NSString*)surveyId downloadedSurveys:(NSArray*)downloadedSurveys {
     
-    __block NSInteger first = 0;
     NSInteger maxResults = 50;
+    __block NSInteger first = 0;
     __block NSInteger count = 0;
     
     do {
@@ -149,7 +141,7 @@
     while (count == maxResults);
 }
 
--(void)persistSurvey:(NSDictionary*)surveyDict error:(NSError*)e {
+-(Survey*)persistSurvey:(NSDictionary*)surveyDict error:(NSError*)e {
     
     Survey *survey = [NSEntityDescription insertNewObjectForEntityForName:@"Survey" inManagedObjectContext:context];
     
@@ -162,6 +154,8 @@
     survey.surveyDescription = [surveyDetails objectForKey:@"description"];
     survey.lastSync = [NSDate date];
     survey.order = [surveyDetails objectForKey:@"weight"];
+    survey.speciesIds = [surveyDetails objectForKey:@"species"];
+    NSLog(@"SpeciesID = %@", survey.speciesIds);
     
     NSNumber* startDate = [surveyDetails objectForKey:@"startDate"];
     if (startDate != (id)[NSNull null]) {
@@ -197,7 +191,7 @@
         NSString* scope = [attribute objectForKey:@"scope"];
         
         if (![scope isEqualToString:kModeratorScope]) {
-            NSLog(@"Saving attribute: %@", attribute);
+            //NSLog(@"Saving attribute: %@", attribute);
             [self persistAttribute:attribute survey:survey error:e];
         }
     }
@@ -205,6 +199,7 @@
     if (![context save:&e]) {
         NSLog(@"Error saving Survey: %@", [e localizedDescription]);
     }
+    return survey;
 }
 
 -(void)persistRecordProperty:(NSDictionary*)recordProperty survey:(Survey*)survey error:(NSError*)e {
@@ -280,8 +275,9 @@
 
 -(void)persistSpecies:(NSDictionary*)speciesDict {
 
-    
-    NSLog(@"Finding species with id=%@", [speciesDict objectForKey:@"commonName"]);
+    //static int speciesCount;
+    //NSLog(@"Saved %d speies",speciesCount++);
+    //NSLog(@"Finding species with id=%@", [speciesDict objectForKey:@"commonName"]);
     
     // Check if we have a species with the same id already in the database.
     Species *species = [self findSpeciesByTaxonId:[speciesDict objectForKey:@"server_id"]];
@@ -298,7 +294,7 @@
     
     // save the image to local storage
     NSString* imageURL = [NSString stringWithFormat:@"%@%@%@", [preferences getFieldDataURL], kDownloadUrl,thumbnailPath];
-    NSLog(@"Getting image from URL: %@", imageURL);
+    //NSLog(@"Getting image from URL: %@", imageURL);
     UIImage* image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imageURL]]];
     
     NSString* docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -308,7 +304,6 @@
 	[data writeToFile:pngFilePath atomically:YES];
     
     species.imageFileName = pngFilePath;
-    
 	
     NSError *error;
     if (![context save:&error]) {
@@ -334,6 +329,19 @@
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Species" inManagedObjectContext:context];
     [fetchRequest setEntity:entity];
+    NSError *error;
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    
+    return fetchedObjects;
+}
+
+-(NSArray*)loadSpecies:(NSArray*)speciesIds {
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Species" inManagedObjectContext:context];
+    [fetchRequest setEntity:entity];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"taxonId in %@", speciesIds];
+    [fetchRequest setPredicate:predicate];
     NSError *error;
     NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
     

@@ -179,7 +179,7 @@
 
 -(void)displaySpeciesList
 {
-    SpeciesSelectionViewController *speciesViewController = [[SpeciesSelectionViewController alloc] initWithStyle:UITableViewStylePlain selectedSpecies:speciesCell.species];
+    SpeciesSelectionViewController *speciesViewController = [[SpeciesSelectionViewController alloc] initWithStyle:UITableViewStylePlain selectedSpecies:speciesCell.species speciesIds:survey.speciesIds];
     speciesViewController.delegate = self;
     
     UINavigationController *navigationBar = [[UINavigationController alloc] initWithRootViewController:speciesViewController];

@@ -27,6 +27,18 @@
     return self;
 }
 
+- (id)initWithStyle:(UITableViewStyle)style speciesIds:(NSArray*)speciesIds
+{
+    self = [super initWithStyle:style];
+    if (self) {
+        fieldDataService = [[FieldDataService alloc]init];
+        speciesList = [fieldDataService loadSpecies:speciesIds];
+        
+    }
+    return self;
+}
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];

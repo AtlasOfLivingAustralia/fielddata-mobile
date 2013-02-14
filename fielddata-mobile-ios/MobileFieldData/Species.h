@@ -12,9 +12,10 @@
 
 @interface Species : NSManagedObject
 
-@property (nonatomic, retain) NSString * commonName;
-@property (nonatomic, retain) NSString * imageFileName;
-@property (nonatomic, retain) NSString * scientificName;
-@property (nonatomic, retain) NSNumber * taxonId;
+@property (nonatomic, strong) NSString * commonName;
+@property (nonatomic, strong) NSString * imageFileName;
+@property (nonatomic, strong) NSString * scientificName;
+@property (nonatomic, strong) NSNumber * taxonId;
+
 
 @end

@@ -19,9 +19,14 @@
 
 @synthesize selectedSpecies, delegate;
 
-- (id)initWithStyle:(UITableViewStyle)style selectedSpecies:(Species*)intialSpeciesSelection;
+- (id)initWithStyle:(UITableViewStyle)style selectedSpecies:(Species*)intialSpeciesSelection speciesIds:(NSArray*)speciesIds
 {
-    self = [super initWithStyle:style];
+    if (speciesIds && speciesIds.count > 0) {
+        self = [super initWithStyle:style speciesIds:speciesIds];
+    }
+    else {
+        self = [super initWithStyle:style];
+    }
     if (self) {
         
         selectedRow = NSNotFound;

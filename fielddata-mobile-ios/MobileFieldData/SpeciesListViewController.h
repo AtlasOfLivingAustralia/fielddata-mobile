@@ -17,4 +17,6 @@
     
 }
 
+-(id)initWithStyle:(UITableViewStyle)style speciesIds:(NSArray*)speciesIds;
+
 @end

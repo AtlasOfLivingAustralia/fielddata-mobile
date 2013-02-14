@@ -23,6 +23,7 @@
 @dynamic attributes;
 @dynamic zoom;
 @dynamic order;
+@dynamic speciesIds;
 
 -(SurveyAttribute *)getAttributeByType:(NSString *)attributeType
 {

@@ -76,7 +76,7 @@
         doneButton.enabled = NO;
     }
     else {
-        selectedRow = [speciesList indexOfObject:species];
+        selectedRow = [speciesLoader indexPathForObject:species].row;
         doneButton.enabled = YES;
     }
 
@@ -118,7 +118,7 @@
         self.selectedSpecies = nil;
     }
     else {
-        self.selectedSpecies = [speciesList objectAtIndex:indexPath.row];
+        self.selectedSpecies = [speciesLoader objectAtIndexPath:indexPath];
     }
     
     [self.tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationFade];

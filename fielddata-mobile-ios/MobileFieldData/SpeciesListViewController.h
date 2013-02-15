@@ -13,7 +13,7 @@
     
     @protected
     FieldDataService* fieldDataService;
-    NSArray* speciesList;
+    NSFetchedResultsController* speciesLoader;
     
 }
 

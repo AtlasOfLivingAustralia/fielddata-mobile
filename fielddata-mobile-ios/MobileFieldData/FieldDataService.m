@@ -79,15 +79,12 @@
         
             [self persistSurvey:survey error:error];
         
+            if (error != NULL) {
+                [delegate downloadSurveyDetailsSuccessful:NO survey:nil];
+            }
             // Download the species associated with the Survey.
             [self downloadSpeciesForSurvey:surveyId downloadedSurveys:downloadedSurveys];
             
-            
-            if (error == NULL) {
-                [delegate downloadSurveyDetailsSuccessful:YES survey:survey];
-            } else {
-                [delegate downloadSurveyDetailsSuccessful:NO survey:nil];
-            }
         }
         else {
             [delegate downloadSurveyDetailsSuccessful:NO survey:nil];
@@ -103,43 +100,59 @@
 
 -(void)downloadSpeciesForSurvey:(NSString*)surveyId downloadedSurveys:(NSArray*)downloadedSurveys {
     
-    NSInteger maxResults = 50;
-    __block NSInteger first = 0;
-    __block NSInteger count = 0;
+    [self downloadSpeciesForSurvey:surveyId downloadedSurveys:downloadedSurveys startFrom:0 batchSize:50];
+}
+
+-(void)downloadSpeciesForSurvey:(NSString*)surveyId downloadedSurveys:(NSArray*)downloadedSurveys startFrom:(NSInteger)first batchSize:(NSInteger)batchSize {
     
-    do {
-        NSString* url = [preferences getFieldDataURL];
-        
-        RFRequest *r = [RFRequest requestWithURL:[NSURL URLWithString:url] type:RFRequestMethodGet
-                          resourcePathComponents:@"species", @"speciesForSurvey", nil];
-        
-        [r addParam:[preferences getFieldDataSessionKey] forKey:@"ident"];
-        [r addParam:surveyId forKey:@"surveyId"];
-        [r addParam:[[NSNumber numberWithInteger:first] stringValue] forKey:@"first"];
-        [r addParam:[[NSNumber numberWithInteger:maxResults] stringValue] forKey:@"maxResults"];
-        
-        for (NSString *downloadedSurvey in downloadedSurveys) {
-            [r addParam:downloadedSurvey forKey:@"surveysOnDevice"];
-        }
-        [RFService execRequest:r completion:^(RFResponse *response){
-            if (response.httpCode == 200) {
-                NSError *error;
-                NSDictionary* speciesResponse =  [NSJSONSerialization JSONObjectWithData:response.dataValue
-                                                                        options:kNilOptions error:&error];
-                
+    NSString* url = [preferences getFieldDataURL];
+    
+    RFRequest *r = [RFRequest requestWithURL:[NSURL URLWithString:url] type:RFRequestMethodGet
+                      resourcePathComponents:@"species", @"speciesForSurvey", nil];
+    
+    [r addParam:[preferences getFieldDataSessionKey] forKey:@"ident"];
+    [r addParam:surveyId forKey:@"surveyId"];
+    [r addParam:[[NSNumber numberWithInteger:first] stringValue] forKey:@"first"];
+    [r addParam:[[NSNumber numberWithInteger:batchSize] stringValue] forKey:@"maxResults"];
+    
+    for (NSString *downloadedSurvey in downloadedSurveys) {
+        [r addParam:downloadedSurvey forKey:@"surveysOnDevice"];
+    }
+    [RFService execRequest:r completion:^(RFResponse *response){
+        if (response.httpCode == 200) {
+            NSError *error;
+            NSDictionary* speciesResponse =  [NSJSONSerialization JSONObjectWithData:response.dataValue
+                                                                             options:kNilOptions error:&error];
+            if (error != NULL) {
+                int count = 0;
                 for (NSDictionary* speciesDict in [speciesResponse objectForKey:@"list"]) {
                     [self persistSpecies:speciesDict];
                     count++;
+                }
+                NSLog(@"downloaded %d species from request %@", count, [r URL]);
+         
+                if (count == batchSize) {
+                    // There are more species, download the next batch.
+                    [self downloadSpeciesForSurvey:surveyId downloadedSurveys:downloadedSurveys startFrom:(first+batchSize) batchSize:batchSize];
+                }
+                else {
+                    if (error == NULL) {
+                        // The survey itself is not used by the callback so we can get away with nil.
+                        [delegate downloadSurveyDetailsSuccessful:YES survey:nil];
+                    }
                 }
             }
             else {
                 [delegate downloadSurveyDetailsSuccessful:NO survey:nil];
             }
-            first+=maxResults;
-        }];
-    }
-    while (count == maxResults);
+        }
+        else {
+            [delegate downloadSurveyDetailsSuccessful:NO survey:nil];
+        }
+    }];
+    
 }
+
 
 -(Survey*)persistSurvey:(NSDictionary*)surveyDict error:(NSError*)e {
     
@@ -324,29 +337,34 @@
     return fetchedObjects;
 }
 
--(NSArray*)loadSpecies {
+-(NSFetchedResultsController*)loadSpecies {
     
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Species" inManagedObjectContext:context];
-    [fetchRequest setEntity:entity];
-    NSError *error;
-    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
-    
-    return fetchedObjects;
+    return [self loadSpecies:nil];
 }
 
--(NSArray*)loadSpecies:(NSArray*)speciesIds {
+-(NSFetchedResultsController*)loadSpecies:(NSArray*)speciesIds {
+    
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Species" inManagedObjectContext:context];
     [fetchRequest setEntity:entity];
-    
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"taxonId in %@", speciesIds];
-    [fetchRequest setPredicate:predicate];
-    NSError *error;
-    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
-    
-    return fetchedObjects;
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"taxonId" ascending:YES];
+    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+    [fetchRequest setSortDescriptors:sortDescriptors];
+
+    if (speciesIds != nil) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"taxonId in %@", speciesIds];
+        [fetchRequest setPredicate:predicate];
+    }
+    NSFetchedResultsController *speciesFetchController = [[NSFetchedResultsController alloc]
+            initWithFetchRequest:fetchRequest
+            managedObjectContext:context
+            sectionNameKeyPath:nil
+            cacheName:nil];
+    NSError *error;;
+    [speciesFetchController performFetch:&error];
+    return speciesFetchController;
 }
+
 
 -(Species*)findSpeciesByCommonName:(NSString*)commonName {
     return [self findSpeciesByProperty:@"commonName" propertyValue:commonName];
@@ -360,7 +378,7 @@
 {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Species" inManagedObjectContext:context];
-    [fetchRequest setEntity:entity];
+    [fetchRequest setEntity:entity]; 
     
     NSString* precidateString = [NSString stringWithFormat:@"%@ = %%@", propertyName];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:precidateString, propertyValue];

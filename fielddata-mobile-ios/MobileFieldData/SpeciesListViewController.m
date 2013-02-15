@@ -21,7 +21,7 @@
     self = [super initWithStyle:style];
     if (self) {
         fieldDataService = [[FieldDataService alloc]init];
-        speciesList = [fieldDataService loadSpecies];
+        speciesLoader = [fieldDataService loadSpecies];
                 
     }
     return self;
@@ -32,7 +32,7 @@
     self = [super initWithStyle:style];
     if (self) {
         fieldDataService = [[FieldDataService alloc]init];
-        speciesList = [fieldDataService loadSpecies:speciesIds];
+        speciesLoader = [fieldDataService loadSpecies:speciesIds];
         
     }
     return self;
@@ -49,8 +49,7 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -58,19 +57,20 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    // Return the number of sections.
-    return 1;
+    return [[speciesLoader sections] count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 
-    // Return the number of rows in the section.
-    return speciesList.count;
+    id <NSFetchedResultsSectionInfo> sectionInfo = [[speciesLoader sections] objectAtIndex:section];
+    return [sectionInfo numberOfObjects];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -86,7 +86,7 @@
     }
     
     // Configure the cell...
-    Species* species = [speciesList objectAtIndex:indexPath.row];
+    Species* species = [speciesLoader objectAtIndexPath:indexPath];
     cell.species = species;
     return cell;
 }

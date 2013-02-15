@@ -145,7 +145,7 @@
         [self openLoginPage];
     }
     
-    self.title = [preferences getPortalName];
+    self.title = @"NRM Plus";
     FieldDataService* fieldDataService = [[FieldDataService alloc] init];
     surveys = [fieldDataService loadSurveys];
     tableHeader.text = [NSString stringWithFormat:@"Welcome %@", preferences.getUsersName];

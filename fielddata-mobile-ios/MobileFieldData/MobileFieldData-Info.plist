@@ -15,8 +15,8 @@
 			<key>CFBundleIconFiles</key>
 			<array>
 				<string>Default@2x.png</string>
-				<string>Nrmplus.png</string>
-				<string>Nrmplus@2x.png</string>
+				<string>iOS App Icon 57 x 57.png</string>
+				<string>iOS App Icon 114 x 114.png</string>
 			</array>
 		</dict>
 	</dict>

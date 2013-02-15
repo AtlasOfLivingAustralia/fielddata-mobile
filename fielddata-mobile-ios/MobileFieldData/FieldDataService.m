@@ -123,7 +123,7 @@
             NSError *error;
             NSDictionary* speciesResponse =  [NSJSONSerialization JSONObjectWithData:response.dataValue
                                                                              options:kNilOptions error:&error];
-            if (error != NULL) {
+            if (!error) {
                 int count = 0;
                 for (NSDictionary* speciesDict in [speciesResponse objectForKey:@"list"]) {
                     [self persistSpecies:speciesDict];
@@ -136,7 +136,7 @@
                     [self downloadSpeciesForSurvey:surveyId downloadedSurveys:downloadedSurveys startFrom:(first+batchSize) batchSize:batchSize];
                 }
                 else {
-                    if (error == NULL) {
+                    if (!error) {
                         // The survey itself is not used by the callback so we can get away with nil.
                         [delegate downloadSurveyDetailsSuccessful:YES survey:nil];
                     }

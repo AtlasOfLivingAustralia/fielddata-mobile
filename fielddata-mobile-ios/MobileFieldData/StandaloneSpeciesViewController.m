@@ -9,7 +9,7 @@
 #import "StandaloneSpeciesViewController.h"
 
 @interface StandaloneSpeciesViewController () {
-    Preferences *prefereces;
+    Preferences *preferences;
 }
 @end
 
@@ -19,7 +19,7 @@
 {
     self = [super initWithStyle:style];
     if (self) {
-        prefereces = [[Preferences alloc] init];
+        preferences = [[Preferences alloc] init];
     }
     return self;
 }
@@ -37,9 +37,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
-    
-    NSNumber *speciesId = [NSNumber numberWithInt:11831];
-    NSString *urlString = [NSString stringWithFormat:@"%@survey/fieldguide/%@", [prefereces getFieldDataURL], speciesId];
+ 
+    Species *species = [speciesLoader objectAtIndexPath:indexPath];
+    NSString *urlString = [NSString stringWithFormat:@"%@survey/fieldguide/%@", [preferences getFieldDataURL], species.taxonId];
     
     NSURL *url = [NSURL URLWithString:urlString];
     [[UIApplication sharedApplication] openURL:url];

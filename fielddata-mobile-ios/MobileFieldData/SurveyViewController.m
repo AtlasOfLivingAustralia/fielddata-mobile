@@ -161,7 +161,7 @@
 
 -(void)displaySelectionList:(NSIndexPath*)indexPath
 {
-    SurveyAttribute* attribute = [attributes objectAtIndex:indexPath.row];
+    SurveyAttribute* attribute = [attributes objectAtIndex:indexPath.row-1];
     BOOL multiSelect = [attribute.typeCode isEqualToString:kMultiCheckbox] ? YES : NO;
     BOOL grouped = [attribute.question isEqualToString:@"Treatment method *"];
     NSArray *values = [[NSArray alloc] initWithArray:attribute.options.allObjects];
@@ -206,13 +206,16 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return attributes.count;
+    return attributes.count+1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.row == 0) {
+        return [self surveyNameCell:tableView];
+    }
     
-    SurveyAttribute* attribute = [attributes objectAtIndex:indexPath.row];
+    SurveyAttribute* attribute = [attributes objectAtIndex:indexPath.row-1];
     NSString *CellIdentifier = [attribute.weight stringValue];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
@@ -320,9 +323,40 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row == 0) {
+        UIColor *color = [[UIColor alloc] initWithRed:206.0/255.0f green:243.0/255.0f blue:1.0f alpha:1.0f];
+        cell.backgroundColor =  color;
+    }
+}
+
+- (UITableViewCell *)surveyNameCell:(UITableView *)tableView
+{
+    static NSString *cellIdentifier = @"SurveyDescription";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.textLabel.adjustsFontSizeToFitWidth = YES;
+        cell.textLabel.text = survey.name;
+
+        cell.detailTextLabel.text = survey.surveyDescription;
+        cell.detailTextLabel.numberOfLines = 2;
+        
+        cell.backgroundColor = [UIColor colorWithRed:206 green:243 blue:255 alpha:0];
+        
+        
+    }
+    return cell;
+}
+
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    SurveyAttribute* attribute = [attributes objectAtIndex:indexPath.row];
+    if (indexPath.row == 0) {
+        return 75;
+    }
+    SurveyAttribute* attribute = [attributes objectAtIndex:indexPath.row-1];
     if ([attribute.typeCode isEqualToString:kMultiSelect]) {
         return 200;
     } else if ([attribute.typeCode isEqualToString:kImage]) {
@@ -352,7 +386,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    SurveyAttribute* attribute = [attributes objectAtIndex:indexPath.row];
+    SurveyAttribute* attribute = [attributes objectAtIndex:indexPath.row-1];
     if ([attribute.typeCode isEqualToString:kStringWithValidValues] ||
         [attribute.typeCode isEqualToString:kMultiCheckbox]) {
         [self displaySelectionList:indexPath];
@@ -364,12 +398,14 @@
 
 - (NSIndexPath *)tableView:(UITableView *)tv willSelectRowAtIndexPath:(NSIndexPath *)path
 {
-    SurveyAttribute* attribute = [attributes objectAtIndex:path.row];
-    if ([attribute.typeCode isEqualToString:kStringWithValidValues] ||
-        [attribute.typeCode isEqualToString:kMultiCheckbox] ||
-        [attribute.typeCode isEqualToString:kWhen] ||
-        [attribute.typeCode isEqualToString:kSpeciesRP]) {
-        return path;
+    if (path.row > 0) {
+        SurveyAttribute* attribute = [attributes objectAtIndex:path.row-1];
+        if ([attribute.typeCode isEqualToString:kStringWithValidValues] ||
+            [attribute.typeCode isEqualToString:kMultiCheckbox] ||
+            [attribute.typeCode isEqualToString:kWhen] ||
+            [attribute.typeCode isEqualToString:kSpeciesRP]) {
+            return path;
+        }
     }
     // Deselect any current selection (this is to effectively cancel a current edit of a date field)
     [tv deselectRowAtIndexPath:[tv indexPathForSelectedRow] animated:YES];

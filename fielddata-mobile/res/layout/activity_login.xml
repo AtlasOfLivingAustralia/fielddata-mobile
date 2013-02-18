@@ -83,6 +83,7 @@
         android:layout_below="@id/loginBtn"
         android:layout_marginTop="15dp"
         android:text="@string/registrationMessage"
+        android:visibility="invisible"
         />
     
     <Button
@@ -92,6 +93,7 @@
         android:layout_below="@id/registrationLbl"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
-        android:text="@string/register" />
+        android:text="@string/register"
+        android:visibility="invisible" />
     
 </RelativeLayout>

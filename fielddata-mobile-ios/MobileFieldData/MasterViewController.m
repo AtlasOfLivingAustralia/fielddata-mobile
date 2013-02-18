@@ -8,7 +8,7 @@
 
 #import "MasterViewController.h"
 #import "LoginViewController.h"
-#import "SpeciesListViewController.h"
+#import "StandaloneSpeciesViewController.h"
 #import "FieldDataService.h"
 #import "SurveyViewController.h"
 #import "SavedRecordsViewController.h"
@@ -230,14 +230,16 @@
 
 - (void)openSpeciesPage
 {
-    SpeciesListViewController *speciesListViewController = [[SpeciesListViewController alloc] initWithStyle:UITableViewStylePlain];
+    StandaloneSpeciesViewController *speciesListViewController = [[StandaloneSpeciesViewController alloc] initWithStyle:UITableViewStylePlain];
     [self.navigationController pushViewController:speciesListViewController animated:YES];
 }
 
 -(void)openWeblink:(NSIndexPath *)indexPath
 {
     [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
-    NSURL *url = [NSURL URLWithString:@"http://root.ala.org.au/bdrs-core/koalacount/map/mySightings.htm"];
+   
+    NSString *urlString = [NSString stringWithFormat:@"http://root.ala.org.au/bdrs-core/condamine/review/sightings/advancedReview.htm?u=%@", [preferences getUserId]];
+    NSURL *url = [NSURL URLWithString:urlString];
     [[UIApplication sharedApplication] openURL:url];
 }
 

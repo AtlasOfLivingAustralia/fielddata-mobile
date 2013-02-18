@@ -100,7 +100,7 @@ public class FieldDataService {
 					start = System.currentTimeMillis();
 					speciesList = webServiceClient.downloadSpecies(survey, surveysWithSpecies, first, maxResults);
 					end = System.currentTimeMillis();
-					Log.i("FieldDataService", "downloadSpecies took: "+(end-start));
+					Log.i("FieldDataService", "downloadSpecies took: "+(end-start)+" for "+speciesList.size()+" species");
 					
 					StorageManager manager = new StorageManager(ctx);
 					
@@ -128,10 +128,10 @@ public class FieldDataService {
 					Log.i("FieldDataService", "save and download images took: "+(end-start));
 					
 					first += maxResults;
-					surveysWithSpecies.add(survey.server_id);
+					
 				}
 				while (speciesList.size() == maxResults); 
-				
+				surveysWithSpecies.add(survey.server_id);
 				
 			}
 

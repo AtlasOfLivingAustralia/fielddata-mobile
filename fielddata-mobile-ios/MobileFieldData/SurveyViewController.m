@@ -260,7 +260,7 @@
             ImageCell* imageCell = [[ImageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
             imageCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             imageCell.parentController = self;
-            [imageCell setImage:[loadedValues objectForKey:attribute.weight]];
+            [imageCell updateImage:[loadedValues objectForKey:attribute.weight]];
             cell = imageCell;
             [inputFields setObject:imageCell.filePath forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {

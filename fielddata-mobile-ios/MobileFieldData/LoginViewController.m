@@ -124,6 +124,7 @@
         NSString *name = [NSString stringWithFormat:@"%@ %@",
                           [user valueForKey:@"firstName"],
                           [user valueForKey:@"lastName"]];
+        NSNumber *userId = [user valueForKey:@"server_id"];
         
         if (ident == NULL) {
             [self hideProgressIndicator];
@@ -131,6 +132,7 @@
         } else {
             [preferences setFieldDataSessionKey:ident];
             [preferences setUsersName:name];
+            [preferences setUserId:userId];
             
             // delete all the existing entities
             [fieldDataService deleteAllEntities:@"Record"];

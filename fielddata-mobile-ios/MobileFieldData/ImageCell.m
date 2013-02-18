@@ -57,7 +57,7 @@
 }
 
 
-- (void)setImage:(NSString*)imagePath
+- (void)updateImage:(NSString*)imagePath
 {
     if (imagePath != NULL && ![imagePath isEqualToString:@""]) {
         [cameraImage setImage:[UIImage imageWithContentsOfFile:imagePath]];
@@ -121,13 +121,13 @@
     image = nil;
     
     if (orientation == UIImageOrientationUp) {
-        cameraImage.frame = CGRectMake(10, 30, 96, 72);
+        cameraImage.frame = CGRectMake(10, 30, 48, 48);
     } else {
-        cameraImage.frame = CGRectMake(10, 30, 72, 96);
+        cameraImage.frame = CGRectMake(10, 30, 48, 48);
     }
     
     // reload the image
-    [self setImage:filePath];
+    [self updateImage:filePath];
     
     //[cameraImage setImage:image];
     

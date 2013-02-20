@@ -10,7 +10,7 @@
 
 @implementation SurveyInputCell
 
-@synthesize label, value;
+@synthesize label;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

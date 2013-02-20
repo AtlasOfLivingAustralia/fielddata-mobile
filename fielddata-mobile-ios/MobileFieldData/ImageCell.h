@@ -7,12 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SurveyInputCell.h"
 
-@interface ImageCell : UITableViewCell <UIImagePickerControllerDelegate, UINavigationControllerDelegate> {
+@interface ImageCell : SurveyInputCell <UIImagePickerControllerDelegate, UINavigationControllerDelegate> {
     
 }
-
-@property (nonatomic, retain) UILabel* label;
 @property (nonatomic, retain) UIButton* startCamera;
 @property (nonatomic, retain) UIImageView* cameraImage;
 @property (nonatomic, retain) NSMutableString* filePath;

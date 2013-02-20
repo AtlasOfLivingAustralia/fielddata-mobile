@@ -7,12 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SurveyInputCell.h"
 
-@interface SingleSelectCell : UITableViewCell <UIPickerViewDelegate, UIPickerViewDataSource> {
+@interface SingleSelectCell : SurveyInputCell <UIPickerViewDelegate, UIPickerViewDataSource> {
        
 }
 
-@property (nonatomic, retain) UILabel* label;
 @property (nonatomic, retain) UIPickerView* picker;
 @property (nonatomic, retain) NSArray* options;
 @property (nonatomic, retain) NSMutableString* value;

@@ -10,7 +10,7 @@
 
 @implementation TextInputCell
 
-@synthesize label, inputField, inputView;
+@synthesize label, inputField;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

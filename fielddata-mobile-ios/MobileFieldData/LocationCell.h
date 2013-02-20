@@ -9,15 +9,14 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import "MBProgressHUD.h"
-@class SurveyViewController;
-
+#import "SurveyInputCell.h"
 
 @protocol LocationCellDelegate
 -(void)showMap;
 -(void)locationFound:(CLLocation*)location;
 @end
 
-@interface LocationCell : UITableViewCell <CLLocationManagerDelegate> {
+@interface LocationCell : SurveyInputCell <CLLocationManagerDelegate> {
     
     @private
     NSTimer *timer;
@@ -26,7 +25,6 @@
     MBProgressHUD *progressIndicator;
 }
 
-@property (nonatomic, retain) UILabel* label;
 @property (nonatomic, retain) UILabel* latitude;
 @property (nonatomic, retain) UILabel* longitude;
 @property (nonatomic, retain) UILabel* accuracy;

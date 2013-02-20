@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SurveyInputCell.h"
+
 @class Species;
 
-@interface LabelledSpeciesCell : UITableViewCell
+@interface LabelledSpeciesCell : SurveyInputCell
 
-@property (strong, nonatomic) UILabel *label;
 @property (strong, nonatomic) UIImageView *imageView;
 @property (strong, nonatomic) Species* species;
 @property (strong, nonatomic) NSMutableString* value;

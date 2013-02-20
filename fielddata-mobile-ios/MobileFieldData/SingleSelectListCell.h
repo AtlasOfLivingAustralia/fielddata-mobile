@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SurveyInputCell.h"
 
-@interface SingleSelectListCell : UITableViewCell
+@interface SingleSelectListCell : SurveyInputCell
 
-@property (nonatomic, retain) UILabel* label;
 @property (nonatomic, retain) UILabel* valueLabel;
 @property (nonatomic, retain) NSArray* options;
 @property (nonatomic, retain) NSMutableString* value;

@@ -7,12 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SurveyInputCell.h"
 
-@interface DateCell : UITableViewCell {
+@interface DateCell : SurveyInputCell {
 
     
 }
-@property (strong) UILabel *label;
 @property (readonly, strong) NSMutableString* value;
 
 -(void)setDate:(NSString*)dateString;

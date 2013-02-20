@@ -26,6 +26,7 @@
     NSArray* attributes;
     NSMutableDictionary* inputFields;
     NSMutableDictionary* loadedValues;
+    NSMutableArray* invalidAttributes;
     MBProgressHUD *progressIndicator;
 }
 

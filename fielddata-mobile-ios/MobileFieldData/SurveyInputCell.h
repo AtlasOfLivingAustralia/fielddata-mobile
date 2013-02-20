@@ -10,7 +10,6 @@
 
 @interface SurveyInputCell : UITableViewCell
 
-@property (nonatomic, retain) UILabel* label;
-@property (nonatomic, retain) NSString *value;
+@property (nonatomic, strong) UILabel* label;
 
 @end

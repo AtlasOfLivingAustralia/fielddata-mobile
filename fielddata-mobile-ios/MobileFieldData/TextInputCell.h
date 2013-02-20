@@ -9,9 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SurveyInputCell.h"
 
-@interface TextInputCell : UITableViewCell <UITextFieldDelegate>
+@interface TextInputCell : SurveyInputCell <UITextFieldDelegate>
 
-@property (nonatomic, retain) UILabel* label;
 @property (nonatomic, retain) UITextField *inputField;
-@property (nonatomic, retain) UITextView *inputView;
 @end

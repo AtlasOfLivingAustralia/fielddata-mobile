@@ -7,12 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SurveyInputCell.h"
 
-@interface SpeciesCell : UITableViewCell <UIPickerViewDelegate, UIPickerViewDataSource> {
+
+@interface SpeciesCell : SurveyInputCell <UIPickerViewDelegate, UIPickerViewDataSource> {
     
 }
 
-@property (nonatomic, retain) UILabel* label;
 @property (nonatomic, retain) UIPickerView* picker;
 @property (nonatomic, retain) UIImageView* speciesImage;
 @property (nonatomic, retain) NSArray* species;

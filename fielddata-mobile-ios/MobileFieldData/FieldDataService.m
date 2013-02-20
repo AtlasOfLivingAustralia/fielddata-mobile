@@ -434,7 +434,8 @@
                    [attribute.typeCode isEqualToString:kStringWithValidValues] ||
                    [attribute.typeCode isEqualToString:kSpeciesRP] ||
                    [attribute.typeCode isEqualToString:kPoint] ||
-                   [attribute.typeCode isEqualToString:kWhen]) {
+                   [attribute.typeCode isEqualToString:kWhen] ||
+                   [attribute.typeCode isEqualToString:kDate]) {
             
             NSMutableString* value = [inputFields objectForKey:attribute.weight];
             NSLog(@"%@ %@", attribute.question, value);
@@ -492,7 +493,8 @@
                    [recordAttribute.surveyAttribute.typeCode isEqualToString:kStringWithValidValues] ||
                    [recordAttribute.surveyAttribute.typeCode isEqualToString:kSpeciesRP] ||
                    [recordAttribute.surveyAttribute.typeCode isEqualToString:kPoint] ||
-                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kWhen]) {
+                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kWhen] ||
+                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kDate]) {
             
             NSMutableString* value = [inputFields objectForKey:recordAttribute.surveyAttribute.weight];
             if (![value isEqualToString:@""]) {
@@ -583,7 +585,7 @@
                 
                 if ([att.surveyAttribute.typeCode isEqualToString:kImage]) {
                     NSString* imageUrl = att.value;
-                    if (imageUrl != NULL && ![imageUrl isEqualToString:@""]) {
+                    if (imageUrl != nil && ![imageUrl isEqualToString:@""]) {
                         
                         @autoreleasepool {
                         
@@ -598,12 +600,16 @@
                             [attributeValues addObject:attributeValue];
                         }
                     }
-                } else {
-                    if (att.value != NULL) {
+                } else if ([att.surveyAttribute.typeCode isEqualToString:kDate]) {
+                    if (att.value != nil) {
+                        [attributeValue setObject:[self formatDateStringForUpload:att.value] forKey:@"value"];
+                        [attributeValues addObject:attributeValue];
+                    }
+                }
+                else {
+                    if (att.value != nil) {
                         [attributeValue setObject:att.value forKey:@"value"];
                         [attributeValues addObject:attributeValue];
-                    } else {
-                        //[attributeValue setObject:@"NA" forKey:@"value"];
                     }
                 }
                 //[attributeValues addObject:attributeValue];
@@ -652,11 +658,8 @@
     if (!date) {
         date = [NSDate date];
     }
-    // get the long date
-    NSNumber *nowDouble = [NSNumber numberWithDouble: 1000.0 * [date timeIntervalSince1970]];
-    NSString *nowString = [NSString stringWithFormat:@"%.0f", nowDouble.doubleValue];
-    
-    [uploadDict setObject:nowString forKey:@"when"];
+        
+    [uploadDict setObject:[self formatDateForUpload:date] forKey:@"when"];
     
     [uploadDict setObject: [NSNumber numberWithInteger:[number.value integerValue]] forKey:@"number"];
     
@@ -719,6 +722,16 @@
     }];
 }
 
+-(NSString*)formatDateStringForUpload:(NSString*)dateString
+{
+    return [self formatDateForUpload:[Record stringToDate:dateString]];
+}
                           
+-(NSString*)formatDateForUpload:(NSDate*)date
+{
+    // get the long date
+    NSNumber *millisSince1970 = [NSNumber numberWithDouble: 1000.0 * [date timeIntervalSince1970]];
+    return [NSString stringWithFormat:@"%lld", [millisSince1970 longLongValue]];
 
+}
 @end

@@ -156,7 +156,7 @@
     } else {
         
         numSurveys = [surveys count];
-        
+        [self updateProgress];
         NSMutableArray *downloadedSurveys = [[NSMutableArray alloc] init];
         for (NSDictionary* survey in surveys) {
          
@@ -180,9 +180,18 @@
     if (surveyCount >= numSurveys) {
         [self hideProgressIndicator];
         [self dismissModalViewControllerAnimated:YES];
-        //[self.navigationController popViewControllerAnimated:YES];
+    }
+    else {
+        [self updateProgress];
     }
 }
+
+-(void)updateProgress
+{
+    progressIndicator.labelText = [NSString stringWithFormat:@"Downloading survey %d of %d", surveyCount+1, numSurveys];
+
+}
+
 
 -(void)showProgressIndicator
 {

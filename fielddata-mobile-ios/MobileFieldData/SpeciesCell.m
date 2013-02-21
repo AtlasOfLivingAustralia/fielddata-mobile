@@ -12,7 +12,7 @@
 
 @implementation SpeciesCell
 
-@synthesize label, picker, speciesImage, species, value;
+@synthesize picker, speciesImage, species, value;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier species:(NSArray*)s
 {
@@ -30,11 +30,6 @@
         
         UIImage* image = [UIImage imageWithContentsOfFile:firstSpecies.imageFileName];
         [speciesImage setImage:image];
-        
-        label = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, self.bounds.size.width-20, 24)];
-        label.font = [UIFont boldSystemFontOfSize:12.0];
-        label.numberOfLines = 0;
-        [self.contentView addSubview:label];
         
         picker = [[UIPickerView alloc]init];
         picker.frame = CGRectMake(110, 14, 200, 162.0);

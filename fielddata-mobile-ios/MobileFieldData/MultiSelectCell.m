@@ -11,17 +11,12 @@
 
 @implementation MultiSelectCell
 
-@synthesize label, picker, options, value;
+@synthesize picker, options, value;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier options:(NSArray*)o
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
-        label = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, self.bounds.size.width-20, 50)];
-        label.font = [UIFont boldSystemFontOfSize:12.0];
-        label.numberOfLines = 0;
-        [self.contentView addSubview:label];
         
         //picker = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 50, self.bounds.size.width, 100)];
         picker = [[UIPickerView alloc]init];

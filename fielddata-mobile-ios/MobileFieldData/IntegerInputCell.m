@@ -10,17 +10,12 @@
 
 @implementation IntegerInputCell
 
-@synthesize label, inputField;
+@synthesize inputField;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
-        label = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, self.bounds.size.width-20, 50)];
-        label.font = [UIFont boldSystemFontOfSize:12.0];
-        label.numberOfLines = 0;
-        [self.contentView addSubview:label];
         
         inputField = [[UITextField alloc] initWithFrame:CGRectMake(10, 50, 100, 28)];
         inputField.borderStyle = UITextBorderStyleRoundedRect;

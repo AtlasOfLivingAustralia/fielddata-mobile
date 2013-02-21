@@ -12,18 +12,13 @@
 
 @implementation LocationCell
 
-@synthesize label, startGPS, latitude, longitude, accuracy, value, showMap, delegate;
+@synthesize startGPS, latitude, longitude, accuracy, value, showMap, delegate;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
-        label = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, self.bounds.size.width-20, 24)];
-        label.font = [UIFont boldSystemFontOfSize:12.0];
-        label.numberOfLines = 0;
-        label.text = @"Location *";
-        [self.contentView addSubview:label];
+        self.label.text = @"Location *";
         
         latitude = [[UILabel alloc] initWithFrame:CGRectMake(10, 24, 200, 24)];
         latitude.font = [UIFont systemFontOfSize:12.0];

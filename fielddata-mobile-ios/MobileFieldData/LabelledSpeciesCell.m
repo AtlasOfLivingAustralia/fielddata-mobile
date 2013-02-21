@@ -18,7 +18,7 @@
 
 @implementation LabelledSpeciesCell
 
-@synthesize imageView, species, label, value;
+@synthesize imageView, species, value;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -29,10 +29,6 @@
         
         self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
-        label = [[UILabel alloc] initWithFrame:CGRectMake(10, 3, self.bounds.size.width-20, 15)];
-        label.font = [UIFont boldSystemFontOfSize:12.0];
-        [self.contentView addSubview:label];
-        
         imageView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 23, 40, 40)];
         [self addSubview:imageView];
         

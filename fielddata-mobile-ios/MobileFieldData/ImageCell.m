@@ -14,7 +14,7 @@
 
 @implementation ImageCell
 
-@synthesize label, startCamera, cameraImage, filePath, parentController;
+@synthesize startCamera, cameraImage, filePath, parentController;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -30,12 +30,6 @@
         UIImage *cellImage = nil; //[UIImage imageNamed:@"image_not_available.png"];
         [cameraImage setImage:cellImage];
         
-        label = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, self.bounds.size.width-20, 24)];
-        label.font = [UIFont boldSystemFontOfSize:12.0];
-        label.numberOfLines = 0;
-        
-        [self.contentView addSubview:label];
-    
         UIImage *cameraBtn = [UIImage imageNamed:@"camera.png"];
         startCamera = [UIButton buttonWithType:UIButtonTypeCustom];
         [startCamera addTarget:self action:@selector(showCameraUI:) forControlEvents:UIControlEventTouchUpInside];

@@ -11,17 +11,12 @@
 
 @implementation SingleSelectCell
 
-@synthesize label, picker, options, value;
+@synthesize picker, options, value;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier options:(NSArray*)o
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
-        label = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, self.bounds.size.width-20, 50)];
-        label.font = [UIFont boldSystemFontOfSize:12.0];
-        label.numberOfLines = 0;
-        [self.contentView addSubview:label];
         
         picker = [[UIPickerView alloc]init];
         picker.frame = CGRectMake(0, 40, self.bounds.size.width, 162.0);
@@ -38,8 +33,6 @@
         options = [o sortedArrayUsingDescriptors:sortDescriptors];
         
         value = [[NSMutableString alloc]init];
-        //SurveyAttributeOption* option = [options objectAtIndex:0];
-        //[value setString:option.value];
     }
     return self;
 }

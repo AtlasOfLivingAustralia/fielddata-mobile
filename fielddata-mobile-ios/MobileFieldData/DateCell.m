@@ -13,18 +13,13 @@
 
 @implementation DateCell
 
-@synthesize label, dateLabel;
+@synthesize dateLabel;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         _value = [[NSMutableString alloc]init];
-        
-        label = [[UILabel alloc] initWithFrame:CGRectMake(10, 3, self.bounds.size.width-20, 15)];
-        label.font = [UIFont boldSystemFontOfSize:12.0];
-        label.numberOfLines = 0;
-        [self.contentView addSubview:label];
         
         dateLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, self.bounds.size.width-35, 30)];
         dateLabel.font = [UIFont systemFontOfSize:12.0];

@@ -375,8 +375,22 @@
         SurveyAttribute* attribute = [self attributeForPath:indexPath];
         if ([invalidAttributes containsObject:attribute.weight]) {
            
-            [cell.layer setBorderColor:[UIColor redColor].CGColor];
-            [cell.layer setBorderWidth:2.0f];
+            SurveyInputCell* inputCell = (SurveyInputCell*)cell;
+            CGRect labelBounds = inputCell.label.bounds;
+            inputCell.label.opaque = YES;
+            inputCell.label.backgroundColor = [UIColor redColor];
+            inputCell.label.textColor = [UIColor whiteColor];
+            //[cell.layer setBorderColor:[UIColor redColor].CGColor];
+            //[cell.layer setBorderWidth:2.0f];
+            
+//            UIImageView* errorIcon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"incomplete.png"]];
+//            errorIcon.frame = CGRectMake(
+//                  labelBounds.origin.x + labelBounds.size.width,
+//                  labelBounds.origin.y,
+//                   15, 15);
+//            [cell addSubview:errorIcon];
+            
+            
         }
     }
 }

@@ -7,6 +7,7 @@
 //
 
 #import "SurveyInputCell.h"
+#import "MarginLabel.h"
 
 @implementation SurveyInputCell
 
@@ -15,7 +16,12 @@
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    
+    if (self) {
+        label = [[MarginLabel alloc] initWithFrame:CGRectMake(5, 2, self.bounds.size.width-10, 18)];
+        label.font = [UIFont boldSystemFontOfSize:12.0];
+        label.numberOfLines = 0;
+        [self.contentView addSubview:label];
+    }
     return self;
 }
 

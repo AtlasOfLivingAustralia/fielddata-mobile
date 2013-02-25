@@ -101,8 +101,7 @@
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];
-    NSLog(@"Selected! %d", selected);
-	if (selected) {
+    if (selected) {
 		[self becomeFirstResponder];
 	}
     

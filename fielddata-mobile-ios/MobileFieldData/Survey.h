@@ -37,6 +37,13 @@
 
 // Returns the first attribute of the specified type.  Mostly useful for unique types
 // (kSpeciesRP ,kNumber, kPointk, kLocation, kAccuracy, kWhen, kTimeRP, kNotes)
+// If the survey contains more than one attribute with the same
+// type, the first attribute encountered with that type will be
+// returned.
 -(SurveyAttribute *)getAttributeByType:(NSString *)attributeType;
 
+
+// Returns the SurveyAttribute with the weight property equal to the supplied parameter.  The weight property is unique amongst SurveyAttributes of the same Survey.
+// Return nil if no such SurveyAttribute exists.
+-(SurveyAttribute *)getAttributeByWeight:(NSNumber *)attributeWeight;
 @end

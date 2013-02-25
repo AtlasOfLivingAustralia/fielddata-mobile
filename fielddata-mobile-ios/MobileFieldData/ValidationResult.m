@@ -16,6 +16,10 @@
 
 @synthesize valid;
 
+-(id)init
+{
+    return [self initWithErrors:[[NSArray alloc] init]];
+}
 
 -(id)initWithErrors:(NSArray*)errors
 {

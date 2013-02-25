@@ -40,7 +40,6 @@
 {
     RecordAttribute *attribute = [self attributeOfType:kWhen];
     if (attribute) {
-        NSLog(@"Date is : %@", attribute.value);
         return [Record stringToDate:attribute.value];
     }
     return nil;

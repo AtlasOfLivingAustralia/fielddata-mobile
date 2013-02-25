@@ -32,6 +32,8 @@
     @private
     LocationCell *locationCell;
     LabelledSpeciesCell *speciesCell;
+    NSInteger attributeCellsRowOffset;
+    ValidationResult *validationResult;
 }
 
 @end
@@ -51,7 +53,9 @@
         attributes = [self sortAndFilterAttributes:[survey.attributes allObjects]];
         inputFields = [NSMutableDictionary dictionaryWithCapacity:attributes.count];
         invalidAttributes = [[NSMutableArray alloc] init];
+        validationResult = [[ValidationResult alloc] init];
         
+        attributeCellsRowOffset = 1;
         if (r == NULL) {
             loadedValues = [[NSMutableDictionary alloc]init];
         } else {
@@ -127,19 +131,32 @@
     NSLog(@"Testing when this is called");
 }
 
+-(void)validate
+{
+    if (record == nil) {
+        return;
+    }
+    RecordValidator *recordValidator = [[RecordValidator alloc] init];
+    validationResult = [recordValidator validate:record];
+    
+    [self updateViewsWithValidationResults:validationResult];
+}
+
 // Save the survey to disk
 -(void)saveSurvey:(id)sender {
     
     [self.view endEditing:YES];
     
-    if (record == NULL) {
+    if (record == nil) {
         record = [fieldDataService createRecord:attributes survey:survey inputFields:inputFields];
         
-        RecordValidator *recordValidator = [[RecordValidator alloc] init];
-        ValidationResult *validationResult = [recordValidator validate:record];
-        
-        // check if all the mandatory fields have been entered
-        if (validationResult.valid) {
+    }
+    else {
+        [fieldDataService updateRecord:record attributes:attributes inputFields:inputFields];
+    }
+    [self validate];
+    // check if all the mandatory fields have been entered
+    if (validationResult.valid) {
             
             UIAlertView *alertView =[[UIAlertView alloc]
                                      initWithTitle:@"Upload Survey"
@@ -150,49 +167,44 @@
             
             [alertView show];
             
-        } else {
-            [AlertService DisplayMessageWithTitle:@"Observation Draft Saved"
+    } else {
+        [AlertService DisplayMessageWithTitle:@"Observation Draft Saved"
                                           message:@"All mandatory fields (marked *) must be entered before your observations can be uploaded to the server."];
             //[[self navigationController] popViewControllerAnimated:YES];
-            [self updateViewsWithValidationResults:validationResult];
             
-        }
-        
-    } else {
-        [fieldDataService updateRecord:record attributes:attributes inputFields:inputFields];
-        
-        if ([fieldDataService isRecordComplete:record]) {
-            [AlertService DisplayMessageWithTitle:@"Observation Saved"
-                                      message:@"Observation has been successfully updated and is ready to be uploaded."];
-        } else {
-            [AlertService DisplayMessageWithTitle:@"Observation Draft Saved"
-                                          message:@"All mandatory fields (marked *) must be entered before your observations can be uploaded to the server."];
-
-        }
-        [[self navigationController] popViewControllerAnimated:YES];
+            
     }
+        
+//    } else {
+//        
+//        
+//        if ([fieldDataService isRecordComplete:record]) {
+//            [AlertService DisplayMessageWithTitle:@"Observation Saved"
+//                                      message:@"Observation has been successfully updated and is ready to be uploaded."];
+//        } else {
+//            [AlertService DisplayMessageWithTitle:@"Observation Draft Saved"
+//                                          message:@"All mandatory fields (marked *) must be entered before your observations can be uploaded to the server."];
+//
+//        }
+//        [[self navigationController] popViewControllerAnimated:YES];
+//    }
     
 }
 
--(void)updateViewsWithValidationResults:(ValidationResult*)validationResult
+-(void)updateViewsWithValidationResults:(ValidationResult*)result
 {
+    
     [invalidAttributes removeAllObjects];
-    for (AttributeError *error in validationResult.errors) {
+    for (AttributeError *error in result.errors) {
         NSNumber *attributeId = error.attributeId;
         [invalidAttributes addObject:attributeId];
     }
+    attributeCellsRowOffset = result.valid ? 1 : 2;
     
     [self.tableView reloadData];
-//            NSLog(@"Attributeid=%@, invalid attr=%@", attribute.weight, attributeId);
-//            if ([attribute.weight isEqualToNumber:attributeId]) {
-//                UITableViewCell *cell = [self tableView:self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:(row+1) inSection:0]];
-//                [cell.layer setBorderColor:[UIColor redColor].CGColor];
-//                [cell.layer setBorderWidth:2.0f];
-//                
-//                //[self.tableView reloadData];
-//                
-//            }
-//        }
+    if (!result.valid) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
 }
 
 -(void)displaySelectionList:(NSIndexPath*)indexPath
@@ -242,7 +254,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return attributes.count+1;
+    return attributes.count+attributeCellsRowOffset;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -250,10 +262,10 @@
     if (indexPath.row == 0) {
         return [self surveyNameCell:tableView];
     }
-//    else if (indexPath.row == 1)
-//    {
-//        return [self validationSummaryCell:tableView];
-//    }
+    else if ([self isValidationSummaryRow:indexPath.row])
+    {
+        return [self validationSummaryCell:tableView];
+    }
     SurveyAttribute* attribute = [self attributeForPath:indexPath];
     NSString *CellIdentifier = [attribute.weight stringValue];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -367,31 +379,28 @@
         UIColor *color = [[UIColor alloc] initWithRed:206.0/255.0f green:243.0/255.0f blue:1.0f alpha:1.0f];
         cell.backgroundColor =  color;
     }
-//    else if (indexPath.row ==1) {
-//        cell.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:0.7f];
-//        
-//    }
-    else if (indexPath.row >= 1){
+    else if ([self isValidationSummaryRow:indexPath.row]) {
+        cell.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:0.7f];
+        
+    }
+    else if (indexPath.row >= attributeCellsRowOffset){
         SurveyAttribute* attribute = [self attributeForPath:indexPath];
+        SurveyInputCell* inputCell = (SurveyInputCell*)cell;
+        
         if ([invalidAttributes containsObject:attribute.weight]) {
            
-            SurveyInputCell* inputCell = (SurveyInputCell*)cell;
-            CGRect labelBounds = inputCell.label.bounds;
             inputCell.label.opaque = YES;
-            inputCell.label.backgroundColor = [UIColor redColor];
+            inputCell.label.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:0.7f];
             inputCell.label.textColor = [UIColor whiteColor];
-            //[cell.layer setBorderColor:[UIColor redColor].CGColor];
-            //[cell.layer setBorderWidth:2.0f];
-            
-//            UIImageView* errorIcon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"incomplete.png"]];
-//            errorIcon.frame = CGRectMake(
-//                  labelBounds.origin.x + labelBounds.size.width,
-//                  labelBounds.origin.y,
-//                   15, 15);
-//            [cell addSubview:errorIcon];
-            
             
         }
+        else {
+            inputCell.label.opaque = NO;
+            inputCell.label.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3f];
+            inputCell.label.textColor = [UIColor blackColor];
+        }
+        //else if (inputCell)
+        
     }
 }
 
@@ -423,19 +432,38 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.textLabel.adjustsFontSizeToFitWidth = YES;
-        cell.textLabel.text = @"Please provide a value for the following fields:";
-        cell.textLabel.textColor = [UIColor whiteColor];
-        cell.textLabel.backgroundColor = [UIColor clearColor];
-        
-        NSLog(@"Size: %f, %f", [cell.textLabel.font pointSize], [cell.detailTextLabel.font pointSize]);
-        
-        cell.detailTextLabel.text = @" \u2022 Description\n \u2022 something\n \u2022 something else";
         cell.detailTextLabel.numberOfLines = 0;
         cell.detailTextLabel.textColor = [UIColor whiteColor];
         cell.detailTextLabel.backgroundColor = [UIColor clearColor];
-                
+        cell.textLabel.textColor = [UIColor whiteColor];
+        cell.textLabel.backgroundColor = [UIColor clearColor];
         
+
     }
+        NSMutableDictionary *messages = [[NSMutableDictionary alloc] init];
+        for (AttributeError *error in validationResult.errors) {
+            NSMutableArray *fieldNames = [messages objectForKey:error.errorText];
+            if (fieldNames == nil) {
+                fieldNames = [[NSMutableArray alloc] init];
+                [messages setObject:fieldNames forKey:error.errorText];
+            }
+            SurveyAttribute *attribute = [survey getAttributeByWeight:error.attributeId];
+            [fieldNames addObject:attribute.question];
+        }
+    
+        NSString *key = [messages allKeys][0];
+        NSArray *fields = [messages objectForKey:key];
+    
+        cell.textLabel.text = [key stringByAppendingString:@" for the following fields:"];
+        
+        NSMutableString* messageText = [[NSMutableString alloc] init];
+        for (NSString* field in fields) {
+            [messageText appendString:@" \u2022 "];
+            [messageText appendString:field];
+            [messageText appendString:@"\n"];
+        }
+        cell.detailTextLabel.text = messageText;
+            
     return cell;
 }
 
@@ -444,12 +472,13 @@
     if (indexPath.row == 0) {
         return 75;
     }
-//    else if (indexPath.row == 1) {
-//        NSString *text = @"Text";
-//        CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:17.0f]];
-//
-//        return textSize.height * 4 + 10;
-//    }
+    else if ([self isValidationSummaryRow:indexPath.row]) {
+        NSString *text = @"Text";
+        CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:17.0f]];
+        NSInteger invalidFieldCount = validationResult.errors.count;
+        
+        return textSize.height * (invalidFieldCount+1) + 10;
+    }
     SurveyAttribute* attribute = [self attributeForPath:indexPath];
     if ([attribute.typeCode isEqualToString:kMultiSelect]) {
         return 200;
@@ -475,18 +504,21 @@
     }
 }
 
+-(BOOL)isValidationSummaryRow:(NSInteger)row
+{
+    return (row == 1 && !validationResult.valid);
+}
+
 -(SurveyAttribute*)attributeForPath:(NSIndexPath*)indexPath
 {
-    NSInteger offset = 1;
-    return [attributes objectAtIndex:indexPath.row-offset];
-    
+    return [attributes objectAtIndex:indexPath.row-attributeCellsRowOffset];
 }
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row > 1) {
+    if (indexPath.row >= attributeCellsRowOffset) {
         SurveyAttribute* attribute = [self attributeForPath:indexPath];
         if ([attribute.typeCode isEqualToString:kStringWithValidValues] ||
             [attribute.typeCode isEqualToString:kMultiCheckbox]) {
@@ -500,7 +532,7 @@
 
 - (NSIndexPath *)tableView:(UITableView *)tv willSelectRowAtIndexPath:(NSIndexPath *)path
 {
-    if (path.row > 1) {
+    if (path.row >= attributeCellsRowOffset) {
         SurveyAttribute* attribute = [self attributeForPath:path];
         if ([attribute.typeCode isEqualToString:kStringWithValidValues] ||
             [attribute.typeCode isEqualToString:kMultiCheckbox] ||

@@ -33,5 +33,15 @@
     return (SurveyAttribute *)[subset anyObject];
 }
 
+-(SurveyAttribute *)getAttributeByWeight:(NSNumber *)attributeWeight
+{
+    for (SurveyAttribute *attribute in self.attributes) {
+        if ([attribute.weight isEqual:attributeWeight]) {
+            return attribute;
+        }
+    }
+    return nil;
+}
+
 
 @end

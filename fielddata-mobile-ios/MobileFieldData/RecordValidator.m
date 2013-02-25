@@ -40,7 +40,6 @@
     BOOL valid = YES;
     if ([recordAttribute.surveyAttribute.required intValue] == YES &&
         (recordAttribute.value == NULL || [recordAttribute.value isEqualToString:@""])) {
-        NSLog(@"Attribute: %@  Value: %@", recordAttribute.surveyAttribute.question, recordAttribute.value);
         
         valid = NO;
         AttributeError *error = [[AttributeError alloc] init];

@@ -11,12 +11,13 @@
 
 @implementation SurveyInputCell
 
-@synthesize label;
+@synthesize label, value;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        self.value = @"";
         label = [[MarginLabel alloc] initWithFrame:CGRectMake(5, 2, self.bounds.size.width-10, 18)];
         label.font = [UIFont boldSystemFontOfSize:12.0];
         label.numberOfLines = 0;

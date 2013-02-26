@@ -16,7 +16,6 @@
 
 @property (nonatomic, retain) UIPickerView* picker;
 @property (nonatomic, retain) NSArray* options;
-@property (nonatomic, retain) NSMutableString* value;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier options:(NSArray*)o;
 - (void)setSelectedValues:(NSString*)inputValues;

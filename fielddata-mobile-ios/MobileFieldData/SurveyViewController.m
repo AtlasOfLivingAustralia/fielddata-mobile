@@ -268,7 +268,7 @@
     }
     SurveyAttribute* attribute = [self attributeForPath:indexPath];
     NSString *CellIdentifier = [attribute.weight stringValue];
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    SurveyInputCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (cell == nil) {
         NSString* mandatory = @"";
@@ -279,82 +279,65 @@
         if ([attribute.typeCode isEqualToString:kIntegerType]) {
             IntegerInputCell* intCell = [[IntegerInputCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                                                   reuseIdentifier:CellIdentifier];
-            intCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             intCell.inputField.text = [loadedValues objectForKey:attribute.weight];
             cell = intCell;
-            [inputFields setObject:intCell.inputField forKey:attribute.weight];
             
         } else if ([attribute.typeCode isEqualToString:kMultiSelect]) {
             SingleSelectCell* singleCell = [[SingleSelectCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                                                      reuseIdentifier:CellIdentifier
                                                                      options:attribute.options.allObjects];
-            singleCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             [singleCell setSelectedValue:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
             cell = singleCell;
-            [inputFields setObject:singleCell.value forKey:attribute.weight];
             
         } else if ([attribute.typeCode isEqualToString:kStringWithValidValues]) {
             SingleSelectListCell* listCell = [[SingleSelectListCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                                                          reuseIdentifier:CellIdentifier
                                                                          options:attribute.options.allObjects];
-            listCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             [listCell setSelectedValue:[loadedValues objectForKey:attribute.weight]];
             cell = listCell;
-            [inputFields setObject:listCell.value forKey:attribute.weight];
         } else if ([attribute.typeCode isEqualToString:kMultiCheckbox]) {
             SingleSelectListCell* listCell = [[SingleSelectListCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                                                          reuseIdentifier:CellIdentifier
                                                                                  options:attribute.options.allObjects];
-            listCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             [listCell setSelectedValue:[loadedValues objectForKey:attribute.weight]];
             cell = listCell;
-            [inputFields setObject:listCell.value forKey:attribute.weight];
-
+           
         } else if ([attribute.typeCode isEqualToString:kImage]) {
             ImageCell* imageCell = [[ImageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-            imageCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             imageCell.parentController = self;
             [imageCell updateImage:[loadedValues objectForKey:attribute.weight]];
             cell = imageCell;
-            [inputFields setObject:imageCell.filePath forKey:attribute.weight];
+           
         } else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {
             speciesCell = [[LabelledSpeciesCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-            speciesCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             NSString *commonName = [loadedValues objectForKey:attribute.weight];
             if (commonName) {
                 speciesCell.species=[fieldDataService findSpeciesByCommonName:commonName];
             }
             cell = speciesCell;
-            [inputFields setObject:speciesCell.value forKey:attribute.weight];
-            
+                
         } else if ([attribute.typeCode isEqualToString:kPoint]) {
             locationCell = [[LocationCell alloc]initWithStyle:UITableViewCellStyleDefault
                                                                      reuseIdentifier:CellIdentifier];
             locationCell.delegate = self;
             [locationCell setLocation:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
             cell = locationCell;
-            [inputFields setObject:locationCell.value forKey:attribute.weight];
             
         } else if ([attribute.typeCode isEqualToString:kWhen] ||
                    [attribute.typeCode isEqualToString:kDate]) {
             
             DateCell *dateCell = [[DateCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-            dateCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             NSString *date = [loadedValues objectForKey:attribute.weight];
             if (date) {
                 [dateCell setDate:date];
             }
             cell = dateCell;
-            
-            [inputFields setObject:dateCell.value forKey:attribute.weight];
         }
         else {
             TextInputCell* textCell = [[TextInputCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             
-            textCell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
             textCell.inputField.text = [loadedValues objectForKey:attribute.weight];
             cell = textCell;
-            [inputFields setObject:textCell.inputField forKey:attribute.weight];
             
             UIKeyboardType keyboardType = UIKeyboardTypeDefault;
             
@@ -367,12 +350,24 @@
             }
             textCell.inputField.keyboardType = keyboardType;
         }
+        cell.label.text = [NSString stringWithFormat:@"%@%@", attribute.question, mandatory];
+        [inputFields setObject:cell.value forKey:attribute.weight];
+        [cell addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionNew context:(__bridge void *)attribute];
     }
     
     //NSLog(@"Index Path: %d  Label: %@", indexPath.row, cell.label.text);
     
     return cell;
 }
+
+-(void)observeValueForKeyPath:(NSString*)keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
+{
+    SurveyAttribute* attribute = (__bridge SurveyAttribute*)context;
+    NSString* value = [change objectForKey:@"new"];
+    NSLog(@"Received change notification for attribute: %@, new value:%@", attribute.weight, value);
+    [inputFields setObject:value forKey:attribute.weight];
+}
+
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == 0) {
@@ -483,13 +478,8 @@
     if ([attribute.typeCode isEqualToString:kMultiSelect]) {
         return 200;
     } else if ([attribute.typeCode isEqualToString:kImage]) {
-        ImageCell *cell = (ImageCell*)[self tableView:tableView cellForRowAtIndexPath:indexPath];
-        if (cell.imageView.image) {
-            return 140;
-        }
-        else {
-            return 90;
-        }
+        return 90;
+        
     } else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {
         return 75;
     } else if ([attribute.typeCode isEqualToString:kPoint]) {
@@ -500,7 +490,7 @@
                [attribute.typeCode isEqualToString:kDate]) {
         return 60;
     } else {
-        return 90;
+        return 75;
     }
 }
 

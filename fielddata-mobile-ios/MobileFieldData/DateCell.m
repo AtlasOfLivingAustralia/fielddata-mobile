@@ -19,7 +19,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        _value = [[NSMutableString alloc]init];
         
         dateLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, self.bounds.size.width-35, 30)];
         dateLabel.font = [UIFont systemFontOfSize:12.0];
@@ -87,7 +86,7 @@
 
 -(void)setDate:(NSString *)dateString
 {
-    [self.value setString:dateString];
+    self.value = dateString;
     self.dateLabel.text = dateString;
     [self.dateLabel setNeedsDisplay];
     
@@ -112,7 +111,6 @@
 
 -(IBAction)dateChanged:(id)sender
 {
-    NSLog(@"The picker date has changed");
     NSString *dateString = [Record dateToString:picker.date];
     [self setDate:dateString];
 }

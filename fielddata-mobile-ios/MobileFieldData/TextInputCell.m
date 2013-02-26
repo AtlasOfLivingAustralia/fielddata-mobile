@@ -18,7 +18,7 @@
     if (self) {
         
         
-        inputField = [[UITextField alloc] initWithFrame:CGRectMake(10, 50, self.bounds.size.width-20, 28)];
+        inputField = [[UITextField alloc] initWithFrame:CGRectMake(10, 35, self.bounds.size.width-20, 28)];
         inputField.borderStyle = UITextBorderStyleRoundedRect;
         inputField.delegate = self;
         
@@ -33,5 +33,9 @@
     return NO;
 }
 
+-(void)textFieldDidEndEditing:(UITextField*)textField
+{
+    self.value = textField.text;
+}
 
 @end

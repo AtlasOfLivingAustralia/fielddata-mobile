@@ -15,6 +15,5 @@
 
 @property (strong, nonatomic) UIImageView *imageView;
 @property (strong, nonatomic) Species* species;
-@property (strong, nonatomic) NSMutableString* value;
 
 @end

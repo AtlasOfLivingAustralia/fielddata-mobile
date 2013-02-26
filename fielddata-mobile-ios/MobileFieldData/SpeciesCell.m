@@ -12,7 +12,7 @@
 
 @implementation SpeciesCell
 
-@synthesize picker, speciesImage, species, value;
+@synthesize picker, speciesImage, species;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier species:(NSArray*)s
 {
@@ -40,8 +40,7 @@
         picker.transform = CGAffineTransformMakeScale(0.8, 0.8);
         [self.contentView addSubview:picker];
 
-        value = [[NSMutableString alloc]init];
-        [value setString:firstSpecies.commonName];
+        self.value= firstSpecies.commonName;
     }
     return self;
 }
@@ -69,7 +68,7 @@
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     
     Species* s = [species objectAtIndex:row];
-    [value setString:s.commonName];
+    self.value = s.commonName;
     
     UIImage* image = [UIImage imageWithContentsOfFile:s.imageFileName];
     [speciesImage setImage:image];

@@ -13,7 +13,7 @@
 
 @implementation SingleSelectListCell
 
-@synthesize valueLabel, options, value;
+@synthesize valueLabel, options;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier options:(NSArray*)o
 {
@@ -30,7 +30,6 @@
         NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"weight" ascending:YES]];
         options = [o sortedArrayUsingDescriptors:sortDescriptors];
         
-        value = [[NSMutableString alloc]init];
         self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         
     }
@@ -46,16 +45,15 @@
 - (void)setSelectedValue:(NSString*)inputValue
 {
     if (inputValue != nil) {
-            self.valueLabel.text = inputValue;
-            [value setString: inputValue];
+        self.valueLabel.text = inputValue;
+        self.value = inputValue;
     }
 }
 
 -(NSString*)getSelectedValue
 {
-    return value;
+    return self.value;
 }
-
 
 
 @end

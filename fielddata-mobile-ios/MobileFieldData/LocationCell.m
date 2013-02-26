@@ -12,7 +12,7 @@
 
 @implementation LocationCell
 
-@synthesize startGPS, latitude, longitude, accuracy, value, showMap, delegate;
+@synthesize startGPS, latitude, longitude, accuracy, showMap, delegate;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -49,9 +49,6 @@
         showMap.frame = CGRectMake(200, 64, 100, 44);
         [self.contentView addSubview:showMap];
         
-        
-        value = [[NSMutableString alloc]init];
-       
     }
     return self;
 }
@@ -161,7 +158,7 @@
                                     location.coordinate.longitude,
                                     location.horizontalAccuracy];
     
-    [value setString:locDescription];
+    self.value = locDescription;
 }
 
 

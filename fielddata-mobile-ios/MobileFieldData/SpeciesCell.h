@@ -17,7 +17,6 @@
 @property (nonatomic, retain) UIPickerView* picker;
 @property (nonatomic, retain) UIImageView* speciesImage;
 @property (nonatomic, retain) NSArray* species;
-@property (nonatomic, retain) NSMutableString* value;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier species:(NSArray*)s;
 

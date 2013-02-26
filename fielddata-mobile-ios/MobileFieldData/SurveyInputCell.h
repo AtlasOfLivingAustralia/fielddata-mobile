@@ -11,5 +11,6 @@
 @interface SurveyInputCell : UITableViewCell
 
 @property (nonatomic, strong) UILabel* label;
+@property (nonatomic, strong) NSString *value;
 
 @end

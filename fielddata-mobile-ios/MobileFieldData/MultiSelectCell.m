@@ -11,7 +11,7 @@
 
 @implementation MultiSelectCell
 
-@synthesize picker, options, value;
+@synthesize picker, options;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier options:(NSArray*)o
 {
@@ -34,7 +34,6 @@
         options = [o sortedArrayUsingDescriptors:sortDescriptors];
         
         selectedItems = [[NSMutableArray alloc]init];
-        value = [[NSMutableString alloc]init];
     }
     return self;
 }
@@ -108,14 +107,16 @@
         [(UITableViewCell *)(recognizer.view) setAccessoryType:UITableViewCellAccessoryCheckmark];
     }
     
-    [value setString:@""];
+    NSMutableString* tmpValue = [[NSMutableString alloc]initWithString:@""];
+    
     for (NSNumber* row in selectedItems) {
         SurveyAttributeOption* selectedOption = [options objectAtIndex:[row integerValue]];
-        [value appendString:selectedOption.value];
+        [tmpValue appendString:selectedOption.value];
         if ([selectedItems indexOfObject:row] != selectedItems.count-1) {
-            [value appendString:@","];
+            [tmpValue appendString:@","];
         }
     }
+    self.value = tmpValue;
 }
 
 

@@ -11,7 +11,7 @@
 
 @implementation SingleSelectCell
 
-@synthesize picker, options, value;
+@synthesize picker, options;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier options:(NSArray*)o
 {
@@ -31,8 +31,6 @@
         
         NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"weight" ascending:YES]];
         options = [o sortedArrayUsingDescriptors:sortDescriptors];
-        
-        value = [[NSMutableString alloc]init];
     }
     return self;
 }
@@ -78,13 +76,13 @@
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     
     if (row == 0) {
-        [value setString:@""];
+        self.value = @"";
         //SurveyAttributeOption* selectedOption = [options objectAtIndex:1];
         //[value setString:selectedOption.value];
         //[picker selectRow:1 inComponent:0 animated:YES];
     } else {
         SurveyAttributeOption* selectedOption = [options objectAtIndex:row-1];
-        [value setString:selectedOption.value];
+        self.value = selectedOption.value;
     }
     //SurveyAttributeOption* selectedOption = [options objectAtIndex:row];
     //[value setString:selectedOption.value];

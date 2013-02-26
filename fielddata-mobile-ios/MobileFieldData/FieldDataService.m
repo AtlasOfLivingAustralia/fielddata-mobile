@@ -420,43 +420,7 @@
         
         recordAttribute.record = record;
         recordAttribute.surveyAttribute = attribute;
-        
-        if ([attribute.typeCode isEqualToString:kIntegerType] ||
-            [attribute.typeCode isEqualToString:kText]) {
-            
-            UITextField* textField = [inputFields objectForKey:attribute.weight];
-            NSLog(@"%@ %@", attribute.question, textField.text);
-            
-            recordAttribute.value = textField.text;
-            
-        } else if ([attribute.typeCode isEqualToString:kMultiSelect] ||
-                   [attribute.typeCode isEqualToString:kMultiCheckbox] ||
-                   [attribute.typeCode isEqualToString:kStringWithValidValues] ||
-                   [attribute.typeCode isEqualToString:kSpeciesRP] ||
-                   [attribute.typeCode isEqualToString:kPoint] ||
-                   [attribute.typeCode isEqualToString:kWhen] ||
-                   [attribute.typeCode isEqualToString:kDate]) {
-            
-            NSMutableString* value = [inputFields objectForKey:attribute.weight];
-            NSLog(@"%@ %@", attribute.question, value);
-            
-            recordAttribute.value = value;
-            
-        } else if ([attribute.typeCode isEqualToString:kImage]) {
-            
-            NSMutableString* filePath = [inputFields objectForKey:attribute.weight];
-            NSLog(@"%@ %@", attribute.question, filePath);
-            
-            recordAttribute.value = filePath;
-            
-        } 
-        else {
-            
-            UITextField* textField = [inputFields objectForKey:attribute.weight];
-            NSLog(@"%@ %@", attribute.question, textField.text);
-            
-            recordAttribute.value = textField.text;
-        }
+        recordAttribute.value = [inputFields objectForKey:attribute.weight];
         
     }
 
@@ -482,36 +446,10 @@
                 break;
             }
         }
-        if ([recordAttribute.surveyAttribute.typeCode isEqualToString:kIntegerType] ||
-            [recordAttribute.surveyAttribute.typeCode isEqualToString:kText]) {
-            
-            UITextField* textField = [inputFields objectForKey:recordAttribute.surveyAttribute.weight];
-            recordAttribute.value = textField.text;
-            
-        } else if ([recordAttribute.surveyAttribute.typeCode isEqualToString:kMultiSelect] ||
-                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kMultiCheckbox] ||
-                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kStringWithValidValues] ||
-                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kSpeciesRP] ||
-                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kPoint] ||
-                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kWhen] ||
-                   [recordAttribute.surveyAttribute.typeCode isEqualToString:kDate]) {
-            
-            NSMutableString* value = [inputFields objectForKey:recordAttribute.surveyAttribute.weight];
-            if (![value isEqualToString:@""]) {
-                recordAttribute.value = value;
-            }
-            
-        } else if ([recordAttribute.surveyAttribute.typeCode isEqualToString:kImage]) {
-            
-            NSMutableString* filePath = [inputFields objectForKey:recordAttribute.surveyAttribute.weight];
-            if (![filePath isEqualToString:@""]) {
-                recordAttribute.value = filePath;
-            }
-        } else {
-            
-            UITextField* textField = [inputFields objectForKey:recordAttribute.surveyAttribute.weight];
-            recordAttribute.value = textField.text;
-        }
+        
+        
+       NSString* value = [inputFields objectForKey:recordAttribute.surveyAttribute.weight];
+       recordAttribute.value = value;
         
     }
     

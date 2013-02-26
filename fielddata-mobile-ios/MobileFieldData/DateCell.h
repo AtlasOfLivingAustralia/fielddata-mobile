@@ -13,7 +13,6 @@
 
     
 }
-@property (readonly, strong) NSMutableString* value;
 
 -(void)setDate:(NSString*)dateString;
 

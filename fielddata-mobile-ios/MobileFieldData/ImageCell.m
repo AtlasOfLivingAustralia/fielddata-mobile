@@ -14,7 +14,7 @@
 
 @implementation ImageCell
 
-@synthesize startCamera, cameraImage, filePath, parentController;
+@synthesize startCamera, cameraImage, parentController;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -38,7 +38,6 @@
         [startCamera setImage:cameraBtn forState:UIControlStateNormal];
         [self.contentView addSubview:startCamera];
         
-        filePath = [[NSMutableString alloc]init];
     }
     return self;
 }
@@ -110,7 +109,7 @@
     } 
     
     NSString* fileName = [NSString stringWithFormat:@"%f.jpg", [[NSDate date] timeIntervalSince1970]];
-    [filePath setString:[FileService saveImage:image withName:fileName]];
+    self.value = [FileService saveImage:image withName:fileName];
     
     image = nil;
     
@@ -121,7 +120,7 @@
     }
     
     // reload the image
-    [self updateImage:filePath];
+    [self updateImage:self.value];
     
     //[cameraImage setImage:image];
     

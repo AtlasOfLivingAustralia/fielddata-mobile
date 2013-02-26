@@ -14,7 +14,6 @@
 }
 @property (nonatomic, retain) UIButton* startCamera;
 @property (nonatomic, retain) UIImageView* cameraImage;
-@property (nonatomic, retain) NSMutableString* filePath;
 @property (nonatomic, retain) UITableViewController* parentController;
 
 - (void)updateImage:(NSString*)imagePath;

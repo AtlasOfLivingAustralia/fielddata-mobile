@@ -18,14 +18,12 @@
 
 @implementation LabelledSpeciesCell
 
-@synthesize imageView, species, value;
+@synthesize imageView, species;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        
-        value = [[NSMutableString alloc]init];
         
         self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
@@ -54,10 +52,10 @@
     
     imageView.image = [UIImage imageWithContentsOfFile:species.imageFileName];
     if (species.commonName) {
-        [value setString:species.commonName];
+        self.value = species.commonName;
     }
     else {
-        [value setString:@""];
+        self.value = @"";
     }
 }
 

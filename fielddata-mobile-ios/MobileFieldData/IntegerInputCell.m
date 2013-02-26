@@ -45,6 +45,10 @@
     return NO;
 }
 
+-(void)textFieldDidEndEditing:(UITextField*)textField
+{
+    self.value = textField.text;
+}
 
 
 @end

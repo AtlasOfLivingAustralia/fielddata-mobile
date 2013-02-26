@@ -30,7 +30,6 @@
 @property (nonatomic, retain) UILabel* accuracy;
 @property (nonatomic, retain) UIButton* startGPS;
 @property (nonatomic, retain) UIButton* showMap;
-@property (nonatomic, retain) NSMutableString* value;
 @property (nonatomic, weak) id<LocationCellDelegate> delegate;
 
 -(void)setFoundLocation:(CLLocation*)location;

@@ -139,7 +139,22 @@
     RecordValidator *recordValidator = [[RecordValidator alloc] init];
     validationResult = [recordValidator validate:record];
     
-    [self updateViewsWithValidationResults:validationResult];
+    [self updateViewsWithValidationResults:validationResult scrollToErrors:YES];
+}
+
+-(void)validate:(NSString*)value forAttribute:(SurveyAttribute*)attribute
+{
+    [validationResult removeErrorForId:attribute.weight];
+    RecordValidator *recordValidator = [[RecordValidator alloc] init];
+    AttributeError *error = [recordValidator validate:value forAttribute:attribute];
+    if (error) {
+        [validationResult addError:error];
+        [invalidAttributes addObject:attribute.weight];
+    }
+    else {
+        [invalidAttributes removeObject:attribute.weight];
+    }
+    [self updateViewsWithValidationResults:validationResult scrollToErrors:NO];
 }
 
 // Save the survey to disk
@@ -191,7 +206,7 @@
     
 }
 
--(void)updateViewsWithValidationResults:(ValidationResult*)result
+-(void)updateViewsWithValidationResults:(ValidationResult*)result scrollToErrors:(BOOL)scrollToErrors
 {
     
     [invalidAttributes removeAllObjects];
@@ -202,7 +217,7 @@
     attributeCellsRowOffset = result.valid ? 1 : 2;
     
     [self.tableView reloadData];
-    if (!result.valid) {
+    if (!result.valid && scrollToErrors) {
         [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
     }
 }
@@ -360,14 +375,6 @@
     return cell;
 }
 
--(void)observeValueForKeyPath:(NSString*)keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
-{
-    SurveyAttribute* attribute = (__bridge SurveyAttribute*)context;
-    NSString* value = [change objectForKey:@"new"];
-    NSLog(@"Received change notification for attribute: %@, new value:%@", attribute.weight, value);
-    [inputFields setObject:value forKey:attribute.weight];
-}
-
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == 0) {
@@ -399,68 +406,6 @@
     }
 }
 
-- (UITableViewCell *)surveyNameCell:(UITableView *)tableView
-{
-    static NSString *cellIdentifier = @"SurveyDescription";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.textLabel.adjustsFontSizeToFitWidth = YES;
-        cell.textLabel.text = survey.name;
-
-        cell.detailTextLabel.text = survey.surveyDescription;
-        cell.detailTextLabel.numberOfLines = 2;
-        
-        cell.backgroundColor = [UIColor colorWithRed:206 green:243 blue:255 alpha:0];
-        
-        
-    }
-    return cell;
-}
-
--(UITableViewCell*)validationSummaryCell:(UITableView*)tableView
-{
-    static NSString *cellIdentifier = @"ValidationSummary";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.textLabel.adjustsFontSizeToFitWidth = YES;
-        cell.detailTextLabel.numberOfLines = 0;
-        cell.detailTextLabel.textColor = [UIColor whiteColor];
-        cell.detailTextLabel.backgroundColor = [UIColor clearColor];
-        cell.textLabel.textColor = [UIColor whiteColor];
-        cell.textLabel.backgroundColor = [UIColor clearColor];
-        
-
-    }
-        NSMutableDictionary *messages = [[NSMutableDictionary alloc] init];
-        for (AttributeError *error in validationResult.errors) {
-            NSMutableArray *fieldNames = [messages objectForKey:error.errorText];
-            if (fieldNames == nil) {
-                fieldNames = [[NSMutableArray alloc] init];
-                [messages setObject:fieldNames forKey:error.errorText];
-            }
-            SurveyAttribute *attribute = [survey getAttributeByWeight:error.attributeId];
-            [fieldNames addObject:attribute.question];
-        }
-    
-        NSString *key = [messages allKeys][0];
-        NSArray *fields = [messages objectForKey:key];
-    
-        cell.textLabel.text = [key stringByAppendingString:@" for the following fields:"];
-        
-        NSMutableString* messageText = [[NSMutableString alloc] init];
-        for (NSString* field in fields) {
-            [messageText appendString:@" \u2022 "];
-            [messageText appendString:field];
-            [messageText appendString:@"\n"];
-        }
-        cell.detailTextLabel.text = messageText;
-            
-    return cell;
-}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -494,6 +439,81 @@
     }
 }
 
+- (UITableViewCell *)surveyNameCell:(UITableView *)tableView
+{
+    static NSString *cellIdentifier = @"SurveyDescription";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.textLabel.adjustsFontSizeToFitWidth = YES;
+        cell.textLabel.text = survey.name;
+        
+        cell.detailTextLabel.text = survey.surveyDescription;
+        cell.detailTextLabel.numberOfLines = 2;
+        
+        cell.backgroundColor = [UIColor colorWithRed:206 green:243 blue:255 alpha:0];
+        
+        
+    }
+    return cell;
+}
+
+-(UITableViewCell*)validationSummaryCell:(UITableView*)tableView
+{
+    static NSString *cellIdentifier = @"ValidationSummary";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.textLabel.adjustsFontSizeToFitWidth = YES;
+        cell.detailTextLabel.numberOfLines = 0;
+        cell.detailTextLabel.textColor = [UIColor whiteColor];
+        cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+        cell.textLabel.textColor = [UIColor whiteColor];
+        cell.textLabel.backgroundColor = [UIColor clearColor];
+        
+        
+    }
+    NSMutableDictionary *messages = [[NSMutableDictionary alloc] init];
+    for (AttributeError *error in validationResult.errors) {
+        NSMutableArray *fieldNames = [messages objectForKey:error.errorText];
+        if (fieldNames == nil) {
+            fieldNames = [[NSMutableArray alloc] init];
+            [messages setObject:fieldNames forKey:error.errorText];
+        }
+        SurveyAttribute *attribute = [survey getAttributeByWeight:error.attributeId];
+        [fieldNames addObject:attribute.question];
+    }
+    
+    NSString *key = [messages allKeys][0];
+    NSArray *fields = [messages objectForKey:key];
+    
+    cell.textLabel.text = [key stringByAppendingString:@" for the following fields:"];
+    
+    NSMutableString* messageText = [[NSMutableString alloc] init];
+    for (NSString* field in fields) {
+        [messageText appendString:@" \u2022 "];
+        [messageText appendString:field];
+        [messageText appendString:@"\n"];
+    }
+    cell.detailTextLabel.text = messageText;
+    
+    return cell;
+}
+
+-(void)observeValueForKeyPath:(NSString*)keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
+{
+    SurveyAttribute* attribute = (__bridge SurveyAttribute*)context;
+    NSString* value = [change objectForKey:@"new"];
+    NSLog(@"Received change notification for attribute: %@, new value:%@", attribute.weight, value);
+    if ([invalidAttributes containsObject:attribute.weight]) {
+        [self validate:value forAttribute:attribute];
+    }
+    [inputFields setObject:value forKey:attribute.weight];
+}
+
+
 -(BOOL)isValidationSummaryRow:(NSInteger)row
 {
     return (row == 1 && !validationResult.valid);
@@ -502,6 +522,11 @@
 -(SurveyAttribute*)attributeForPath:(NSIndexPath*)indexPath
 {
     return [attributes objectAtIndex:indexPath.row-attributeCellsRowOffset];
+}
+
+-(NSIndexPath*)pathForAttribute:(SurveyAttribute*)attribute
+{
+    return [NSIndexPath indexPathForRow:([attributes indexOfObject:attribute]+attributeCellsRowOffset) inSection:0];
 }
 
 #pragma mark - Table view delegate

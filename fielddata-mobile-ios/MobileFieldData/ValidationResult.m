@@ -34,4 +34,16 @@
     return _errors.count == 0 ? YES : NO;
 }
 
+-(void)removeErrorForId:(NSNumber*)attributeId
+{
+    NSPredicate* predicate = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        return ![((AttributeError*)evaluatedObject).attributeId isEqualToNumber:attributeId];
+    }];
+    _errors = [_errors filteredArrayUsingPredicate:predicate];
+}
+
+-(void)addError:(AttributeError*)error
+{
+    _errors = [_errors arrayByAddingObject:error];
+}
 @end

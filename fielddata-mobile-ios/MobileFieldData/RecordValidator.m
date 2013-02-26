@@ -15,9 +15,6 @@
 
 @interface RecordValidator()
 
--(BOOL)validateRequired:(RecordAttribute*)recordAttribute withResults:(NSArray*)results;
--(BOOL)validateDate:(RecordAttribute*)recordAttribute withResults:(NSArray*)results;
-
 @end
 
 @implementation RecordValidator
@@ -25,51 +22,57 @@
 {
     NSMutableArray *results = [[NSMutableArray alloc] init];
     for (RecordAttribute* att in record.recordAttributes) {
-        
-        if ([self validateRequired:att withResults:results]) {
-            // Don't do the date validation if the date is required and blank.
-            [self validateDate:att withResults:results];
+       
+        AttributeError* error = [self validate:att.value forAttribute:att.surveyAttribute];
+        if (error) {
+            [results addObject:error];
         }
     }
     
     return [[ValidationResult alloc] initWithErrors:results];
 }
 
--(BOOL)validateRequired:(RecordAttribute*)recordAttribute withResults:(NSMutableArray*)results
+
+-(AttributeError*)validate:(NSString*)value forAttribute:(SurveyAttribute*)attribute
 {
-    BOOL valid = YES;
-    if ([recordAttribute.surveyAttribute.required intValue] == YES &&
-        (recordAttribute.value == NULL || [recordAttribute.value isEqualToString:@""])) {
-        
-        valid = NO;
-        AttributeError *error = [[AttributeError alloc] init];
-        error.attributeId = recordAttribute.surveyAttribute.weight;
-        error.errorText = @"Please enter a value";
-        [results addObject:error];
-        
+    AttributeError* error = [self validateRequired:value forAttribute:attribute];
+    if (!error) {
+        error = [self validateDate:value forAttribute:attribute];
     }
-    return valid;
+    return error;
 }
--(BOOL)validateDate:(RecordAttribute*)recordAttribute withResults:(NSMutableArray*)results
+
+-(AttributeError*)validateRequired:(NSString*)value forAttribute:(SurveyAttribute*)attribute
 {
-    BOOL valid = YES;
-    if ([recordAttribute.surveyAttribute.typeCode isEqualToString:kWhen]) {
+    AttributeError* error = nil;
+    if ([attribute.required intValue] == YES &&
+        (value == nil || [value isEqualToString:@""])) {
         
-        NSString *dateString = recordAttribute.value;
-        if (dateString) {
+        error = [[AttributeError alloc] init];
+        error.attributeId = attribute.weight;
+        error.errorText = @"Please enter a value";
+    }
+    return error;
+}
+
+-(AttributeError*)validateDate:(NSString*)value forAttribute:(SurveyAttribute*)attribute
+{
+    AttributeError* error = nil;
+    
+    if ([attribute.typeCode isEqualToString:kWhen]) {
+        
+        if (value != nil && ![value isEqualToString:@""]) {
             NSDate *today = [NSDate date];
-            NSDate *date = [Record stringToDate:recordAttribute.value];
+            NSDate *date = [Record stringToDate:value];
             if ([date laterDate:today] == date) {
         
-                valid = NO;
-                AttributeError *error = [[AttributeError alloc] init];
-                error.attributeId = recordAttribute.surveyAttribute.weight;
+                error = [[AttributeError alloc] init];
+                error.attributeId = attribute.weight;
                 error.errorText = @"The date cannot be in the future";
-                [results addObject:error];
             }
         }
     }
-    return valid;
+    return error;
 
 }
 

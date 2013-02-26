@@ -18,6 +18,12 @@
 
 -(id)initWithErrors:(NSArray*)errors;
 
+// Clears any errors created after validating the attribute
+// with the supplied attributeId.  Used to support partial
+// validations.
+-(void)removeErrorForId:(NSNumber*)attributeId;
+-(void)addError:(AttributeError*)error;
+
 // Whether the record is valid or not - a YES value indicates a valid record.
 @property (assign, readonly) BOOL valid;
 

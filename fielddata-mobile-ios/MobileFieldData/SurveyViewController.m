@@ -34,6 +34,7 @@
     LabelledSpeciesCell *speciesCell;
     NSInteger attributeCellsRowOffset;
     ValidationResult *validationResult;
+    BOOL editingSavedRecord;
 }
 
 @end
@@ -45,6 +46,7 @@
     self = [super initWithStyle:style];
     if (self) {
         // Custom initialization
+        
         fieldDataService = [[FieldDataService alloc]init];
         fieldDataService.uploadDelegate = self;
         
@@ -56,7 +58,8 @@
         validationResult = [[ValidationResult alloc] init];
         
         attributeCellsRowOffset = 1;
-        if (r == NULL) {
+        editingSavedRecord = (r != nil);
+        if (!editingSavedRecord) {
             loadedValues = [[NSMutableDictionary alloc]init];
         } else {
             record = r;
@@ -103,11 +106,6 @@
     gestureRecognizer.cancelsTouchesInView = NO;
     [self.tableView addGestureRecognizer:gestureRecognizer];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 -(void)hideKeyboard:(UITapGestureRecognizer *)gestureRecognizer
@@ -162,48 +160,37 @@
     
     [self.view endEditing:YES];
     
-    if (record == nil) {
-        record = [fieldDataService createRecord:attributes survey:survey inputFields:inputFields];
-        
+    if (record != nil) {
+        [fieldDataService updateRecord:record attributes:attributes inputFields:inputFields];
     }
     else {
-        [fieldDataService updateRecord:record attributes:attributes inputFields:inputFields];
+        record = [fieldDataService createRecord:attributes survey:survey inputFields:inputFields];
     }
     [self validate];
     // check if all the mandatory fields have been entered
     if (validationResult.valid) {
+        if (editingSavedRecord) {
             
+            [AlertService DisplayMessageWithTitle:@"Observation Saved"
+                                          message:@"Observation has been successfully updated and is ready to be uploaded."];
+            [[self navigationController] popViewControllerAnimated:YES];
+        }
+        else {
             UIAlertView *alertView =[[UIAlertView alloc]
                                      initWithTitle:@"Upload Survey"
-                                           message:@"Would you like to upload this survey immediately?"
-                                          delegate:self
-                                 cancelButtonTitle:@"No"
-                                 otherButtonTitles:@"Yes", nil];
+                                     message:@"Would you like to upload this survey immediately?"
+                                     delegate:self
+                                     cancelButtonTitle:@"No"
+                                     otherButtonTitles:@"Yes", nil];
             
             [alertView show];
-            
+        }
+    
     } else {
         [AlertService DisplayMessageWithTitle:@"Observation Draft Saved"
                                           message:@"All mandatory fields (marked *) must be entered before your observations can be uploaded to the server."];
-            //[[self navigationController] popViewControllerAnimated:YES];
-            
-            
     }
         
-//    } else {
-//        
-//        
-//        if ([fieldDataService isRecordComplete:record]) {
-//            [AlertService DisplayMessageWithTitle:@"Observation Saved"
-//                                      message:@"Observation has been successfully updated and is ready to be uploaded."];
-//        } else {
-//            [AlertService DisplayMessageWithTitle:@"Observation Draft Saved"
-//                                          message:@"All mandatory fields (marked *) must be entered before your observations can be uploaded to the server."];
-//
-//        }
-//        [[self navigationController] popViewControllerAnimated:YES];
-//    }
-    
 }
 
 -(void)updateViewsWithValidationResults:(ValidationResult*)result scrollToErrors:(BOOL)scrollToErrors

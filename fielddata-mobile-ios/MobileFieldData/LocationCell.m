@@ -125,6 +125,7 @@
     if (newLocation.horizontalAccuracy <= 20.0) {
         
         [self setFoundLocation:newLocation];
+        [delegate locationFound:newLocation];
         [timer invalidate];
         
     } else {

@@ -13,6 +13,7 @@
 
 @protocol LocationCellDelegate
 -(void)showMap;
+-(void)locationFound:(CLLocation*)location;
 @end
 
 @interface LocationCell : SurveyInputCell <CLLocationManagerDelegate> {

@@ -32,9 +32,11 @@
     @private
     LocationCell *locationCell;
     LabelledSpeciesCell *speciesCell;
+    SingleSelectListCell *locationPrecisionCell;
     NSInteger attributeCellsRowOffset;
     ValidationResult *validationResult;
     BOOL editingSavedRecord;
+    
 }
 
 @end
@@ -296,6 +298,9 @@
                                                                          reuseIdentifier:CellIdentifier
                                                                          options:attribute.options.allObjects];
             [listCell setSelectedValue:[loadedValues objectForKey:attribute.weight]];
+            if ([attribute.name isEqualToString:@"Location_Precision"]) {
+                locationPrecisionCell = listCell;
+            }
             cell = listCell;
         } else if ([attribute.typeCode isEqualToString:kMultiCheckbox]) {
             SingleSelectListCell* listCell = [[SingleSelectListCell alloc] initWithStyle:UITableViewCellStyleSubtitle
@@ -633,10 +638,22 @@
     return nil;
 }
 
+// Callback from the Map View when the user selects a location on the map.
 - (void)locationSelected:(CLLocation *)selectedLocation
 {
     [locationCell setFoundLocation:selectedLocation];
+    if (locationPrecisionCell) {
+        [locationPrecisionCell setSelectedValue:@"On-screen map"];
+    }
     NSLog(@"Found location!=%@", selectedLocation);
+}
+
+// Callback from the Location Cell when the GPS finds a location.
+-(void)locationFound:(CLLocation*)foundLocation
+{
+    if (locationPrecisionCell) {
+        [locationPrecisionCell setSelectedValue:@"GPS"];
+    }
 }
 
 #pragma mark SpeciesSelectionDelegate implementation

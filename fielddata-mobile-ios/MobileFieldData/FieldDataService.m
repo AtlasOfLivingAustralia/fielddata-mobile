@@ -202,8 +202,9 @@
         
         // ignore moderator scoped fields
         NSString* scope = [attribute objectForKey:@"scope"];
-        
-        if (![scope isEqualToString:kModeratorScope]) {
+        NSString* name = [attribute objectForKey:@"name"];
+        if (![scope isEqualToString:kModeratorScope] &&
+            ![name isEqualToString:@"possible_species"]) { // This field only makes sense on the web form
             //NSLog(@"Saving attribute: %@", attribute);
             [self persistAttribute:attribute survey:survey error:e];
         }

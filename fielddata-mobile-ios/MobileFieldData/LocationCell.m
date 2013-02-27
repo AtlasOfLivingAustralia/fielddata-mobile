@@ -69,6 +69,7 @@
         longitude.text = [NSString stringWithFormat:@"Latitude: %@", [locDescArr objectAtIndex:1]];
         accuracy.text = [NSString stringWithFormat:@"Accuracy: %@m", [locDescArr objectAtIndex:2]];
     }
+    self.value = locationString;
     
 }
 

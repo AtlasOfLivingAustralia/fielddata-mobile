@@ -203,7 +203,7 @@
         NSNumber *attributeId = error.attributeId;
         [invalidAttributes addObject:attributeId];
     }
-    attributeCellsRowOffset = result.valid ? 1 : [result messagesAndFields].count;
+    attributeCellsRowOffset = result.valid ? 1 : [result messagesAndFields].count + 1;
     
     [self.tableView reloadData];
     if (!result.valid && scrollToErrors) {
@@ -503,7 +503,7 @@
 
 -(BOOL)isValidationSummaryRow:(NSInteger)row
 {
-    return (!validationResult.valid && row <= attributeCellsRowOffset);
+    return (!validationResult.valid && row > 0 && row < attributeCellsRowOffset);
 }
 
 -(SurveyAttribute*)attributeForPath:(NSIndexPath*)indexPath

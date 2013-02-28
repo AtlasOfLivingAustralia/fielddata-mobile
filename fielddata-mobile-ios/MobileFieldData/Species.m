@@ -15,5 +15,6 @@
 @dynamic imageFileName;
 @dynamic scientificName;
 @dynamic taxonId;
+@dynamic groupName;
 
 @end

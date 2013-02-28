@@ -489,7 +489,6 @@
     for (RecordAttribute* att in record.recordAttributes) {
         if ([att.surveyAttribute.required intValue] == 1 &&
             (att.value == NULL || [att.value isEqualToString:@""])) {
-            NSLog(@"Attribute: %@  Value: %@", att.surveyAttribute.question, att.value);
             complete = NO;
             break;
         }

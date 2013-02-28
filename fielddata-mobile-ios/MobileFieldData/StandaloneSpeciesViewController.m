@@ -36,6 +36,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
+    
     [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
  
     Species *species = [speciesLoader objectAtIndexPath:indexPath];

@@ -340,10 +340,10 @@
 
 -(NSFetchedResultsController*)loadSpecies {
     
-    return [self loadSpecies:nil];
+    return [self loadSpecies:nil searchText:nil];
 }
 
--(NSFetchedResultsController*)loadSpecies:(NSArray*)speciesIds {
+-(NSFetchedResultsController*)loadSpecies:(NSArray*)speciesIds searchText:(NSString*)searchText {
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Species" inManagedObjectContext:context];
@@ -352,10 +352,22 @@
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
     [fetchRequest setSortDescriptors:sortDescriptors];
 
+    NSMutableArray *predicates = [[NSMutableArray alloc] init];
     if (speciesIds != nil) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"taxonId in %@", speciesIds];
-        [fetchRequest setPredicate:predicate];
+        [predicates addObject:predicate];
+        
     }
+    if (searchText != nil && ![searchText isEqualToString:@""]) {
+        NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"(commonName CONTAINS[c] %@) OR (scientificName CONTAINS[c] %@)", searchText, searchText];
+        [predicates addObject:searchPredicate];
+        
+    }
+    
+    if (predicates.count > 0) {
+        [fetchRequest setPredicate:[NSCompoundPredicate andPredicateWithSubpredicates:predicates]];
+    }
+    
     NSFetchedResultsController *speciesFetchController = [[NSFetchedResultsController alloc]
             initWithFetchRequest:fetchRequest
             managedObjectContext:context

@@ -10,7 +10,9 @@
 #import "Species.h"
 #import "SpeciesTableCell.h"
 
-@interface SpeciesListViewController () 
+@interface SpeciesListViewController () {
+    NSArray* speciesToDisplay;
+}
 @end
 
 @implementation SpeciesListViewController
@@ -20,6 +22,7 @@
 {
     self = [super initWithStyle:style];
     if (self) {
+        speciesToDisplay = nil;
         fieldDataService = [[FieldDataService alloc]init];
         speciesLoader = [fieldDataService loadSpecies];
                 
@@ -31,8 +34,9 @@
 {
     self = [super initWithStyle:style];
     if (self) {
+        speciesToDisplay = speciesIds;
         fieldDataService = [[FieldDataService alloc]init];
-        speciesLoader = [fieldDataService loadSpecies:speciesIds];
+        speciesLoader = [fieldDataService loadSpecies:speciesIds searchText:nil];
         
     }
     return self;
@@ -43,7 +47,21 @@
 {
     [super viewDidLoad];
     self.title = @"Species List";
+    
+    searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0,0,400,38)];
+    searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+    searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    searchBar.showsCancelButton = YES;
+    searchBar.delegate = self;
+    self.tableView.tableHeaderView = searchBar;
 
+    for(UIView *subView in searchBar.subviews) {
+        if([subView conformsToProtocol:@protocol(UITextInputTraits)]) {
+            [(UITextField *)subView setKeyboardAppearance: UIKeyboardAppearanceAlert];
+        }
+    }
+    //[self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:searchBar action:@selector(resignFirstResponder)]];
+    
 }
 
 - (void)viewDidUnload
@@ -134,6 +152,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [searchBar resignFirstResponder];
+    
     // Navigation logic may go here. Create and push another view controller.
     /*
      <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
@@ -141,6 +161,34 @@
      // Pass the selected object to the new view controller.
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
+}
+
+#pragma mark -UISearchBarDelegate
+
+-(void)searchBar:(UISearchBar *)aSearchBar textDidChange:(NSString *)searchText
+{
+    [self doSearch:searchText];
+}
+-(void)searchBarSearchButtonClicked:(UISearchBar *)aSearchBar
+{
+    [aSearchBar resignFirstResponder];
+}
+-(void)searchBarCancelButtonClicked:(UISearchBar *)aSearchBar
+{
+    [aSearchBar setText:@""];
+    [self searchBar:aSearchBar textDidChange:@""];
+    [aSearchBar resignFirstResponder];
+}
+
+-(void)searchBarTextDidEndEditing:(UISearchBar*)aSearchBar
+{
+   [aSearchBar resignFirstResponder];
+}
+
+-(void)doSearch:(NSString*)searchText
+{
+    speciesLoader = [fieldDataService loadSpecies:speciesToDisplay searchText:searchText];
+    [self.tableView reloadData];
 }
 
 @end

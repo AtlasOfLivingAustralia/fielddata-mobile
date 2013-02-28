@@ -7,10 +7,10 @@
 //
 
 #import "SpeciesSelectionViewController.h"
+#import "SpeciesTableCell.h"
 
 @interface SpeciesSelectionViewController () {
     UIBarButtonItem *doneButton;
-    NSInteger selectedRow;
     Species *initialSelection;
 }
 @end
@@ -28,10 +28,7 @@
         self = [super initWithStyle:style];
     }
     if (self) {
-        
-        selectedRow = NSNotFound;
         initialSelection = intialSpeciesSelection;
-        
     }
     return self;
 }
@@ -52,7 +49,8 @@
     
     if (initialSelection) {
         self.selectedSpecies = initialSelection;
-        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:selectedRow inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+        
+        [self.tableView scrollToRowAtIndexPath:[speciesLoader indexPathForObject:initialSelection] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
     }
 }
 
@@ -69,21 +67,13 @@
 -(void)setSelectedSpecies:(Species*)species
 {
     selectedSpecies = species;
-    NSUInteger oldSelection = selectedRow;
-    
-    if (species == nil) {
-        selectedRow = NSNotFound;
-        doneButton.enabled = NO;
-    }
-    else {
-        selectedRow = [speciesLoader indexPathForObject:species].row;
-        doneButton.enabled = YES;
-    }
-
-    NSArray *paths = [NSArray arrayWithObjects:[NSIndexPath indexPathForRow:oldSelection inSection:0], [NSIndexPath indexPathForRow:selectedRow inSection:0], nil];
-    [self.tableView reloadRowsAtIndexPaths:paths withRowAnimation:NO];
+    doneButton.enabled = (species != nil);
 }
 
+-(void)doSearch:(NSString*)searchText
+{
+    [super doSearch:searchText];
+}
 
 
 
@@ -91,9 +81,9 @@
 // This method is overridden to configure the checkmark for the selected species.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
+    SpeciesTableCell *cell = (SpeciesTableCell*)[super tableView:tableView cellForRowAtIndexPath:indexPath];
     
-    if (selectedRow == indexPath.row) {
+    if ([cell.species isEqual:self.selectedSpecies]) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
     else {
@@ -106,19 +96,28 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
+    
+    NSIndexPath* currentSelectedPath = nil;
+    if (self.selectedSpecies) {
+        currentSelectedPath = [speciesLoader indexPathForObject:self.selectedSpecies];
+    }
+    
+    Species* species = [speciesLoader objectAtIndexPath:indexPath];
+    if ([species isEqual:self.selectedSpecies]) {
+        // If the user selects the same cell, treat this as a de-select.
+        self.selectedSpecies = nil;
+    }
+    else {
+        self.selectedSpecies = species;
+    }
+    
     NSArray* paths = [NSArray arrayWithObject:indexPath];
     
     // If we have a current selection (different to the new selection), add that row to the
     // ones that need to be reloaded / redrawn.
-    if (selectedRow != NSNotFound && selectedRow != indexPath.row) {
-        paths = [paths arrayByAddingObject:[NSIndexPath indexPathForRow:selectedRow inSection:0]];
-    }
-    
-    if (selectedRow == indexPath.row) {
-        self.selectedSpecies = nil;
-    }
-    else {
-        self.selectedSpecies = [speciesLoader objectAtIndexPath:indexPath];
+    if (currentSelectedPath && ![currentSelectedPath isEqual:indexPath]) {
+        paths = [paths arrayByAddingObject:currentSelectedPath];
     }
     
     [self.tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationFade];

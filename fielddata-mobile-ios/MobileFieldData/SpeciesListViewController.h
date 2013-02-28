@@ -9,14 +9,15 @@
 #import <UIKit/UIKit.h>
 #import "FieldDataService.h"
 
-@interface SpeciesListViewController : UITableViewController {
+@interface SpeciesListViewController : UITableViewController <UISearchBarDelegate> {
     
     @protected
     FieldDataService* fieldDataService;
     NSFetchedResultsController* speciesLoader;
-    
+    UISearchBar *searchBar;
 }
 
 -(id)initWithStyle:(UITableViewStyle)style speciesIds:(NSArray*)speciesIds;
+-(void)doSearch:(NSString*)searchText;
 
 @end

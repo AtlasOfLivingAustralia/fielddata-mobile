@@ -559,7 +559,7 @@
                 }
                 else {
                     if (att.value != nil) {
-                        [attributeValue setObject:att.value forKey:@"value"];
+                        [attributeValue setObject:[self urlEncode:att.value] forKey:@"value"];
                         [attributeValues addObject:attributeValue];
                     }
                 }
@@ -576,6 +576,7 @@
         scientificName = spec.scientificName;
         taxonId = spec.taxonId;
     }
+    NSMutableDictionary* uploadDict = [[NSMutableDictionary alloc] init];
     
     NSArray* locDescArr = [location.value componentsSeparatedByString:@","];
     
@@ -587,12 +588,13 @@
         lat = [locDescArr objectAtIndex:0];
         lon = [locDescArr objectAtIndex:1];
         accuracy = [locDescArr objectAtIndex:2];
+        
+        [uploadDict setObject:lat forKey:@"latitude"];
+        [uploadDict setObject:lon forKey:@"longitude"];
+        [uploadDict setObject:accuracy forKey:@"accuracy"];
+        
     }
     
-    NSMutableDictionary* uploadDict = [[NSMutableDictionary alloc] init];
-    [uploadDict setObject:lat forKey:@"latitude"];
-    [uploadDict setObject:lon forKey:@"longitude"];
-    [uploadDict setObject:accuracy forKey:@"accuracy"];
     if (scientificName) {
         [uploadDict setObject:scientificName forKey:@"scientificName"];
     }
@@ -620,7 +622,6 @@
     [uploadDict setObject:uuidString forKey:@"id"];
     
     [uploadDict setObject:[[NSNumber alloc]initWithInt:0] forKey:@"location"];
-    //[uploadDict setObject:[[NSNumber alloc]initWithInt:0] forKey:@"number"];
     [uploadDict setObject:[[NSNumber alloc]initWithInt:0] forKey:@"server_id"];
     [uploadDict setObject:[[NSNumber alloc]initWithInt:3] forKey:@"_id"];
     
@@ -644,6 +645,7 @@
     
     //jsonString = [jsonString stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"]; //%2F
     jsonString = [jsonString stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"];
+    
     [r addParam:jsonString forKey:@"syncData" alreadyEncoded:YES];
     
     //now execute this request and fetch the response in a block
@@ -684,5 +686,14 @@
     NSNumber *millisSince1970 = [NSNumber numberWithDouble: 1000.0 * [date timeIntervalSince1970]];
     return [NSString stringWithFormat:@"%lld", [millisSince1970 longLongValue]];
 
+}
+-(NSString*)urlEncode:(NSString*)string
+{
+    return (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
+              NULL,
+              (__bridge CFStringRef) string,
+              NULL,
+              CFSTR("!*'();:@&=+$,/?%#[]"),
+              kCFStringEncodingUTF8));
 }
 @end

@@ -135,13 +135,11 @@
         NSString *optionValue = option.value;
         NSArray* split = [self splitIntoHeaderAndValue:groupIdentifier value:optionValue];
         header = split[0];
-        NSLog(@"Value: %@ Header: %@", header, option.value);
         
         if (previousHeader != nil && ![header isEqualToString:previousHeader]) {
             [headers addObject:previousHeader];
             [groupedOptions addObject:optionGroup];
             
-            NSLog(@"Adding: %@ with %d values", header, optionGroup.count);
             optionGroup = [NSMutableArray arrayWithCapacity:values.count];
         }
         [optionGroup addObject:split[1]];

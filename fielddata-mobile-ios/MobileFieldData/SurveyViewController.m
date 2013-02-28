@@ -127,8 +127,7 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    NSLog(@"Testing when this is called");
+   
 }
 
 -(void)validate
@@ -332,7 +331,7 @@
             locationCell = [[LocationCell alloc]initWithStyle:UITableViewCellStyleDefault
                                                                      reuseIdentifier:CellIdentifier];
             locationCell.delegate = self;
-            [locationCell setLocation:[NSString stringWithFormat:@"%@", [loadedValues objectForKey:attribute.weight]]];
+            [locationCell setLocation:[loadedValues objectForKey:attribute.weight]];
             cell = locationCell;
             
         } else if ([attribute.typeCode isEqualToString:kWhen] ||
@@ -493,7 +492,6 @@
 {
     SurveyAttribute* attribute = (__bridge SurveyAttribute*)context;
     NSString* value = [change objectForKey:@"new"];
-    NSLog(@"Received change notification for attribute: %@, new value:%@", attribute.weight, value);
     if ([invalidAttributes containsObject:attribute.weight]) {
         [self validate:value forAttribute:attribute];
     }
@@ -625,7 +623,6 @@
 {
     SurveyAttribute *locationAttribute = [survey getAttributeByType:kPoint];
     NSString *locationString = [inputFields objectForKey:locationAttribute.weight];
-    NSLog(@"Location weight=%@, Inputfields=%@", locationAttribute.weight, inputFields);
     if (locationString) {
         return [Record stringToLocation:locationString];
     }
@@ -640,7 +637,7 @@
     if (locationPrecisionCell) {
         [locationPrecisionCell setSelectedValue:@"On-screen map"];
     }
-    NSLog(@"Found location!=%@", selectedLocation);
+    
 }
 
 // Callback from the Location Cell when the GPS finds a location.

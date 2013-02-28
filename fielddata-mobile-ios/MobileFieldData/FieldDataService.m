@@ -168,7 +168,6 @@
     survey.lastSync = [NSDate date];
     survey.order = [surveyDetails objectForKey:@"weight"];
     survey.speciesIds = [surveyDetails objectForKey:@"species"];
-    NSLog(@"SpeciesID = %@", survey.speciesIds);
     
     NSNumber* startDate = [surveyDetails objectForKey:@"startDate"];
     if (startDate != (id)[NSNull null]) {

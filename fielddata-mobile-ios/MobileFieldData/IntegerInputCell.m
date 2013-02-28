@@ -17,7 +17,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         
-        inputField = [[UITextField alloc] initWithFrame:CGRectMake(10, 50, 100, 28)];
+        inputField = [[UITextField alloc] initWithFrame:CGRectMake(10, 35, 100, 28)];
         inputField.borderStyle = UITextBorderStyleRoundedRect;
         inputField.keyboardType = UIKeyboardTypeDecimalPad;
         inputField.delegate = self;

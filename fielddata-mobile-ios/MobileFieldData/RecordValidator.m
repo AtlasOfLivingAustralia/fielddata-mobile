@@ -22,7 +22,6 @@
 {
     NSMutableArray *results = [[NSMutableArray alloc] init];
     for (RecordAttribute* att in record.recordAttributes) {
-       
         AttributeError* error = [self validate:att.value forAttribute:att.surveyAttribute];
         if (error) {
             [results addObject:error];

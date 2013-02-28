@@ -62,6 +62,9 @@
 
 -(void)setLocation:(NSString*)locationString
 {
+    if (locationString == nil) {
+        locationString = @"";
+    }
     NSArray* locDescArr = [locationString componentsSeparatedByString:@","];
     
     if (locDescArr.count == 3) {
@@ -131,7 +134,7 @@
     } else {
         tempLocation = newLocation;
     }
-	NSLog(@"%f", newLocation.horizontalAccuracy);
+	
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {

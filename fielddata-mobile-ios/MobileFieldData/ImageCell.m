@@ -52,8 +52,13 @@
 
 - (void)updateImage:(NSString*)imagePath
 {
+    
     if (imagePath != NULL && ![imagePath isEqualToString:@""]) {
         [cameraImage setImage:[UIImage imageWithContentsOfFile:imagePath]];
+        self.value = imagePath;
+    }
+    else {
+        self.value = @"";
     }
 }
 
@@ -109,7 +114,7 @@
     } 
     
     NSString* fileName = [NSString stringWithFormat:@"%f.jpg", [[NSDate date] timeIntervalSince1970]];
-    self.value = [FileService saveImage:image withName:fileName];
+    NSString* filePath = [FileService saveImage:image withName:fileName];
     
     image = nil;
     
@@ -120,9 +125,8 @@
     }
     
     // reload the image
-    [self updateImage:self.value];
+    [self updateImage:filePath];
     
-    //[cameraImage setImage:image];
     
     [parentController dismissModalViewControllerAnimated: YES];
 }

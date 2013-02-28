@@ -46,4 +46,20 @@
 {
     _errors = [_errors arrayByAddingObject:error];
 }
+
+-(NSDictionary*)messagesAndFields
+{
+    NSMutableDictionary *messages = [[NSMutableDictionary alloc] init];
+    for (AttributeError *error in self.errors) {
+        NSMutableArray *fieldNames = [messages objectForKey:error.errorText];
+        if (fieldNames == nil) {
+            fieldNames = [[NSMutableArray alloc] init];
+            [messages setObject:fieldNames forKey:error.errorText];
+        }
+        [fieldNames addObject:error.attributeId];
+        
+    }
+    return messages;
+}
+
 @end

@@ -203,7 +203,7 @@
         NSNumber *attributeId = error.attributeId;
         [invalidAttributes addObject:attributeId];
     }
-    attributeCellsRowOffset = result.valid ? 1 : 2;
+    attributeCellsRowOffset = result.valid ? 1 : [result messagesAndFields].count;
     
     [self.tableView reloadData];
     if (!result.valid && scrollToErrors) {
@@ -268,7 +268,12 @@
     }
     else if ([self isValidationSummaryRow:indexPath.row])
     {
-        return [self validationSummaryCell:tableView];
+        NSDictionary* errors = [validationResult messagesAndFields];
+        NSArray* sortedMessages = [[errors allKeys] sortedArrayUsingSelector:@selector(compare:)];
+        
+        NSString *key = sortedMessages[indexPath.row-1];
+        NSArray *fields = [errors objectForKey:key];
+        return [self validationSummaryCell:tableView message:key fields:fields];
     }
     SurveyAttribute* attribute = [self attributeForPath:indexPath];
     NSString *CellIdentifier = [attribute.weight stringValue];
@@ -451,7 +456,7 @@
     return cell;
 }
 
--(UITableViewCell*)validationSummaryCell:(UITableView*)tableView
+-(UITableViewCell*)validationSummaryCell:(UITableView*)tableView message:(NSString*)message fields:(NSArray*)fields
 {
     static NSString *cellIdentifier = @"ValidationSummary";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
@@ -467,26 +472,16 @@
         
         
     }
-    NSMutableDictionary *messages = [[NSMutableDictionary alloc] init];
-    for (AttributeError *error in validationResult.errors) {
-        NSMutableArray *fieldNames = [messages objectForKey:error.errorText];
-        if (fieldNames == nil) {
-            fieldNames = [[NSMutableArray alloc] init];
-            [messages setObject:fieldNames forKey:error.errorText];
-        }
-        SurveyAttribute *attribute = [survey getAttributeByWeight:error.attributeId];
-        [fieldNames addObject:attribute.question];
-    }
     
-    NSString *key = [messages allKeys][0];
-    NSArray *fields = [messages objectForKey:key];
+    cell.textLabel.text = [message stringByAppendingString:@" for the following fields:"];
     
-    cell.textLabel.text = [key stringByAppendingString:@" for the following fields:"];
     
     NSMutableString* messageText = [[NSMutableString alloc] init];
-    for (NSString* field in fields) {
+    for (NSNumber* fieldId in fields) {
+        SurveyAttribute *attribute = [survey getAttributeByWeight:fieldId];
+        
         [messageText appendString:@" \u2022 "];
-        [messageText appendString:field];
+        [messageText appendString:attribute.question];
         [messageText appendString:@"\n"];
     }
     cell.detailTextLabel.text = messageText;
@@ -508,7 +503,7 @@
 
 -(BOOL)isValidationSummaryRow:(NSInteger)row
 {
-    return (row == 1 && !validationResult.valid);
+    return (!validationResult.valid && row <= attributeCellsRowOffset);
 }
 
 -(SurveyAttribute*)attributeForPath:(NSIndexPath*)indexPath

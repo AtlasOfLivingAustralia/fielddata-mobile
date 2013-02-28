@@ -23,6 +23,7 @@
 // validations.
 -(void)removeErrorForId:(NSNumber*)attributeId;
 -(void)addError:(AttributeError*)error;
+-(NSDictionary*)messagesAndFields;
 
 // Whether the record is valid or not - a YES value indicates a valid record.
 @property (assign, readonly) BOOL valid;

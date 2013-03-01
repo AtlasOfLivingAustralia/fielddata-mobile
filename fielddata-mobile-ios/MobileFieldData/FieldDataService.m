@@ -338,6 +338,9 @@
         SpeciesGroup* group = [speciesGroups objectAtIndex:index];
         species.groupName = group.name;
     }
+    else {
+        species.groupName = @"All Species";
+    }
     
     NSString* thumbnailPath = [speciesDict objectForKey:@"profileImageUUID"];
     

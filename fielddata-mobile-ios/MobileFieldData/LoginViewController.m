@@ -137,6 +137,7 @@
             // delete all the existing entities
             [fieldDataService deleteAllEntities:@"Record"];
             [fieldDataService deleteAllEntities:@"Species"];
+            [fieldDataService deleteAllEntities:@"SpeciesGroup"];
             [fieldDataService deleteAllEntities:@"Survey"];
             
             // download the new surveys

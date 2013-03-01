@@ -18,5 +18,6 @@
 @dynamic parent;
 @dynamic species;
 @dynamic subgroups;
+@dynamic groupId;
 
 @end

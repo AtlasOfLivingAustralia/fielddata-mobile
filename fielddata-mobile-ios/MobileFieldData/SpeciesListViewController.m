@@ -9,6 +9,7 @@
 #import "SpeciesListViewController.h"
 #import "Species.h"
 #import "SpeciesTableCell.h"
+#import "SpeciesGroup.h"
 
 @interface SpeciesListViewController () {
     NSArray* speciesToDisplay;
@@ -99,14 +100,17 @@
     SpeciesTableCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[SpeciesTableCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        //cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        
     }
     
     // Configure the cell...
     Species* species = [speciesLoader objectAtIndexPath:indexPath];
     cell.species = species;
     return cell;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    id <NSFetchedResultsSectionInfo> sectionInfo = [[speciesLoader sections] objectAtIndex:section];
+    return [sectionInfo name];
 }
 
 /*

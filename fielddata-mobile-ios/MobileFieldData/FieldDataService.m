@@ -11,6 +11,7 @@
 #import "RFResponse.h"
 #import "RFService.h"
 #import "Species.h"
+#import "SpeciesGroup.h"
 #import "Survey.h"
 #import "SurveyAttribute.h"
 #import "SurveyAttributeOption.h"
@@ -56,6 +57,7 @@
             [delegate downloadSurveysSuccessful:NO surveyArray:nil];
         }
     }];
+    [self downloadSpeciesGroups];
 }
 
 -(void)downloadSurveyDetails:(NSString*)surveyId downloadedSurveys:(NSArray*)downloadedSurveys
@@ -106,6 +108,7 @@
 -(void)downloadSpeciesForSurvey:(NSString*)surveyId downloadedSurveys:(NSArray*)downloadedSurveys startFrom:(NSInteger)first batchSize:(NSInteger)batchSize {
     
     NSString* url = [preferences getFieldDataURL];
+    NSArray* speciesGroups = [self loadSpeciesGroups];
     
     RFRequest *r = [RFRequest requestWithURL:[NSURL URLWithString:url] type:RFRequestMethodGet
                       resourcePathComponents:@"species", @"speciesForSurvey", nil];
@@ -126,7 +129,7 @@
             if (!error) {
                 int count = 0;
                 for (NSDictionary* speciesDict in [speciesResponse objectForKey:@"list"]) {
-                    [self persistSpecies:speciesDict];
+                    [self persistSpecies:speciesDict speciesGroups:speciesGroups];
                     count++;
                 }
                 NSLog(@"downloaded %d species from request %@", count, [r URL]);
@@ -153,6 +156,29 @@
     
 }
 
+-(void)downloadSpeciesGroups
+{
+    NSString* url = [preferences getFieldDataURL];
+    
+    RFRequest *r = [RFRequest requestWithURL:[NSURL URLWithString:url] type:RFRequestMethodGet
+                      resourcePathComponents:@"species", @"speciesGroups", nil];
+    
+    [RFService execRequest:r completion:^(RFResponse *response){
+        if (response.httpCode == 200) {
+            NSError *error;
+            NSArray* speciesGroupsResponse = [NSJSONSerialization JSONObjectWithData:response.dataValue
+                                                                             options:kNilOptions error:&error];
+            if (!error) {
+                for (NSDictionary* speciesGroup in speciesGroupsResponse) {
+                    NSLog(@"Species groups response: %@", speciesGroup);
+                    [self persistSpeciesGroup:speciesGroup];
+                }
+                
+            }
+        }
+    }];
+    
+}
 
 -(Survey*)persistSurvey:(NSDictionary*)surveyDict error:(NSError*)e {
     
@@ -286,7 +312,7 @@
     return ![typeCode isEqualToString:@"HR"];
 }
 
--(void)persistSpecies:(NSDictionary*)speciesDict {
+-(void)persistSpecies:(NSDictionary*)speciesDict speciesGroups:(NSArray*)speciesGroups {
 
     //static int speciesCount;
     //NSLog(@"Saved %d speies",speciesCount++);
@@ -302,6 +328,16 @@
     species.scientificName = [speciesDict objectForKey:@"scientificName"];
     species.commonName = [speciesDict objectForKey:@"commonName"];
     species.taxonId = [speciesDict objectForKey:@"server_id"];
+    
+    NSNumber* speciesGroupId = [speciesDict objectForKey:@"taxonGroupId"];
+    NSUInteger index = [speciesGroups indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        SpeciesGroup* group = (SpeciesGroup*)obj;
+        return [group.groupId isEqual:speciesGroupId];
+    }];
+    if (index != NSNotFound) {
+        SpeciesGroup* group = [speciesGroups objectAtIndex:index];
+        species.groupName = group.name;
+    }
     
     NSString* thumbnailPath = [speciesDict objectForKey:@"profileImageUUID"];
     
@@ -322,6 +358,25 @@
     if (![context save:&error]) {
         NSLog(@"Error saving Species: %@", [error localizedDescription]);
     }
+}
+
+-(SpeciesGroup*)persistSpeciesGroup:(NSDictionary*)speciesGroupDict
+{
+    
+    SpeciesGroup* speciesGroup = [NSEntityDescription insertNewObjectForEntityForName:@"SpeciesGroup" inManagedObjectContext:context];
+    
+    speciesGroup.groupId = [speciesGroupDict objectForKey:@"id"];
+    speciesGroup.name = [speciesGroupDict objectForKey:@"name"];
+    NSArray* subgroups = [speciesGroupDict objectForKey:@"subgroups"];
+    for (NSDictionary* subgroupDict in subgroups) {
+        SpeciesGroup* subgroup = [self persistSpeciesGroup:subgroupDict];
+        [speciesGroup addSubgroupsObject:subgroup];
+    }
+    NSError *error;
+    if (![context save:&error]) {
+        NSLog(@"Error saving Species Groups: %@", [error localizedDescription]);
+    }
+    return speciesGroup;
 }
 
 -(NSArray*)loadSurveys {
@@ -347,7 +402,7 @@
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Species" inManagedObjectContext:context];
     [fetchRequest setEntity:entity];
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"taxonId" ascending:YES];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"groupName" ascending:YES];
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
     [fetchRequest setSortDescriptors:sortDescriptors];
 
@@ -358,7 +413,7 @@
         
     }
     if (searchText != nil && ![searchText isEqualToString:@""]) {
-        NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"(commonName CONTAINS[c] %@) OR (scientificName CONTAINS[c] %@)", searchText, searchText];
+        NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"(commonName CONTAINS[c] %@) OR (scientificName CONTAINS[c] %@) OR (groupName CONTAINS[c] %@)", searchText, searchText, searchText];
         [predicates addObject:searchPredicate];
         
     }
@@ -370,7 +425,7 @@
     NSFetchedResultsController *speciesFetchController = [[NSFetchedResultsController alloc]
             initWithFetchRequest:fetchRequest
             managedObjectContext:context
-            sectionNameKeyPath:nil
+            sectionNameKeyPath:@"groupName"
             cacheName:nil];
     NSError *error;;
     [speciesFetchController performFetch:&error];
@@ -402,6 +457,20 @@
         NSLog(@"Error finding species with %@=%@ : %@", propertyName, propertyValue, error);
     }
     return result;
+}
+
+-(NSArray*)loadSpeciesGroups
+{
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"SpeciesGroup" inManagedObjectContext:context];
+    [fetchRequest setEntity:entity];
+    
+    NSError *error = nil;
+    NSArray* groups = [context executeFetchRequest:fetchRequest error:&error];
+    if (error) {
+        NSLog(@"Error loading species groups: %@", error);
+    }
+    return groups;
 }
 
 -(void)deleteAllEntities:(NSString*)entityName {

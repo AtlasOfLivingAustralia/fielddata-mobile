@@ -85,6 +85,7 @@
 -(NSArray*)loadSurveys;
 -(NSFetchedResultsController*)loadSpecies;
 -(NSFetchedResultsController*)loadSpecies:(NSArray*)speciesIds searchText:(NSString*)searchText;
+-(NSArray*)loadSpeciesGroups;
 
 -(void)deleteAllEntities:(NSString*)entityName;
 -(Record*)createRecord:(NSArray*)attributes survey:(Survey*)survey inputFields:(NSMutableDictionary*)inputFields;

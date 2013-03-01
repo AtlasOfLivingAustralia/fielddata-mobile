@@ -88,13 +88,12 @@
         [self setUserLocation:selectedLocation.coordinate];
     }
     [self setCenterCoorindate:centre zoomLevel:zoom animated:YES];
-    NSLog(@"%@", self.presentingViewController);
+    
 }
 
 
 
 - (MKAnnotationView *)mapView:(MKMapView *)mv viewForAnnotation:(id <MKAnnotation>)annotation {
-    NSLog(@"I am called");
     if( annotation == mv.userLocation ) return nil;
     
     MKPinAnnotationView *annotationView;
@@ -208,10 +207,8 @@ didChangeDragState:(MKAnnotationViewDragState)newState fromOldState:(MKAnnotatio
     }
 
     CGPoint point = [gestureRecognizer locationInView:self.mapView];
-    NSLog(@"Tap! %f,%f", point.x, point.y);
     
     CLLocationCoordinate2D coordinate = [self.mapView convertPoint:point toCoordinateFromView:self.mapView];
-    NSLog(@"Tap! %f,%f", coordinate.latitude, coordinate.longitude);
     
     [self setUserLocation:coordinate];
 }
@@ -236,8 +233,6 @@ didChangeDragState:(MKAnnotationViewDragState)newState fromOldState:(MKAnnotatio
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
 {
-    NSLog(@"User location: %@", userLocation.location);
-    NSLog(@"part 2 %f, %f", userLocation.coordinate.latitude, userLocation.coordinate.longitude);
     [self setCenterCoorindate:userLocation.location.coordinate zoomLevel:DEFAULT_ZOOM animated:YES];
     if (!selectedLocation) {
         [self setUserLocation:userLocation.location.coordinate];

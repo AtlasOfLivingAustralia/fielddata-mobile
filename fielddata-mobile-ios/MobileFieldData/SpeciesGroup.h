@@ -18,6 +18,7 @@
 @property (nonatomic, retain) SpeciesGroup *parent;
 @property (nonatomic, retain) NSSet *species;
 @property (nonatomic, retain) NSSet *subgroups;
+@property (nonatomic, retain) NSNumber *groupId;
 @end
 
 @interface SpeciesGroup (CoreDataGeneratedAccessors)

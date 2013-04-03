@@ -14,9 +14,9 @@
 -->
 <resources>
 
-    <string name="app_name">NRM Plus</string>
-    <string name="title_activity_mobile_field_data">NRM Plus</string>
-    <string name="title_activity_mobile_data_dashboard">NRM Plus</string>
+    <string name="app_name">NPA NSW</string>
+    <string name="title_activity_mobile_field_data">NPA NSW</string>
+    <string name="title_activity_mobile_data_dashboard">NPA NSW</string>
     
     <string name="hello_world">Hello world!</string>
     <string name="submitButtonText">Save</string>
@@ -99,13 +99,17 @@
     
     <!--  Portal names -->
 	<string-array name="portals">
-	     <item>Condamine Alliance</item>
+	     <!-- <item>Condamine Alliance</item>  -->
 	      <!-- <item>Great Koala Count</item>  -->
-	     <!-- <item>Conservation Volunteers Australia</item>  -->
+	     <item><![CDATA[National Parks Association of NSW]]></item>
 	</string-array>
 	
 	<!-- Saved records page -->
 	<string name="photo_icon">Record photo</string>
 	<string name="draft">Draft</string>
 	
+	<!-- species list menu items -->
+	<string name="species_action_title">Species Action</string>
+	<string name="record_observation">Record with %s survey</string>
+	<string name="view_field_guide">View Field Guide&#8230;</string>
 </resources>

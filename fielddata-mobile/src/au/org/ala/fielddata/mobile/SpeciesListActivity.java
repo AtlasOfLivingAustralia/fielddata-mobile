@@ -14,6 +14,8 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile;
 
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,8 +24,10 @@ import android.support.v4.widget.SearchViewCompat;
 import android.support.v4.widget.SearchViewCompat.OnQueryTextListenerCompat;
 import android.view.View;
 import android.widget.ListView;
+import au.org.ala.fielddata.mobile.dao.SurveyDAO;
 import au.org.ala.fielddata.mobile.model.Species;
-import au.org.ala.fielddata.mobile.pref.Preferences;
+import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.ui.SpeciesListFragment;
 import au.org.ala.fielddata.mobile.ui.SpeciesSelectionListener;
 
@@ -50,20 +54,16 @@ public class SpeciesListActivity extends SpeciesListFragment implements SpeciesS
 		
 	}
 	
-	private Preferences preferences;
-	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//setHasOptionsMenu(true);
-		preferences = new Preferences(getActivity());
 		init();
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
-		preferences = new Preferences(getActivity());
 		
 	}
 	
@@ -98,14 +98,15 @@ public class SpeciesListActivity extends SpeciesListFragment implements SpeciesS
 
 	public void onSpeciesSelected(final Species species) {
 		
-		final CharSequence[] items = {"Record Observation", "View Field Guide"};
+		final List<Survey> surveys = getSurveys(species);
+		final String[] items = buildMenuItems(surveys);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle("Species Action");
+		builder.setTitle(getString(R.string.species_action_title));
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int item) {
-		        if (item == 0) {
-		        	recordObservation(species);
+		        if (item > 0) {
+		        	recordObservation(species, surveys.get(item-1));
 		        } else {
 		        	showFieldGuide(species);
 		        }
@@ -114,10 +115,27 @@ public class SpeciesListActivity extends SpeciesListFragment implements SpeciesS
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
+	
+	private String[] buildMenuItems(List<Survey> surveys) {
+		String[] items = new String[surveys.size() + 1];
+		String recordItem = getString(R.string.record_observation);
+		items[0] = getString(R.string.view_field_guide);
+		
+		int i = 1;
+		for (Survey survey : surveys) {
+			items[i++] = String.format(recordItem, survey.name);
+		}
+		
+		return items;
+	}
+	
+	private List<Survey> getSurveys(Species species) {
+		return new SurveyDAO(getActivity()).surveysForSpecies(species.getId());
+	}
 
-	private void recordObservation(Species species) {
+	private void recordObservation(Species species, Survey survey) {
 		Intent intent = new Intent(getActivity(), CollectSurveyData.class);
-		intent.putExtra(CollectSurveyData.SURVEY_BUNDLE_KEY, preferences.getCurrentSurvey());
+		intent.putExtra(CollectSurveyData.SURVEY_BUNDLE_KEY, survey.server_id);
 		intent.putExtra(CollectSurveyData.SPECIES, species.getId());
 		startActivity(intent);
 	}

@@ -16,10 +16,8 @@
 
     <style name="AppTheme" parent="@style/Theme.Sherlock.Light">
         <item name="vpiTitlePageIndicatorStyle">@style/CustomTitlePageIndicator</item>
-        <item name="android:actionBarStyle">@style/FieldData.ActionBar</item>
         <item name="actionBarStyle">@style/FieldData.ActionBar</item>
         <item name="android:windowBackground">@drawable/roundedrectangle</item>
-        <item name="android:actionBarTabStyle">@style/FieldData.ActionBarTab</item>
         <item name="actionBarTabStyle">@style/FieldData.ActionBarTab</item> 
     </style>
        
@@ -38,15 +36,12 @@
         <item name="topPadding">10dp</item>
         <item name="footerPadding">10dp</item>
         
-        <item name="android:textAllCaps">true</item>
     </style>
     
     <style name="FieldData.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid">
-        <item name="android:titleTextStyle">@style/FieldData.ActionBar.Title</item>     
         <item name="titleTextStyle">@style/FieldData.ActionBar.Title</item>
         
         <item name="subtitleTextStyle">@style/FieldData.ActionBar.Subtitle</item>
-        <item name="android:subtitleTextStyle">@style/FieldData.ActionBar.Subtitle</item>
         
         <item name="background">@drawable/action_bar_background</item>
         <item name="android:background">@drawable/action_bar_background</item>
@@ -54,8 +49,6 @@
         <item name="actionBarItemBackground">@drawable/ad_tab_unselected_holo</item>
         <item name="backgroundStacked">@drawable/ad_tab_unselected_holo</item>
         <item name="backgroundSplit">@drawable/ad_tab_unselected_holo</item>
-         <item name="android:backgroundStacked">@drawable/ad_tab_unselected_holo</item>
-        <item name="android:backgroundSplit">@drawable/ad_tab_unselected_holo</item>
         <item name="homeAsUpIndicator">@drawable/abs__ic_ab_back_holo_light</item>
         <item name="progressBarStyle">@style/Widget.Sherlock.Light.ProgressBar.Horizontal</item>
         <item name="indeterminateProgressStyle">@style/Widget.Sherlock.Light.ProgressBar</item>
@@ -91,9 +84,7 @@
       	<item name="android:textStyle">bold</item>
     </style>
     
-    
-    <style name="FieldData.ActionButton" parent="@android:style/Widget.Holo.Light.ImageButton">
-           </style>
+   
            
     <style name="EditEventCustomActionButton" parent="@style/Widget.Sherlock.Light.ActionButton">
         <item name="android:layout_height">match_parent</item>
@@ -112,7 +103,7 @@
     <style name="EditEventCustomActionButtonText">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:textAppearance">?android:attr/actionMenuTextAppearance</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sherlock.Widget.ActionBar.Menu</item>
         <item name="android:textColor">?android:attr/actionMenuTextColor</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:singleLine">true</item>

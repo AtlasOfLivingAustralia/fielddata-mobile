@@ -213,7 +213,7 @@ public class SpeciesDAO extends GenericDAO<Species> {
 		}
 		return speciesList;
 	}
-
+	
 	public Cursor loadSpecies() {
 		return helper.getReadableDatabase().query(
 				true, SPECIES_TABLE, new String[] {"_id", SCIENTIFIC_NAME_COLUMN_NAME, COMMON_NAME_COLUMN_NAME, IMAGE_URL_COLUMN_NAME}, 

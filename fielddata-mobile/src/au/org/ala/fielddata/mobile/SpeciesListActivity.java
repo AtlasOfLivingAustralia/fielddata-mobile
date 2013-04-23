@@ -130,7 +130,7 @@ public class SpeciesListActivity extends SpeciesListFragment implements SpeciesS
 	}
 	
 	private List<Survey> getSurveys(Species species) {
-		return new SurveyDAO(getActivity()).surveysForSpecies(species.getId());
+		return new SurveyDAO(getActivity()).surveysForSpecies(species.server_id);
 	}
 
 	private void recordObservation(Species species, Survey survey) {

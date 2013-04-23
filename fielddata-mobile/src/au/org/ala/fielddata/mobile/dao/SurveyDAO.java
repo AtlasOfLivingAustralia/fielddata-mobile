@@ -33,31 +33,17 @@ public class SurveyDAO extends GenericDAO<Survey> {
 	
 	
 	public List<Survey> surveysForSpecies(Integer speciesId) {
-		SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor result = null;
 		List<Survey> surveyList = new ArrayList<Survey>();
-		try {
-			
-			String query = "SELECT * from "+SURVEY_TABLE+" s inner join "+SURVEY_SPECIES_TABLE+
-					" ss on s.server_id = ss.survey_id where ss.species_id = ?";
-			result = db.rawQuery(query, new String[] {Integer.toString(speciesId)});
-
-			if (result.getCount() == 0) {
-				surveyList = loadAll(Survey.class);
-				
-			} else {
-				result.moveToFirst();
-				while (!result.isAfterLast()) {
-					surveyList.add( map(db, result, Survey.class) );
-					result.moveToNext();
+		
+			List<Survey> allSurveys = loadAll(Survey.class);
+			for (Survey survey : allSurveys) {
+				if (survey.recordsSpecies(speciesId)) {
+					surveyList.add(survey);
 				}
 			}
-		}
-		finally {
-			if (result != null) {
-				result.close();
-			}
-		}
+			
+		
+		
 		return surveyList;
 	}
 	

@@ -45,7 +45,15 @@ public class Survey extends Persistent {
 	public SurveyDetails details;
 	
 	public boolean hasSpecies() {
-		return true;
+		return propertyByType(AttributeType.SPECIES_P) != null;
+	}
+	
+	public boolean isAllSpeciesSurvey() {
+		return hasSpecies() && (speciesIds == null || speciesIds.isEmpty());
+	}
+	
+	public boolean recordsSpecies(Integer speciesServerId) {
+		return hasSpecies() && (isAllSpeciesSurvey() || speciesIds.contains(speciesServerId));
 	}
 	
 	public boolean hasNumber() {

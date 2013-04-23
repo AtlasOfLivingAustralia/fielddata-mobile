@@ -2,6 +2,11 @@ package au.org.ala.fielddata.mobile.ui;
 
 import java.io.File;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,6 +14,7 @@ import android.widget.TextView;
 import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.service.StorageManager;
+import au.org.ala.fielddata.mobile.service.WebServiceClient;
 
 /**
  * Caches references to the UI components that display the details 
@@ -21,6 +27,7 @@ public class SpeciesViewHolder {
 	ImageView icon = null;
 	TextView scientificName = null;
 	TextView commonName = null;
+	Context context = null;
 	
 
 	public SpeciesViewHolder(View row) {
@@ -33,7 +40,7 @@ public class SpeciesViewHolder {
 		this.commonName = (TextView)row.findViewById(R.id.commonName);
 		scientificName.setFocusable(focusable);
 		scientificName.setFocusableInTouchMode(focusable);
-		
+		context = row.getContext();
 		cacheManager = new StorageManager(row.getContext());
 	}
 	
@@ -56,18 +63,10 @@ public class SpeciesViewHolder {
 	}
 	
 	private void setImage(String fileName) {
-		File profileImage = cacheManager.getProfileImage(fileName, false);
 		
-		if (profileImage != null) {
-			
-			Drawable d = Drawable.createFromPath(profileImage.getAbsolutePath());
-			
-			icon.setImageDrawable(d);
-			
-		}
-		else {
-			icon.setImageResource(R.drawable.ic_action_search);
-		}
+		String url = new WebServiceClient(context).getServerUrl()+"/survey/download?uuid="+fileName;
+		ImageLoader.getInstance().displayImage(url, icon);
+
 	}
 	
 	public void setError(CharSequence error) {

@@ -41,8 +41,8 @@ public class StorageManager {
 	 * @return the File containing the profile image, null if the species
 	 * does not have a defined profile image.
 	 */
-	public File getProfileImage(Species species) {
-		return getProfileImage(species.getImageFileName(), false);
+	public void prefetchSpeciesProfileImage(Species species) {
+		downloadService.downloadSpeciesProfileImage(species.getImageFileName());
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class StorageManager {
 		
 		if (!profileImage.exists() || forceDownload) {
 			try {
-				downloadService.downloadSpeciesProfileImage(fileName, profileImage);
+				
 			}
 			catch (Exception e) {
 				// If we are offline the download will fail.

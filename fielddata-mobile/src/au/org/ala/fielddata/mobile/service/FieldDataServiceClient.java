@@ -29,6 +29,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import android.content.Context;
 import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Record;
@@ -192,38 +194,15 @@ public class FieldDataServiceClient extends WebServiceClient {
 		return canPing;	
 	}
 
-	public void downloadSpeciesProfileImage(String uuid, File destinationFile) {
-		InputStream in = null;
-		OutputStream out = null;
-		HttpURLConnection conn = null;
-		
-		final int BUFFER_SIZE = 8192;
-		byte[] buffer = new byte[BUFFER_SIZE];
-		try {
-			URL url = new URL(getServerUrl() + downloadUrl+uuid);
-			conn = (HttpURLConnection)url.openConnection();
-			in = conn.getInputStream();
-			out = new FileOutputStream(destinationFile);
-			int count = in.read(buffer);
-			while (count >= 0) {
-				out.write(buffer, 0, count);
-				count = in.read(buffer);
-			}
-		} catch (Exception e) {
-			throw new ServiceException(e);
-		} finally {
-			try {
-
-				
-				close(in);
-				close(conn);
-				close(out);
-				
-			} catch (Exception e) {
-				Log.e("FieldDataService", "Error downloadSpeciesProfileImage: ", e);
-				throw new ServiceException(e);
-			}
-		}
+	/**
+	 * Downloads the species profile in the background so it is cached
+	 * when it is required to be used.
+	 * @param uuid identifies the image to download.
+	 */
+	public void downloadSpeciesProfileImage(String uuid) {
+		String url = getServerUrl()+downloadUrl+uuid;
+		Log.d("FieldDataServiceClient", "downloading species: "+uuid);
+		ImageLoader.getInstance().loadImage(url, null);
 	}
 
 }

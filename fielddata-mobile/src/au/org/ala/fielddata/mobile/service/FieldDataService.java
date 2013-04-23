@@ -118,7 +118,7 @@ public class FieldDataService {
 						speciesDAO.save(species, db);
 						try {
 							// Instruct the cache manager to download and cache the file
-							manager.getProfileImage(species);
+							manager.prefetchSpeciesProfileImage(species);
 						} catch (Exception e) {
 							Log.e("Service", "Error downloading profile image", e);
 						}

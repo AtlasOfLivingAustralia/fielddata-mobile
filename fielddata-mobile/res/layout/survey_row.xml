@@ -25,14 +25,16 @@
     android:background="#EEEEEEEE">
 
     <ImageView
-        android:id="@+id/defaulticon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:id="@+id/surveyImage"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
         android:contentDescription="@string/species_profile_image"
-        android:src="@drawable/green_tick" />
+        android:visibility="gone"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
@@ -55,6 +57,12 @@
             android:textStyle="italic" 
             />
 
-           </LinearLayout>
+     </LinearLayout>
+     <ImageView
+        android:id="@+id/defaulticon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="@string/species_profile_image"
+        android:src="@drawable/green_tick" />
 
 </LinearLayout>

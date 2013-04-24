@@ -44,6 +44,8 @@ public class Survey extends Persistent {
 	@SerializedName("indicatorSpecies_server_ids")
 	public SurveyDetails details;
 	
+	public String imageUrl;
+	
 	public boolean hasSpecies() {
 		return propertyByType(AttributeType.SPECIES_P) != null;
 	}

@@ -14,10 +14,7 @@
  ******************************************************************************/
 package au.org.ala.fielddata.mobile.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,10 +26,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
@@ -41,6 +39,9 @@ import au.org.ala.fielddata.mobile.service.dto.DownloadSpeciesResponse;
 import au.org.ala.fielddata.mobile.service.dto.DownloadSurveyResponse;
 import au.org.ala.fielddata.mobile.service.dto.SyncRecordsResponse;
 import au.org.ala.fielddata.mobile.service.dto.UserSurveyResponse;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
 /** 
  * The FieldDataServiceClient provides the interface to the FieldData 
@@ -157,6 +158,7 @@ public class FieldDataServiceClient extends WebServiceClient {
 		survey.map = surveyResponse.map;
 		survey.description = surveyResponse.details.description;
 		survey.speciesIds = surveyResponse.details.speciesIds;
+		survey.imageUrl = surveyResponse.imageUrl;
 		return survey;
 	}
 	
@@ -203,6 +205,17 @@ public class FieldDataServiceClient extends WebServiceClient {
 		String url = getServerUrl()+downloadUrl+uuid;
 		Log.d("FieldDataServiceClient", "downloading species: "+uuid);
 		ImageLoader.getInstance().loadImage(url, null);
+	}
+	
+	public void loadSurveyImage(ImageView imageView, String imageUrl) {
+		String url = getServerUrl()+imageUrl;
+		Log.d("FieldDataServiceClient", "loading survey image: "+url);
+		ImageLoader.getInstance().displayImage(url, imageView, new SimpleImageLoadingListener() {
+						
+			public void onLoadingComplete(String arg0, View imageView, Bitmap arg2) {
+				imageView.setVisibility(View.VISIBLE);
+			}
+		});
 	}
 
 }

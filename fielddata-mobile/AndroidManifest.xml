@@ -93,6 +93,11 @@
             android:name="au.org.ala.fielddata.mobile.service.LocationServiceHelper"
             android:label="Location Service" >
         </service>
+        <service
+            android:name="au.org.ala.fielddata.mobile.service.SurveyDownloadService"
+            android:label="Survey Download Service" >
+        </service>
+        
     </application>
 
 </manifest>

@@ -3,28 +3,32 @@ package au.org.ala.fielddata.mobile;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.dao.SpeciesDAO;
 import au.org.ala.fielddata.mobile.model.Record;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.model.User;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.pref.Preferences;
-import au.org.ala.fielddata.mobile.service.FieldDataService;
 import au.org.ala.fielddata.mobile.service.FieldDataService.SurveyDownloadCallback;
 import au.org.ala.fielddata.mobile.service.LoginService;
+import au.org.ala.fielddata.mobile.service.SurveyDownloadService;
 import au.org.ala.fielddata.mobile.service.dto.LoginResponse;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -32,13 +36,14 @@ import com.actionbarsherlock.app.SherlockActivity;
 /**
  * Displays a login form to the user and initiates the login process.
  */
-public class LoginActivity extends SherlockActivity implements OnClickListener {
+public class LoginActivity extends SherlockActivity implements OnClickListener{
 
 	private ProgressDialog pd;
 	private String[] portals; 
 	private String dialogTitle;
 	private String dialogMessage;
 	private boolean dialogShowing = false;
+	private BroadcastReceiver broadcastReceiver;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -71,13 +76,49 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 						dialogMessage, true, false, null);
 			}
 		}
+		
 	}
 	
 	@Override
 	public void onPause() {
 		super.onPause();
+	
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
 		if (pd != null && pd.isShowing()) {
 			pd.dismiss();
+		}
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (dialogShowing && !SurveyDownloadService.isDownloading()) {
+			if (pd != null && pd.isShowing()) {
+				pd.dismiss();
+			}
+			finish();
+		}
+		else {
+			broadcastReceiver = new BroadcastReceiver() {
+				
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					if (intent.getAction().equals(SurveyDownloadService.PROGRESS_ACTION)) {
+						onProgressUpdate(
+							intent.getIntExtra(SurveyDownloadService.NUMBER_EXTRA, 0), 
+							intent.getIntExtra(SurveyDownloadService.COUNT_EXTRA, 0));
+					}
+					else if (intent.getAction().equals(SurveyDownloadService.FINISHED_ACTION)) {
+						if (pd != null && pd.isShowing()) {
+							pd.dismiss();
+						}
+						finish();
+					}
+				}
+			};
+			IntentFilter downloadFilter = new IntentFilter(SurveyDownloadService.PROGRESS_ACTION);
+			downloadFilter.addAction(SurveyDownloadService.FINISHED_ACTION);
+			LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, downloadFilter);
 		}
 	}
 	
@@ -89,6 +130,22 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 		b.putString("dialogTitle", dialogTitle);
 		b.putString("dialogMessage", dialogMessage);
 	}
+	
+	protected void onProgressUpdate(Integer... values) {
+		if (!dialogShowing || pd == null) {
+			return;
+		}
+		int value = values[0];
+		if (value == 0) {
+			dialogTitle = "Downloading surveys..."; 
+			pd.setTitle(dialogTitle);
+		}
+		else {
+			dialogMessage = "Downloading survey "+value+"..."; 
+			pd.setMessage(dialogMessage);
+		}
+	}
+
 
 	public void onClick(View v) {
 		if (v.getId() == R.id.loginBtn) {
@@ -133,9 +190,7 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 						publishProgress(0);
 						clearPersistantData();
 						initialiseUserAndSurveys(response, callback);
-						// return to the main activity
-						finish();
-
+						
 					} catch (Exception e) {
 						this.e = e;
 						Log.e("LoginActivity", "Login failed, ",e);
@@ -147,27 +202,18 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 				
 				@Override
 				protected void onProgressUpdate(Integer... values) {
-					int value = values[0];
-					if (value == 0) {
-						dialogTitle = "Downloading surveys..."; 
-						pd.setTitle(dialogTitle);
-					}
-					else {
-						dialogMessage = "Downloading survey "+value+"..."; 
-						pd.setMessage(dialogMessage);
-					}
+					LoginActivity.this.onProgressUpdate(values);
 				}
 
 				protected void onPostExecute(Void result) {
 					
-					if (pd.isShowing()) {
-						pd.dismiss();
-						
-					}
-					dialogShowing = false;
-					
 					if (e != null) {
 
+						if (pd.isShowing()) {
+							pd.dismiss();
+							
+						}
+						dialogShowing = false;
 						AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
 
 						builder.setTitle(R.string.login_failed);
@@ -216,7 +262,9 @@ public class LoginActivity extends SherlockActivity implements OnClickListener {
 		GenericDAO<User> userDAO = new GenericDAO<User>(LoginActivity.this);
 		userDAO.save(response.user);
 		
-		new FieldDataService(this).downloadSurveys(callback);
+		Intent downloadSurveys = new Intent(this, SurveyDownloadService.class);
+		startService(downloadSurveys);
+		//new FieldDataService(this).downloadSurveys(callback);
 
 	}
 }

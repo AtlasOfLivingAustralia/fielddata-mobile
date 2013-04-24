@@ -275,7 +275,7 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 				user = users.get(0);
 
 			}
-			String portal = "NRM Plus";//preferences.getFieldDataPortalName();
+			String portal = "NPA NSW";//preferences.getFieldDataPortalName();
 
 			return new Model(user, portal);
 		}

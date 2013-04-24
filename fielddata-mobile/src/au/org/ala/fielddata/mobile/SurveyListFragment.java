@@ -15,8 +15,10 @@ import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.Survey;
 import au.org.ala.fielddata.mobile.pref.Preferences;
+import au.org.ala.fielddata.mobile.service.FieldDataServiceClient;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * Fragment that displays a list of Surveys that are available for use
@@ -25,12 +27,13 @@ import com.actionbarsherlock.app.SherlockListFragment;
 public class SurveyListFragment extends SherlockListFragment {
 	
 	private Preferences preferences;
-		
+	private FieldDataServiceClient fieldDataClient;
+	
 	@Override
 	public void onResume() {
 		super.onResume();
 		preferences = new Preferences(getActivity());
-		
+		fieldDataClient = new FieldDataServiceClient(getActivity());
 		new InitDataTask().execute();
 	}
 
@@ -98,7 +101,10 @@ public class SurveyListFragment extends SherlockListFragment {
 			else {
 				defaultIcon.setVisibility(View.GONE);
 			}
-			
+			if ((survey.imageUrl != null) && (survey.imageUrl.length() > 0)) {
+				ImageView surveyImage = (ImageView)row.findViewById(R.id.surveyImage); 
+				fieldDataClient.loadSurveyImage(surveyImage, survey.imageUrl);						
+			}
 			return row;
 			
 		}

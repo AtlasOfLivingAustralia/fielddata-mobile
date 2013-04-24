@@ -34,7 +34,7 @@ public class DownloadSurveyResponse {
 		public List<Integer> speciesIds;
 	}
 	
-	
+	public String imageUrl;
 	public MapDefaults map;
 		
 	public String name;

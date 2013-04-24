@@ -1,9 +1,12 @@
 package au.org.ala.fielddata.mobile.service;
 
+import java.util.concurrent.ThreadPoolExecutor;
+
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import au.org.ala.fielddata.mobile.FieldDataApp;
 import au.org.ala.fielddata.mobile.service.FieldDataService.SurveyDownloadCallback;
 
 
@@ -40,11 +43,32 @@ public class SurveyDownloadService extends IntentService implements SurveyDownlo
 		SurveyDownloadService.setDownloading(true);
 		new FieldDataService(this).downloadSurveys(this);
 		SurveyDownloadService.setDownloading(false);
-		finished();
+		
+		// At this point the app can function correctly, however we will
+		// continue to pre-cache the images.
+		notifyFinished();
+		
+		// Wait for the image download to finish.
+		ThreadPoolExecutor executor = ((FieldDataApp)getApplication()).getImageLoaderExecutor();
+		int size = executor.getQueue().size();
+		while (size > 0) {
+		
+			try {
+				Log.i("SurveyDownloadService", "Waiting for image download: "+size);
+				
+				Thread.sleep(30*1000);
+				size = executor.getQueue().size();
+				
+			}
+			catch(InterruptedException e) {
+				Log.i("SurveyDownloadService", "Interrupted waiting for image download");
+			}
+		}
+		Log.i("SurveyDownloadService", "Image download finished.");
 		
 	}
 	
-	private void finished() {
+	private void notifyFinished() {
 		Intent finishedIntent = new Intent(FINISHED_ACTION);
 		LocalBroadcastManager.getInstance(this).sendBroadcast(finishedIntent);
 		

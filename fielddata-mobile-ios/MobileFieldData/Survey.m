@@ -24,6 +24,7 @@
 @dynamic zoom;
 @dynamic order;
 @dynamic speciesIds;
+@dynamic imageUrl;
 
 -(SurveyAttribute *)getAttributeByType:(NSString *)attributeType
 {

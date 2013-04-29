@@ -12,6 +12,7 @@
 #import "FieldDataService.h"
 #import "SurveyViewController.h"
 #import "SavedRecordsViewController.h"
+#import "UIImageView+WebCache.h"
 
 @interface MasterViewController () {
     UILabel *tableHeader;
@@ -258,6 +259,25 @@
     if (indexPath.section == 0) {
         Survey *survey = [surveys objectAtIndex:indexPath.row];
         cell.textLabel.text = survey.name;
+        NSString* surveyImagePath = survey.imageUrl;
+        if ([surveyImagePath length] > 0) {
+            // Omit leading / if present as the url prefix has a trailing /
+            if ([surveyImagePath hasPrefix:@"/"]) {
+                NSLog(@"Survey path: %@", surveyImagePath);
+                
+                surveyImagePath = [surveyImagePath substringFromIndex:1];
+                NSLog(@"Survey path: %@", surveyImagePath);
+                
+            }
+            NSString* url = [preferences getFieldDataURL];
+            
+            url = [url stringByAppendingString:surveyImagePath];
+            NSLog(@"Survey URL: %@", url);
+            [cell.imageView setImageWithURL:[NSURL URLWithString:url]] ;
+        }
+        else {
+            [cell.imageView setImage:nil];
+        }
     }
     else if (indexPath.section ==1) {
         switch (indexPath.row) {

@@ -74,7 +74,8 @@
      
     [RFService execRequest:r completion:^(RFResponse *response){
         
-        if (response.httpCode == 200) {
+        if (response.httpCode == 200 && !response.error) {
+            
             NSError *error;
             NSDictionary* survey =  [NSJSONSerialization JSONObjectWithData:response.dataValue
                                                                 options:kNilOptions error:&error];
@@ -86,15 +87,14 @@
             }
             // Download the species associated with the Survey.
             [self downloadSpeciesForSurvey:surveyId downloadedSurveys:downloadedSurveys];
-            
         }
         else {
+            if (response.error) {
+                NSLog(@"Error while downloading survey %@.  Error=%@", r, response.error);
+            }
             [delegate downloadSurveyDetailsSuccessful:NO survey:nil];
         }
-        /*
-        for (NSString* key in [survey keyEnumerator]) {
-            NSLog(@"Key: %@ Value: %@", key, [survey objectForKey:key]);
-        }*/
+        
     }];
 
 }
@@ -194,6 +194,7 @@
     survey.lastSync = [NSDate date];
     survey.order = [surveyDetails objectForKey:@"weight"];
     survey.speciesIds = [surveyDetails objectForKey:@"species"];
+    survey.imageUrl = [surveyDict objectForKey:@"imageUrl"];
     
     NSNumber* startDate = [surveyDetails objectForKey:@"startDate"];
     if (startDate != (id)[NSNull null]) {

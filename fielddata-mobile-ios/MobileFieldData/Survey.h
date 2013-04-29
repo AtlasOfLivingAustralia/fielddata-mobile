@@ -25,6 +25,8 @@
 @property (nonatomic, retain) NSSet *attributes;
 @property (nonatomic, retain) NSNumber *order;
 @property (nonatomic, strong) NSArray* speciesIds;
+@property (nonatomic, strong) NSString* imageUrl;
+
 
 @end
 

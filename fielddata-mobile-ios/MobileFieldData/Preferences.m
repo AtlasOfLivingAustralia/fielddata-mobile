@@ -14,11 +14,11 @@
 {
     
     defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@"127.0.0.1:8081" forKey:@"baseURL"];
+    [defaults setObject:@"root-uat.ala.org.au" forKey:@"baseURL"];
     //[defaults setObject:@"152.83.195.62:8081" forKey:@"baseURL"];
     [defaults setObject:@"fielddata-proxy" forKey:@"context"];
-    [defaults setObject:@"condamine" forKey:@"path"];
-    [defaults setObject:@"Condamine Alliance" forKey:@"portal"];
+    [defaults setObject:@"npansw" forKey:@"path"];
+    [defaults setObject:@"National Parks Association of NSW" forKey:@"portal"];
     
 //    [defaults setObject:@"koalacount" forKey:@"path"];
 //    [defaults setObject:@"Great+Koala+Count" forKey:@"portal"];
@@ -65,6 +65,16 @@
 -(NSString*)getUsersName
 {
     return [defaults objectForKey:@"name"];
+}
+
+-(NSNumber*)getUserId
+{
+    return [NSNumber numberWithInteger:[defaults integerForKey:@"userId"]];
+}
+
+-(void)setUserId:(NSNumber *)userId
+{
+    [defaults setInteger:[userId integerValue] forKey:@"userId"];
 }
 
 

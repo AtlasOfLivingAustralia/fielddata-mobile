@@ -21,5 +21,7 @@
 -(NSString*)getFieldDataSessionKey;
 -(void)setUsersName:(NSString*)name;
 -(NSString*)getUsersName;
+-(void)setUserId:(NSNumber*)userId;
+-(NSNumber*)getUserId;
 
 @end

@@ -1,20 +1,14 @@
 package au.org.ala.fielddata.mobile.ui;
 
-import java.io.File;
-
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.model.Species;
-import au.org.ala.fielddata.mobile.service.StorageManager;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.service.WebServiceClient;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * Caches references to the UI components that display the details 
@@ -23,7 +17,6 @@ import au.org.ala.fielddata.mobile.service.WebServiceClient;
  * while the list is scrolling. 
  */
 public class SpeciesViewHolder {
-	StorageManager cacheManager;
 	ImageView icon = null;
 	TextView scientificName = null;
 	TextView commonName = null;
@@ -41,7 +34,6 @@ public class SpeciesViewHolder {
 		scientificName.setFocusable(focusable);
 		scientificName.setFocusableInTouchMode(focusable);
 		context = row.getContext();
-		cacheManager = new StorageManager(row.getContext());
 	}
 	
 	/**
@@ -50,7 +42,6 @@ public class SpeciesViewHolder {
 	 * @param species contains the species data to display.
 	 */
 	public void populate(Species species) {
-		// Should *not* be doing this on the UI thread.
 		setImage(species.getImageFileName());
 		scientificName.setText(species.scientificName);
 		commonName.setText(species.commonName);

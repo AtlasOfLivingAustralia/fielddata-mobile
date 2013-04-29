@@ -37,7 +37,6 @@ public class FieldDataApp extends Application {
 		DisplayImageOptions options = new DisplayImageOptions.Builder().
 				cacheInMemory().
 				cacheOnDisc().
-				showStubImage(R.drawable.species_list_icon).
 				build();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
 			.memoryCacheSize(cacheSize)

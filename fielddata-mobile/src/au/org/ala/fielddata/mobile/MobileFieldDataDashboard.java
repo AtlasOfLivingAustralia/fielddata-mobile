@@ -29,6 +29,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -38,9 +39,9 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.dao.GenericDAO;
 import au.org.ala.fielddata.mobile.model.User;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.pref.EditPreferences;
 import au.org.ala.fielddata.mobile.pref.Preferences;
 import au.org.ala.fielddata.mobile.service.FieldDataService;
@@ -77,6 +78,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 		}
 	}
 	
+	protected Dialog splashDialog;
+	
 	private Preferences preferences;
 	private TextView status;
 	private ViewPager viewPager;
@@ -91,6 +94,8 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		showSplashScreen();
+		
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
 		setContentView(R.layout.activity_mobile_data_dashboard);
@@ -125,6 +130,37 @@ public class MobileFieldDataDashboard extends SherlockFragmentActivity implement
 		
 		getSupportActionBar().setSelectedNavigationItem(selectedTabIndex);
 
+	}
+	
+	protected void showSplashScreen() {
+	    splashDialog = new Dialog(this, R.style.SplashScreen) {
+	    	@Override
+	    	public void onBackPressed() {
+	    		removeSplashScreen();
+	    		MobileFieldDataDashboard.this.onBackPressed();
+	    	}
+	    };
+	    splashDialog.setContentView(R.layout.splash_screen);
+	    splashDialog.setCancelable(false);
+	    splashDialog.show();
+	     
+	    // Set Runnable to remove splash screen
+	    final Handler handler = new Handler();
+	    handler.postDelayed(new Runnable() {
+	      public void run() {
+	        removeSplashScreen();
+	      }
+	    }, 4000);
+	}
+	
+	/**
+	 * Removes the Dialog that displays the splash screen
+	 */
+	protected void removeSplashScreen() {
+	    if (splashDialog != null) {
+	    	splashDialog.dismiss();
+	    	splashDialog = null;
+	    }
 	}
 
 	public static class TabsAdapter extends FragmentPagerAdapter implements ActionBar.TabListener,

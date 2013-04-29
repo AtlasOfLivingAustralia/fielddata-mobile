@@ -58,7 +58,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/portalLbl"
         android:layout_centerHorizontal="true"
-        android:entries="@array/portals"
         android:layout_marginTop="5dp"
         android:ems="10"
         android:visibility="gone"

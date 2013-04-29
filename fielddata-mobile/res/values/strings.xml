@@ -15,8 +15,8 @@
 <resources>
 
     <string name="app_name">NPA NSW</string>
-    <string name="title_activity_mobile_field_data">NPA NSW</string>
-    <string name="title_activity_mobile_data_dashboard">NPA NSW</string>
+    <string name="title_activity_mobile_field_data">@string/app_name</string>
+    <string name="title_activity_mobile_data_dashboard">@string/app_name</string>
     
     <string name="hello_world">Hello world!</string>
     <string name="submitButtonText">Save</string>
@@ -97,13 +97,6 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     
-    <!--  Portal names -->
-	<string-array name="portals">
-	     <!-- <item>Condamine Alliance</item>  -->
-	      <!-- <item>Great Koala Count</item>  -->
-	     <item><![CDATA[National Parks Association of NSW]]></item>
-	</string-array>
-	
 	<!-- Saved records page -->
 	<string name="photo_icon">Record photo</string>
 	<string name="draft">Draft</string>

@@ -15,6 +15,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -50,7 +51,8 @@ public class LoginActivity extends SherlockActivity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_login);
-		portals = getResources().getStringArray(R.array.portals);
+		portals = Config.getPortalNames();
+		((Spinner)findViewById(R.id.portal)).setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, portals));
 		if (portals.length > 1) {
 			findViewById(R.id.portalLbl).setVisibility(View.VISIBLE);
 			findViewById(R.id.portal).setVisibility(View.VISIBLE);	

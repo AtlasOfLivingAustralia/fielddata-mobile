@@ -53,7 +53,7 @@ public class SpeciesListFragment extends SherlockListFragment implements LoaderC
     	if (getActivity() != null) {
     		
     		
-    		SpeciesAdapter adapter = new SpeciesAdapter(getActivity(),  R.layout.species_row, null);
+    		SpeciesAdapter adapter = new SpeciesAdapter(getActivity(),  R.layout.species_list_row, null);
     		setListAdapter(adapter);
     		LoaderManager manager = getActivity().getSupportLoaderManager();
     		manager.initLoader(0, null, this);

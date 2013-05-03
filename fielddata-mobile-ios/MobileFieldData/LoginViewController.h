@@ -9,17 +9,16 @@
 #import <UIKit/UIKit.h>
 #import "Preferences.h"
 #import "FieldDataService.h"
+#import "SurveyDownloadController.h"
 #import "MBProgressHUD.h"
 
-@interface LoginViewController : UIViewController <FieldDataServiceDelegate, UITextFieldDelegate> {
+@interface LoginViewController : UIViewController <SurveyDownloadDelegate, UITextFieldDelegate> {
     
     @private
     Preferences *preferences;
     FieldDataService *fieldDataService;
-    
-    int numSurveys;
-    int surveyCount;
     MBProgressHUD *progressIndicator;
+    
 }
 
 @property (nonatomic, retain) IBOutlet UITextField *username;

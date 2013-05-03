@@ -36,8 +36,11 @@
     return self;
 }
 
--(void)downloadSurveys
+-(void)downloadSurveys:(BOOL)deleteExisting
 {
+    if (deleteExisting) {
+        [self deleteAll];
+    }
     NSString* url = [preferences getFieldDataURL];
     
     RFRequest *r = [RFRequest requestWithURL:[NSURL URLWithString:url] type:RFRequestMethodGet 
@@ -49,15 +52,45 @@
     [RFService execRequest:r completion:^(RFResponse *response){
         
         NSError *error;
-        NSArray* surveys = [NSJSONSerialization JSONObjectWithData:response.dataValue 
+        if (response.httpCode == 200 && !response.error) {
+            NSArray* surveys = [NSJSONSerialization JSONObjectWithData:response.dataValue
                                                            options:kNilOptions error:&error];
-        if (error == NULL) {
-            [delegate downloadSurveysSuccessful:YES surveyArray:surveys];
+            if (error == NULL) {
+                [delegate downloadSurveysSuccessful:YES surveyArray:surveys];
+            } else {
+                [delegate downloadSurveysSuccessful:NO surveyArray:nil];
+            }
         } else {
             [delegate downloadSurveysSuccessful:NO surveyArray:nil];
         }
     }];
     [self downloadSpeciesGroups];
+}
+
+-(void)begin {
+    NSUndoManager* undoManager = [[NSUndoManager alloc] init];
+    context.undoManager = undoManager;
+}
+
+-(void)commit
+{
+    NSError* error;
+    if (![context save:&error]) {
+        NSLog(@"Error saving Survey: %@", [error localizedDescription]);
+    }
+}
+-(void)rollback
+{
+    [context rollback];
+    context.undoManager = nil;
+}
+
+-(void)deleteAll
+{
+    [self deleteAllEntities:@"Record"];
+    [self deleteAllEntities:@"Species"];
+    [self deleteAllEntities:@"SpeciesGroup"];
+    [self deleteAllEntities:@"Survey"];
 }
 
 -(void)downloadSurveyDetails:(NSString*)surveyId downloadedSurveys:(NSArray*)downloadedSurveys
@@ -236,9 +269,6 @@
         }
     }
     
-    if (![context save:&e]) {
-        NSLog(@"Error saving Survey: %@", [e localizedDescription]);
-    }
     return survey;
 }
 
@@ -253,10 +283,6 @@
     rpAttribute.weight = [recordProperty objectForKey:@"weight"];
     rpAttribute.question = [recordProperty objectForKey:@"description"];
     rpAttribute.survey = survey;
-    
-    if (![context save:&e]) {
-        NSLog(@"Error saving Survey: %@", [e localizedDescription]);
-    }
     
 }
 
@@ -288,10 +314,6 @@
             weight = weight + 100;
         }
     }
-    
-    if (![context save:&e]) {
-        NSLog(@"Error saving Survey: %@", [e localizedDescription]);
-    }
 }
 
 -(void)persistAttributeOption:(NSDictionary*)surveyOption surveyAttribute:(SurveyAttribute*)attribute
@@ -304,9 +326,6 @@
     option.attribute = attribute;
     option.weight = [NSNumber numberWithInt:weight];
     
-    if (![context save:&e]) {
-        NSLog(@"Error saving Survey: %@", [e localizedDescription]);
-    }
 }
 
 -(BOOL)isSupported:(NSString *)typeCode {
@@ -358,10 +377,6 @@
     
     species.imageFileName = pngFilePath;
 	
-    NSError *error;
-    if (![context save:&error]) {
-        NSLog(@"Error saving Species: %@", [error localizedDescription]);
-    }
 }
 
 -(SpeciesGroup*)persistSpeciesGroup:(NSDictionary*)speciesGroupDict
@@ -375,10 +390,6 @@
     for (NSDictionary* subgroupDict in subgroups) {
         SpeciesGroup* subgroup = [self persistSpeciesGroup:subgroupDict];
         [speciesGroup addSubgroupsObject:subgroup];
-    }
-    NSError *error;
-    if (![context save:&error]) {
-        NSLog(@"Error saving Species Groups: %@", [error localizedDescription]);
     }
     return speciesGroup;
 }
@@ -490,8 +501,6 @@
     for (NSManagedObject * entity in entities) {
         [context deleteObject:entity];
     }
-    NSError *saveError = nil;
-    [context save:&saveError];
 }
 
 -(Record*)createRecord:(NSArray*)attributes survey:(Survey*)survey inputFields:(NSMutableDictionary*)inputFields {

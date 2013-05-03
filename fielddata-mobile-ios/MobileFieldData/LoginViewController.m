@@ -103,13 +103,14 @@
     if ([preferences getFieldDataSessionKey]) {
         [self dismissModalViewControllerAnimated:YES];
     } else {
-        NSURL *url = [NSURL URLWithString:@"http://root.ala.org.au/bdrs-core/koalacount/vanilla/usersignup.htm"];
+        NSURL *url = [NSURL URLWithString:@"http://root.ala.org.au/bdrs-core/npansw/vanilla/usersignup.htm"];
         [[UIApplication sharedApplication] openURL:url];
     }
 }
 
 - (void)handleLoginResponse:(RFResponse*)response
 {
+    [self hideProgressIndicator];
     if (!response.error) {
         NSLog(@"%@", response); //print out full response
         
@@ -127,72 +128,35 @@
         NSNumber *userId = [user valueForKey:@"server_id"];
         
         if (ident == NULL) {
-            [self hideProgressIndicator];
             [AlertService DisplayMessageWithTitle:@"Login Failed" message:@"Username or Password not recognised"];
         } else {
             [preferences setFieldDataSessionKey:ident];
             [preferences setUsersName:name];
             [preferences setUserId:userId];
             
-            // delete all the existing entities
-            [fieldDataService deleteAllEntities:@"Record"];
-            [fieldDataService deleteAllEntities:@"Species"];
-            [fieldDataService deleteAllEntities:@"SpeciesGroup"];
-            [fieldDataService deleteAllEntities:@"Survey"];
             
             // download the new surveys
-            [fieldDataService downloadSurveys];
+            SurveyDownloadController* downloadController = [[SurveyDownloadController alloc]initWithView:self.view];
+            downloadController.delegate = self;
+            [downloadController downloadSurveys];
         }
     } else {
         [AlertService DisplayAlertWithError:response.error title:@"Login Error"];
-        [self hideProgressIndicator];
     }
 }
 
-- (void)downloadSurveysSuccessful:(BOOL)success surveyArray:(NSArray*)surveys {
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return NO;
+}
+
+-(void)downloadSurveysSuccessful {
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+-(void)downloadSurveysFailed {
     
-    if (!success) {
-        [self hideProgressIndicator];
-        [AlertService DisplayMessageWithTitle:@"Network Error" message:@"Downloading Field Data surveys failed."];
-    } else {
-        
-        numSurveys = [surveys count];
-        [self updateProgress];
-        NSMutableArray *downloadedSurveys = [[NSMutableArray alloc] init];
-        for (NSDictionary* survey in surveys) {
-         
-            //NSString* surveyId = [survey objectForKey:@"id"];
-            NSNumber* surveyId = [survey objectForKey:@"id"];
-            @try {
-                NSLog(@"Downloading survey %@",surveyId);
-                [fieldDataService downloadSurveyDetails:surveyId.stringValue downloadedSurveys:[downloadedSurveys copy]];
-                [downloadedSurveys addObject:surveyId.stringValue];
-            }
-            @catch (NSException *e) {
-                NSLog(@"Exception %@", e);
-            }
-        }
-    }
 }
-
-- (void)downloadSurveyDetailsSuccessful:(BOOL)success survey:(NSDictionary*)survey {
-    
-    surveyCount++;
-    if (surveyCount >= numSurveys) {
-        [self hideProgressIndicator];
-        [self dismissModalViewControllerAnimated:YES];
-    }
-    else {
-        [self updateProgress];
-    }
-}
-
--(void)updateProgress
-{
-    progressIndicator.labelText = [NSString stringWithFormat:@"Downloading survey %d of %d", surveyCount+1, numSurveys];
-
-}
-
 
 -(void)showProgressIndicator
 {
@@ -206,11 +170,6 @@
 -(void)hideProgressIndicator
 {
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    [textField resignFirstResponder];
-    return NO;
 }
 
 @end

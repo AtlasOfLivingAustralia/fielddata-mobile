@@ -13,6 +13,7 @@
 #import "SurveyViewController.h"
 #import "SavedRecordsViewController.h"
 #import "UIImageView+WebCache.h"
+#import "SurveyDownloadController.h"
 
 @interface MasterViewController () {
     UILabel *tableHeader;
@@ -27,7 +28,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.title = NSLocalizedString(@"Great Koala Count", @"Great Koala Count");
+        self.title = NSLocalizedString(@"Citizen Science", @"Citizen Science");
         
         preferences = [[Preferences alloc]init];
         
@@ -118,7 +119,7 @@
         return 3;
     }
     else if (section == 2) {
-        return 1;
+        return 2;
     }
 }
 
@@ -146,12 +147,18 @@
         [self openLoginPage];
     }
     
-    self.title = @"NRM Plus";
+    self.title = @"Citizen Science";
+    [self loadSurveys];
+}
+
+-(void)loadSurveys
+{
     FieldDataService* fieldDataService = [[FieldDataService alloc] init];
     surveys = [fieldDataService loadSurveys];
     tableHeader.text = [NSString stringWithFormat:@"Welcome %@", preferences.getUsersName];
     
     [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -174,6 +181,22 @@
         return @"";
     }
 }
+
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+//    
+//    UIView* view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 400, 30)];
+//    UILabel* label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 400, 30)];
+//    [view addSubview:label];
+//    label.text = @"Testing";
+//    return section == 0 ? view : nil;
+//}
+//
+//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+//    return section == 0 ? 30.0f : 0.0;
+//}
+//
+
+
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -199,12 +222,30 @@
     else if (indexPath.section == 2) {
         switch (indexPath.row) {
             case 0:
+                [self reloadSurveys];
+                [tableView deselectRowAtIndexPath:indexPath animated:YES];
+                break;
+            case 1:
                 [self openLoginPage];
                 break;
             default:
                 break;
         }
     }
+}
+
+-(void)reloadSurveys {
+    SurveyDownloadController* controller = [[SurveyDownloadController alloc] initWithView:self.view];
+    [controller downloadSurveys];
+}
+
+-(void)downloadSurveysSuccessful {
+    [self loadSurveys];
+}
+
+-(void)downloadSurveysFailed {
+    
+    [self loadSurveys];
 }
 
 -(void)openSavedRecordsPage
@@ -297,15 +338,17 @@
     } else if (indexPath.section == 2) {
         switch (indexPath.row) {
             case 0:
+                cell.textLabel.text = @"Reload Surveys";
+                cell.accessoryType = UITableViewCellAccessoryNone;
+                break;
+            case 1:
                 cell.textLabel.text = @"Change Login";
                 break;
-            //case 1:
-            //    cell.textLabel.text = @"Settings";
-            //    break;
             default:
                 break;
         }
     }
+    
     //NSManagedObject *object = [self.fetchedResultsController objectAtIndexPath:indexPath];
     //cell.textLabel.text = [[object valueForKey:@"timeStamp"] description];
 }

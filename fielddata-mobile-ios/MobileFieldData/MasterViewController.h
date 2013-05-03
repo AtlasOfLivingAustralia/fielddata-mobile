@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "Preferences.h"
+#import "SurveyDownloadController.h"
 
 @class DetailViewController;
 
 #import <CoreData/CoreData.h>
 
-@interface MasterViewController : UITableViewController {
+@interface MasterViewController : UITableViewController <SurveyDownloadDelegate> {
     @private
     Preferences *preferences;
     NSArray* surveys;

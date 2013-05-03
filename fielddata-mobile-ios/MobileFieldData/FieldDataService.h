@@ -80,9 +80,15 @@
 @property (retain) id delegate;
 @property (retain) id uploadDelegate;
 
--(void)downloadSurveys;
+// Transaction management methods.
+-(void)begin;
+-(void)commit;
+-(void)rollback;
+
+-(void)downloadSurveys:(BOOL)deleteExisting;
 -(void)downloadSurveyDetails:(NSString*)surveyId downloadedSurveys:(NSArray*)downloadedSurveys;
 -(NSArray*)loadSurveys;
+-(void)deleteAll;
 -(NSFetchedResultsController*)loadSpecies;
 -(NSFetchedResultsController*)loadSpecies:(NSArray*)speciesIds searchText:(NSString*)searchText;
 -(NSArray*)loadSpeciesGroups;

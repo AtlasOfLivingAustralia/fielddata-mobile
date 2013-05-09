@@ -25,7 +25,7 @@ import com.readystatesoftware.mapviewballoons.BalloonItemizedOverlay;
 public class SingleSelectionOverlay extends BalloonItemizedOverlay<OverlayItem> {
 
 	private LocationListener listener;
-	private List<OverlayItem> items = new ArrayList<OverlayItem>();
+	protected List<OverlayItem> items = new ArrayList<OverlayItem>();
 	private Drawable marker = null;
 	private OverlayItem inDrag = null;
 	private ImageView dragImage = null;

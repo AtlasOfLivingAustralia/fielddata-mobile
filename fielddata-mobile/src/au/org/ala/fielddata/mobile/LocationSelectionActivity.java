@@ -25,7 +25,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import au.org.ala.fielddata.mobile.nrmplus.R;
-import au.org.ala.fielddata.mobile.map.SingleSelectionOverlay;
+import au.org.ala.fielddata.mobile.map.AreaOverlay;
 import au.org.ala.fielddata.mobile.model.MapDefaults;
 import au.org.ala.fielddata.mobile.ui.MenuHelper;
 
@@ -47,7 +47,7 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 	public static final String LOCATION_BUNDLE_KEY = "Location";
 	public static final String MAP_DEFAULTS_BUNDLE_KEY = "MapDefaults";
 	private MapView mapView;
-	private SingleSelectionOverlay selectionOverlay;
+	private AreaOverlay selectionOverlay;
 	private Location selectedLocation;
 	private MyLocationOverlay myLocationOverlay;
 	
@@ -82,7 +82,7 @@ public class LocationSelectionActivity extends SherlockMapActivity implements
 				marker.getIntrinsicHeight());
 
 		ImageView dragImage = (ImageView) findViewById(R.id.drag);
-		selectionOverlay = new SingleSelectionOverlay(mapView, marker, dragImage, this);
+		selectionOverlay = new AreaOverlay(mapView, marker, dragImage, this);
 		
 		mapView.getOverlays().add(selectionOverlay);
 	}

@@ -86,15 +86,6 @@ public class SpeciesListActivity extends SpeciesListFragment implements SpeciesS
         SearchViewCompat.setOnQueryTextListener(searchView, new OnQueryTextListener());
         item.setActionView(searchView);
     }
-	   
-	public boolean onQueryTextSubmit(String query) {
-		return true;
-	}
-
-	public boolean onQueryTextChange(String newText) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	public void onSpeciesSelected(final Species species) {
 		

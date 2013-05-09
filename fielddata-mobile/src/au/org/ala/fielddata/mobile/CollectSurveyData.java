@@ -49,6 +49,7 @@ import android.widget.Toast;
 import au.org.ala.fielddata.mobile.dao.DraftRecordDAO;
 import au.org.ala.fielddata.mobile.dao.RecordDAO;
 import au.org.ala.fielddata.mobile.dao.SpeciesDAO;
+import au.org.ala.fielddata.mobile.map.WayPointActivity;
 import au.org.ala.fielddata.mobile.model.Attribute;
 import au.org.ala.fielddata.mobile.model.MapDefaults;
 import au.org.ala.fielddata.mobile.model.Record;
@@ -498,7 +499,7 @@ public class CollectSurveyData extends SherlockFragmentActivity implements
 	}
 
 	public void selectLocation() {
-		Intent intent = new Intent(this, LocationSelectionActivity.class);
+		Intent intent = new Intent(this, WayPointActivity.class);
 		Location location = surveyViewModel.getLocation();
 		MapDefaults defaults = surveyViewModel.getSurvey().map;
 		intent.putExtra(LocationSelectionActivity.MAP_DEFAULTS_BUNDLE_KEY, defaults);

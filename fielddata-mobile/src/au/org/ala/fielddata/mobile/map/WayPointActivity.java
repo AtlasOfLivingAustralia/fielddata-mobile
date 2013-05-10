@@ -1,14 +1,28 @@
 package au.org.ala.fielddata.mobile.map;
 
 
+import java.io.IOException;
+import java.util.List;
+
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.ExifInterface;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import au.org.ala.fielddata.mobile.CollectSurveyData;
 import au.org.ala.fielddata.mobile.model.MapDefaults;
 import au.org.ala.fielddata.mobile.nrmplus.R;
+import au.org.ala.fielddata.mobile.service.StorageManager;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -27,19 +41,26 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
+@TargetApi(8)
 public class WayPointActivity extends SherlockFragmentActivity implements InfoWindowAdapter, OnMarkerDragListener {
 	
+	/** Bundle keys */
 	public static final String WAY_POINTS_KEY = "WAYPOINTS";
-	
 	public static final String MAP_DEFAULTS_BUNDLE_KEY = "MapDefaults";
+	private static final String PHOTO_URI_KEY = "PhotoURI";
+	
+	/** Used to identify a request to the Camera when a result is returned */
+	public static final int TAKE_PHOTO_REQUEST = 10000;
 	
 	protected GoogleMap map;
 	private WayPoints wayPoints;
 	private Polyline polyline;
 	private LocationManager locationManager;
-	private boolean polygonClosed;
-
+	private Uri photoInProgress;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,6 +69,7 @@ public class WayPointActivity extends SherlockFragmentActivity implements InfoWi
 		if (savedInstanceState != null) {
 			setZoom = false;
 			wayPoints = (WayPoints) savedInstanceState.getParcelable(WAY_POINTS_KEY);
+			photoInProgress = (Uri)savedInstanceState.getParcelable(PHOTO_URI_KEY);
 			
 		} else {
 			wayPoints = (WayPoints) getIntent().getParcelableExtra(WAY_POINTS_KEY);
@@ -86,7 +108,7 @@ public class WayPointActivity extends SherlockFragmentActivity implements InfoWi
 			addVertex(locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER));
 		}
 		else if (item.getItemId() == R.id.add_photopoint) {
-			addPhotopoint(locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER));
+			takePhoto();
 		}
 		else if (item.getItemId() == R.id.close_polygon) {
 			wayPoints.setClosed(true);
@@ -136,13 +158,9 @@ public class WayPointActivity extends SherlockFragmentActivity implements InfoWi
 			// to clear the map and re-add everything.
 			map.clear();
 			final LatLngBounds.Builder builder = new LatLngBounds.Builder();
-			LatLng location;
-			for (WayPoint wayPoint : wayPoints.getVerticies()) {
-				location = wayPoint.coordinate();
-				builder.include(location);
-				Marker marker = addMarker(location, BitmapDescriptorFactory.HUE_RED);
-				wayPoint.markerId = marker.getId();
-			}
+			restoreWayPoints(wayPoints.getVerticies(), builder, BitmapDescriptorFactory.HUE_RED);
+			restoreWayPoints(wayPoints.getPhotoPoints(), builder, BitmapDescriptorFactory.HUE_BLUE);
+			
 			drawLine();
 			if (setZoom) {
 				findViewById(android.R.id.content).post(new Runnable() {
@@ -166,16 +184,52 @@ public class WayPointActivity extends SherlockFragmentActivity implements InfoWi
 		}
 
 	}
+	
+	private void restoreWayPoints(List<WayPoint> wayPoints, LatLngBounds.Builder bounds, float markerColour) {
+		LatLng location;
+		for (WayPoint wayPoint : wayPoints) {
+			location = wayPoint.coordinate();
+			bounds.include(location);
+			Marker marker = addMarker(location, markerColour);
+			wayPoint.markerId = marker.getId();
+		}
+	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putParcelable(WAY_POINTS_KEY, wayPoints);
+		outState.putParcelable(PHOTO_URI_KEY, photoInProgress);
 	}
 	
 	
-	public View getInfoContents(Marker arg0) {
-		return getLayoutInflater().inflate(R.layout.waypoint_photo, null); 
+	private View photoPointInfoView;
+	
+	
+	public View getInfoContents(Marker marker) {
+		if (photoPointInfoView != null && marker.getId().equals(photoPointInfoView.getTag())) {
+			return photoPointInfoView;
+		}
+		photoPointInfoView = null;
+		final Marker tmpMarker = marker;
+		WayPoint wayPoint = wayPoints.findById(marker.getId());
+		if (wayPoint.photo != null) {
+			photoPointInfoView = getLayoutInflater().inflate(R.layout.waypoint_photo, null);
+			photoPointInfoView.setTag(marker.getId());
+			ImageView view = (ImageView)photoPointInfoView.findViewById(R.id.photo);
+			ImageLoader.getInstance().displayImage(wayPoint.photo.toString(), view, new SimpleImageLoadingListener() {
+
+				@Override
+				public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+					if (tmpMarker.isInfoWindowShown()) {
+						tmpMarker.showInfoWindow();
+					}
+				}
+				
+			});
+				
+		}
+		return photoPointInfoView;
 	}
 
 	public View getInfoWindow(Marker arg0) {
@@ -183,9 +237,15 @@ public class WayPointActivity extends SherlockFragmentActivity implements InfoWi
 	}
 
 	private void addPhotopoint(Location location) {
+		if (photoInProgress == null) {
+			return;
+		}
 		Marker marker = addMarker(new LatLng(location.getLatitude(), location.getLongitude()), BitmapDescriptorFactory.HUE_BLUE);
 		
 		WayPoint point = new WayPoint(location, marker.getId());
+		point.photo = photoInProgress;
+		photoInProgress = null;
+		
 		wayPoints.addPhotoPoint(point);
 	}
 	
@@ -227,7 +287,6 @@ public class WayPointActivity extends SherlockFragmentActivity implements InfoWi
 	@Override
 	public void onPause() {
 		super.onPause();
-		map.setMyLocationEnabled(false);
 	}
 
 	private void addEventHandlers() {
@@ -250,27 +309,6 @@ public class WayPointActivity extends SherlockFragmentActivity implements InfoWi
 			}
 		});
 		
-		
-//		Button button = (Button) findViewById(R.id.mapNext);
-//		button.setOnClickListener(new OnClickListener() {
-//
-//			public void onClick(View v) {
-//				Intent result = new Intent();
-//				//result.putExtra(LOCATION_BUNDLE_KEY, selectedLocation);
-//				setResult(RESULT_OK, result);
-//				finish();
-//
-//			}
-//		});
-		//button.setEnabled(selectedLocation != null);
-
-//		ImageButton gps = (ImageButton) findViewById(R.id.mapCurrentLocation);
-//		gps.setOnClickListener(new OnClickListener() {
-//
-//			public void onClick(View v) {
-//				updateLocation();
-//			}
-//		});
 	}
 
 	private Location locationFromClick(LatLng arg0) {
@@ -299,14 +337,75 @@ public class WayPointActivity extends SherlockFragmentActivity implements InfoWi
 	}
 
 	
-
-	public void onStatusChanged(String provider, int status, Bundle extras) {
+	private void takePhoto() {
+		if (StorageManager.canWriteToExternalStorage()) {
+			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			photoInProgress = StorageManager.getOutputMediaFileUri(StorageManager.MEDIA_TYPE_IMAGE);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, photoInProgress);
+			
+			startActivityForResult(intent, CollectSurveyData.TAKE_PHOTO_REQUEST);
+		} else {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Cannot take photo")
+					.setMessage("Please ensure you have mounted your SD card and it is writable")
+					.setPositiveButton("OK", null).show();
+		}
 	}
-
-	public void onProviderEnabled(String provider) {
+	
+	/**
+	 * Callback made to this activity after the camera, gallery or map activity
+	 * has finished.
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == TAKE_PHOTO_REQUEST && resultCode == RESULT_OK && photoInProgress != null) {
+			new PhotoLocationLoader(this, photoInProgress).execute();
+		}
 	}
+	
+	static class PhotoLocationLoader extends AsyncTask<Void, Void, Location> {
 
-	public void onProviderDisabled(String provider) {
+		private WayPointActivity context;
+		private Uri photo;
+		
+		public PhotoLocationLoader(WayPointActivity context, Uri photoUri) {
+			this.context = context;
+			this.photo = photoUri;
+		}
+		
+		@Override
+		protected Location doInBackground(Void... params) {
+			return readPhotoMetadata(photo);
+		}
+
+		@Override
+		protected void onPostExecute(Location location) {
+			context.addPhotopoint(location);
+		}
+		
+		private Location readPhotoMetadata(Uri photoUri) {
+			Location location = null;
+			
+			try {
+				ExifInterface exif = new ExifInterface(photoUri.getPath());
+				float[] latlong= new float[2];
+				boolean hasLatLong = exif.getLatLong(latlong);
+				if (hasLatLong) {
+					location = new Location("EXIF");
+					location.setLatitude(latlong[0]);
+					location.setLongitude(latlong[1]);
+				}
+			}
+			catch (IOException e) {
+				Log.e("RecordSightingActivity", "Error reading EXIF for file: "+photoUri, e);
+			}
+			if (location == null) {
+				location = context.locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+			}
+			return location;
+		}
+		
 	}
-
+	
+	
 }

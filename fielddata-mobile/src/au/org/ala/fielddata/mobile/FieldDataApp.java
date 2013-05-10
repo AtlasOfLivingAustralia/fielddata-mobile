@@ -5,7 +5,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import android.app.ActivityManager;
 import android.app.Application;
-import au.org.ala.fielddata.mobile.nrmplus.R;
 
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.core.DefaultConfigurationFactory;

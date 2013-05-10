@@ -1,9 +1,7 @@
 package au.org.ala.fielddata.mobile.map;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.location.Location;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -11,19 +9,18 @@ import com.google.android.gms.maps.model.LatLng;
 
 class WayPoint implements Parcelable {
 	public Location location;
-	public List<String> photos;
+	public Uri photo;
 	public String markerId;
 	
+	
 	public WayPoint(Location location, String markerId) {
-		photos = new ArrayList<String>(4);
 		this.location = location;
 		this.markerId = markerId;
 		
 	}
-	@SuppressWarnings("unchecked")
 	public WayPoint(Parcel in) {
 		location = in.readParcelable(WayPoint.class.getClassLoader());
-		photos = in.readArrayList(WayPoint.class.getClassLoader());
+		photo = in.readParcelable(WayPoint.class.getClassLoader());
 		markerId = in.readString();
 	}
 	
@@ -32,7 +29,7 @@ class WayPoint implements Parcelable {
 	}
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeParcelable(location, 0);
-		dest.writeList(photos);
+		dest.writeParcelable(photo, 0);
 		dest.writeString(markerId);
 	}
 	public LatLng coordinate() {

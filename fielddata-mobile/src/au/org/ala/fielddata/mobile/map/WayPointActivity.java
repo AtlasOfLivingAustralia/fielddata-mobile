@@ -21,6 +21,8 @@ import android.view.View;
 import android.widget.ImageView;
 import au.org.ala.fielddata.mobile.CollectSurveyData;
 import au.org.ala.fielddata.mobile.model.MapDefaults;
+import au.org.ala.fielddata.mobile.model.WayPoint;
+import au.org.ala.fielddata.mobile.model.WayPoints;
 import au.org.ala.fielddata.mobile.nrmplus.R;
 import au.org.ala.fielddata.mobile.service.StorageManager;
 

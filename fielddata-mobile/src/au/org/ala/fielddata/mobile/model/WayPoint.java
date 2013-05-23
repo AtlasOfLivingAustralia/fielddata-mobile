@@ -1,4 +1,4 @@
-package au.org.ala.fielddata.mobile.map;
+package au.org.ala.fielddata.mobile.model;
 
 import android.location.Location;
 import android.net.Uri;
@@ -7,7 +7,7 @@ import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
 
-class WayPoint implements Parcelable {
+public class WayPoint implements Parcelable {
 	public Location location;
 	public Uri photo;
 	public String markerId;
@@ -37,6 +37,14 @@ class WayPoint implements Parcelable {
 			return null;
 		}
 		return new LatLng(location.getLatitude(), location.getLongitude());
+	}
+	
+	public String toWKT() {
+		StringBuilder coordinates = new StringBuilder();
+		coordinates.append(location.getLongitude());
+		coordinates.append(" ");
+		coordinates.append(location.getLatitude());
+		return coordinates.toString();
 	}
 	
 	public static final Parcelable.Creator<WayPoint> CREATOR = new Parcelable.Creator<WayPoint>() {

@@ -19,6 +19,7 @@ import au.org.ala.fielddata.mobile.model.Record.PropertyAttributeValue;
 public class RecordDAO extends GenericDAO<Record> {
 
 	public static final String ATTRIBUTE_VALUE_TABLE = "ATTRIBUTE_VALUE";
+	public static final String ATTRIBUTE_ROW_TABLE = "ATTRIBUTE_ROW";
 	public static final String RECORD_TABLE = "RECORD";
 	
 	
@@ -49,6 +50,12 @@ public class RecordDAO extends GenericDAO<Record> {
 	public static final int ATTRIBUTE_ID_COLUMN = 5;
 	public static final int ATTRIBUTE_VALUE_COLUMN = 6;
 	public static final int TYPE_COLUMN = 7;
+	
+	// Column indexes for the PHOTO_POINT table (select *)
+	public static final int ROW_NUMBER_COLUMN = 4;
+	public static final int PARENT_RECORD_ID_COLUMN = 5;
+	public static final int PARENT_ATTRIBUTE_VALUE_COLUMN =6;
+
 	
 	private static final int TYPE_TEXT = 0;
 	private static final int TYPE_URI = 1;
@@ -85,9 +92,20 @@ public class RecordDAO extends GenericDAO<Record> {
     "attribute_id INTEGER, "+
     "value TEXT, " +
     "type INTEGER)";
+    
+    protected static final String ATTRIBUTE_ROW_COLUMNS = " (_id INTEGER PRIMARY KEY AUTOINCREMENT, "+
+      "server_id INTEGER, "+
+      "created INTEGER, "+
+      "updated INTEGER, "+
+      "row_number INTEGER, "+
+      "parent_record_id INTEGER "+
+      "parent_attribute_value INTEGER)";
 	
 	public static final String ATTRIBUTE_VALUE_TABLE_DDL = 
 		"CREATE TABLE "+ATTRIBUTE_VALUE_TABLE+ ATTRIBUTE_VALUE_COLUMNS;
+	
+	public static final String ATTRIBUTE_ROW_TABLE_DDL = 
+			"CREATE TABLE "+ATTRIBUTE_ROW_TABLE+ATTRIBUTE_ROW_COLUMNS;
 	
 	
 	protected String recordTable;

@@ -60,6 +60,8 @@ public class Record extends Persistent {
 	public String scientificName;
 	private Location pointLocation;
 	
+	
+	
 	private List<AttributeValue> attributeValues;
 	
 	private Status status;

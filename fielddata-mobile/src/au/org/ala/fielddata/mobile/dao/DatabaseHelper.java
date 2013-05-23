@@ -33,7 +33,7 @@ import au.org.ala.fielddata.mobile.model.User;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "FieldData.db";
-	private static final int SCHEMA_VERSION = 3;
+	private static final int SCHEMA_VERSION = 4;
 
 	private static final String[] TABLES = { 
 		Survey.class.getSimpleName(),
@@ -108,7 +108,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			case 3:
 				version3(db);
 				break;
+			case 4:
+				version4(db);
+				break;
 			}
+			
 		}
 	}
 	
@@ -127,6 +131,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE "+Species.class.getSimpleName());
 		createSpeciesTables(db);
 	}
+	
+	private void version4(SQLiteDatabase db) {
+		if (Utils.DEBUG) {
+			Log.i("DatabaseHelper", "Upgrading to version 4 of the schema");
+		}
+		createAttributeRowTable(db);
+	}
 
 	private void createRecordTable(SQLiteDatabase db) {
 		
@@ -142,6 +153,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(SpeciesDAO.SPECIES_TABLE_DDL);
 		db.execSQL(SpeciesDAO.SURVEY_SPECIES_TABLE_DDL);
 		db.execSQL(SpeciesDAO.SPECIES_GROUP_DDL);
+	}
+	
+	private void createAttributeRowTable(SQLiteDatabase db) {
+		db.execSQL(RecordDAO.ATTRIBUTE_ROW_TABLE_DDL);
 	}
 	
 }

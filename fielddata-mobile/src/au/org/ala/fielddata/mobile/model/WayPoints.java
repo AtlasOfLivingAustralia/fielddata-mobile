@@ -1,4 +1,4 @@
-package au.org.ala.fielddata.mobile.map;
+package au.org.ala.fielddata.mobile.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
 
-class WayPoints implements Parcelable {
+public class WayPoints implements Parcelable {
 	
 	private List<WayPoint> photoPoints;
 	private List<WayPoint> verticies;
@@ -29,6 +29,35 @@ class WayPoints implements Parcelable {
 		in.readBooleanArray(wrapper);
 		polygonClosed = wrapper[0];
 		
+	}
+	
+	public String verticiesToWKT() {
+		if (verticies.size() == 0) {
+			return "";
+		}
+		else if (verticies.size() == 1) {
+			return "POINT ("+verticiesToText()+")";
+		}
+		else if (polygonClosed) {
+			return "POLYGON (("+verticiesToText()+"))";
+		}
+		else {
+			return "LINESTRING ("+verticiesToText()+")";
+		}
+	}
+	
+	private String verticiesToText() {
+		if (verticies.isEmpty()) {
+			return "";
+		}
+		StringBuilder coordinates = new StringBuilder();
+		for (int i=0; i<verticies.size()-1; i++) {
+			WayPoint coordinate = verticies.get(i);
+			coordinates.append(coordinate.toWKT());
+			coordinates.append(",");
+		}
+		coordinates.append(verticies.get(verticies.size()-1).toWKT());
+		return coordinates.toString();
 	}
 	
 	public boolean isClosed() {

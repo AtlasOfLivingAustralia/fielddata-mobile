@@ -4,7 +4,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.4.1'
+        classpath 'com.android.tools.build:gradle:0.4'
     }
 }
 apply plugin: 'android'
@@ -24,13 +24,11 @@ dependencies {
     compile files('libs/CWAC-SackOfViewsAdapter.jar')
     compile files('libs/universal-image-loader.jar')
     compile files('libs/actionbarsherlock-plugin-maps-4.1.0.jar')
-    compile files('libs/google-play-services.jar')
-
 
 }
 
 android {
-    compileSdkVersion 'Google Inc.:Google APIs:17'
+    compileSdkVersion 'Google Inc.:Google APIs:16'
     buildToolsVersion "17"
 
     defaultConfig {

@@ -91,7 +91,8 @@ public class RecordDAO extends GenericDAO<Record> {
     "record_id INTEGER, " +
     "attribute_id INTEGER, "+
     "value TEXT, " +
-    "type INTEGER)";
+    "type INTEGER, " +
+    "row_id INTEGER)";
     
     protected static final String ATTRIBUTE_ROW_COLUMNS = " (_id INTEGER PRIMARY KEY AUTOINCREMENT, "+
       "server_id INTEGER, "+

@@ -72,6 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			}
 			createRecordTable(db);
 			createSpeciesTables(db);
+			createAttributeRowTable(db);
 			
 			db.setTransactionSuccessful();
 		} finally {
@@ -137,6 +138,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			Log.i("DatabaseHelper", "Upgrading to version 4 of the schema");
 		}
 		createAttributeRowTable(db);
+		db.execSQL("ALTER TABLE "+RecordDAO.ATTRIBUTE_VALUE_TABLE+" ADD COLUMN row_id INTEGER");
 	}
 
 	private void createRecordTable(SQLiteDatabase db) {

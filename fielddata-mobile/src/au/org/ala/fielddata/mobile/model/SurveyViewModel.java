@@ -352,5 +352,11 @@ public class SurveyViewModel {
 	public Location getLocation() {
 		return record.getLocation();
 	}
+	
+	public void setWayPoints(WayPoints wayPoints) {
+		// Gotta do me some magic here.
+		String location = wayPoints.verticiesToWKT();
+		List<WayPoint> photopointList = wayPoints.getPhotoPoints();
+	}
 
 }

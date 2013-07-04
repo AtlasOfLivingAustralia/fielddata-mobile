@@ -5,7 +5,9 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>NRM Plus</string>
+	<string>GER BioTag</string>
+	<key>Background Image</key>
+	<string>GERBioTag_background.png</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIcons</key>
@@ -15,13 +17,13 @@
 			<key>CFBundleIconFiles</key>
 			<array>
 				<string>Default@2x.png</string>
-				<string>iOS App Icon 57 x 57.png</string>
-				<string>iOS App Icon 114 x 114.png</string>
+				<string>Icon.png</string>
+				<string>Icon@2x.png</string>
 			</array>
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
-	<string>au.org.ala.nrmplus</string>
+	<string>au.org.ala.gerbiotag</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -34,6 +36,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
+	<key>UILaunchImageFile</key>
+	<string>GERDefault</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>

@@ -28,11 +28,16 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.title = NSLocalizedString(@"Citizen Science", @"Citizen Science");
-        
+        //self.title = NSLocalizedString(@"Citizen Science", @"Citizen Science");
+        self.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
         preferences = [[Preferences alloc]init];
         
-        UIImage* background = [MasterViewController imageWithImage:[UIImage imageNamed:@"background_image.jpg" ] scaledToSize:self.tableView.bounds.size ];
+        NSString* backgroundImage = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Background Image"];
+        if (!backgroundImage) {
+            backgroundImage = @"background_image.jpg";
+        }
+        
+        UIImage* background = [MasterViewController imageWithImage:[UIImage imageNamed:backgroundImage ] scaledToSize:self.tableView.bounds.size ];
         self.tableView.backgroundColor = [UIColor colorWithPatternImage:background];
         self.tableView.backgroundView = [[UIImageView alloc] initWithImage:background];
         
@@ -54,6 +59,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
 	// Do any additional setup after loading the view, typically from a nib.
     //self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
@@ -147,7 +153,6 @@
         [self openLoginPage];
     }
     
-    self.title = @"Citizen Science";
     [self loadSurveys];
 }
 

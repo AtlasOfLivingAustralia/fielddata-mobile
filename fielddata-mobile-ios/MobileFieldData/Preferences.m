@@ -17,8 +17,10 @@
     [defaults setObject:@"root.ala.org.au" forKey:@"baseURL"];
     //[defaults setObject:@"152.83.195.62:8081" forKey:@"baseURL"];
     [defaults setObject:@"fielddata-proxy" forKey:@"context"];
-    [defaults setObject:@"npansw" forKey:@"path"];
-    [defaults setObject:@"National Parks Association of NSW" forKey:@"portal"];
+    NSString* portalURLPrefix = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Portal URL prefix"];
+    [defaults setObject:portalURLPrefix forKey:@"path"];
+    NSString* portalName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Portal name"];
+    [defaults setObject:portalName forKey:@"portal"];
     
 //    [defaults setObject:@"koalacount" forKey:@"path"];
 //    [defaults setObject:@"Great+Koala+Count" forKey:@"portal"];

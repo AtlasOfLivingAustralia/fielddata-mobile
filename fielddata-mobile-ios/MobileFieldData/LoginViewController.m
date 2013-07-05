@@ -103,7 +103,9 @@
     if ([preferences getFieldDataSessionKey]) {
         [self dismissModalViewControllerAnimated:YES];
     } else {
-        NSURL *url = [NSURL URLWithString:@"http://root.ala.org.au/bdrs-core/npansw/vanilla/usersignup.htm"];
+        NSString* path = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Portal path"];
+
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://root.ala.org.au%@/vanilla/usersignup.htm", path]];
         [[UIApplication sharedApplication] openURL:url];
     }
 }

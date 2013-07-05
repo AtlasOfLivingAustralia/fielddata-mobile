@@ -285,7 +285,9 @@
 {
     [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
    
-    NSString *urlString = [NSString stringWithFormat:@"http://root.ala.org.au/bdrs-core/condamine/review/sightings/advancedReview.htm?u=%@", [preferences getUserId]];
+    NSString* path = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Portal path"];
+
+    NSString *urlString = [NSString stringWithFormat:@"http://root.ala.org.au%@/review/sightings/advancedReview.htm?u=%@", path, [preferences getUserId]];
     NSURL *url = [NSURL URLWithString:urlString];
     [[UIApplication sharedApplication] openURL:url];
 }

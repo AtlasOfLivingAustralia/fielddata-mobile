@@ -94,7 +94,6 @@
 		110374431785354E001A0736 /* iOS App Icon 57 x 57.png in Resources */ = {isa = PBXBuildFile; fileRef = 11D7EAF116CDF35B001192DB /* iOS App Icon 57 x 57.png */; };
 		110374441785354E001A0736 /* iOS App Icon 114 x 114.png in Resources */ = {isa = PBXBuildFile; fileRef = 11D7EAF316CDF363001192DB /* iOS App Icon 114 x 114.png */; };
 		110374451785354E001A0736 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11E8E57C170B8B8D0050AA8F /* Default-568h@2x.png */; };
-		11037451178536F1001A0736 /* splashscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103744F178536F1001A0736 /* splashscreen.png */; };
 		110374541785384B001A0736 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 110374531785384B001A0736 /* Icon@2x.png */; };
 		1103745617853859001A0736 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745517853859001A0736 /* Icon.png */; };
 		1103745817853AAF001A0736 /* GERDefault.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745717853AAF001A0736 /* GERDefault.png */; };
@@ -118,6 +117,7 @@
 		113DC8CB1727C1DC00A90369 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 113DC8CA1727C1DC00A90369 /* ImageIO.framework */; };
 		113DC99B172E01F600A90369 /* MobileFieldData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 113DC999172E01F600A90369 /* MobileFieldData.xcdatamodeld */; };
 		113DC9A2173335A500A90369 /* SurveyDownloadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC9A1173335A500A90369 /* SurveyDownloadController.m */; };
+		118FDB5417CC638500BBC696 /* splashscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 118FDB5317CC638500BBC696 /* splashscreen.png */; };
 		1198E30416D47997005A1BF6 /* SpeciesGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 1198E30316D47997005A1BF6 /* SpeciesGroup.m */; };
 		1198E30A16D5A5A8005A1BF6 /* MarginLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1198E30916D5A5A8005A1BF6 /* MarginLabel.m */; };
 		11B2D20116D1DE0600734E1A /* StandaloneSpeciesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B2D20016D1DE0600734E1A /* StandaloneSpeciesViewController.m */; };
@@ -307,7 +307,6 @@
 /* Begin PBXFileReference section */
 		1103744A1785354E001A0736 /* MobileFieldData copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MobileFieldData copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1103744B1785354F001A0736 /* MobileFieldData copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MobileFieldData copy-Info.plist"; path = "/Users/god08d/Documents/fielddata-mobile-ios/MobileFieldData copy-Info.plist"; sourceTree = "<absolute>"; };
-		1103744F178536F1001A0736 /* splashscreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = splashscreen.png; path = "../fieldcapture-mobile/fielddata-mobile/src/npansw/res/drawable-xhdpi/splashscreen.png"; sourceTree = "<group>"; };
 		110374531785384B001A0736 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		1103745517853859001A0736 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		1103745717853AAF001A0736 /* GERDefault.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GERDefault.png; sourceTree = "<group>"; };
@@ -348,6 +347,7 @@
 		113DC99C172E02B900A90369 /* MobileFieldData 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MobileFieldData 2.xcdatamodel"; sourceTree = "<group>"; };
 		113DC9A0173335A500A90369 /* SurveyDownloadController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurveyDownloadController.h; sourceTree = "<group>"; };
 		113DC9A1173335A500A90369 /* SurveyDownloadController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurveyDownloadController.m; sourceTree = "<group>"; };
+		118FDB5317CC638500BBC696 /* splashscreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = splashscreen.png; path = GERBioTag/splashscreen.png; sourceTree = "<group>"; };
 		1198E30216D47997005A1BF6 /* SpeciesGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeciesGroup.h; sourceTree = "<group>"; };
 		1198E30316D47997005A1BF6 /* SpeciesGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpeciesGroup.m; sourceTree = "<group>"; };
 		1198E30816D5A5A8005A1BF6 /* MarginLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarginLabel.h; sourceTree = "<group>"; };
@@ -545,13 +545,13 @@
 		1103744C178536B5001A0736 /* GERBioTag */ = {
 			isa = PBXGroup;
 			children = (
+				118FDB5317CC638500BBC696 /* splashscreen.png */,
 				11BC8088178645FC0099F465 /* GERDefault-568h@2x.png */,
 				11BC8089178645FC0099F465 /* GERDefault@2x.png */,
 				1103745E17854EBA001A0736 /* GERBioTag_background.png */,
 				1103745717853AAF001A0736 /* GERDefault.png */,
 				1103745517853859001A0736 /* Icon.png */,
 				110374531785384B001A0736 /* Icon@2x.png */,
-				1103744F178536F1001A0736 /* splashscreen.png */,
 			);
 			name = GERBioTag;
 			sourceTree = "<group>";
@@ -1005,6 +1005,7 @@
 				1103745617853859001A0736 /* Icon.png in Resources */,
 				1103745817853AAF001A0736 /* GERDefault.png in Resources */,
 				1103746017855087001A0736 /* GERBioTag_background.png in Resources */,
+				118FDB5417CC638500BBC696 /* splashscreen.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1069,7 +1070,6 @@
 				11D7EAF216CDF35C001192DB /* iOS App Icon 57 x 57.png in Resources */,
 				11D7EAF416CDF363001192DB /* iOS App Icon 114 x 114.png in Resources */,
 				11E8E57D170B8B8D0050AA8F /* Default-568h@2x.png in Resources */,
-				11037451178536F1001A0736 /* splashscreen.png in Resources */,
 				11BC808A178645FC0099F465 /* GERDefault-568h@2x.png in Resources */,
 				11BC808B178645FC0099F465 /* GERDefault@2x.png in Resources */,
 			);
@@ -1418,7 +1418,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Condamine Catchment Natural Resource Management Corporation Limited";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Chris Godwin";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
 				HEADER_SEARCH_PATHS = "";
@@ -1430,7 +1430,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "MobileFieldData copy";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1C0E44BE-0A18-408A-9140-845455403E59";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CFAE882A-3F71-4470-A188-085FD9F440AA";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

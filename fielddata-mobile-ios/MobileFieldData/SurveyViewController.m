@@ -53,7 +53,7 @@
         fieldDataService.uploadDelegate = self;
         
         survey = s;
-        
+    
         attributes = [self sortAndFilterAttributes:[survey.attributes allObjects]];
         inputFields = [NSMutableDictionary dictionaryWithCapacity:attributes.count];
         invalidAttributes = [[NSMutableArray alloc] init];
@@ -63,6 +63,10 @@
         editingSavedRecord = (r != nil);
         if (!editingSavedRecord) {
             loadedValues = [[NSMutableDictionary alloc]init];
+            if (s.speciesIds != nil && s.speciesIds.count == 1) {
+                // Prepopulate the species field.
+                [self prepopulateSingleSpecies];
+            }
         } else {
             record = r;
             loadedValues = [NSMutableDictionary dictionaryWithCapacity:record.recordAttributes.count];
@@ -240,6 +244,20 @@
 
 }
 
+-(void)prepopulateSingleSpecies
+{
+    
+    NSFetchedResultsController *speciesResults = [fieldDataService loadSpecies];
+    if (speciesResults.fetchedObjects.count == 1) {
+        Species* species = speciesResults.fetchedObjects[0];
+        
+        SurveyAttribute *attribute = [survey getAttributeByType:kSpeciesRP];
+        
+        [loadedValues setObject:species.commonName forKey:attribute.weight];
+        
+    }
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     //return (interfaceOrientation == UIInterfaceOrientationPortrait);
@@ -321,6 +339,9 @@
            
         } else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {
             speciesCell = [[LabelledSpeciesCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+            if (survey.speciesIds != nil && survey.speciesIds.count == 1) {
+                speciesCell.accessoryType = UITableViewCellAccessoryNone;
+            }
             NSString *commonName = [loadedValues objectForKey:attribute.weight];
             if (commonName) {
                 speciesCell.species=[fieldDataService findSpeciesByCommonName:commonName];
@@ -525,7 +546,9 @@
             [self displaySelectionList:indexPath];
         }
         else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {
-            [self displaySpeciesList];
+            if (survey.speciesIds == nil || survey.speciesIds.count != 1) {
+                [self displaySpeciesList];
+            }
         }
     }
 }

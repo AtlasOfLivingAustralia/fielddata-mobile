@@ -118,6 +118,10 @@
 		113DC99B172E01F600A90369 /* MobileFieldData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 113DC999172E01F600A90369 /* MobileFieldData.xcdatamodeld */; };
 		113DC9A2173335A500A90369 /* SurveyDownloadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC9A1173335A500A90369 /* SurveyDownloadController.m */; };
 		118FDB5417CC638500BBC696 /* splashscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 118FDB5317CC638500BBC696 /* splashscreen.png */; };
+		1195ADD217DD8CA700C2F39A /* GERDefault@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC8089178645FC0099F465 /* GERDefault@2x.png */; };
+		1195ADD317DD8CAB00C2F39A /* GERDefault-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC8088178645FC0099F465 /* GERDefault-568h@2x.png */; };
+		1195ADD617DD8F2900C2F39A /* GERBioTag_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1195ADD417DD8F2900C2F39A /* GERBioTag_background@2x.png */; };
+		1195ADD717DD8F2900C2F39A /* GERBioTag_background-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1195ADD517DD8F2900C2F39A /* GERBioTag_background-568h@2x.png */; };
 		1198E30416D47997005A1BF6 /* SpeciesGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 1198E30316D47997005A1BF6 /* SpeciesGroup.m */; };
 		1198E30A16D5A5A8005A1BF6 /* MarginLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1198E30916D5A5A8005A1BF6 /* MarginLabel.m */; };
 		11B2D20116D1DE0600734E1A /* StandaloneSpeciesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B2D20016D1DE0600734E1A /* StandaloneSpeciesViewController.m */; };
@@ -132,8 +136,6 @@
 		11B8AF18165EE2C700FD472C /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 11B8AF04165EE2C700FD472C /* MasterViewController.xib */; };
 		11B8AF19165EE2C700FD472C /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AF07165EE2C700FD472C /* NSData+Base64.m */; };
 		11B8AF221664882400FD472C /* SelectionListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AF211664882300FD472C /* SelectionListViewController.m */; };
-		11BC808A178645FC0099F465 /* GERDefault-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC8088178645FC0099F465 /* GERDefault-568h@2x.png */; };
-		11BC808B178645FC0099F465 /* GERDefault@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC8089178645FC0099F465 /* GERDefault@2x.png */; };
 		11BC808E17865CCE0099F465 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AE915FD7184004869D0 /* main.m */; };
 		11BC808F17865CCE0099F465 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AED15FD7184004869D0 /* AppDelegate.m */; };
 		11BC809017865CCE0099F465 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AF315FD7184004869D0 /* MasterViewController.m */; };
@@ -224,7 +226,6 @@
 		11BC80E717865CCE0099F465 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 110374531785384B001A0736 /* Icon@2x.png */; };
 		11BC80E817865CCE0099F465 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745517853859001A0736 /* Icon.png */; };
 		11BC80E917865CCE0099F465 /* GERDefault.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745717853AAF001A0736 /* GERDefault.png */; };
-		11BC80EA17865CCE0099F465 /* GERBioTag_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745E17854EBA001A0736 /* GERBioTag_background.png */; };
 		11BC80F517865F370099F465 /* ALCWIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC80F117865F330099F465 /* ALCWIcon@2x.png */; };
 		11BC80F617865F3A0099F465 /* ALCWIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC80F217865F330099F465 /* ALCWIcon.png */; };
 		11BC80F8178660640099F465 /* ALCW_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC80F7178660640099F465 /* ALCW_background.png */; };
@@ -348,6 +349,8 @@
 		113DC9A0173335A500A90369 /* SurveyDownloadController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurveyDownloadController.h; sourceTree = "<group>"; };
 		113DC9A1173335A500A90369 /* SurveyDownloadController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurveyDownloadController.m; sourceTree = "<group>"; };
 		118FDB5317CC638500BBC696 /* splashscreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = splashscreen.png; path = GERBioTag/splashscreen.png; sourceTree = "<group>"; };
+		1195ADD417DD8F2900C2F39A /* GERBioTag_background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "GERBioTag_background@2x.png"; sourceTree = "<group>"; };
+		1195ADD517DD8F2900C2F39A /* GERBioTag_background-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "GERBioTag_background-568h@2x.png"; sourceTree = "<group>"; };
 		1198E30216D47997005A1BF6 /* SpeciesGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeciesGroup.h; sourceTree = "<group>"; };
 		1198E30316D47997005A1BF6 /* SpeciesGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpeciesGroup.m; sourceTree = "<group>"; };
 		1198E30816D5A5A8005A1BF6 /* MarginLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarginLabel.h; sourceTree = "<group>"; };
@@ -545,7 +548,9 @@
 		1103744C178536B5001A0736 /* GERBioTag */ = {
 			isa = PBXGroup;
 			children = (
+				1195ADD417DD8F2900C2F39A /* GERBioTag_background@2x.png */,
 				118FDB5317CC638500BBC696 /* splashscreen.png */,
+				1195ADD517DD8F2900C2F39A /* GERBioTag_background-568h@2x.png */,
 				11BC8088178645FC0099F465 /* GERDefault-568h@2x.png */,
 				11BC8089178645FC0099F465 /* GERDefault@2x.png */,
 				1103745E17854EBA001A0736 /* GERBioTag_background.png */,
@@ -1006,6 +1011,10 @@
 				1103745817853AAF001A0736 /* GERDefault.png in Resources */,
 				1103746017855087001A0736 /* GERBioTag_background.png in Resources */,
 				118FDB5417CC638500BBC696 /* splashscreen.png in Resources */,
+				1195ADD217DD8CA700C2F39A /* GERDefault@2x.png in Resources */,
+				1195ADD317DD8CAB00C2F39A /* GERDefault-568h@2x.png in Resources */,
+				1195ADD617DD8F2900C2F39A /* GERBioTag_background@2x.png in Resources */,
+				1195ADD717DD8F2900C2F39A /* GERBioTag_background-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1036,7 +1045,6 @@
 				11BC80E717865CCE0099F465 /* Icon@2x.png in Resources */,
 				11BC80E817865CCE0099F465 /* Icon.png in Resources */,
 				11BC80E917865CCE0099F465 /* GERDefault.png in Resources */,
-				11BC80EA17865CCE0099F465 /* GERBioTag_background.png in Resources */,
 				11BC80F517865F370099F465 /* ALCWIcon@2x.png in Resources */,
 				11BC80F617865F3A0099F465 /* ALCWIcon.png in Resources */,
 				11BC80F8178660640099F465 /* ALCW_background.png in Resources */,
@@ -1070,8 +1078,6 @@
 				11D7EAF216CDF35C001192DB /* iOS App Icon 57 x 57.png in Resources */,
 				11D7EAF416CDF363001192DB /* iOS App Icon 114 x 114.png in Resources */,
 				11E8E57D170B8B8D0050AA8F /* Default-568h@2x.png in Resources */,
-				11BC808A178645FC0099F465 /* GERDefault-568h@2x.png in Resources */,
-				11BC808B178645FC0099F465 /* GERDefault@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1368,7 +1374,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Chris Godwin (GKUW7WSNH5)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: William Coleman (GAJK78KGT4)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
 				HEADER_SEARCH_PATHS = "";
@@ -1381,7 +1387,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "MobileFieldData copy";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "DEE5B4ED-0AF6-4EDE-B039-1131E9EC2C92";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C31AE27F-51FD-4AB9-8044-2580351FCE01";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1392,8 +1398,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: Chris Godwin";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Chris Godwin";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: William Coleman (GAJK78KGT4)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: William Coleman (GAJK78KGT4)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
 				HEADER_SEARCH_PATHS = "";
@@ -1405,8 +1411,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "MobileFieldData copy";
-				"PROVISIONING_PROFILE[sdk=*]" = "CFAE882A-3F71-4470-A188-085FD9F440AA";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CFAE882A-3F71-4470-A188-085FD9F440AA";
+				"PROVISIONING_PROFILE[sdk=*]" = "C31AE27F-51FD-4AB9-8044-2580351FCE01";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C31AE27F-51FD-4AB9-8044-2580351FCE01";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = NO;
 				WRAPPER_EXTENSION = app;
@@ -1418,7 +1424,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Chris Godwin";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: William Coleman (GAJK78KGT4)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
 				HEADER_SEARCH_PATHS = "";
@@ -1430,7 +1436,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "MobileFieldData copy";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CFAE882A-3F71-4470-A188-085FD9F440AA";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C31AE27F-51FD-4AB9-8044-2580351FCE01";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

@@ -132,15 +132,21 @@
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
     static NSString *CellIdentifier = @"Cell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    NSString *reuseIdentifier = CellIdentifier;
+    if (indexPath.section == 0) {
+        reuseIdentifier = [NSString stringWithFormat:@"Cell%d", indexPath.row];
     }
-
-    [self configureCell:cell atIndexPath:indexPath];
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        [self configureCell:cell atIndexPath:indexPath];
+    }
+    
     return cell;
 }
 
@@ -161,9 +167,7 @@
     FieldDataService* fieldDataService = [[FieldDataService alloc] init];
     surveys = [fieldDataService loadSurveys];
     tableHeader.text = [NSString stringWithFormat:@"Welcome %@", preferences.getUsersName];
-    
     [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -241,6 +245,7 @@
 
 -(void)reloadSurveys {
     SurveyDownloadController* controller = [[SurveyDownloadController alloc] initWithView:self.view];
+    controller.delegate = self;
     [controller downloadSurveys];
 }
 
@@ -259,7 +264,6 @@
         [[SavedRecordsViewController alloc] initWithStyle:UITableViewStylePlain];
     [self.navigationController pushViewController:savedRecordsViewController animated:YES];
 
-    
 }
 
 -(void)openSurveyPage:(NSInteger) surveyIndex
@@ -287,7 +291,9 @@
    
     NSString* path = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Portal path"];
 
-    NSString *urlString = [NSString stringWithFormat:@"http://root.ala.org.au%@/review/sightings/advancedReview.htm?u=%@", path, [preferences getUserId]];
+    NSString *urlString = [NSString stringWithFormat:@"http://root.ala.org.au%@/map/mySightings.htm", path];
+    
+    //NSString *urlString = [NSString stringWithFormat:@"http://root.ala.org.au%@/review/sightings/advancedReview.htm?u=%@", path, [preferences getUserId]];
     NSURL *url = [NSURL URLWithString:urlString];
     [[UIApplication sharedApplication] openURL:url];
 }
@@ -304,6 +310,7 @@
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     if (indexPath.section == 0) {
         Survey *survey = [surveys objectAtIndex:indexPath.row];
         cell.textLabel.text = survey.name;
@@ -311,17 +318,14 @@
         if ([surveyImagePath length] > 0) {
             // Omit leading / if present as the url prefix has a trailing /
             if ([surveyImagePath hasPrefix:@"/"]) {
-                NSLog(@"Survey path: %@", surveyImagePath);
-                
                 surveyImagePath = [surveyImagePath substringFromIndex:1];
-                NSLog(@"Survey path: %@", surveyImagePath);
-                
             }
             NSString* url = [preferences getFieldDataURL];
             
             url = [url stringByAppendingString:surveyImagePath];
-            NSLog(@"Survey URL: %@", url);
-            [cell.imageView setImageWithURL:[NSURL URLWithString:url]] ;
+            [cell.imageView setImageWithURL:[NSURL URLWithString:url] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
+                [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+            }];
         }
         else {
             [cell.imageView setImage:nil];

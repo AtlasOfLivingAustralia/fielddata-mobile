@@ -36,6 +36,12 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>Portal URL prefix</key>
+	<string>condamine</string>
+	<key>Portal name</key>
+	<string>Condamine Alliance</string>
+	<key>Portal path</key>
+	<string>/bdrs-core/condamine</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

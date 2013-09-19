@@ -101,5 +101,6 @@
 -(BOOL)isRecordComplete:(Record*)record;
 -(void)uploadRecord:(Record*)record;
 -(Species*)findSpeciesByCommonName:(NSString*)commonName;
+-(Species*)findSpeciesByTaxonId:(NSNumber*)taxonId;
 
 @end

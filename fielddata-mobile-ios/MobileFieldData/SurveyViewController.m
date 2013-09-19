@@ -36,6 +36,7 @@
     NSInteger attributeCellsRowOffset;
     ValidationResult *validationResult;
     BOOL editingSavedRecord;
+    BOOL speciesPrepopulated;
     
 }
 
@@ -48,7 +49,7 @@
     self = [super initWithStyle:style];
     if (self) {
         // Custom initialization
-        
+        speciesPrepopulated = NO;
         fieldDataService = [[FieldDataService alloc]init];
         fieldDataService.uploadDelegate = self;
         
@@ -246,16 +247,16 @@
 
 -(void)prepopulateSingleSpecies
 {
-    
-    NSFetchedResultsController *speciesResults = [fieldDataService loadSpecies];
-    if (speciesResults.fetchedObjects.count == 1) {
-        Species* species = speciesResults.fetchedObjects[0];
-        
+    if (survey.speciesIds != nil && survey.speciesIds.count == 1) {
+        Species* species = [fieldDataService findSpeciesByTaxonId:survey.speciesIds[0]];
         SurveyAttribute *attribute = [survey getAttributeByType:kSpeciesRP];
+        if ([attribute.required intValue] == 1 && species != nil) {
         
-        [loadedValues setObject:species.commonName forKey:attribute.weight];
-        
+            [loadedValues setObject:species.commonName forKey:attribute.weight];
+            speciesPrepopulated = YES;
+        }
     }
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -339,7 +340,7 @@
            
         } else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {
             speciesCell = [[LabelledSpeciesCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-            if (survey.speciesIds != nil && survey.speciesIds.count == 1) {
+            if (speciesPrepopulated) {
                 speciesCell.accessoryType = UITableViewCellAccessoryNone;
             }
             NSString *commonName = [loadedValues objectForKey:attribute.weight];
@@ -546,7 +547,7 @@
             [self displaySelectionList:indexPath];
         }
         else if ([attribute.typeCode isEqualToString:kSpeciesRP]) {
-            if (survey.speciesIds == nil || survey.speciesIds.count != 1) {
+            if (!speciesPrepopulated) {
                 [self displaySpeciesList];
             }
         }

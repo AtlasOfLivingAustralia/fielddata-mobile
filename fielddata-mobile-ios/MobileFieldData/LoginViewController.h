@@ -21,9 +21,12 @@
     
 }
 
+@property (nonatomic, retain) IBOutlet UILabel *appName;
+@property (nonatomic, retain) IBOutlet UILabel *version;
 @property (nonatomic, retain) IBOutlet UITextField *username;
 @property (nonatomic, retain) IBOutlet UITextField *password;
 @property (nonatomic, retain) IBOutlet UIButton *cancelButton;
+@property (nonatomic, retain) IBOutlet UIButton *submit;
 
 - (IBAction)onClickLogin:(id)sender;
 - (IBAction)onClickCancel:(id)sender;

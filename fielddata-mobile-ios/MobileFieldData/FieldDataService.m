@@ -19,6 +19,8 @@
 #import "Record.h"
 #import "RecordAttribute.h"
 #import "NSData+Base64.h"
+#import "FileService.h"
+#import "Constant.h"
 
 @implementation FieldDataService
 
@@ -228,6 +230,8 @@
     survey.order = [surveyDetails objectForKey:@"weight"];
     survey.speciesIds = [surveyDetails objectForKey:@"species"];
     survey.imageUrl = [surveyDict objectForKey:@"imageUrl"];
+    survey.locationPolygon = [surveyDict objectForKey:@"locationPolygon"];
+    survey.polygonCensusMethod = [surveyDict objectForKey:@"polygonCensusMethod"];
     
     NSNumber* startDate = [surveyDetails objectForKey:@"startDate"];
     if (startDate != (id)[NSNull null]) {
@@ -262,13 +266,46 @@
         // ignore moderator scoped fields
         NSString* scope = [attribute objectForKey:@"scope"];
         NSString* name = [attribute objectForKey:@"name"];
+        NSString* typeCode = [attribute objectForKey:@"typeCode"];
+        NSString *ids = nil;
+        
+        // Now loop the nested attribute and get set the custom field values.
+        if(name != nil && typeCode != nil && [name isEqualToString:@"photopoints"] && [typeCode isEqualToString:@"CC"]) {
+            NSString *ppLat = @"";
+            NSString *ppLong = @"";
+            NSString *bearing = @"";
+            NSString *photo = @"";
+            
+            for (NSDictionary* nestedAttribute in [attribute objectForKey:@"nestedAttributes"]) {
+                if([[nestedAttribute objectForKey:@"name"] isEqualToString:@"ppLat"]){
+                    ppLat = [nestedAttribute objectForKey:@"id"];
+                }
+                else if([[nestedAttribute objectForKey:@"name"] isEqualToString:@"ppLong"]){
+                    ppLong = [nestedAttribute objectForKey:@"id"];
+                }
+                else if([[nestedAttribute objectForKey:@"name"] isEqualToString:@"bearing"]){
+                    bearing = [nestedAttribute objectForKey:@"id"];
+                }
+                else if([[nestedAttribute objectForKey:@"type"] isEqualToString:@"IMAGE"]){
+                    photo = [nestedAttribute objectForKey:@"id"];
+                }
+            }
+            NSLog(@"Survey with photopoints attribute.");
+            ids = [NSString stringWithFormat : @"%@,%@,%@,%@",ppLat,ppLong,bearing,photo];
+        }
+
         if (![scope isEqualToString:kModeratorScope] &&
             ![name isEqualToString:@"possible_species"]) { // This field only makes sense on the web form
-            //NSLog(@"Saving attribute: %@", attribute);
-            [self persistAttribute:attribute survey:survey error:e];
+            [self persistAttribute:attribute survey:survey customIds:ids error:e];
         }
     }
     
+    // Retrieve census method information, not needed at this stage.
+    for (NSDictionary* attribute in [surveyDict objectForKey:@"censusMethods"]) {
+        NSLog(@"Saving census method informaytion: %@", attribute);
+        [self persistAttribute:attribute survey:survey customIds:nil error:e];
+    }
+
     return survey;
 }
 
@@ -286,7 +323,7 @@
     
 }
 
--(void)persistAttribute:(NSDictionary*)surveyAttribute survey:(Survey*)survey error:(NSError*)e {
+-(void)persistAttribute:(NSDictionary*)surveyAttribute survey:(Survey*)survey customIds:(NSString *) ids error:(NSError*)e {
     
     NSString* typeCode = [surveyAttribute objectForKey:@"typeCode"];
     if (![self isSupported:typeCode]) {
@@ -302,6 +339,12 @@
     attribute.weight = [surveyAttribute objectForKey:@"weight"];
     attribute.question = [surveyAttribute objectForKey:@"description"];
     attribute.name = [surveyAttribute objectForKey:@"name"];
+   
+    // Store photo points custom field (ppLat,ppLong, bearing and photo id)
+    if (ids != nil || [ids length] > 0)
+    {
+        attribute.custom = ids;
+    }
     
     attribute.survey = survey;
     
@@ -522,8 +565,12 @@
     if (![context save:&error]) {
         NSLog(@"Error saving Record: %@", [error localizedDescription]);
     }
-    
+    [self movePhotoPointsPhotos];
     return record;
+}
+
+- (void) movePhotoPointsPhotos{
+    [FileService copyFiles:[FileService getTempFolderPath] :[FileService getSavedFolderPath]];
 }
 
 -(void)updateRecord:(Record*)record attributes:(NSArray*)attributes inputFields:(NSMutableDictionary*)inputFields {
@@ -551,6 +598,7 @@
     if (![context save:&error]) {
         NSLog(@"Error saving Record: %@", [error localizedDescription]);
     }
+    [self movePhotoPointsPhotos];
 }
       
 
@@ -585,7 +633,8 @@
     RecordAttribute* notes;
     RecordAttribute* when;
     RecordAttribute* number;
-    
+    RecordAttribute* photopoints;
+
     
     NSMutableArray* attributeValues = [[NSMutableArray alloc] init];
     
@@ -602,11 +651,15 @@
         }
         else if ([att.surveyAttribute.typeCode isEqualToString:kNumber]) {
             number = att;
-            
-        } else {
-        
+        }
+        else if ([att.surveyAttribute.typeCode isEqualToString:kCensusMethodCol] &&
+                 [att.surveyAttribute.name isEqualToString:@"photopoints"]) {
+            photopoints = att;
+        }
+
+        else {
+            //Handle all attributeValues here.
             NSNumber* attributeId = att.surveyAttribute.serverId;
-            
             if (attributeId.intValue != 0) {
                 
                 NSMutableDictionary* attributeValue = [[NSMutableDictionary alloc] init];
@@ -643,8 +696,87 @@
                         [attributeValues addObject:attributeValue];
                     }
                 }
-                //[attributeValues addObject:attributeValue];
-            }
+             }
+        }
+    }
+
+    if(photopoints){
+        NSNumber* attributeId = photopoints.surveyAttribute.serverId;
+        NSArray *ids = [photopoints.surveyAttribute.custom componentsSeparatedByString:@kPHOTOPOINT_FIELD_DELIMITER];
+        NSString *ppLatId;
+        NSString *ppLongId;
+        NSString *ppBearingId;
+        NSString *ppImageId;
+        
+        if(ids != nil && [ids count] == kPHOTOPOINT_FIELDS) {
+            ppLatId = [ids objectAtIndex:0];
+            ppLongId = [ids objectAtIndex:1];
+            ppBearingId = [ids objectAtIndex:2];
+            ppImageId =[ids objectAtIndex:3];
+ 
+            if( [ppLatId length] > 0 && [ppLongId length] > 0 && [ppImageId length] > 0) {
+                NSMutableDictionary *attValuesLevel1 = [[NSMutableDictionary alloc] init];
+                NSMutableArray *attValuesLevel2 = [[NSMutableArray alloc] init];
+                NSArray *pics = [photopoints.value componentsSeparatedByString:@kPHOTOPOINT_DELIMITER];
+            
+                for(int i =0; i < [pics count] - 1 ; i++) {
+                    NSString *pic = [pics objectAtIndex:i];
+                    NSString *ppLatValue;
+                    NSString *ppLongValue;
+                    NSString *ppBearingValue;
+                    NSString *ppImageValue;
+                    NSArray *tokens = [pic componentsSeparatedByString:@kPHOTOPOINT_FIELD_DELIMITER];
+                    NSMutableArray *attValuesLevel4 = [[NSMutableArray alloc] init];
+                    NSMutableDictionary *attValuesLevel4_1 = [[NSMutableDictionary alloc] init];
+                    NSMutableDictionary *attValuesLevel5 = [[NSMutableDictionary alloc] init];
+                    NSMutableDictionary *attValuesLevel6 = [[NSMutableDictionary alloc] init];
+                    NSMutableDictionary *attValuesLevel7 = [[NSMutableDictionary alloc] init];
+                    
+                    if([tokens count] == kPHOTOPOINT_FIELDS) {
+                        ppLatValue = [tokens objectAtIndex:0];
+                        ppLongValue = [tokens objectAtIndex:1];
+                        ppBearingValue = [tokens objectAtIndex:2];
+                        ppImageValue = [tokens objectAtIndex:3];
+                        
+                        [attValuesLevel5 setObject:[[NSNumber alloc]initWithInt:0] forKey:@"key"];
+                        [attValuesLevel5 setObject: [[NSNumber alloc] initWithInt: [ppLatId intValue]] forKey:@"attribute_id"];
+                        [attValuesLevel5 setObject:[[NSNumber alloc]initWithInt:-1] forKey:@"id"];
+                        [attValuesLevel5 setObject:ppLatValue forKey:@"value"];
+                        
+                        [attValuesLevel6 setObject:[[NSNumber alloc]initWithInt:1] forKey:@"key"];
+                        [attValuesLevel6 setObject:[[NSNumber alloc] initWithInt: [ppLongId intValue]] forKey:@"attribute_id"];
+                        [attValuesLevel6 setObject:[[NSNumber alloc]initWithInt:-1] forKey:@"id"];
+                        [attValuesLevel6 setObject:ppLongValue forKey:@"value"];
+                        
+                        [attValuesLevel7 setObject:[[NSNumber alloc]initWithInt:2] forKey:@"key"];
+                        [attValuesLevel7 setObject:[[NSNumber alloc] initWithInt: [ppImageId intValue]] forKey:@"attribute_id"];
+                        [attValuesLevel7 setObject:[[NSNumber alloc]initWithInt:-1] forKey:@"id"];
+
+                        @autoreleasepool {
+                            NSString *imageUrl = [FileService getSavedFilePath: ppImageValue];
+                            UIImage* photo = [UIImage imageWithContentsOfFile:imageUrl];
+                            NSData *imageData = UIImageJPEGRepresentation(photo, 0.8);
+                            NSString *imageString = [imageData base64EncodedString];
+                            photo = nil;
+                            imageData = nil;
+                            [attValuesLevel7 setObject:imageString forKey:@"value"];
+                        }
+                    }
+                    [attValuesLevel4  addObject:attValuesLevel5];
+                    [attValuesLevel4  addObject:attValuesLevel6];
+                    [attValuesLevel4  addObject:attValuesLevel7];
+                    [attValuesLevel4_1 setValue:attValuesLevel4 forKeyPath:@"values"];
+                    
+                    [attValuesLevel4_1 setValue: [[NSNumber alloc] initWithInt:i] forKeyPath:@"row"];
+                    [attValuesLevel4_1 setValue: [[NSNumber alloc] initWithInt: [attributeId intValue]] forKeyPath:@"attributeId"];
+                    [attValuesLevel2 addObject:attValuesLevel4_1];
+                }
+                
+            [attValuesLevel1 setValue: attributeId forKeyPath:@"attribute_id"];
+            [attValuesLevel1 setValue: [[NSNumber alloc] initWithInt:-1] forKeyPath:@"id"];
+            [attValuesLevel1 setValue: attValuesLevel2 forKeyPath:@"values"];
+            [attributeValues addObject:attValuesLevel1];
+           }
         }
     }
     
@@ -658,21 +790,43 @@
     }
     NSMutableDictionary* uploadDict = [[NSMutableDictionary alloc] init];
     
-    NSArray* locDescArr = [location.value componentsSeparatedByString:@","];
-    
-    NSString* lat;
-    NSString* lon;
-    NSString* accuracy;
-    
-    if (locDescArr.count == 3) {
-        lat = [locDescArr objectAtIndex:0];
-        lon = [locDescArr objectAtIndex:1];
-        accuracy = [locDescArr objectAtIndex:2];
+    //Business rule: polygon values overwrites points value.
+    //If locationPolygon is true and polygon attribute is available then update locationWkt with polygon value
+    NSString *regEx = [NSString stringWithFormat:@".*%@.*", @kPOLYGON_STR];
+    NSRange range = [location.value rangeOfString:regEx options:NSRegularExpressionSearch];
+    // Upper layer handles the formatting
+    if([record.survey.locationPolygon intValue] == 1 && range.location != NSNotFound) {
+        // Exception case:
+        // If you have only 2 polygon points then change it from multipolygon to multiline string.
+        NSString *polygonStr = location.value;
+        polygonStr = [polygonStr stringByReplacingOccurrencesOfString:@kPOLYGON_START withString:@""];
+        polygonStr = [polygonStr stringByReplacingOccurrencesOfString:@kPOLYGON_END withString:@""];
+        NSArray* polyArray = [polygonStr componentsSeparatedByString:@kPOLYGON_FIELD_DELIMITER];
+        if([polyArray count] == 3){
+            NSString *multiLine = [[NSString alloc] initWithFormat:@"MULTILINESTRING ((%@,%@))",[polyArray objectAtIndex:0],[polyArray objectAtIndex:1]];
+            [uploadDict setObject:multiLine forKey:@"locationWkt"];
+            [uploadDict setObject:record.survey.polygonCensusMethod forKey:@"censusMethod_id"];
+            
+        }else{
+            [uploadDict setObject:location.value forKey:@"locationWkt"];
+            [uploadDict setObject:record.survey.polygonCensusMethod forKey:@"censusMethod_id"];
+        }
+    }
+    else{
+        NSArray* locDescArr = [location.value componentsSeparatedByString:@kPOLYGON_FIELD_DELIMITER];
+        NSString* lat;
+        NSString* lon;
+        NSString* accuracy;
         
-        [uploadDict setObject:lat forKey:@"latitude"];
-        [uploadDict setObject:lon forKey:@"longitude"];
-        [uploadDict setObject:accuracy forKey:@"accuracy"];
-        
+        if (locDescArr.count == 3) {
+            lat = [locDescArr objectAtIndex:0];
+            lon = [locDescArr objectAtIndex:1];
+            accuracy = [locDescArr objectAtIndex:2];
+            
+            [uploadDict setObject:lat forKey:@"latitude"];
+            [uploadDict setObject:lon forKey:@"longitude"];
+            [uploadDict setObject:accuracy forKey:@"accuracy"];
+        }
     }
     
     if (scientificName) {
@@ -738,11 +892,22 @@
                                                                       options:kNilOptions error:&error];
             
             NSNumber* status = [respDict objectForKey:@"status"];
+
             if (status.intValue == 200) {
+                // Remove any image that are associated to the record.
+                if(photopoints) {
+                    NSArray *pics = [photopoints.value componentsSeparatedByString:@"|"];
+                    for(NSString * pic in pics){
+                     NSArray *fields = [pic componentsSeparatedByString:@","];
+                        if([fields count] == 4)
+                            [FileService deleteSavedFile: [fields objectAtIndex:3]];
+                    }
+                }
                 // delete the record
                 NSError * saveError = nil;
                 [context deleteObject:record];
                 [context save:&saveError];
+                
                 [uploadDelegate uploadSurveysSuccessful:YES];
             } else {
                 [uploadDelegate uploadSurveysSuccessful:NO];

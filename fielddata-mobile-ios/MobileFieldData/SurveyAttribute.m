@@ -22,5 +22,6 @@
 @dynamic name;
 @dynamic survey;
 @dynamic options;
+@dynamic custom;
 
 @end

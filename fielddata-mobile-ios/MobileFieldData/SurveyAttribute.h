@@ -22,6 +22,7 @@
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) Survey *survey;
 @property (nonatomic, retain) NSSet *options;
+@property (nonatomic, retain) NSString * custom;
 @end
 
 @interface SurveyAttribute (CoreDataGeneratedAccessors)

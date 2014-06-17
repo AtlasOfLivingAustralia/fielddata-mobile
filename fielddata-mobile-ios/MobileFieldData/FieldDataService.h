@@ -21,6 +21,7 @@
 #define kWhen @"When"
 #define kTimeRP @"Time"
 #define kNotes @"Notes"
+#define kPolygon @"Polygon"
 
 // attribute types
 #define kIntegerType @"IN"

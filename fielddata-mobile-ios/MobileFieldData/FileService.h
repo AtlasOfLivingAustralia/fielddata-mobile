@@ -11,5 +11,12 @@
 @interface FileService : NSObject
 
 + (NSString*)saveImage:(UIImage *)image withName:(NSString *)name;
-
++ (BOOL)deleteFilesInFolder:(NSString *)directory;
++ (NSString*)getDocumentsPath;
++ (NSString*)getUniqueFileName;
++ (BOOL) copyFiles: (NSString*) srcFolder : (NSString*) destFolder;
++ (NSString*)getSavedFolderPath;
++ (NSString*)getTempFolderPath;
++ (NSString*)getSavedFilePath: (NSString*) fileName;
++ (BOOL)deleteSavedFile:(NSString *)fileName;
 @end

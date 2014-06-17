@@ -14,13 +14,13 @@
 
 @implementation ImageCell
 
-@synthesize startCamera, cameraImage, parentController;
+@synthesize startCamera, cameraImage, parentController,photopoints, multiPhotoEnabled,locationManager;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        
+        multiPhotoEnabled = 0;
         // Initialization code
         cameraImage=[[UIImageView alloc] initWithFrame:CGRectMake(10, 30, 48, 48)];
         cameraImage.autoresizingMask = ( UIViewAutoresizingNone );
@@ -37,10 +37,50 @@
         startCamera.frame = CGRectMake(self.bounds.size.width-30-width, 30, 48, 48);
         [startCamera setImage:cameraBtn forState:UIControlStateNormal];
         [self.contentView addSubview:startCamera];
-        
+
     }
     return self;
 }
+
+- (id)initWithStyleForPhotopoints:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    
+    if (self) {
+        multiPhotoEnabled = 1;
+
+        // Remove all unused images.
+        NSString *newPath = [[FileService getDocumentsPath] stringByAppendingPathComponent:@"/temp"];
+        [FileService deleteFilesInFolder:newPath];
+        
+        photopoints = [[UILabel alloc] initWithFrame:CGRectMake(10, 30, 148, 48)];
+        photopoints.font = [UIFont systemFontOfSize:12.0];
+        photopoints.text = @"Total photos taken: 0" ;
+        [self.contentView addSubview:photopoints];
+        
+        UIImage *cameraBtn = [UIImage imageNamed:@"camera.png"];
+        startCamera = [UIButton buttonWithType:UIButtonTypeCustom];
+        [startCamera addTarget:self action:@selector(showCameraUI:) forControlEvents:UIControlEventTouchUpInside];
+        NSInteger width = 48;
+        startCamera.frame = CGRectMake(self.bounds.size.width-30-width, 30, 48, 48);
+        [startCamera setImage:cameraBtn forState:UIControlStateNormal];
+        [self.contentView addSubview:startCamera];
+        
+        // Track user location.
+        locationManager = [[CLLocationManager alloc] init];
+        locationManager.distanceFilter = kCLDistanceFilterNone; // whenever we move
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+        locationManager.delegate = self;
+        [locationManager startUpdatingLocation];
+    }
+    return self;
+}
+
+-(void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+{
+    /*  CLLocationManagerDelegate delegate to update new location. */
+}
+
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
@@ -60,6 +100,17 @@
     else {
         self.value = @"";
     }
+}
+
+- (void)updatePhotopoints:(NSString*)points
+{
+    if(points != nil && ![points isEqualToString:@""]){
+        NSArray *tokens = [points componentsSeparatedByString:@"|"];
+        photopoints.text = [[NSString alloc] initWithFormat:@"Total photos taken: %d",[tokens count]-1] ;
+        self.value = points;
+    }
+    else
+        self.value = @"";
 }
 
 - (IBAction)showCameraUI:(id)sender {
@@ -103,6 +154,47 @@
 }
 
 -(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+
+    if(self.multiPhotoEnabled == 1)
+        [self multiplePhotoHandler:info];
+    else
+       [self singlePhotoHandler:info];
+    
+    [parentController dismissModalViewControllerAnimated: YES];
+}
+
+-(void) multiplePhotoHandler :(NSDictionary *)info {
+   
+    UIImage *image = [info valueForKey:UIImagePickerControllerOriginalImage];
+    
+    if (image.size.height > 1024 || image.size.width > 1024) {
+        image = [image resizedImageWithContentMode:UIViewContentModeScaleAspectFit
+                                            bounds:CGSizeMake(1024, 1024)
+                              interpolationQuality:kCGInterpolationMedium];
+    }
+    
+    NSData *imageData = UIImagePNGRepresentation(image);
+    NSString *imagePath = [FileService getUniqueFileName];
+    if (![imageData writeToFile:imagePath atomically:NO])
+    {
+        NSLog((@"Failed to cache image data to disk"));
+    }
+    else
+    {
+        self.value = [[NSString alloc] initWithFormat:@"%@%.20f,%.20f,%@,%@|",self.value,
+                      locationManager.location.coordinate.latitude,
+                      locationManager.location.coordinate.longitude,
+                      @"",
+                      [imagePath lastPathComponent]];
+        int times = [[self.value componentsSeparatedByString:@"|"] count]-1;
+        photopoints.text = [[NSString alloc] initWithFormat:@"Total photos taken = %d",times];
+    }
+    
+}
+
+
+-(void) singlePhotoHandler :(NSDictionary *)info{
+    
     UIImage* image = [info valueForKey:UIImagePickerControllerOriginalImage];
     
     UIImageOrientation orientation = [image imageOrientation];
@@ -111,7 +203,7 @@
         image = [image resizedImageWithContentMode:UIViewContentModeScaleAspectFit
                                             bounds:CGSizeMake(1024, 1024)
                               interpolationQuality:kCGInterpolationMedium];
-    } 
+    }
     
     NSString* fileName = [NSString stringWithFormat:@"%f.jpg", [[NSDate date] timeIntervalSince1970]];
     NSString* filePath = [FileService saveImage:image withName:fileName];
@@ -126,10 +218,6 @@
     
     // reload the image
     [self updateImage:filePath];
-    
-    
-    [parentController dismissModalViewControllerAnimated: YES];
 }
-
 
 @end

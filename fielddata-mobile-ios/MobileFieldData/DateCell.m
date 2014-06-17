@@ -52,13 +52,6 @@
     return [super becomeFirstResponder];
 }
 
-- (BOOL)resignFirstResponder {
-	
-	UITableView *tableView = (UITableView *)self.superview;
-	[tableView deselectRowAtIndexPath:[tableView indexPathForCell:self] animated:YES];
-    
-	return [super resignFirstResponder];
-}
 
 -(UIView *)inputView
 {

@@ -19,7 +19,7 @@
 
 @implementation LoginViewController
 
-@synthesize username, password;
+@synthesize username, password, appName,submit,cancelButton, version;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -36,16 +36,27 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self.appName setText:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]];
+    appName.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:30];
+    
+    NSString * ver = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
+    NSString * build = [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
+    NSString *displayFormat = [[NSString alloc] initWithFormat:@"v%@(%@)",ver,build];
+    [self.version setText:displayFormat];
+    self.version.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:12];
+
+
+   // NSString *txt = [[NSString alloc] initWithFormat:@"Register"];
+    //[self.cancelButton setTitle:txt forState:UIControlStateNormal];
+    //cancelButton.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:14];
     
     // Do any additional setup after loading the view from its nib.
     if ([preferences getFieldDataSessionKey]) {
         [AlertService DisplayMessageWithTitle:@"Warning"
                                       message:@"Changing the logged in user will delete any survey recordings that have not yet been uploaded."];
         [self.cancelButton setTitle:@" Cancel" forState:UIControlStateNormal];
-    } //else {
-        //self.cancelButton.hidden = YES;
-    //}
-    
+    }
+  
 }
 
 - (void)viewDidUnload
@@ -59,7 +70,27 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
+    // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+- (BOOL)shouldAutorotate  // iOS 6 autorotation fix
+{
+    return YES;
+}
+
+- (NSUInteger)supportedInterfaceOrientations // iOS 6 autorotation fix
+{
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        return UIInterfaceOrientationMaskPortrait;
+    } else {
+        return UIInterfaceOrientationMaskAll;
+    }
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation // iOS 6 autorotation fix
+{
+    return UIInterfaceOrientationPortrait;
 }
 
 - (IBAction)onClickLogin:(id)sender

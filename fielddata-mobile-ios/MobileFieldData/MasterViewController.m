@@ -37,9 +37,9 @@
             backgroundImage = @"background_image.jpg";
         }
         
-        UIImage* background = [MasterViewController imageWithImage:[UIImage imageNamed:backgroundImage ] scaledToSize:self.tableView.bounds.size ];
-        self.tableView.backgroundColor = [UIColor colorWithPatternImage:background];
-        self.tableView.backgroundView = [[UIImageView alloc] initWithImage:background];
+        //UIImage* background = [MasterViewController imageWithImage:[UIImage imageNamed:backgroundImage ] scaledToSize:self.tableView.bounds.size ];
+       // self.tableView.backgroundColor = [UIColor colorWithPatternImage:background];
+       // self.tableView.backgroundView = [[UIImageView alloc] initWithImage:background];
         
         
         
@@ -291,9 +291,9 @@
    
     NSString* path = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Portal path"];
 
-    NSString *urlString = [NSString stringWithFormat:@"http://root.ala.org.au%@/map/mySightings.htm", path];
+   // NSString *urlString = [NSString stringWithFormat:@"http://root-uat.ala.org.au%@/map/mySightings.htm", path];
     
-    //NSString *urlString = [NSString stringWithFormat:@"http://root.ala.org.au%@/review/sightings/advancedReview.htm?u=%@", path, [preferences getUserId]];
+    NSString *urlString = [NSString stringWithFormat:@"http://root.ala.org.au%@/review/sightings/advancedReview.htm?u=%@", path, [preferences getUserId]];
     NSURL *url = [NSURL URLWithString:urlString];
     [[UIApplication sharedApplication] openURL:url];
 }

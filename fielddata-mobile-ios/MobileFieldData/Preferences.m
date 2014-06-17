@@ -14,6 +14,7 @@
 {
     
     defaults = [NSUserDefaults standardUserDefaults];
+//    [defaults setObject:@"root-uat.ala.org.au" forKey:@"baseURL"];
     [defaults setObject:@"root.ala.org.au" forKey:@"baseURL"];
     //[defaults setObject:@"152.83.195.62:8081" forKey:@"baseURL"];
     [defaults setObject:@"fielddata-proxy" forKey:@"context"];

@@ -94,8 +94,8 @@
 		110374431785354E001A0736 /* iOS App Icon 57 x 57.png in Resources */ = {isa = PBXBuildFile; fileRef = 11D7EAF116CDF35B001192DB /* iOS App Icon 57 x 57.png */; };
 		110374441785354E001A0736 /* iOS App Icon 114 x 114.png in Resources */ = {isa = PBXBuildFile; fileRef = 11D7EAF316CDF363001192DB /* iOS App Icon 114 x 114.png */; };
 		110374451785354E001A0736 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11E8E57C170B8B8D0050AA8F /* Default-568h@2x.png */; };
-		110374541785384B001A0736 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 110374531785384B001A0736 /* Icon@2x.png */; };
-		1103745617853859001A0736 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745517853859001A0736 /* Icon.png */; };
+		110374541785384B001A0736 /* GERIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 110374531785384B001A0736 /* GERIcon@2x.png */; };
+		1103745617853859001A0736 /* GERIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745517853859001A0736 /* GERIcon.png */; };
 		1103745817853AAF001A0736 /* GERDefault.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745717853AAF001A0736 /* GERDefault.png */; };
 		1103746017855087001A0736 /* GERBioTag_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745E17854EBA001A0736 /* GERBioTag_background.png */; };
 		112A93B2169F9BFD009F060D /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 112A93B0169F9BFD009F060D /* MapViewController.m */; };
@@ -223,8 +223,8 @@
 		11BC80E417865CCE0099F465 /* iOS App Icon 57 x 57.png in Resources */ = {isa = PBXBuildFile; fileRef = 11D7EAF116CDF35B001192DB /* iOS App Icon 57 x 57.png */; };
 		11BC80E517865CCE0099F465 /* iOS App Icon 114 x 114.png in Resources */ = {isa = PBXBuildFile; fileRef = 11D7EAF316CDF363001192DB /* iOS App Icon 114 x 114.png */; };
 		11BC80E617865CCE0099F465 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11E8E57C170B8B8D0050AA8F /* Default-568h@2x.png */; };
-		11BC80E717865CCE0099F465 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 110374531785384B001A0736 /* Icon@2x.png */; };
-		11BC80E817865CCE0099F465 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745517853859001A0736 /* Icon.png */; };
+		11BC80E717865CCE0099F465 /* GERIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 110374531785384B001A0736 /* GERIcon@2x.png */; };
+		11BC80E817865CCE0099F465 /* GERIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745517853859001A0736 /* GERIcon.png */; };
 		11BC80E917865CCE0099F465 /* GERDefault.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745717853AAF001A0736 /* GERDefault.png */; };
 		11BC80F517865F370099F465 /* ALCWIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC80F117865F330099F465 /* ALCWIcon@2x.png */; };
 		11BC80F617865F3A0099F465 /* ALCWIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC80F217865F330099F465 /* ALCWIcon.png */; };
@@ -293,6 +293,125 @@
 		5C5935861613E403001547F3 /* camera.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C5935851613E403001547F3 /* camera.png */; };
 		5C59358816142150001547F3 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5935871614214F001547F3 /* AssetsLibrary.framework */; };
 		5C59358F16155DA0001547F3 /* SpeciesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C59358E16155DA0001547F3 /* SpeciesCell.m */; };
+		E20BECF418EC212400BC7556 /* camera_3.png in Resources */ = {isa = PBXBuildFile; fileRef = E20BECF318EC212400BC7556 /* camera_3.png */; };
+		E20BECF518EC212400BC7556 /* camera_3.png in Resources */ = {isa = PBXBuildFile; fileRef = E20BECF318EC212400BC7556 /* camera_3.png */; };
+		E20BECF618EC212400BC7556 /* camera_3.png in Resources */ = {isa = PBXBuildFile; fileRef = E20BECF318EC212400BC7556 /* camera_3.png */; };
+		E20BECF718EC212400BC7556 /* camera_3.png in Resources */ = {isa = PBXBuildFile; fileRef = E20BECF318EC212400BC7556 /* camera_3.png */; };
+		E261A05F18DFA0E5004913AE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AE915FD7184004869D0 /* main.m */; };
+		E261A06018DFA0E5004913AE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AED15FD7184004869D0 /* AppDelegate.m */; };
+		E261A06118DFA0E5004913AE /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AF315FD7184004869D0 /* MasterViewController.m */; };
+		E261A06218DFA0E5004913AE /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1B2D15FDBAD5004869D0 /* LoginViewController.m */; };
+		E261A06318DFA0E5004913AE /* RFRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1CE115FEF2EC004869D0 /* RFRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		E261A06418DFA0E5004913AE /* RFResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1CE315FEF2EC004869D0 /* RFResponse.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		E261A06518DFA0E5004913AE /* RFService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1CE515FEF2EC004869D0 /* RFService.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		E261A06618DFA0E5004913AE /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1CFB1600191F004869D0 /* Preferences.m */; };
+		E261A06718DFA0E5004913AE /* AlertService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D031600223C004869D0 /* AlertService.m */; };
+		E261A06818DFA0E5004913AE /* FieldDataService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D0616004752004869D0 /* FieldDataService.m */; };
+		E261A06918DFA0E5004913AE /* Species.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D091602B32C004869D0 /* Species.m */; };
+		E261A06A18DFA0E5004913AE /* SpeciesListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D0E1602F674004869D0 /* SpeciesListViewController.m */; };
+		E261A06B18DFA0E5004913AE /* Survey.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D161606F469004869D0 /* Survey.m */; };
+		E261A06C18DFA0E5004913AE /* SurveyAttributeOption.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D191606F4E0004869D0 /* SurveyAttributeOption.m */; };
+		E261A06D18DFA0E5004913AE /* SurveyAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D1C1606F4E1004869D0 /* SurveyAttribute.m */; };
+		E261A06E18DFA0E5004913AE /* SurveyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C593564160A9FEC001547F3 /* SurveyViewController.m */; };
+		E261A06F18DFA0E5004913AE /* TextInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C593567160AAE64001547F3 /* TextInputCell.m */; };
+		E261A07018DFA0E5004913AE /* UIAlertTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C59356E160AD892001547F3 /* UIAlertTableView.m */; };
+		E261A07118DFA0E5004913AE /* IntegerInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C593576160C2669001547F3 /* IntegerInputCell.m */; };
+		E261A07218DFA0E5004913AE /* SurveyInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C593579160C27AB001547F3 /* SurveyInputCell.m */; };
+		E261A07318DFA0E5004913AE /* MultiSelectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C59357C16112BD5001547F3 /* MultiSelectCell.m */; };
+		E261A07418DFA0E5004913AE /* SingleSelectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C59357E16116EFF001547F3 /* SingleSelectCell.m */; };
+		E261A07518DFA0E5004913AE /* ImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5935821613CACB001547F3 /* ImageCell.m */; };
+		E261A07618DFA0E5004913AE /* SpeciesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C59358E16155DA0001547F3 /* SpeciesCell.m */; };
+		E261A07718DFA0E5004913AE /* LocationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3BD1FD161A7DFC001FEABD /* LocationCell.m */; };
+		E261A07818DFA0E5004913AE /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3BD201161AAEF7001FEABD /* MBProgressHUD.m */; };
+		E261A07918DFA0E5004913AE /* RecordAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C070419161D0D97001875F6 /* RecordAttribute.m */; };
+		E261A07A18DFA0E5004913AE /* SavedRecordsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C07041D161D4823001875F6 /* SavedRecordsViewController.m */; };
+		E261A07B18DFA0E5004913AE /* Record.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C070420161D5BB3001875F6 /* Record.m */; };
+		E261A07C18DFA0E5004913AE /* UIImage+Alpha.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AEF1165EE2C700FD472C /* UIImage+Alpha.m */; };
+		E261A07D18DFA0E5004913AE /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AEF2165EE2C700FD472C /* UIImage+Resize.m */; };
+		E261A07E18DFA0E5004913AE /* FileService.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AEFE165EE2C700FD472C /* FileService.m */; };
+		E261A07F18DFA0E5004913AE /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AF00165EE2C700FD472C /* UIImage+RoundedCorner.m */; };
+		E261A08018DFA0E5004913AE /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AF07165EE2C700FD472C /* NSData+Base64.m */; };
+		E261A08118DFA0E5004913AE /* SelectionListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AF211664882300FD472C /* SelectionListViewController.m */; };
+		E261A08218DFA0E5004913AE /* SingleSelectListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 11C2DA24166C5F7400D77905 /* SingleSelectListCell.m */; };
+		E261A08318DFA0E5004913AE /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 112A93B0169F9BFD009F060D /* MapViewController.m */; };
+		E261A08418DFA0E5004913AE /* MapAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 112A93B5169FB7C7009F060D /* MapAnnotation.m */; };
+		E261A08518DFA0E5004913AE /* DateCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 112A93BF16A7CF73009F060D /* DateCell.m */; };
+		E261A08618DFA0E5004913AE /* SpeciesTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 112A93D016B21839009F060D /* SpeciesTableCell.m */; };
+		E261A08718DFA0E5004913AE /* SpeciesSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DE6AB516B745B1009495A1 /* SpeciesSelectionViewController.m */; };
+		E261A08818DFA0E5004913AE /* LabelledSpeciesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DE6AB816B7950F009495A1 /* LabelledSpeciesCell.m */; };
+		E261A08918DFA0E5004913AE /* RecordValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DE6B7D16C08C0D009495A1 /* RecordValidator.m */; };
+		E261A08A18DFA0E5004913AE /* ValidationResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DE6B8016C09158009495A1 /* ValidationResult.m */; };
+		E261A08B18DFA0E5004913AE /* StandaloneSpeciesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B2D20016D1DE0600734E1A /* StandaloneSpeciesViewController.m */; };
+		E261A08C18DFA0E5004913AE /* SpeciesGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 1198E30316D47997005A1BF6 /* SpeciesGroup.m */; };
+		E261A08D18DFA0E5004913AE /* MarginLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1198E30916D5A5A8005A1BF6 /* MarginLabel.m */; };
+		E261A08E18DFA0E5004913AE /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8AB1727C12800A90369 /* MKAnnotationView+WebCache.m */; };
+		E261A08F18DFA0E5004913AE /* SDImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8AD1727C12800A90369 /* SDImageCache.m */; };
+		E261A09018DFA0E5004913AE /* SDWebImageCompat.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8AF1727C12800A90369 /* SDWebImageCompat.m */; };
+		E261A09118DFA0E5004913AE /* SDWebImageDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8B11727C12800A90369 /* SDWebImageDecoder.m */; };
+		E261A09218DFA0E5004913AE /* SDWebImageDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8B31727C12800A90369 /* SDWebImageDownloader.m */; };
+		E261A09318DFA0E5004913AE /* SDWebImageDownloaderOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8B51727C12800A90369 /* SDWebImageDownloaderOperation.m */; };
+		E261A09418DFA0E5004913AE /* SDWebImageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8B71727C12800A90369 /* SDWebImageManager.m */; };
+		E261A09518DFA0E5004913AE /* SDWebImagePrefetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8BA1727C12800A90369 /* SDWebImagePrefetcher.m */; };
+		E261A09618DFA0E5004913AE /* UIButton+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8BC1727C12800A90369 /* UIButton+WebCache.m */; };
+		E261A09718DFA0E5004913AE /* UIImageView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8BE1727C12800A90369 /* UIImageView+WebCache.m */; };
+		E261A09818DFA0E5004913AE /* MobileFieldData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 113DC999172E01F600A90369 /* MobileFieldData.xcdatamodeld */; };
+		E261A09918DFA0E5004913AE /* SurveyDownloadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC9A1173335A500A90369 /* SurveyDownloadController.m */; };
+		E261A09B18DFA0E5004913AE /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 113DC8CA1727C1DC00A90369 /* ImageIO.framework */; };
+		E261A09C18DFA0E5004913AE /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 112A93B7169FC190009F060D /* MapKit.framework */; };
+		E261A09D18DFA0E5004913AE /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C3BD1F9161A7982001FEABD /* CoreLocation.framework */; };
+		E261A09E18DFA0E5004913AE /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5935871614214F001547F3 /* AssetsLibrary.framework */; };
+		E261A09F18DFA0E5004913AE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0F1ADB15FD7184004869D0 /* UIKit.framework */; };
+		E261A0A018DFA0E5004913AE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0F1ADD15FD7184004869D0 /* Foundation.framework */; };
+		E261A0A118DFA0E5004913AE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0F1ADF15FD7184004869D0 /* CoreGraphics.framework */; };
+		E261A0A218DFA0E5004913AE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0F1AE115FD7184004869D0 /* CoreData.framework */; };
+		E261A0A418DFA0E5004913AE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C0F1AE615FD7184004869D0 /* InfoPlist.strings */; };
+		E261A0A518DFA0E5004913AE /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C0F1AF815FD7184004869D0 /* MasterViewController.xib */; };
+		E261A0A618DFA0E5004913AE /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C0F1B2E15FDBAD5004869D0 /* LoginViewController.xib */; };
+		E261A0A718DFA0E5004913AE /* License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C0F1CDE15FEF2EC004869D0 /* License.txt */; };
+		E261A0A818DFA0E5004913AE /* camera.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C5935851613E403001547F3 /* camera.png */; };
+		E261A0A918DFA0E5004913AE /* gps@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3BD203161AB5BB001FEABD /* gps@2x.png */; };
+		E261A0AA18DFA0E5004913AE /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C07042B16263F68001875F6 /* Default.png */; };
+		E261A0AB18DFA0E5004913AE /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C07042D16263F71001875F6 /* Default@2x.png */; };
+		E261A0AC18DFA0E5004913AE /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C07042F16263F96001875F6 /* logo.png */; };
+		E261A0AD18DFA0E5004913AE /* logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C07043116263FF2001875F6 /* logo@2x.png */; };
+		E261A0AE18DFA0E5004913AE /* image_not_available.png in Resources */ = {isa = PBXBuildFile; fileRef = 11B8AEEF165EE2C700FD472C /* image_not_available.png */; };
+		E261A0AF18DFA0E5004913AE /* complete@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11B8AEFD165EE2C700FD472C /* complete@2x.png */; };
+		E261A0B018DFA0E5004913AE /* incomplete@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11B8AEFF165EE2C700FD472C /* incomplete@2x.png */; };
+		E261A0B118DFA0E5004913AE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 11B8AF02165EE2C700FD472C /* InfoPlist.strings */; };
+		E261A0B218DFA0E5004913AE /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 11B8AF04165EE2C700FD472C /* MasterViewController.xib */; };
+		E261A0B318DFA0E5004913AE /* background_image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 11C5990B167154D80037A7A1 /* background_image.jpg */; };
+		E261A0B418DFA0E5004913AE /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 112A93B1169F9BFD009F060D /* MapViewController.xib */; };
+		E261A0B518DFA0E5004913AE /* iOS App Icon 57 x 57.png in Resources */ = {isa = PBXBuildFile; fileRef = 11D7EAF116CDF35B001192DB /* iOS App Icon 57 x 57.png */; };
+		E261A0B618DFA0E5004913AE /* iOS App Icon 114 x 114.png in Resources */ = {isa = PBXBuildFile; fileRef = 11D7EAF316CDF363001192DB /* iOS App Icon 114 x 114.png */; };
+		E261A0B718DFA0E5004913AE /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11E8E57C170B8B8D0050AA8F /* Default-568h@2x.png */; };
+		E261A0B818DFA0E5004913AE /* GERIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 110374531785384B001A0736 /* GERIcon@2x.png */; };
+		E261A0B918DFA0E5004913AE /* GERIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745517853859001A0736 /* GERIcon.png */; };
+		E261A0BA18DFA0E5004913AE /* GERDefault.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745717853AAF001A0736 /* GERDefault.png */; };
+		E261A0BB18DFA0E5004913AE /* GERBioTag_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745E17854EBA001A0736 /* GERBioTag_background.png */; };
+		E261A0BC18DFA0E5004913AE /* splashscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 118FDB5317CC638500BBC696 /* splashscreen.png */; };
+		E261A0BD18DFA0E5004913AE /* GERDefault@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC8089178645FC0099F465 /* GERDefault@2x.png */; };
+		E261A0BE18DFA0E5004913AE /* GERDefault-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC8088178645FC0099F465 /* GERDefault-568h@2x.png */; };
+		E261A0BF18DFA0E5004913AE /* GERBioTag_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1195ADD417DD8F2900C2F39A /* GERBioTag_background@2x.png */; };
+		E261A0C018DFA0E5004913AE /* GERBioTag_background-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1195ADD517DD8F2900C2F39A /* GERBioTag_background-568h@2x.png */; };
+		E28CF54018DFFEC1008C3328 /* Annotation.m in Sources */ = {isa = PBXBuildFile; fileRef = E28CF53F18DFFEC1008C3328 /* Annotation.m */; };
+		E28CF54118DFFF58008C3328 /* Annotation.m in Sources */ = {isa = PBXBuildFile; fileRef = E28CF53F18DFFEC1008C3328 /* Annotation.m */; };
+		E2E3AA3A18F3C6CA0005BB9E /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E2E3AA3818F3C6CA0005BB9E /* icon.png */; };
+		E2E3AA3B18F3C6CA0005BB9E /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2E3AA3918F3C6CA0005BB9E /* icon@2x.png */; };
+		E2E635D818F27B9A00B39E83 /* WeedSpotter-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2E635D718F27B9A00B39E83 /* WeedSpotter-Info.plist */; };
+		E2E635DA18F3791B00B39E83 /* icon-120.png in Resources */ = {isa = PBXBuildFile; fileRef = E2E635D918F3791B00B39E83 /* icon-120.png */; };
+		E2E635DC18F3797500B39E83 /* GERDefault.png in Resources */ = {isa = PBXBuildFile; fileRef = E2E635DB18F3797500B39E83 /* GERDefault.png */; };
+		E2E635DE18F37B0A00B39E83 /* background-640x960_copy.png in Resources */ = {isa = PBXBuildFile; fileRef = E2E635DD18F37B0A00B39E83 /* background-640x960_copy.png */; };
+		E2E635E018F37B5F00B39E83 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E2E635DF18F37B5F00B39E83 /* Images.xcassets */; };
+		E2F5690E18EE86FE005C68ED /* WeedSpotter~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690718EE86FE005C68ED /* WeedSpotter~iphone.png */; };
+		E2F5690F18EE86FE005C68ED /* GERDefault@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690818EE86FE005C68ED /* GERDefault@2x~iphone.png */; };
+		E2F5691018EE86FE005C68ED /* background-640x1008.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690918EE86FE005C68ED /* background-640x1008.png */; };
+		E2F5691118EE86FE005C68ED /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690A18EE86FE005C68ED /* background.png */; };
+		E2F5691218EE86FE005C68ED /* icon-57.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690B18EE86FE005C68ED /* icon-57.png */; };
+		E2F5691318EE86FE005C68ED /* icon-114.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690C18EE86FE005C68ED /* icon-114.png */; };
+		E2F5691418EE86FE005C68ED /* icon-1024.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690D18EE86FE005C68ED /* icon-1024.png */; };
+		E2F5691618EE8897005C68ED /* GERDefault~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5691518EE8897005C68ED /* GERDefault~iphone.png */; };
+		E2F5691818EE8915005C68ED /* background-640x960.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5691718EE8915005C68ED /* background-640x960.png */; };
+		E2F5691A18EE894D005C68ED /* background-640x1136.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5691918EE894D005C68ED /* background-640x1136.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -308,8 +427,8 @@
 /* Begin PBXFileReference section */
 		1103744A1785354E001A0736 /* MobileFieldData copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MobileFieldData copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1103744B1785354F001A0736 /* MobileFieldData copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MobileFieldData copy-Info.plist"; path = "/Users/god08d/Documents/fielddata-mobile-ios/MobileFieldData copy-Info.plist"; sourceTree = "<absolute>"; };
-		110374531785384B001A0736 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
-		1103745517853859001A0736 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		110374531785384B001A0736 /* GERIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "GERIcon@2x.png"; sourceTree = "<group>"; };
+		1103745517853859001A0736 /* GERIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GERIcon.png; sourceTree = "<group>"; };
 		1103745717853AAF001A0736 /* GERDefault.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GERDefault.png; sourceTree = "<group>"; };
 		1103745E17854EBA001A0736 /* GERBioTag_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GERBioTag_background.png; sourceTree = "<group>"; };
 		112A93AF169F9BFD009F060D /* MapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapViewController.h; sourceTree = "<group>"; };
@@ -483,6 +602,30 @@
 		5C5935871614214F001547F3 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		5C59358D16155DA0001547F3 /* SpeciesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeciesCell.h; sourceTree = "<group>"; };
 		5C59358E16155DA0001547F3 /* SpeciesCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpeciesCell.m; sourceTree = "<group>"; };
+		B842A27A18E785D20039AE35 /* MobileFieldData 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MobileFieldData 3.xcdatamodel"; sourceTree = "<group>"; };
+		B89EC8A718F125AA000E7662 /* Constant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constant.h; sourceTree = "<group>"; };
+		E20BECF318EC212400BC7556 /* camera_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camera_3.png; sourceTree = "<group>"; };
+		E261A0C518DFA0E5004913AE /* WeedSpotter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeedSpotter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E261A0C618DFA0E6004913AE /* GERBioTag copy2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GERBioTag copy2-Info.plist"; path = "/Users/sat01a/All/ALA/source/bitbucket/fielddata-mobile-ios/GERBioTag copy2-Info.plist"; sourceTree = "<absolute>"; };
+		E28CF53E18DFFEC1008C3328 /* Annotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Annotation.h; sourceTree = "<group>"; };
+		E28CF53F18DFFEC1008C3328 /* Annotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Annotation.m; sourceTree = "<group>"; };
+		E2E3AA3818F3C6CA0005BB9E /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		E2E3AA3918F3C6CA0005BB9E /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
+		E2E635D718F27B9A00B39E83 /* WeedSpotter-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WeedSpotter-Info.plist"; sourceTree = "<group>"; };
+		E2E635D918F3791B00B39E83 /* icon-120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-120.png"; sourceTree = "<group>"; };
+		E2E635DB18F3797500B39E83 /* GERDefault.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GERDefault.png; sourceTree = "<group>"; };
+		E2E635DD18F37B0A00B39E83 /* background-640x960_copy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background-640x960_copy.png"; sourceTree = "<group>"; };
+		E2E635DF18F37B5F00B39E83 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = WeedSpotter/Images.xcassets; sourceTree = "<group>"; };
+		E2F5690718EE86FE005C68ED /* WeedSpotter~iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "WeedSpotter~iphone.png"; sourceTree = "<group>"; };
+		E2F5690818EE86FE005C68ED /* GERDefault@2x~iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "GERDefault@2x~iphone.png"; sourceTree = "<group>"; };
+		E2F5690918EE86FE005C68ED /* background-640x1008.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background-640x1008.png"; sourceTree = "<group>"; };
+		E2F5690A18EE86FE005C68ED /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
+		E2F5690B18EE86FE005C68ED /* icon-57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-57.png"; sourceTree = "<group>"; };
+		E2F5690C18EE86FE005C68ED /* icon-114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-114.png"; sourceTree = "<group>"; };
+		E2F5690D18EE86FE005C68ED /* icon-1024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-1024.png"; sourceTree = "<group>"; };
+		E2F5691518EE8897005C68ED /* GERDefault~iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "GERDefault~iphone.png"; sourceTree = "<group>"; };
+		E2F5691718EE8915005C68ED /* background-640x960.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background-640x960.png"; sourceTree = "<group>"; };
+		E2F5691918EE894D005C68ED /* background-640x1136.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background-640x1136.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -542,6 +685,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E261A09A18DFA0E5004913AE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E261A09B18DFA0E5004913AE /* ImageIO.framework in Frameworks */,
+				E261A09C18DFA0E5004913AE /* MapKit.framework in Frameworks */,
+				E261A09D18DFA0E5004913AE /* CoreLocation.framework in Frameworks */,
+				E261A09E18DFA0E5004913AE /* AssetsLibrary.framework in Frameworks */,
+				E261A09F18DFA0E5004913AE /* UIKit.framework in Frameworks */,
+				E261A0A018DFA0E5004913AE /* Foundation.framework in Frameworks */,
+				E261A0A118DFA0E5004913AE /* CoreGraphics.framework in Frameworks */,
+				E261A0A218DFA0E5004913AE /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -555,8 +713,8 @@
 				11BC8089178645FC0099F465 /* GERDefault@2x.png */,
 				1103745E17854EBA001A0736 /* GERBioTag_background.png */,
 				1103745717853AAF001A0736 /* GERDefault.png */,
-				1103745517853859001A0736 /* Icon.png */,
-				110374531785384B001A0736 /* Icon@2x.png */,
+				1103745517853859001A0736 /* GERIcon.png */,
+				110374531785384B001A0736 /* GERIcon@2x.png */,
 			);
 			name = GERBioTag;
 			sourceTree = "<group>";
@@ -564,6 +722,8 @@
 		112A93AE169F952D009F060D /* Location */ = {
 			isa = PBXGroup;
 			children = (
+				E28CF53E18DFFEC1008C3328 /* Annotation.h */,
+				E28CF53F18DFFEC1008C3328 /* Annotation.m */,
 				112A93AF169F9BFD009F060D /* MapViewController.h */,
 				112A93B0169F9BFD009F060D /* MapViewController.m */,
 				112A93B1169F9BFD009F060D /* MapViewController.xib */,
@@ -623,6 +783,7 @@
 		5C0F1ACC15FD7183004869D0 = {
 			isa = PBXGroup;
 			children = (
+				E2F5690618EE86E6005C68ED /* WeedSpotter */,
 				11BC80FB17866DA00099F465 /* ALCWDefault-568h@2x.png */,
 				11BC80FC17866DA00099F465 /* ALCWDefault.png */,
 				11BC80F917866B140099F465 /* ALCWDefault@2x.png */,
@@ -631,11 +792,9 @@
 				11BC80F217865F330099F465 /* ALCWIcon.png */,
 				1103744C178536B5001A0736 /* GERBioTag */,
 				113DC999172E01F600A90369 /* MobileFieldData.xcdatamodeld */,
-				113DC8CA1727C1DC00A90369 /* ImageIO.framework */,
 				11E8E57C170B8B8D0050AA8F /* Default-568h@2x.png */,
 				11D7EAF316CDF363001192DB /* iOS App Icon 114 x 114.png */,
 				11D7EAF116CDF35B001192DB /* iOS App Icon 57 x 57.png */,
-				112A93B7169FC190009F060D /* MapKit.framework */,
 				11C5990B167154D80037A7A1 /* background_image.jpg */,
 				11B8AEEF165EE2C700FD472C /* image_not_available.png */,
 				11B8AEF0165EE2C700FD472C /* UIImage+Alpha.h */,
@@ -655,6 +814,8 @@
 				5C07043116263FF2001875F6 /* logo@2x.png */,
 				5C07042D16263F71001875F6 /* Default@2x.png */,
 				5C07042B16263F68001875F6 /* Default.png */,
+				112A93B7169FC190009F060D /* MapKit.framework */,
+				113DC8CA1727C1DC00A90369 /* ImageIO.framework */,
 				5C3BD1F9161A7982001FEABD /* CoreLocation.framework */,
 				5C5935871614214F001547F3 /* AssetsLibrary.framework */,
 				5C0F1AE315FD7184004869D0 /* MobileFieldData */,
@@ -663,6 +824,8 @@
 				5C0F1AD815FD7184004869D0 /* Products */,
 				1103744B1785354F001A0736 /* MobileFieldData copy-Info.plist */,
 				11BC80F017865CCF0099F465 /* GERBioTag copy-Info.plist */,
+				E261A0C618DFA0E6004913AE /* GERBioTag copy2-Info.plist */,
+				E2E635D718F27B9A00B39E83 /* WeedSpotter-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -673,6 +836,7 @@
 				5C0F1B0315FD7184004869D0 /* MobileFieldDataTests.octest */,
 				1103744A1785354E001A0736 /* MobileFieldData copy.app */,
 				11BC80EF17865CCE0099F465 /* GERBioTag copy.app */,
+				E261A0C518DFA0E5004913AE /* WeedSpotter.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -760,6 +924,7 @@
 				11DE6B8016C09158009495A1 /* ValidationResult.m */,
 				113DC9A0173335A500A90369 /* SurveyDownloadController.h */,
 				113DC9A1173335A500A90369 /* SurveyDownloadController.m */,
+				B89EC8A718F125AA000E7662 /* Constant.h */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -874,10 +1039,34 @@
 		5C5935841613E3EF001547F3 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				E20BECF318EC212400BC7556 /* camera_3.png */,
 				5C3BD203161AB5BB001FEABD /* gps@2x.png */,
 				5C5935851613E403001547F3 /* camera.png */,
 			);
 			name = Images;
+			sourceTree = "<group>";
+		};
+		E2F5690618EE86E6005C68ED /* WeedSpotter */ = {
+			isa = PBXGroup;
+			children = (
+				E2E3AA3818F3C6CA0005BB9E /* icon.png */,
+				E2E3AA3918F3C6CA0005BB9E /* icon@2x.png */,
+				E2E635DD18F37B0A00B39E83 /* background-640x960_copy.png */,
+				E2E635DB18F3797500B39E83 /* GERDefault.png */,
+				E2E635D918F3791B00B39E83 /* icon-120.png */,
+				E2F5691918EE894D005C68ED /* background-640x1136.png */,
+				E2F5691718EE8915005C68ED /* background-640x960.png */,
+				E2F5691518EE8897005C68ED /* GERDefault~iphone.png */,
+				E2F5690718EE86FE005C68ED /* WeedSpotter~iphone.png */,
+				E2F5690818EE86FE005C68ED /* GERDefault@2x~iphone.png */,
+				E2F5690918EE86FE005C68ED /* background-640x1008.png */,
+				E2F5690A18EE86FE005C68ED /* background.png */,
+				E2F5690B18EE86FE005C68ED /* icon-57.png */,
+				E2F5690C18EE86FE005C68ED /* icon-114.png */,
+				E2F5690D18EE86FE005C68ED /* icon-1024.png */,
+				E2E635DF18F37B5F00B39E83 /* Images.xcassets */,
+			);
+			name = WeedSpotter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -953,6 +1142,23 @@
 			productReference = 5C0F1B0315FD7184004869D0 /* MobileFieldDataTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
+		E261A05D18DFA0E5004913AE /* WeedSpotter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E261A0C118DFA0E5004913AE /* Build configuration list for PBXNativeTarget "WeedSpotter" */;
+			buildPhases = (
+				E261A05E18DFA0E5004913AE /* Sources */,
+				E261A09A18DFA0E5004913AE /* Frameworks */,
+				E261A0A318DFA0E5004913AE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WeedSpotter;
+			productName = MobileFieldData;
+			productReference = E261A0C518DFA0E5004913AE /* WeedSpotter.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -960,6 +1166,14 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0460;
+				TargetAttributes = {
+					5C0F1B0215FD7184004869D0 = {
+						TestTargetID = 5C0F1AD615FD7184004869D0;
+					};
+					E261A05D18DFA0E5004913AE = {
+						DevelopmentTeam = VS75428PD6;
+					};
+				};
 			};
 			buildConfigurationList = 5C0F1AD115FD7183004869D0 /* Build configuration list for PBXProject "MobileFieldData" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -975,8 +1189,9 @@
 			targets = (
 				5C0F1AD615FD7184004869D0 /* MobileFieldData */,
 				110373EB1785354E001A0736 /* GERBioTag */,
-				5C0F1B0215FD7184004869D0 /* MobileFieldDataTests */,
+				E261A05D18DFA0E5004913AE /* WeedSpotter */,
 				11BC808C17865CCE0099F465 /* ALCW */,
+				5C0F1B0215FD7184004869D0 /* MobileFieldDataTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1003,11 +1218,12 @@
 				110374401785354E001A0736 /* MasterViewController.xib in Resources */,
 				110374411785354E001A0736 /* background_image.jpg in Resources */,
 				110374421785354E001A0736 /* MapViewController.xib in Resources */,
+				E20BECF518EC212400BC7556 /* camera_3.png in Resources */,
 				110374431785354E001A0736 /* iOS App Icon 57 x 57.png in Resources */,
 				110374441785354E001A0736 /* iOS App Icon 114 x 114.png in Resources */,
 				110374451785354E001A0736 /* Default-568h@2x.png in Resources */,
-				110374541785384B001A0736 /* Icon@2x.png in Resources */,
-				1103745617853859001A0736 /* Icon.png in Resources */,
+				110374541785384B001A0736 /* GERIcon@2x.png in Resources */,
+				1103745617853859001A0736 /* GERIcon.png in Resources */,
 				1103745817853AAF001A0736 /* GERDefault.png in Resources */,
 				1103746017855087001A0736 /* GERBioTag_background.png in Resources */,
 				118FDB5417CC638500BBC696 /* splashscreen.png in Resources */,
@@ -1039,11 +1255,12 @@
 				11BC80E117865CCE0099F465 /* MasterViewController.xib in Resources */,
 				11BC80E217865CCE0099F465 /* background_image.jpg in Resources */,
 				11BC80E317865CCE0099F465 /* MapViewController.xib in Resources */,
+				E20BECF718EC212400BC7556 /* camera_3.png in Resources */,
 				11BC80E417865CCE0099F465 /* iOS App Icon 57 x 57.png in Resources */,
 				11BC80E517865CCE0099F465 /* iOS App Icon 114 x 114.png in Resources */,
 				11BC80E617865CCE0099F465 /* Default-568h@2x.png in Resources */,
-				11BC80E717865CCE0099F465 /* Icon@2x.png in Resources */,
-				11BC80E817865CCE0099F465 /* Icon.png in Resources */,
+				11BC80E717865CCE0099F465 /* GERIcon@2x.png in Resources */,
+				11BC80E817865CCE0099F465 /* GERIcon.png in Resources */,
 				11BC80E917865CCE0099F465 /* GERDefault.png in Resources */,
 				11BC80F517865F370099F465 /* ALCWIcon@2x.png in Resources */,
 				11BC80F617865F3A0099F465 /* ALCWIcon.png in Resources */,
@@ -1071,12 +1288,14 @@
 				11B8AF0C165EE2C700FD472C /* image_not_available.png in Resources */,
 				11B8AF13165EE2C700FD472C /* complete@2x.png in Resources */,
 				11B8AF15165EE2C700FD472C /* incomplete@2x.png in Resources */,
+				E2E635D818F27B9A00B39E83 /* WeedSpotter-Info.plist in Resources */,
 				11B8AF17165EE2C700FD472C /* InfoPlist.strings in Resources */,
 				11B8AF18165EE2C700FD472C /* MasterViewController.xib in Resources */,
 				11C5990C167154D80037A7A1 /* background_image.jpg in Resources */,
 				112A93B3169F9BFD009F060D /* MapViewController.xib in Resources */,
 				11D7EAF216CDF35C001192DB /* iOS App Icon 57 x 57.png in Resources */,
 				11D7EAF416CDF363001192DB /* iOS App Icon 114 x 114.png in Resources */,
+				E20BECF418EC212400BC7556 /* camera_3.png in Resources */,
 				11E8E57D170B8B8D0050AA8F /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1086,6 +1305,59 @@
 			buildActionMask = 2147483647;
 			files = (
 				5C0F1B1015FD7184004869D0 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E261A0A318DFA0E5004913AE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E261A0A418DFA0E5004913AE /* InfoPlist.strings in Resources */,
+				E261A0A518DFA0E5004913AE /* MasterViewController.xib in Resources */,
+				E2F5691618EE8897005C68ED /* GERDefault~iphone.png in Resources */,
+				E261A0A618DFA0E5004913AE /* LoginViewController.xib in Resources */,
+				E261A0A718DFA0E5004913AE /* License.txt in Resources */,
+				E261A0A818DFA0E5004913AE /* camera.png in Resources */,
+				E2F5691418EE86FE005C68ED /* icon-1024.png in Resources */,
+				E2F5690F18EE86FE005C68ED /* GERDefault@2x~iphone.png in Resources */,
+				E2E635DC18F3797500B39E83 /* GERDefault.png in Resources */,
+				E2E3AA3B18F3C6CA0005BB9E /* icon@2x.png in Resources */,
+				E261A0A918DFA0E5004913AE /* gps@2x.png in Resources */,
+				E261A0AA18DFA0E5004913AE /* Default.png in Resources */,
+				E2E3AA3A18F3C6CA0005BB9E /* icon.png in Resources */,
+				E261A0AB18DFA0E5004913AE /* Default@2x.png in Resources */,
+				E261A0AC18DFA0E5004913AE /* logo.png in Resources */,
+				E2F5690E18EE86FE005C68ED /* WeedSpotter~iphone.png in Resources */,
+				E2F5691318EE86FE005C68ED /* icon-114.png in Resources */,
+				E2F5691818EE8915005C68ED /* background-640x960.png in Resources */,
+				E261A0AD18DFA0E5004913AE /* logo@2x.png in Resources */,
+				E261A0AE18DFA0E5004913AE /* image_not_available.png in Resources */,
+				E2E635DA18F3791B00B39E83 /* icon-120.png in Resources */,
+				E261A0AF18DFA0E5004913AE /* complete@2x.png in Resources */,
+				E2F5691218EE86FE005C68ED /* icon-57.png in Resources */,
+				E261A0B018DFA0E5004913AE /* incomplete@2x.png in Resources */,
+				E2F5691A18EE894D005C68ED /* background-640x1136.png in Resources */,
+				E2E635DE18F37B0A00B39E83 /* background-640x960_copy.png in Resources */,
+				E261A0B118DFA0E5004913AE /* InfoPlist.strings in Resources */,
+				E261A0B218DFA0E5004913AE /* MasterViewController.xib in Resources */,
+				E261A0B318DFA0E5004913AE /* background_image.jpg in Resources */,
+				E2F5691018EE86FE005C68ED /* background-640x1008.png in Resources */,
+				E2F5691118EE86FE005C68ED /* background.png in Resources */,
+				E261A0B418DFA0E5004913AE /* MapViewController.xib in Resources */,
+				E20BECF618EC212400BC7556 /* camera_3.png in Resources */,
+				E261A0B518DFA0E5004913AE /* iOS App Icon 57 x 57.png in Resources */,
+				E261A0B618DFA0E5004913AE /* iOS App Icon 114 x 114.png in Resources */,
+				E261A0B718DFA0E5004913AE /* Default-568h@2x.png in Resources */,
+				E261A0B818DFA0E5004913AE /* GERIcon@2x.png in Resources */,
+				E261A0B918DFA0E5004913AE /* GERIcon.png in Resources */,
+				E261A0BA18DFA0E5004913AE /* GERDefault.png in Resources */,
+				E2E635E018F37B5F00B39E83 /* Images.xcassets in Resources */,
+				E261A0BB18DFA0E5004913AE /* GERBioTag_background.png in Resources */,
+				E261A0BC18DFA0E5004913AE /* splashscreen.png in Resources */,
+				E261A0BD18DFA0E5004913AE /* GERDefault@2x.png in Resources */,
+				E261A0BE18DFA0E5004913AE /* GERDefault-568h@2x.png in Resources */,
+				E261A0BF18DFA0E5004913AE /* GERBioTag_background@2x.png in Resources */,
+				E261A0C018DFA0E5004913AE /* GERBioTag_background-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1274,6 +1546,7 @@
 				5C07041E161D4823001875F6 /* SavedRecordsViewController.m in Sources */,
 				5C070421161D5BB3001875F6 /* Record.m in Sources */,
 				11B8AF0D165EE2C700FD472C /* UIImage+Alpha.m in Sources */,
+				E28CF54018DFFEC1008C3328 /* Annotation.m in Sources */,
 				11B8AF0E165EE2C700FD472C /* UIImage+Resize.m in Sources */,
 				11B8AF14165EE2C700FD472C /* FileService.m in Sources */,
 				11B8AF16165EE2C700FD472C /* UIImage+RoundedCorner.m in Sources */,
@@ -1312,6 +1585,73 @@
 			files = (
 				5C0F1B1315FD7184004869D0 /* MobileFieldDataTests.m in Sources */,
 				11DE6B8416C0CD10009495A1 /* RecordValidatorTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E261A05E18DFA0E5004913AE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E28CF54118DFFF58008C3328 /* Annotation.m in Sources */,
+				E261A05F18DFA0E5004913AE /* main.m in Sources */,
+				E261A06018DFA0E5004913AE /* AppDelegate.m in Sources */,
+				E261A06118DFA0E5004913AE /* MasterViewController.m in Sources */,
+				E261A06218DFA0E5004913AE /* LoginViewController.m in Sources */,
+				E261A06318DFA0E5004913AE /* RFRequest.m in Sources */,
+				E261A06418DFA0E5004913AE /* RFResponse.m in Sources */,
+				E261A06518DFA0E5004913AE /* RFService.m in Sources */,
+				E261A06618DFA0E5004913AE /* Preferences.m in Sources */,
+				E261A06718DFA0E5004913AE /* AlertService.m in Sources */,
+				E261A06818DFA0E5004913AE /* FieldDataService.m in Sources */,
+				E261A06918DFA0E5004913AE /* Species.m in Sources */,
+				E261A06A18DFA0E5004913AE /* SpeciesListViewController.m in Sources */,
+				E261A06B18DFA0E5004913AE /* Survey.m in Sources */,
+				E261A06C18DFA0E5004913AE /* SurveyAttributeOption.m in Sources */,
+				E261A06D18DFA0E5004913AE /* SurveyAttribute.m in Sources */,
+				E261A06E18DFA0E5004913AE /* SurveyViewController.m in Sources */,
+				E261A06F18DFA0E5004913AE /* TextInputCell.m in Sources */,
+				E261A07018DFA0E5004913AE /* UIAlertTableView.m in Sources */,
+				E261A07118DFA0E5004913AE /* IntegerInputCell.m in Sources */,
+				E261A07218DFA0E5004913AE /* SurveyInputCell.m in Sources */,
+				E261A07318DFA0E5004913AE /* MultiSelectCell.m in Sources */,
+				E261A07418DFA0E5004913AE /* SingleSelectCell.m in Sources */,
+				E261A07518DFA0E5004913AE /* ImageCell.m in Sources */,
+				E261A07618DFA0E5004913AE /* SpeciesCell.m in Sources */,
+				E261A07718DFA0E5004913AE /* LocationCell.m in Sources */,
+				E261A07818DFA0E5004913AE /* MBProgressHUD.m in Sources */,
+				E261A07918DFA0E5004913AE /* RecordAttribute.m in Sources */,
+				E261A07A18DFA0E5004913AE /* SavedRecordsViewController.m in Sources */,
+				E261A07B18DFA0E5004913AE /* Record.m in Sources */,
+				E261A07C18DFA0E5004913AE /* UIImage+Alpha.m in Sources */,
+				E261A07D18DFA0E5004913AE /* UIImage+Resize.m in Sources */,
+				E261A07E18DFA0E5004913AE /* FileService.m in Sources */,
+				E261A07F18DFA0E5004913AE /* UIImage+RoundedCorner.m in Sources */,
+				E261A08018DFA0E5004913AE /* NSData+Base64.m in Sources */,
+				E261A08118DFA0E5004913AE /* SelectionListViewController.m in Sources */,
+				E261A08218DFA0E5004913AE /* SingleSelectListCell.m in Sources */,
+				E261A08318DFA0E5004913AE /* MapViewController.m in Sources */,
+				E261A08418DFA0E5004913AE /* MapAnnotation.m in Sources */,
+				E261A08518DFA0E5004913AE /* DateCell.m in Sources */,
+				E261A08618DFA0E5004913AE /* SpeciesTableCell.m in Sources */,
+				E261A08718DFA0E5004913AE /* SpeciesSelectionViewController.m in Sources */,
+				E261A08818DFA0E5004913AE /* LabelledSpeciesCell.m in Sources */,
+				E261A08918DFA0E5004913AE /* RecordValidator.m in Sources */,
+				E261A08A18DFA0E5004913AE /* ValidationResult.m in Sources */,
+				E261A08B18DFA0E5004913AE /* StandaloneSpeciesViewController.m in Sources */,
+				E261A08C18DFA0E5004913AE /* SpeciesGroup.m in Sources */,
+				E261A08D18DFA0E5004913AE /* MarginLabel.m in Sources */,
+				E261A08E18DFA0E5004913AE /* MKAnnotationView+WebCache.m in Sources */,
+				E261A08F18DFA0E5004913AE /* SDImageCache.m in Sources */,
+				E261A09018DFA0E5004913AE /* SDWebImageCompat.m in Sources */,
+				E261A09118DFA0E5004913AE /* SDWebImageDecoder.m in Sources */,
+				E261A09218DFA0E5004913AE /* SDWebImageDownloader.m in Sources */,
+				E261A09318DFA0E5004913AE /* SDWebImageDownloaderOperation.m in Sources */,
+				E261A09418DFA0E5004913AE /* SDWebImageManager.m in Sources */,
+				E261A09518DFA0E5004913AE /* SDWebImagePrefetcher.m in Sources */,
+				E261A09618DFA0E5004913AE /* UIButton+WebCache.m in Sources */,
+				E261A09718DFA0E5004913AE /* UIImageView+WebCache.m in Sources */,
+				E261A09818DFA0E5004913AE /* MobileFieldData.xcdatamodeld in Sources */,
+				E261A09918DFA0E5004913AE /* SurveyDownloadController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1563,7 +1903,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1C0E44BE-0A18-408A-9140-845455403E59";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "4A393602-05A9-40EA-B822-40655CA2CC4C";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1603,7 +1943,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
+					"DEBUG=0",
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -1670,7 +2010,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "DEE5B4ED-0AF6-4EDE-B039-1131E9EC2C92";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "4A393602-05A9-40EA-B822-40655CA2CC4C";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1693,7 +2033,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CFAE882A-3F71-4470-A188-085FD9F440AA";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "4A393602-05A9-40EA-B822-40655CA2CC4C";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = NO;
 				WRAPPER_EXTENSION = app;
@@ -1733,6 +2073,88 @@
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
+		};
+		E261A0C218DFA0E5004913AE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Environment and Sustainable Development Directorate (EF64B9H6Q6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Environment and Sustainable Development Directorate (EF64B9H6Q6)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
+				HEADER_SEARCH_PATHS = "";
+				"HEADER_SEARCH_PATHS[arch=*]" = "";
+				INFOPLIST_FILE = "WeedSpotter-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PRODUCT_NAME = WeedSpotter;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				TARGETED_DEVICE_FAMILY = 1;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		E261A0C318DFA0E5004913AE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Environment and Sustainable Development Directorate (EF64B9H6Q6)";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: Environment and Sustainable Development Directorate (EF64B9H6Q6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Environment and Sustainable Development Directorate (EF64B9H6Q6)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "WeedSpotter-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PRODUCT_NAME = WeedSpotter;
+				PROVISIONING_PROFILE = "0324EA15-07CC-41FD-AF13-0DFA3DBD4A51";
+				"PROVISIONING_PROFILE[sdk=*]" = "0324EA15-07CC-41FD-AF13-0DFA3DBD4A51";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0324EA15-07CC-41FD-AF13-0DFA3DBD4A51";
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		E261A0C418DFA0E5004913AE /* AppStore */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Environment and Sustainable Development Directorate (EF64B9H6Q6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Environment and Sustainable Development Directorate (EF64B9H6Q6)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "WeedSpotter-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PRODUCT_NAME = WeedSpotter;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				TARGETED_DEVICE_FAMILY = 1;
+				WRAPPER_EXTENSION = app;
+			};
+			name = AppStore;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1787,6 +2209,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		E261A0C118DFA0E5004913AE /* Build configuration list for PBXNativeTarget "WeedSpotter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E261A0C218DFA0E5004913AE /* Debug */,
+				E261A0C318DFA0E5004913AE /* Release */,
+				E261A0C418DFA0E5004913AE /* AppStore */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
@@ -1794,9 +2226,10 @@
 			isa = XCVersionGroup;
 			children = (
 				113DC99C172E02B900A90369 /* MobileFieldData 2.xcdatamodel */,
+				B842A27A18E785D20039AE35 /* MobileFieldData 3.xcdatamodel */,
 				113DC99A172E01F600A90369 /* MobileFieldData.xcdatamodel */,
 			);
-			currentVersion = 113DC99C172E02B900A90369 /* MobileFieldData 2.xcdatamodel */;
+			currentVersion = B842A27A18E785D20039AE35 /* MobileFieldData 3.xcdatamodel */;
 			name = MobileFieldData.xcdatamodeld;
 			path = MobileFieldData/MobileFieldData.xcdatamodeld;
 			sourceTree = "<group>";

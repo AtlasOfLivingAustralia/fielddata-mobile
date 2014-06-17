@@ -25,6 +25,8 @@
 @dynamic order;
 @dynamic speciesIds;
 @dynamic imageUrl;
+@dynamic locationPolygon;
+@dynamic polygonCensusMethod;
 
 -(SurveyAttribute *)getAttributeByType:(NSString *)attributeType
 {

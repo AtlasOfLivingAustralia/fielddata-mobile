@@ -26,7 +26,8 @@
 @property (nonatomic, retain) NSNumber *order;
 @property (nonatomic, strong) NSArray* speciesIds;
 @property (nonatomic, strong) NSString* imageUrl;
-
+@property (nonatomic, retain) NSNumber * locationPolygon;
+@property (nonatomic, retain) NSNumber * polygonCensusMethod;
 
 @end
 

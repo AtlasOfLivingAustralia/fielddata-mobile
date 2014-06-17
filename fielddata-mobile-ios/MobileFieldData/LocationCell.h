@@ -30,10 +30,13 @@
 @property (nonatomic, retain) UILabel* accuracy;
 @property (nonatomic, retain) UIButton* startGPS;
 @property (nonatomic, retain) UIButton* showMap;
+@property (nonatomic, retain) UILabel* polygon;
 @property (nonatomic, weak) id<LocationCellDelegate> delegate;
+
 
 -(void)setFoundLocation:(CLLocation*)location;
 -(void)setLocation:(NSString*)locationString;
+-(void)setPolygonValues:(NSString*)polygonStr;
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
-
+- (id)initWithStyleEnablePolygon:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
 @end

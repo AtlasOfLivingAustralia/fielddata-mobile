@@ -84,10 +84,11 @@
     return self;
 }
 
+
 -(NSArray*)sortAndFilterAttributes:(NSArray*)attributesToFilter
 {
-    NSArray* supportedTypes = [NSArray arrayWithObjects:kSpeciesRP, kNumber, kPoint, kWhen, kTimeRP, kNotes,
-                               kIntegerType, kIntegerWithRange, kDecimal, kRegEx, kDate, kTime, kString, kStringAutoComplete, kText, kStringWithValidValues, kSingleCheckbox, kMultiCheckbox, kMultiSelect, kImage, kSpecies, nil];
+    NSArray* supportedTypes = [NSArray arrayWithObjects:kSpeciesRP, kNumber, kPoint, kWhen, kTimeRP, kNotes,kPolygon,
+                               kIntegerType, kIntegerWithRange, kDecimal, kRegEx, kDate, kTime, kString, kStringAutoComplete, kText, kStringWithValidValues, kSingleCheckbox, kMultiCheckbox, kMultiSelect, kImage, kSpecies, kCensusMethodCol, nil];
     NSPredicate* predicate = [NSPredicate predicateWithFormat:@"typeCode IN %@", supportedTypes];
     
     NSArray* filtered = [attributesToFilter filteredArrayUsingPredicate:predicate];
@@ -112,7 +113,6 @@
     UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard:)];
     gestureRecognizer.cancelsTouchesInView = NO;
     [self.tableView addGestureRecognizer:gestureRecognizer];
-    
 }
 
 -(void)hideKeyboard:(UITapGestureRecognizer *)gestureRecognizer
@@ -135,6 +135,10 @@
    
 }
 
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+}
 -(void)validate
 {
     if (record == nil) {
@@ -265,6 +269,7 @@
     return YES;
 }
 
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -350,10 +355,20 @@
             cell = speciesCell;
                 
         } else if ([attribute.typeCode isEqualToString:kPoint]) {
-            locationCell = [[LocationCell alloc]initWithStyle:UITableViewCellStyleDefault
-                                                                     reuseIdentifier:CellIdentifier];
+            if([survey.locationPolygon intValue] == 1)
+            {
+                locationCell = [[LocationCell alloc]initWithStyleEnablePolygon:UITableViewCellStyleDefault
+                                                  reuseIdentifier:CellIdentifier];
+                [locationCell setPolygonValues:[loadedValues objectForKey:attribute.weight]];
+            }
+            else
+            {
+                locationCell = [[LocationCell alloc]initWithStyle:UITableViewCellStyleDefault
+                                                  reuseIdentifier:CellIdentifier];
+                [locationCell setLocation:[loadedValues objectForKey:attribute.weight]];
+            }
             locationCell.delegate = self;
-            [locationCell setLocation:[loadedValues objectForKey:attribute.weight]];
+
             cell = locationCell;
             
         } else if ([attribute.typeCode isEqualToString:kWhen] ||
@@ -366,11 +381,22 @@
             }
             cell = dateCell;
         }
+        else if ([attribute.typeCode isEqualToString:kCensusMethodCol] &&
+                 [attribute.name isEqualToString:@"photopoints"]) {
+            
+            // Display the cell with the button and text area.
+            ImageCell* imageCell = [[ImageCell alloc] initWithStyleForPhotopoints: UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+            imageCell.parentController = self;
+            NSString *ppoints = [loadedValues objectForKey:attribute.weight];
+            [imageCell updatePhotopoints:ppoints];
+            cell = imageCell;
+            
+        }
         else {
             TextInputCell* textCell = [[TextInputCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-            
             textCell.inputField.text = [loadedValues objectForKey:attribute.weight];
             cell = textCell;
+            cell.value = textCell.inputField.text;
             
             UIKeyboardType keyboardType = UIKeyboardTypeDefault;
             
@@ -396,7 +422,7 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == 0) {
-        UIColor *color = [[UIColor alloc] initWithRed:206.0/255.0f green:243.0/255.0f blue:1.0f alpha:1.0f];
+        UIColor *color = [[UIColor alloc] initWithRed:134.0/255.0f green:195.0/255.0f blue:68.0/255.0f alpha:1.0f];
         cell.backgroundColor =  color;
     }
     else if ([self isValidationSummaryRow:indexPath.row]) {
@@ -406,7 +432,7 @@
     else if (indexPath.row >= attributeCellsRowOffset){
         SurveyAttribute* attribute = [self attributeForPath:indexPath];
         SurveyInputCell* inputCell = (SurveyInputCell*)cell;
-        
+ 
         if ([invalidAttributes containsObject:attribute.weight]) {
            
             inputCell.label.opaque = YES;
@@ -416,12 +442,14 @@
         }
         else {
             inputCell.label.opaque = NO;
-            inputCell.label.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3f];
-            inputCell.label.textColor = [UIColor blackColor];
+            inputCell.label.backgroundColor = [[UIColor alloc] initWithRed:71.0/255.0f green:71.0/255.0f blue:72.0/255.0f alpha:1.0f];
         }
-        //else if (inputCell)
-        
+        inputCell.label.textColor = [UIColor whiteColor];
+//        [inputCell.label setAutoresizesSubviews:YES];
+//        [inputCell.label setAutoresizingMask: UIViewAutoresizingFlexibleWidth]; //UIViewAutoresizingFlexibleWidth
     }
+    
+    
 }
 
 
@@ -629,13 +657,16 @@
 {
     // If a location has already been selected by the user, initialise the Map with that location, otherwise
     // use the survey defaults to display a region.
+    
     MapViewController *mapController = nil;
     CLLocation *location = [self getLocation];
+    
+    
     if (location) {
-        mapController = [[MapViewController alloc] initWithLocation:location];
+        mapController = [[MapViewController alloc] initWithLocation:location polygon:[survey.locationPolygon intValue] polygonValue: locationCell.value];
     }
     else {
-        mapController = [[MapViewController alloc] initWithSurveyDefaults:survey];
+        mapController = [[MapViewController alloc] initWithSurveyDefaults:survey polygon:[survey.locationPolygon intValue] polygonValue: locationCell.value];
     }
     mapController.delegate = self;
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:mapController];
@@ -661,7 +692,11 @@
     if (locationPrecisionCell) {
         [locationPrecisionCell setSelectedValue:@"On-screen map"];
     }
-    
+}
+
+- (void)polygonValues:(NSString *)polygonStr
+{
+    [locationCell setPolygonValues:polygonStr];
 }
 
 // Callback from the Location Cell when the GPS finds a location.

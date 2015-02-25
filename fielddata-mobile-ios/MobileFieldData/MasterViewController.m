@@ -12,8 +12,9 @@
 #import "FieldDataService.h"
 #import "SurveyViewController.h"
 #import "SavedRecordsViewController.h"
-#import "UIImageView+WebCache.h"
 #import "SurveyDownloadController.h"
+#import "UIImageView+WebCache.h"
+
 
 @interface MasterViewController () {
     UILabel *tableHeader;
@@ -323,9 +324,12 @@
             NSString* url = [preferences getFieldDataURL];
             
             url = [url stringByAppendingString:surveyImagePath];
-            [cell.imageView setImageWithURL:[NSURL URLWithString:url] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
-                [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-            }];
+
+
+            [cell.imageView sd_setImageWithURL:[NSURL URLWithString:url]
+                                       completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                                           [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+                                       }];
         }
         else {
             [cell.imageView setImage:nil];

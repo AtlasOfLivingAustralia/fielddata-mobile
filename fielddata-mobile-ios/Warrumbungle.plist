@@ -9,7 +9,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Weed Spotter</string>
+	<string>Warrumbungles</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIcons</key>
@@ -17,7 +17,7 @@
 	<key>CFBundleIcons~ipad</key>
 	<dict/>
 	<key>CFBundleIdentifier</key>
-	<string>au.org.ala.weedspotter</string>
+	<string>au.org.ala.warrumbungle</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -37,11 +37,11 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location is required to find out where you are</string>
 	<key>Portal URL prefix</key>
-	<string>act-esdd</string>
+	<string>wfr</string>
 	<key>Portal name</key>
-	<string>ACT and Southern Tablelands Weed Spotter Portal</string>
+	<string>Warrumbungle National Park Fire Recovery Project</string>
 	<key>Portal path</key>
-	<string>/bdrs-core/act-esdd</string>
+	<string>/bdrs-core/wfr</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

@@ -140,6 +140,12 @@
             locMgr = [[CLLocationManager alloc] init];
             locMgr.delegate = self;
             locMgr.desiredAccuracy = 20;
+           
+            // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+            if ([locMgr respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+                [locMgr requestWhenInUseAuthorization];
+            }
+            
             [locMgr startUpdatingLocation];
         });
     });

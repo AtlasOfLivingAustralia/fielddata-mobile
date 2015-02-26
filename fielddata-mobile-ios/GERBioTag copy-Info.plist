@@ -40,12 +40,16 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>Portal path</key>
-	<string>/bdrs-core/alcw</string>
-	<key>Portal name</key>
-	<string>Atlas of Life in the Coastal Wilderness</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Location is required to find out where you are</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location is required to find out where you are</string>
 	<key>Portal URL prefix</key>
 	<string>alcw</string>
+	<key>Portal name</key>
+	<string>Atlas of Life in the Coastal Wilderness</string>
+	<key>Portal path</key>
+	<string>/bdrs-core/alcw</string>
 	<key>UILaunchImageFile</key>
 	<string>ALCWDefault</string>
 	<key>UIRequiredDeviceCapabilities</key>

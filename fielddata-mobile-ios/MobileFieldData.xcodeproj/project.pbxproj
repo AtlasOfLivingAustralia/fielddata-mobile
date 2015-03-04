@@ -299,6 +299,121 @@
 		E20BECF518EC212400BC7556 /* camera_3.png in Resources */ = {isa = PBXBuildFile; fileRef = E20BECF318EC212400BC7556 /* camera_3.png */; };
 		E20BECF618EC212400BC7556 /* camera_3.png in Resources */ = {isa = PBXBuildFile; fileRef = E20BECF318EC212400BC7556 /* camera_3.png */; };
 		E20BECF718EC212400BC7556 /* camera_3.png in Resources */ = {isa = PBXBuildFile; fileRef = E20BECF318EC212400BC7556 /* camera_3.png */; };
+		E212DEF31AA68E2600A26E86 /* FD_Util.m in Sources */ = {isa = PBXBuildFile; fileRef = E201B0521AA6864B00026FA5 /* FD_Util.m */; };
+		E212DEF41AA68E2600A26E86 /* Annotation.m in Sources */ = {isa = PBXBuildFile; fileRef = E28CF53F18DFFEC1008C3328 /* Annotation.m */; };
+		E212DEF51AA68E2600A26E86 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AE915FD7184004869D0 /* main.m */; };
+		E212DEF61AA68E2600A26E86 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AED15FD7184004869D0 /* AppDelegate.m */; };
+		E212DEF71AA68E2600A26E86 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AF315FD7184004869D0 /* MasterViewController.m */; };
+		E212DEF81AA68E2600A26E86 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1B2D15FDBAD5004869D0 /* LoginViewController.m */; };
+		E212DEF91AA68E2600A26E86 /* RFRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1CE115FEF2EC004869D0 /* RFRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		E212DEFA1AA68E2600A26E86 /* RFResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1CE315FEF2EC004869D0 /* RFResponse.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		E212DEFB1AA68E2600A26E86 /* RFService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1CE515FEF2EC004869D0 /* RFService.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		E212DEFC1AA68E2600A26E86 /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1CFB1600191F004869D0 /* Preferences.m */; };
+		E212DEFD1AA68E2600A26E86 /* AlertService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D031600223C004869D0 /* AlertService.m */; };
+		E212DEFE1AA68E2600A26E86 /* FieldDataService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D0616004752004869D0 /* FieldDataService.m */; };
+		E212DEFF1AA68E2600A26E86 /* Species.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D091602B32C004869D0 /* Species.m */; };
+		E212DF001AA68E2600A26E86 /* SpeciesListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D0E1602F674004869D0 /* SpeciesListViewController.m */; };
+		E212DF011AA68E2600A26E86 /* Survey.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D161606F469004869D0 /* Survey.m */; };
+		E212DF021AA68E2600A26E86 /* SurveyAttributeOption.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D191606F4E0004869D0 /* SurveyAttributeOption.m */; };
+		E212DF031AA68E2600A26E86 /* SurveyAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1D1C1606F4E1004869D0 /* SurveyAttribute.m */; };
+		E212DF041AA68E2600A26E86 /* SurveyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C593564160A9FEC001547F3 /* SurveyViewController.m */; };
+		E212DF051AA68E2600A26E86 /* TextInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C593567160AAE64001547F3 /* TextInputCell.m */; };
+		E212DF061AA68E2600A26E86 /* UIAlertTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C59356E160AD892001547F3 /* UIAlertTableView.m */; };
+		E212DF071AA68E2600A26E86 /* IntegerInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C593576160C2669001547F3 /* IntegerInputCell.m */; };
+		E212DF081AA68E2600A26E86 /* SurveyInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C593579160C27AB001547F3 /* SurveyInputCell.m */; };
+		E212DF091AA68E2600A26E86 /* MultiSelectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C59357C16112BD5001547F3 /* MultiSelectCell.m */; };
+		E212DF0A1AA68E2600A26E86 /* SingleSelectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C59357E16116EFF001547F3 /* SingleSelectCell.m */; };
+		E212DF0B1AA68E2600A26E86 /* ImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5935821613CACB001547F3 /* ImageCell.m */; };
+		E212DF0C1AA68E2600A26E86 /* SpeciesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C59358E16155DA0001547F3 /* SpeciesCell.m */; };
+		E212DF0D1AA68E2600A26E86 /* LocationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3BD1FD161A7DFC001FEABD /* LocationCell.m */; };
+		E212DF0E1AA68E2600A26E86 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3BD201161AAEF7001FEABD /* MBProgressHUD.m */; };
+		E212DF0F1AA68E2600A26E86 /* RecordAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C070419161D0D97001875F6 /* RecordAttribute.m */; };
+		E212DF101AA68E2600A26E86 /* SavedRecordsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C07041D161D4823001875F6 /* SavedRecordsViewController.m */; };
+		E212DF111AA68E2600A26E86 /* Record.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C070420161D5BB3001875F6 /* Record.m */; };
+		E212DF121AA68E2600A26E86 /* UIImage+Alpha.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AEF1165EE2C700FD472C /* UIImage+Alpha.m */; };
+		E212DF131AA68E2600A26E86 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AEF2165EE2C700FD472C /* UIImage+Resize.m */; };
+		E212DF141AA68E2600A26E86 /* FileService.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AEFE165EE2C700FD472C /* FileService.m */; };
+		E212DF151AA68E2600A26E86 /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AF00165EE2C700FD472C /* UIImage+RoundedCorner.m */; };
+		E212DF161AA68E2600A26E86 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AF07165EE2C700FD472C /* NSData+Base64.m */; };
+		E212DF171AA68E2600A26E86 /* SelectionListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B8AF211664882300FD472C /* SelectionListViewController.m */; };
+		E212DF181AA68E2600A26E86 /* SingleSelectListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 11C2DA24166C5F7400D77905 /* SingleSelectListCell.m */; };
+		E212DF191AA68E2600A26E86 /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 112A93B0169F9BFD009F060D /* MapViewController.m */; };
+		E212DF1A1AA68E2600A26E86 /* MapAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 112A93B5169FB7C7009F060D /* MapAnnotation.m */; };
+		E212DF1B1AA68E2600A26E86 /* DateCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 112A93BF16A7CF73009F060D /* DateCell.m */; };
+		E212DF1C1AA68E2600A26E86 /* SpeciesTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 112A93D016B21839009F060D /* SpeciesTableCell.m */; };
+		E212DF1D1AA68E2600A26E86 /* SpeciesSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DE6AB516B745B1009495A1 /* SpeciesSelectionViewController.m */; };
+		E212DF1E1AA68E2600A26E86 /* LabelledSpeciesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DE6AB816B7950F009495A1 /* LabelledSpeciesCell.m */; };
+		E212DF1F1AA68E2600A26E86 /* RecordValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DE6B7D16C08C0D009495A1 /* RecordValidator.m */; };
+		E212DF201AA68E2600A26E86 /* ValidationResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DE6B8016C09158009495A1 /* ValidationResult.m */; };
+		E212DF211AA68E2600A26E86 /* StandaloneSpeciesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B2D20016D1DE0600734E1A /* StandaloneSpeciesViewController.m */; };
+		E212DF221AA68E2600A26E86 /* SpeciesGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 1198E30316D47997005A1BF6 /* SpeciesGroup.m */; };
+		E212DF231AA68E2600A26E86 /* MarginLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1198E30916D5A5A8005A1BF6 /* MarginLabel.m */; };
+		E212DF241AA68E2600A26E86 /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8AB1727C12800A90369 /* MKAnnotationView+WebCache.m */; };
+		E212DF251AA68E2600A26E86 /* SDImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8AD1727C12800A90369 /* SDImageCache.m */; };
+		E212DF261AA68E2600A26E86 /* SDWebImageCompat.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8AF1727C12800A90369 /* SDWebImageCompat.m */; };
+		E212DF271AA68E2600A26E86 /* SDWebImageDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8B11727C12800A90369 /* SDWebImageDecoder.m */; };
+		E212DF281AA68E2600A26E86 /* SDWebImageDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8B31727C12800A90369 /* SDWebImageDownloader.m */; };
+		E212DF291AA68E2600A26E86 /* SDWebImageDownloaderOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8B51727C12800A90369 /* SDWebImageDownloaderOperation.m */; };
+		E212DF2A1AA68E2600A26E86 /* SDWebImageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8B71727C12800A90369 /* SDWebImageManager.m */; };
+		E212DF2B1AA68E2600A26E86 /* SDWebImagePrefetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8BA1727C12800A90369 /* SDWebImagePrefetcher.m */; };
+		E212DF2C1AA68E2600A26E86 /* UIButton+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8BC1727C12800A90369 /* UIButton+WebCache.m */; };
+		E212DF2D1AA68E2600A26E86 /* UIImageView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC8BE1727C12800A90369 /* UIImageView+WebCache.m */; };
+		E212DF2E1AA68E2600A26E86 /* MobileFieldData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 113DC999172E01F600A90369 /* MobileFieldData.xcdatamodeld */; };
+		E212DF2F1AA68E2600A26E86 /* SurveyDownloadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 113DC9A1173335A500A90369 /* SurveyDownloadController.m */; };
+		E212DF311AA68E2600A26E86 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 113DC8CA1727C1DC00A90369 /* ImageIO.framework */; };
+		E212DF321AA68E2600A26E86 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 112A93B7169FC190009F060D /* MapKit.framework */; };
+		E212DF331AA68E2600A26E86 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C3BD1F9161A7982001FEABD /* CoreLocation.framework */; };
+		E212DF341AA68E2600A26E86 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5935871614214F001547F3 /* AssetsLibrary.framework */; };
+		E212DF351AA68E2600A26E86 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0F1ADB15FD7184004869D0 /* UIKit.framework */; };
+		E212DF361AA68E2600A26E86 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0F1ADD15FD7184004869D0 /* Foundation.framework */; };
+		E212DF371AA68E2600A26E86 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0F1ADF15FD7184004869D0 /* CoreGraphics.framework */; };
+		E212DF381AA68E2600A26E86 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0F1AE115FD7184004869D0 /* CoreData.framework */; };
+		E212DF3A1AA68E2600A26E86 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C0F1AE615FD7184004869D0 /* InfoPlist.strings */; };
+		E212DF3B1AA68E2600A26E86 /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C0F1AF815FD7184004869D0 /* MasterViewController.xib */; };
+		E212DF3C1AA68E2600A26E86 /* GERDefault~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5691518EE8897005C68ED /* GERDefault~iphone.png */; };
+		E212DF3D1AA68E2600A26E86 /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C0F1B2E15FDBAD5004869D0 /* LoginViewController.xib */; };
+		E212DF3E1AA68E2600A26E86 /* License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C0F1CDE15FEF2EC004869D0 /* License.txt */; };
+		E212DF3F1AA68E2600A26E86 /* camera.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C5935851613E403001547F3 /* camera.png */; };
+		E212DF401AA68E2600A26E86 /* icon-1024.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690D18EE86FE005C68ED /* icon-1024.png */; };
+		E212DF411AA68E2600A26E86 /* GERDefault@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690818EE86FE005C68ED /* GERDefault@2x~iphone.png */; };
+		E212DF421AA68E2600A26E86 /* GERDefault.png in Resources */ = {isa = PBXBuildFile; fileRef = E2E635DB18F3797500B39E83 /* GERDefault.png */; };
+		E212DF431AA68E2600A26E86 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2E3AA3918F3C6CA0005BB9E /* icon@2x.png */; };
+		E212DF441AA68E2600A26E86 /* gps@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3BD203161AB5BB001FEABD /* gps@2x.png */; };
+		E212DF451AA68E2600A26E86 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C07042B16263F68001875F6 /* Default.png */; };
+		E212DF461AA68E2600A26E86 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E2E3AA3818F3C6CA0005BB9E /* icon.png */; };
+		E212DF471AA68E2600A26E86 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C07042D16263F71001875F6 /* Default@2x.png */; };
+		E212DF481AA68E2600A26E86 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C07042F16263F96001875F6 /* logo.png */; };
+		E212DF491AA68E2600A26E86 /* WeedSpotter~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690718EE86FE005C68ED /* WeedSpotter~iphone.png */; };
+		E212DF4A1AA68E2600A26E86 /* icon-114.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690C18EE86FE005C68ED /* icon-114.png */; };
+		E212DF4B1AA68E2600A26E86 /* background-640x960.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5691718EE8915005C68ED /* background-640x960.png */; };
+		E212DF4C1AA68E2600A26E86 /* logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C07043116263FF2001875F6 /* logo@2x.png */; };
+		E212DF4D1AA68E2600A26E86 /* image_not_available.png in Resources */ = {isa = PBXBuildFile; fileRef = 11B8AEEF165EE2C700FD472C /* image_not_available.png */; };
+		E212DF4E1AA68E2600A26E86 /* icon-120.png in Resources */ = {isa = PBXBuildFile; fileRef = E2E635D918F3791B00B39E83 /* icon-120.png */; };
+		E212DF4F1AA68E2600A26E86 /* complete@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11B8AEFD165EE2C700FD472C /* complete@2x.png */; };
+		E212DF501AA68E2600A26E86 /* icon-57.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690B18EE86FE005C68ED /* icon-57.png */; };
+		E212DF511AA68E2600A26E86 /* incomplete@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11B8AEFF165EE2C700FD472C /* incomplete@2x.png */; };
+		E212DF521AA68E2600A26E86 /* background-640x1136.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5691918EE894D005C68ED /* background-640x1136.png */; };
+		E212DF531AA68E2600A26E86 /* background-640x960_copy.png in Resources */ = {isa = PBXBuildFile; fileRef = E2E635DD18F37B0A00B39E83 /* background-640x960_copy.png */; };
+		E212DF541AA68E2600A26E86 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 11B8AF02165EE2C700FD472C /* InfoPlist.strings */; };
+		E212DF551AA68E2600A26E86 /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 11B8AF04165EE2C700FD472C /* MasterViewController.xib */; };
+		E212DF561AA68E2600A26E86 /* background_image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 11C5990B167154D80037A7A1 /* background_image.jpg */; };
+		E212DF571AA68E2600A26E86 /* background-640x1008.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690918EE86FE005C68ED /* background-640x1008.png */; };
+		E212DF581AA68E2600A26E86 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5690A18EE86FE005C68ED /* background.png */; };
+		E212DF591AA68E2600A26E86 /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 112A93B1169F9BFD009F060D /* MapViewController.xib */; };
+		E212DF5A1AA68E2600A26E86 /* camera_3.png in Resources */ = {isa = PBXBuildFile; fileRef = E20BECF318EC212400BC7556 /* camera_3.png */; };
+		E212DF5B1AA68E2600A26E86 /* iOS App Icon 57 x 57.png in Resources */ = {isa = PBXBuildFile; fileRef = 11D7EAF116CDF35B001192DB /* iOS App Icon 57 x 57.png */; };
+		E212DF5C1AA68E2600A26E86 /* iOS App Icon 114 x 114.png in Resources */ = {isa = PBXBuildFile; fileRef = 11D7EAF316CDF363001192DB /* iOS App Icon 114 x 114.png */; };
+		E212DF5D1AA68E2600A26E86 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11E8E57C170B8B8D0050AA8F /* Default-568h@2x.png */; };
+		E212DF5E1AA68E2600A26E86 /* GERIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 110374531785384B001A0736 /* GERIcon@2x.png */; };
+		E212DF5F1AA68E2600A26E86 /* GERIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745517853859001A0736 /* GERIcon.png */; };
+		E212DF601AA68E2600A26E86 /* GERDefault.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745717853AAF001A0736 /* GERDefault.png */; };
+		E212DF611AA68E2600A26E86 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E2E635DF18F37B5F00B39E83 /* Images.xcassets */; };
+		E212DF621AA68E2600A26E86 /* GERBioTag_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 1103745E17854EBA001A0736 /* GERBioTag_background.png */; };
+		E212DF631AA68E2600A26E86 /* splashscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 118FDB5317CC638500BBC696 /* splashscreen.png */; };
+		E212DF641AA68E2600A26E86 /* GERDefault@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC8089178645FC0099F465 /* GERDefault@2x.png */; };
+		E212DF651AA68E2600A26E86 /* GERDefault-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC8088178645FC0099F465 /* GERDefault-568h@2x.png */; };
+		E212DF661AA68E2600A26E86 /* GERBioTag_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1195ADD417DD8F2900C2F39A /* GERBioTag_background@2x.png */; };
+		E212DF671AA68E2600A26E86 /* GERBioTag_background-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1195ADD517DD8F2900C2F39A /* GERBioTag_background-568h@2x.png */; };
 		E261A05F18DFA0E5004913AE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AE915FD7184004869D0 /* main.m */; };
 		E261A06018DFA0E5004913AE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AED15FD7184004869D0 /* AppDelegate.m */; };
 		E261A06118DFA0E5004913AE /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AF315FD7184004869D0 /* MasterViewController.m */; };
@@ -723,6 +838,8 @@
 		E201B0511AA6864B00026FA5 /* FD_Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FD_Util.h; sourceTree = "<group>"; };
 		E201B0521AA6864B00026FA5 /* FD_Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FD_Util.m; sourceTree = "<group>"; };
 		E20BECF318EC212400BC7556 /* camera_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camera_3.png; sourceTree = "<group>"; };
+		E212DEF01AA68DB100A26E86 /* SuperbParrot-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SuperbParrot-Info.plist"; path = "/Users/sat01a/All/sat01a_git/ios/filed-data-v2/fielddata-mobile-ios/SuperbParrot-Info.plist"; sourceTree = "<absolute>"; };
+		E212DF6C1AA68E2600A26E86 /* Superb Parrot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Superb Parrot.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E261A0C518DFA0E5004913AE /* WeedSpotter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeedSpotter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E261A0C618DFA0E6004913AE /* GERBioTag copy2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GERBioTag copy2-Info.plist"; path = "/Users/sat01a/All/ALA/source/bitbucket/fielddata-mobile-ios/GERBioTag copy2-Info.plist"; sourceTree = "<absolute>"; };
 		E28CF53E18DFFEC1008C3328 /* Annotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Annotation.h; sourceTree = "<group>"; };
@@ -802,6 +919,21 @@
 				5C0F1B0615FD7184004869D0 /* UIKit.framework in Frameworks */,
 				5C0F1B0715FD7184004869D0 /* Foundation.framework in Frameworks */,
 				5C0F1B0815FD7184004869D0 /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E212DF301AA68E2600A26E86 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E212DF311AA68E2600A26E86 /* ImageIO.framework in Frameworks */,
+				E212DF321AA68E2600A26E86 /* MapKit.framework in Frameworks */,
+				E212DF331AA68E2600A26E86 /* CoreLocation.framework in Frameworks */,
+				E212DF341AA68E2600A26E86 /* AssetsLibrary.framework in Frameworks */,
+				E212DF351AA68E2600A26E86 /* UIKit.framework in Frameworks */,
+				E212DF361AA68E2600A26E86 /* Foundation.framework in Frameworks */,
+				E212DF371AA68E2600A26E86 /* CoreGraphics.framework in Frameworks */,
+				E212DF381AA68E2600A26E86 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -962,6 +1094,7 @@
 				E261A0C618DFA0E6004913AE /* GERBioTag copy2-Info.plist */,
 				E2E635D718F27B9A00B39E83 /* WeedSpotter-Info.plist */,
 				E2A2AD9B1A9E9059002E9F26 /* Warrumbungle.plist */,
+				E212DEF01AA68DB100A26E86 /* SuperbParrot-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -974,6 +1107,7 @@
 				11BC80EF17865CCE0099F465 /* GERBioTag copy.app */,
 				E261A0C518DFA0E5004913AE /* WeedSpotter.app */,
 				E2A2AD9A1A9E9058002E9F26 /* Warrumbungle.app */,
+				E212DF6C1AA68E2600A26E86 /* Superb Parrot.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1289,6 +1423,23 @@
 			productReference = 5C0F1B0315FD7184004869D0 /* MobileFieldDataTests.octest */;
 			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
+		E212DEF11AA68E2600A26E86 /* SuperbParrort */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E212DF681AA68E2600A26E86 /* Build configuration list for PBXNativeTarget "SuperbParrort" */;
+			buildPhases = (
+				E212DEF21AA68E2600A26E86 /* Sources */,
+				E212DF301AA68E2600A26E86 /* Frameworks */,
+				E212DF391AA68E2600A26E86 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SuperbParrort;
+			productName = MobileFieldData;
+			productReference = E212DF6C1AA68E2600A26E86 /* Superb Parrot.app */;
+			productType = "com.apple.product-type.application";
+		};
 		E261A05D18DFA0E5004913AE /* WeedSpotter */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E261A0C118DFA0E5004913AE /* Build configuration list for PBXNativeTarget "WeedSpotter" */;
@@ -1360,6 +1511,7 @@
 				11BC808C17865CCE0099F465 /* ALCW */,
 				5C0F1B0215FD7184004869D0 /* MobileFieldDataTests */,
 				E2A2AD201A9E9058002E9F26 /* Warrumbungle */,
+				E212DEF11AA68E2600A26E86 /* SuperbParrort */,
 			);
 		};
 /* End PBXProject section */
@@ -1473,6 +1625,59 @@
 			buildActionMask = 2147483647;
 			files = (
 				5C0F1B1015FD7184004869D0 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E212DF391AA68E2600A26E86 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E212DF3A1AA68E2600A26E86 /* InfoPlist.strings in Resources */,
+				E212DF3B1AA68E2600A26E86 /* MasterViewController.xib in Resources */,
+				E212DF3C1AA68E2600A26E86 /* GERDefault~iphone.png in Resources */,
+				E212DF3D1AA68E2600A26E86 /* LoginViewController.xib in Resources */,
+				E212DF3E1AA68E2600A26E86 /* License.txt in Resources */,
+				E212DF3F1AA68E2600A26E86 /* camera.png in Resources */,
+				E212DF401AA68E2600A26E86 /* icon-1024.png in Resources */,
+				E212DF411AA68E2600A26E86 /* GERDefault@2x~iphone.png in Resources */,
+				E212DF421AA68E2600A26E86 /* GERDefault.png in Resources */,
+				E212DF431AA68E2600A26E86 /* icon@2x.png in Resources */,
+				E212DF441AA68E2600A26E86 /* gps@2x.png in Resources */,
+				E212DF451AA68E2600A26E86 /* Default.png in Resources */,
+				E212DF461AA68E2600A26E86 /* icon.png in Resources */,
+				E212DF471AA68E2600A26E86 /* Default@2x.png in Resources */,
+				E212DF481AA68E2600A26E86 /* logo.png in Resources */,
+				E212DF491AA68E2600A26E86 /* WeedSpotter~iphone.png in Resources */,
+				E212DF4A1AA68E2600A26E86 /* icon-114.png in Resources */,
+				E212DF4B1AA68E2600A26E86 /* background-640x960.png in Resources */,
+				E212DF4C1AA68E2600A26E86 /* logo@2x.png in Resources */,
+				E212DF4D1AA68E2600A26E86 /* image_not_available.png in Resources */,
+				E212DF4E1AA68E2600A26E86 /* icon-120.png in Resources */,
+				E212DF4F1AA68E2600A26E86 /* complete@2x.png in Resources */,
+				E212DF501AA68E2600A26E86 /* icon-57.png in Resources */,
+				E212DF511AA68E2600A26E86 /* incomplete@2x.png in Resources */,
+				E212DF521AA68E2600A26E86 /* background-640x1136.png in Resources */,
+				E212DF531AA68E2600A26E86 /* background-640x960_copy.png in Resources */,
+				E212DF541AA68E2600A26E86 /* InfoPlist.strings in Resources */,
+				E212DF551AA68E2600A26E86 /* MasterViewController.xib in Resources */,
+				E212DF561AA68E2600A26E86 /* background_image.jpg in Resources */,
+				E212DF571AA68E2600A26E86 /* background-640x1008.png in Resources */,
+				E212DF581AA68E2600A26E86 /* background.png in Resources */,
+				E212DF591AA68E2600A26E86 /* MapViewController.xib in Resources */,
+				E212DF5A1AA68E2600A26E86 /* camera_3.png in Resources */,
+				E212DF5B1AA68E2600A26E86 /* iOS App Icon 57 x 57.png in Resources */,
+				E212DF5C1AA68E2600A26E86 /* iOS App Icon 114 x 114.png in Resources */,
+				E212DF5D1AA68E2600A26E86 /* Default-568h@2x.png in Resources */,
+				E212DF5E1AA68E2600A26E86 /* GERIcon@2x.png in Resources */,
+				E212DF5F1AA68E2600A26E86 /* GERIcon.png in Resources */,
+				E212DF601AA68E2600A26E86 /* GERDefault.png in Resources */,
+				E212DF611AA68E2600A26E86 /* Images.xcassets in Resources */,
+				E212DF621AA68E2600A26E86 /* GERBioTag_background.png in Resources */,
+				E212DF631AA68E2600A26E86 /* splashscreen.png in Resources */,
+				E212DF641AA68E2600A26E86 /* GERDefault@2x.png in Resources */,
+				E212DF651AA68E2600A26E86 /* GERDefault-568h@2x.png in Resources */,
+				E212DF661AA68E2600A26E86 /* GERBioTag_background@2x.png in Resources */,
+				E212DF671AA68E2600A26E86 /* GERBioTag_background-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1807,6 +2012,74 @@
 			files = (
 				5C0F1B1315FD7184004869D0 /* MobileFieldDataTests.m in Sources */,
 				11DE6B8416C0CD10009495A1 /* RecordValidatorTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E212DEF21AA68E2600A26E86 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E212DEF31AA68E2600A26E86 /* FD_Util.m in Sources */,
+				E212DEF41AA68E2600A26E86 /* Annotation.m in Sources */,
+				E212DEF51AA68E2600A26E86 /* main.m in Sources */,
+				E212DEF61AA68E2600A26E86 /* AppDelegate.m in Sources */,
+				E212DEF71AA68E2600A26E86 /* MasterViewController.m in Sources */,
+				E212DEF81AA68E2600A26E86 /* LoginViewController.m in Sources */,
+				E212DEF91AA68E2600A26E86 /* RFRequest.m in Sources */,
+				E212DEFA1AA68E2600A26E86 /* RFResponse.m in Sources */,
+				E212DEFB1AA68E2600A26E86 /* RFService.m in Sources */,
+				E212DEFC1AA68E2600A26E86 /* Preferences.m in Sources */,
+				E212DEFD1AA68E2600A26E86 /* AlertService.m in Sources */,
+				E212DEFE1AA68E2600A26E86 /* FieldDataService.m in Sources */,
+				E212DEFF1AA68E2600A26E86 /* Species.m in Sources */,
+				E212DF001AA68E2600A26E86 /* SpeciesListViewController.m in Sources */,
+				E212DF011AA68E2600A26E86 /* Survey.m in Sources */,
+				E212DF021AA68E2600A26E86 /* SurveyAttributeOption.m in Sources */,
+				E212DF031AA68E2600A26E86 /* SurveyAttribute.m in Sources */,
+				E212DF041AA68E2600A26E86 /* SurveyViewController.m in Sources */,
+				E212DF051AA68E2600A26E86 /* TextInputCell.m in Sources */,
+				E212DF061AA68E2600A26E86 /* UIAlertTableView.m in Sources */,
+				E212DF071AA68E2600A26E86 /* IntegerInputCell.m in Sources */,
+				E212DF081AA68E2600A26E86 /* SurveyInputCell.m in Sources */,
+				E212DF091AA68E2600A26E86 /* MultiSelectCell.m in Sources */,
+				E212DF0A1AA68E2600A26E86 /* SingleSelectCell.m in Sources */,
+				E212DF0B1AA68E2600A26E86 /* ImageCell.m in Sources */,
+				E212DF0C1AA68E2600A26E86 /* SpeciesCell.m in Sources */,
+				E212DF0D1AA68E2600A26E86 /* LocationCell.m in Sources */,
+				E212DF0E1AA68E2600A26E86 /* MBProgressHUD.m in Sources */,
+				E212DF0F1AA68E2600A26E86 /* RecordAttribute.m in Sources */,
+				E212DF101AA68E2600A26E86 /* SavedRecordsViewController.m in Sources */,
+				E212DF111AA68E2600A26E86 /* Record.m in Sources */,
+				E212DF121AA68E2600A26E86 /* UIImage+Alpha.m in Sources */,
+				E212DF131AA68E2600A26E86 /* UIImage+Resize.m in Sources */,
+				E212DF141AA68E2600A26E86 /* FileService.m in Sources */,
+				E212DF151AA68E2600A26E86 /* UIImage+RoundedCorner.m in Sources */,
+				E212DF161AA68E2600A26E86 /* NSData+Base64.m in Sources */,
+				E212DF171AA68E2600A26E86 /* SelectionListViewController.m in Sources */,
+				E212DF181AA68E2600A26E86 /* SingleSelectListCell.m in Sources */,
+				E212DF191AA68E2600A26E86 /* MapViewController.m in Sources */,
+				E212DF1A1AA68E2600A26E86 /* MapAnnotation.m in Sources */,
+				E212DF1B1AA68E2600A26E86 /* DateCell.m in Sources */,
+				E212DF1C1AA68E2600A26E86 /* SpeciesTableCell.m in Sources */,
+				E212DF1D1AA68E2600A26E86 /* SpeciesSelectionViewController.m in Sources */,
+				E212DF1E1AA68E2600A26E86 /* LabelledSpeciesCell.m in Sources */,
+				E212DF1F1AA68E2600A26E86 /* RecordValidator.m in Sources */,
+				E212DF201AA68E2600A26E86 /* ValidationResult.m in Sources */,
+				E212DF211AA68E2600A26E86 /* StandaloneSpeciesViewController.m in Sources */,
+				E212DF221AA68E2600A26E86 /* SpeciesGroup.m in Sources */,
+				E212DF231AA68E2600A26E86 /* MarginLabel.m in Sources */,
+				E212DF241AA68E2600A26E86 /* MKAnnotationView+WebCache.m in Sources */,
+				E212DF251AA68E2600A26E86 /* SDImageCache.m in Sources */,
+				E212DF261AA68E2600A26E86 /* SDWebImageCompat.m in Sources */,
+				E212DF271AA68E2600A26E86 /* SDWebImageDecoder.m in Sources */,
+				E212DF281AA68E2600A26E86 /* SDWebImageDownloader.m in Sources */,
+				E212DF291AA68E2600A26E86 /* SDWebImageDownloaderOperation.m in Sources */,
+				E212DF2A1AA68E2600A26E86 /* SDWebImageManager.m in Sources */,
+				E212DF2B1AA68E2600A26E86 /* SDWebImagePrefetcher.m in Sources */,
+				E212DF2C1AA68E2600A26E86 /* UIButton+WebCache.m in Sources */,
+				E212DF2D1AA68E2600A26E86 /* UIImageView+WebCache.m in Sources */,
+				E212DF2E1AA68E2600A26E86 /* MobileFieldData.xcdatamodeld in Sources */,
+				E212DF2F1AA68E2600A26E86 /* SurveyDownloadController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2364,6 +2637,91 @@
 			};
 			name = Release;
 		};
+		E212DF691AA68E2600A26E86 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
+				HEADER_SEARCH_PATHS = "";
+				"HEADER_SEARCH_PATHS[arch=*]" = "";
+				INFOPLIST_FILE = "SuperbParrot-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PRODUCT_NAME = "Superb Parrot";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				TARGETED_DEVICE_FAMILY = 1;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		E212DF6A1AA68E2600A26E86 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: Environment and Sustainable Development Directorate (EF64B9H6Q6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "SuperbParrot-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PRODUCT_NAME = "Superb Parrot";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=*]" = "0324EA15-07CC-41FD-AF13-0DFA3DBD4A51";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0324EA15-07CC-41FD-AF13-0DFA3DBD4A51";
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		E212DF6B1AA68E2600A26E86 /* AppStore */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "SuperbParrot-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PRODUCT_NAME = "Superb Parrot";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				TARGETED_DEVICE_FAMILY = 1;
+				WRAPPER_EXTENSION = app;
+			};
+			name = AppStore;
+		};
 		E261A0C218DFA0E5004913AE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2580,6 +2938,16 @@
 				5C0F1B1A15FD7184004869D0 /* Debug */,
 				5C0F1B1B15FD7184004869D0 /* Release */,
 				11E8E57B170AA2450050AA8F /* AppStore */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E212DF681AA68E2600A26E86 /* Build configuration list for PBXNativeTarget "SuperbParrort" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E212DF691AA68E2600A26E86 /* Debug */,
+				E212DF6A1AA68E2600A26E86 /* Release */,
+				E212DF6B1AA68E2600A26E86 /* AppStore */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

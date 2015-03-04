@@ -6,6 +6,12 @@
 	<false/>
 	<key>Background Image</key>
 	<string>GERDefault~iphone.png</string>
+	<key>Background_Blue</key>
+	<string>80</string>
+	<key>Background_Green</key>
+	<string>10</string>
+	<key>Background_Red</key>
+	<string>139</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>

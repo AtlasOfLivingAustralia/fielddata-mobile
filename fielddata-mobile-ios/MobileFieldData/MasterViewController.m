@@ -14,6 +14,7 @@
 #import "SavedRecordsViewController.h"
 #import "SurveyDownloadController.h"
 #import "UIImageView+WebCache.h"
+#import "FD_Util.h"
 
 
 @interface MasterViewController () {
@@ -38,11 +39,9 @@
             backgroundImage = @"background_image.jpg";
         }
         
-        //UIImage* background = [MasterViewController imageWithImage:[UIImage imageNamed:backgroundImage ] scaledToSize:self.tableView.bounds.size ];
-       // self.tableView.backgroundColor = [UIColor colorWithPatternImage:background];
-       // self.tableView.backgroundView = [[UIImageView alloc] initWithImage:background];
-        
-        
+        if([FD_Util getBackgroundColor]){
+            self.view.backgroundColor = [FD_Util getBackgroundColor];
+        }
         
     }
     return self;

@@ -12,6 +12,7 @@
 #import "RFService.h"
 #import "Preferences.h"
 #import "AlertService.h"
+#import "FD_Util.h"
 
 @interface LoginViewController ()
 
@@ -44,11 +45,10 @@
     NSString *displayFormat = [[NSString alloc] initWithFormat:@"v%@(%@)",ver,build];
     [self.version setText:displayFormat];
     self.version.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:12];
-
-
-   // NSString *txt = [[NSString alloc] initWithFormat:@"Register"];
-    //[self.cancelButton setTitle:txt forState:UIControlStateNormal];
-    //cancelButton.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:14];
+    
+    if([FD_Util getBackgroundColor]){
+        self.view.backgroundColor = [FD_Util getBackgroundColor];
+    }
     
     // Do any additional setup after loading the view from its nib.
     if ([preferences getFieldDataSessionKey]) {

@@ -293,6 +293,8 @@
 		5C5935861613E403001547F3 /* camera.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C5935851613E403001547F3 /* camera.png */; };
 		5C59358816142150001547F3 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5935871614214F001547F3 /* AssetsLibrary.framework */; };
 		5C59358F16155DA0001547F3 /* SpeciesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C59358E16155DA0001547F3 /* SpeciesCell.m */; };
+		E201B0531AA6864B00026FA5 /* FD_Util.m in Sources */ = {isa = PBXBuildFile; fileRef = E201B0521AA6864B00026FA5 /* FD_Util.m */; };
+		E201B0541AA688EF00026FA5 /* FD_Util.m in Sources */ = {isa = PBXBuildFile; fileRef = E201B0521AA6864B00026FA5 /* FD_Util.m */; };
 		E20BECF418EC212400BC7556 /* camera_3.png in Resources */ = {isa = PBXBuildFile; fileRef = E20BECF318EC212400BC7556 /* camera_3.png */; };
 		E20BECF518EC212400BC7556 /* camera_3.png in Resources */ = {isa = PBXBuildFile; fileRef = E20BECF318EC212400BC7556 /* camera_3.png */; };
 		E20BECF618EC212400BC7556 /* camera_3.png in Resources */ = {isa = PBXBuildFile; fileRef = E20BECF318EC212400BC7556 /* camera_3.png */; };
@@ -718,6 +720,8 @@
 		5C59358E16155DA0001547F3 /* SpeciesCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpeciesCell.m; sourceTree = "<group>"; };
 		B842A27A18E785D20039AE35 /* MobileFieldData 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MobileFieldData 3.xcdatamodel"; sourceTree = "<group>"; };
 		B89EC8A718F125AA000E7662 /* Constant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constant.h; sourceTree = "<group>"; };
+		E201B0511AA6864B00026FA5 /* FD_Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FD_Util.h; sourceTree = "<group>"; };
+		E201B0521AA6864B00026FA5 /* FD_Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FD_Util.m; sourceTree = "<group>"; };
 		E20BECF318EC212400BC7556 /* camera_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camera_3.png; sourceTree = "<group>"; };
 		E261A0C518DFA0E5004913AE /* WeedSpotter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeedSpotter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E261A0C618DFA0E6004913AE /* GERBioTag copy2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GERBioTag copy2-Info.plist"; path = "/Users/sat01a/All/ALA/source/bitbucket/fielddata-mobile-ios/GERBioTag copy2-Info.plist"; sourceTree = "<absolute>"; };
@@ -989,6 +993,7 @@
 		5C0F1AE315FD7184004869D0 /* MobileFieldData */ = {
 			isa = PBXGroup;
 			children = (
+				E201B0501AA6863C00026FA5 /* Util */,
 				113DC8C91727C15A00A90369 /* SDWebImage */,
 				112A93AE169F952D009F060D /* Location */,
 				5C07041B161D47AD001875F6 /* SavedRecords */,
@@ -1177,6 +1182,15 @@
 				5C5935851613E403001547F3 /* camera.png */,
 			);
 			name = Images;
+			sourceTree = "<group>";
+		};
+		E201B0501AA6863C00026FA5 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				E201B0511AA6864B00026FA5 /* FD_Util.h */,
+				E201B0521AA6864B00026FA5 /* FD_Util.m */,
+			);
+			name = Util;
 			sourceTree = "<group>";
 		};
 		E2F5690618EE86E6005C68ED /* WeedSpotter */ = {
@@ -1758,6 +1772,7 @@
 				11B8AF14165EE2C700FD472C /* FileService.m in Sources */,
 				11B8AF16165EE2C700FD472C /* UIImage+RoundedCorner.m in Sources */,
 				11B8AF19165EE2C700FD472C /* NSData+Base64.m in Sources */,
+				E201B0531AA6864B00026FA5 /* FD_Util.m in Sources */,
 				11B8AF221664882400FD472C /* SelectionListViewController.m in Sources */,
 				11C2DA25166C5F7400D77905 /* SingleSelectListCell.m in Sources */,
 				112A93B2169F9BFD009F060D /* MapViewController.m in Sources */,
@@ -1866,6 +1881,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E201B0541AA688EF00026FA5 /* FD_Util.m in Sources */,
 				E2A2AD221A9E9058002E9F26 /* Annotation.m in Sources */,
 				E2A2AD231A9E9058002E9F26 /* main.m in Sources */,
 				E2A2AD241A9E9058002E9F26 /* AppDelegate.m in Sources */,

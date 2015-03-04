@@ -26,6 +26,7 @@
 #import "LabelledSpeciesCell.h"
 #import "RecordValidator.h"
 #import "ValidationResult.h"
+#import "FD_Util.h"
 
 @interface SurveyViewController ()
 {
@@ -424,6 +425,11 @@
     if (indexPath.row == 0) {
         UIColor *color = [[UIColor alloc] initWithRed:134.0/255.0f green:195.0/255.0f blue:68.0/255.0f alpha:1.0f];
         cell.backgroundColor =  color;
+        
+        if([FD_Util getBackgroundColor]){
+            cell.backgroundColor = [FD_Util getBackgroundColor];
+        }
+        
     }
     else if ([self isValidationSummaryRow:indexPath.row]) {
         cell.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:0.7f];

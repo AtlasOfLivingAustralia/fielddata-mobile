@@ -34,11 +34,11 @@
         self.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
         preferences = [[Preferences alloc]init];
         
-        NSString* backgroundImage = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Background Image"];
+/*        NSString* backgroundImage = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Background Image"];
         if (!backgroundImage) {
             backgroundImage = @"background_image.jpg";
         }
-        
+*/        
         if([FD_Util getBackgroundColor]){
             self.view.backgroundColor = [FD_Util getBackgroundColor];
         }

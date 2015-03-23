@@ -14,6 +14,9 @@
 #import "SavedRecordsViewController.h"
 #import "SurveyDownloadController.h"
 #import "UIImageView+WebCache.h"
+#import "UIView+WebCacheOperation.h"
+#import "UIImageView+HighlightedWebCache.h"
+
 #import "FD_Util.h"
 
 
@@ -191,6 +194,20 @@
     }
 }
 
+
+- (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0,  tableView.bounds.size.width, 30)];
+    UILabel *labelHeader = [[UILabel alloc] initWithFrame:CGRectMake (0,20,320,20)];
+    labelHeader.textColor = [UIColor whiteColor];
+    [headerView addSubview:labelHeader];
+
+    if(section == 0)
+        labelHeader.text = @"Available Surveys";
+    
+    return headerView;
+}
+
+
 //- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
 //    
 //    UIView* view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 400, 30)];
@@ -321,14 +338,12 @@
                 surveyImagePath = [surveyImagePath substringFromIndex:1];
             }
             NSString* url = [preferences getFieldDataURL];
-            
             url = [url stringByAppendingString:surveyImagePath];
+            [cell.imageView sd_setImageWithURL: [NSURL URLWithString:url]
+                                     completed: ^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                                                    [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+                                                }];
 
-
-            [cell.imageView sd_setImageWithURL:[NSURL URLWithString:url]
-                                       completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-                                           [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-                                       }];
         }
         else {
             [cell.imageView setImage:nil];

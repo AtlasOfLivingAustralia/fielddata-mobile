@@ -2779,8 +2779,8 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Warrumbungle-AppIcon";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "WarrumBungle-LaunchImage";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Sathish Babu Sathya moorthy (VS75428PD6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Sathish Babu Sathya moorthy (VS75428PD6)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
 				HEADER_SEARCH_PATHS = "";
@@ -2793,8 +2793,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = Warrumbungle;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -2807,9 +2807,9 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Warrumbungle-AppIcon";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "WarrumBungle-LaunchImage";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: Environment and Sustainable Development Directorate (EF64B9H6Q6)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: Sathish Babu Sathya moorthy (VS75428PD6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Sathish Babu Sathya moorthy (VS75428PD6)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
 				HEADER_SEARCH_PATHS = "";
@@ -2821,9 +2821,9 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = Warrumbungle;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=*]" = "0324EA15-07CC-41FD-AF13-0DFA3DBD4A51";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0324EA15-07CC-41FD-AF13-0DFA3DBD4A51";
+				PROVISIONING_PROFILE = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
+				"PROVISIONING_PROFILE[sdk=*]" = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
@@ -2837,8 +2837,8 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Warrumbungle-AppIcon";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "WarrumBungle-LaunchImage";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Sathish Babu Sathya moorthy (VS75428PD6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Sathish Babu Sathya moorthy (VS75428PD6)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MobileFieldData/MobileFieldData-Prefix.pch";
 				HEADER_SEARCH_PATHS = "";
@@ -2850,8 +2850,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = Warrumbungle;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

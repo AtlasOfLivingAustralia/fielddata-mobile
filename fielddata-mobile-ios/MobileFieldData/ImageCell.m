@@ -14,7 +14,7 @@
 
 @implementation ImageCell
 
-@synthesize startCamera, cameraImage, parentController,photopoints, multiPhotoEnabled,locationManager;
+@synthesize startCamera, cameraImage, parentController,photopoints, multiPhotoEnabled,locationManager, photoLibrary;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -29,14 +29,23 @@
         
         UIImage *cellImage = nil; //[UIImage imageNamed:@"image_not_available.png"];
         [cameraImage setImage:cellImage];
+
         
-        UIImage *cameraBtn = [UIImage imageNamed:@"camera.png"];
+        UIImage *cameraBtn = [UIImage imageNamed:@"1.png"];
         startCamera = [UIButton buttonWithType:UIButtonTypeCustom];
         [startCamera addTarget:self action:@selector(showCameraUI:) forControlEvents:UIControlEventTouchUpInside];
         NSInteger width = 48;
         startCamera.frame = CGRectMake(self.bounds.size.width-30-width, 30, 48, 48);
         [startCamera setImage:cameraBtn forState:UIControlStateNormal];
         [self.contentView addSubview:startCamera];
+        
+        UIImage *galleryBtn = [UIImage imageNamed:@"3.png"];
+        photoLibrary = [UIButton buttonWithType:UIButtonTypeCustom];
+        [photoLibrary addTarget:self action:@selector(showPhotoLibraryUI:) forControlEvents:UIControlEventTouchUpInside];
+        photoLibrary.frame = CGRectMake(self.bounds.size.width-30-100, 30, 48, 48);
+        [photoLibrary setImage:galleryBtn forState:UIControlStateNormal];
+        [self.contentView addSubview:photoLibrary];
+
 
     }
     return self;
@@ -58,13 +67,23 @@
         photopoints.text = @"Total photos taken: 0" ;
         [self.contentView addSubview:photopoints];
         
-        UIImage *cameraBtn = [UIImage imageNamed:@"camera.png"];
+        
+        
+        UIImage *cameraBtn = [UIImage imageNamed:@"1.png"];
         startCamera = [UIButton buttonWithType:UIButtonTypeCustom];
         [startCamera addTarget:self action:@selector(showCameraUI:) forControlEvents:UIControlEventTouchUpInside];
         NSInteger width = 48;
         startCamera.frame = CGRectMake(self.bounds.size.width-30-width, 30, 48, 48);
         [startCamera setImage:cameraBtn forState:UIControlStateNormal];
         [self.contentView addSubview:startCamera];
+        
+        UIImage *galleryBtn = [UIImage imageNamed:@"3.png"];
+        photoLibrary = [UIButton buttonWithType:UIButtonTypeCustom];
+        [photoLibrary addTarget:self action:@selector(showPhotoLibraryUI:) forControlEvents:UIControlEventTouchUpInside];
+        photoLibrary.frame = CGRectMake(self.bounds.size.width-30-100, 30, 48, 48);
+        [photoLibrary setImage:galleryBtn forState:UIControlStateNormal];
+        [self.contentView addSubview:photoLibrary];
+
         
         // Track user location.
         locationManager = [[CLLocationManager alloc] init];
@@ -122,6 +141,10 @@
     [self startCameraControllerFromViewController: parentController usingDelegate: self];
 }
 
+- (IBAction)showPhotoLibraryUI:(id)sender {
+    [self photoLibraryFromViewController: parentController usingDelegate: self];
+}
+
 - (BOOL) startCameraControllerFromViewController: (UIViewController*) controller
                                    usingDelegate: (id <UIImagePickerControllerDelegate,
                                                    UINavigationControllerDelegate>) delegate {
@@ -134,6 +157,35 @@
     
     UIImagePickerController *cameraUI = [[UIImagePickerController alloc] init];
     cameraUI.sourceType = UIImagePickerControllerSourceTypeCamera;
+    
+    // Displays a control that allows the user to choose picture or
+    // movie capture, if both are available:
+    //cameraUI.mediaTypes =
+    //[UIImagePickerController availableMediaTypesForSourceType:
+    // UIImagePickerControllerSourceTypeCamera];
+    
+    // Hides the controls for moving & scaling pictures, or for
+    // trimming movies. To instead show the controls, use YES.
+    cameraUI.allowsEditing = NO;
+    cameraUI.delegate = delegate;
+    
+    [controller presentModalViewController: cameraUI animated: YES];
+    
+    return YES;
+}
+
+- (BOOL) photoLibraryFromViewController: (UIViewController*) controller
+                                   usingDelegate: (id <UIImagePickerControllerDelegate,
+                                                   UINavigationControllerDelegate>) delegate {
+    
+    if (([UIImagePickerController isSourceTypeAvailable:
+          UIImagePickerControllerSourceTypeCamera] == NO)
+        || (delegate == nil)
+        || (controller == nil))
+        return NO;
+    
+    UIImagePickerController *cameraUI = [[UIImagePickerController alloc] init];
+    cameraUI.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     
     // Displays a control that allows the user to choose picture or
     // movie capture, if both are available:

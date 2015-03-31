@@ -15,6 +15,7 @@
     CLLocationManager *locationManager;
 }
 @property (nonatomic, retain) UIButton* startCamera;
+@property (nonatomic, retain) UIButton* photoLibrary;
 @property (nonatomic, retain) UIImageView* cameraImage;
 @property (nonatomic, retain) UILabel* photopoints;
 @property (nonatomic, retain) UITableViewController* parentController;

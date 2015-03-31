@@ -374,6 +374,18 @@
 		E212DF651AA68E2600A26E86 /* GERDefault-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11BC8088178645FC0099F465 /* GERDefault-568h@2x.png */; };
 		E212DF661AA68E2600A26E86 /* GERBioTag_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1195ADD417DD8F2900C2F39A /* GERBioTag_background@2x.png */; };
 		E212DF671AA68E2600A26E86 /* GERBioTag_background-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1195ADD517DD8F2900C2F39A /* GERBioTag_background-568h@2x.png */; };
+		E242076A1ACA1FEA00DB7678 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = E24207681ACA1FEA00DB7678 /* 1.png */; };
+		E242076B1ACA1FEA00DB7678 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = E24207681ACA1FEA00DB7678 /* 1.png */; };
+		E242076C1ACA1FEA00DB7678 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = E24207681ACA1FEA00DB7678 /* 1.png */; };
+		E242076D1ACA1FEA00DB7678 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = E24207681ACA1FEA00DB7678 /* 1.png */; };
+		E242076E1ACA1FEA00DB7678 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = E24207681ACA1FEA00DB7678 /* 1.png */; };
+		E242076F1ACA1FEA00DB7678 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = E24207681ACA1FEA00DB7678 /* 1.png */; };
+		E24207771ACA207C00DB7678 /* 3.png in Resources */ = {isa = PBXBuildFile; fileRef = E24207761ACA207C00DB7678 /* 3.png */; };
+		E24207781ACA207C00DB7678 /* 3.png in Resources */ = {isa = PBXBuildFile; fileRef = E24207761ACA207C00DB7678 /* 3.png */; };
+		E24207791ACA207C00DB7678 /* 3.png in Resources */ = {isa = PBXBuildFile; fileRef = E24207761ACA207C00DB7678 /* 3.png */; };
+		E242077A1ACA207C00DB7678 /* 3.png in Resources */ = {isa = PBXBuildFile; fileRef = E24207761ACA207C00DB7678 /* 3.png */; };
+		E242077B1ACA207C00DB7678 /* 3.png in Resources */ = {isa = PBXBuildFile; fileRef = E24207761ACA207C00DB7678 /* 3.png */; };
+		E242077C1ACA207C00DB7678 /* 3.png in Resources */ = {isa = PBXBuildFile; fileRef = E24207761ACA207C00DB7678 /* 3.png */; };
 		E261A05F18DFA0E5004913AE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AE915FD7184004869D0 /* main.m */; };
 		E261A06018DFA0E5004913AE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AED15FD7184004869D0 /* AppDelegate.m */; };
 		E261A06118DFA0E5004913AE /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0F1AF315FD7184004869D0 /* MasterViewController.m */; };
@@ -791,6 +803,8 @@
 		E20BECF318EC212400BC7556 /* camera_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camera_3.png; sourceTree = "<group>"; };
 		E212DEF01AA68DB100A26E86 /* SuperbParrot-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SuperbParrot-Info.plist"; path = "/Users/sat01a/All/sat01a_git/ios/filed-data-v2/fielddata-mobile-ios/SuperbParrot-Info.plist"; sourceTree = "<absolute>"; };
 		E212DF6C1AA68E2600A26E86 /* Superb Parrot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Superb Parrot.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E24207681ACA1FEA00DB7678 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
+		E24207761ACA207C00DB7678 /* 3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 3.png; sourceTree = "<group>"; };
 		E261A0C518DFA0E5004913AE /* WeedSpotter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeedSpotter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E261A0C618DFA0E6004913AE /* GERBioTag copy2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GERBioTag copy2-Info.plist"; path = "/Users/sat01a/All/ALA/source/bitbucket/fielddata-mobile-ios/GERBioTag copy2-Info.plist"; sourceTree = "<absolute>"; };
 		E26D18551AC0DCAC002E2E1A /* MKAnnotationView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKAnnotationView+WebCache.h"; sourceTree = "<group>"; };
@@ -1307,6 +1321,8 @@
 		5C5935841613E3EF001547F3 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				E24207761ACA207C00DB7678 /* 3.png */,
+				E24207681ACA1FEA00DB7678 /* 1.png */,
 				E20BECF318EC212400BC7556 /* camera_3.png */,
 				5C3BD203161AB5BB001FEABD /* gps@2x.png */,
 				5C5935851613E403001547F3 /* camera.png */,
@@ -1517,9 +1533,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E242076B1ACA1FEA00DB7678 /* 1.png in Resources */,
 				110374321785354E001A0736 /* InfoPlist.strings in Resources */,
 				110374331785354E001A0736 /* MasterViewController.xib in Resources */,
 				110374341785354E001A0736 /* LoginViewController.xib in Resources */,
+				E24207781ACA207C00DB7678 /* 3.png in Resources */,
 				110374351785354E001A0736 /* License.txt in Resources */,
 				110374361785354E001A0736 /* camera.png in Resources */,
 				110374371785354E001A0736 /* gps@2x.png in Resources */,
@@ -1554,9 +1572,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E242076D1ACA1FEA00DB7678 /* 1.png in Resources */,
 				11BC80D317865CCE0099F465 /* InfoPlist.strings in Resources */,
 				11BC80D417865CCE0099F465 /* MasterViewController.xib in Resources */,
 				11BC80D517865CCE0099F465 /* LoginViewController.xib in Resources */,
+				E242077A1ACA207C00DB7678 /* 3.png in Resources */,
 				11BC80D617865CCE0099F465 /* License.txt in Resources */,
 				11BC80D717865CCE0099F465 /* camera.png in Resources */,
 				11BC80D817865CCE0099F465 /* gps@2x.png in Resources */,
@@ -1595,12 +1615,14 @@
 				5C0F1AFA15FD7184004869D0 /* MasterViewController.xib in Resources */,
 				5C0F1B3015FDBAD5004869D0 /* LoginViewController.xib in Resources */,
 				5C0F1CE615FEF2EC004869D0 /* License.txt in Resources */,
+				E242076A1ACA1FEA00DB7678 /* 1.png in Resources */,
 				5C5935861613E403001547F3 /* camera.png in Resources */,
 				5C3BD204161AB5BB001FEABD /* gps@2x.png in Resources */,
 				5C07042C16263F68001875F6 /* Default.png in Resources */,
 				5C07042E16263F71001875F6 /* Default@2x.png in Resources */,
 				5C07043016263F96001875F6 /* logo.png in Resources */,
 				5C07043216263FF2001875F6 /* logo@2x.png in Resources */,
+				E24207771ACA207C00DB7678 /* 3.png in Resources */,
 				11B8AF0C165EE2C700FD472C /* image_not_available.png in Resources */,
 				11B8AF13165EE2C700FD472C /* complete@2x.png in Resources */,
 				11B8AF15165EE2C700FD472C /* incomplete@2x.png in Resources */,
@@ -1631,6 +1653,7 @@
 				E212DF3A1AA68E2600A26E86 /* InfoPlist.strings in Resources */,
 				E212DF3B1AA68E2600A26E86 /* MasterViewController.xib in Resources */,
 				E212DF3C1AA68E2600A26E86 /* GERDefault~iphone.png in Resources */,
+				E242077C1ACA207C00DB7678 /* 3.png in Resources */,
 				E212DF3D1AA68E2600A26E86 /* LoginViewController.xib in Resources */,
 				E212DF3E1AA68E2600A26E86 /* License.txt in Resources */,
 				E212DF3F1AA68E2600A26E86 /* camera.png in Resources */,
@@ -1654,6 +1677,7 @@
 				E212DF511AA68E2600A26E86 /* incomplete@2x.png in Resources */,
 				E212DF521AA68E2600A26E86 /* background-640x1136.png in Resources */,
 				E212DF531AA68E2600A26E86 /* background-640x960_copy.png in Resources */,
+				E242076F1ACA1FEA00DB7678 /* 1.png in Resources */,
 				E212DF541AA68E2600A26E86 /* InfoPlist.strings in Resources */,
 				E212DF551AA68E2600A26E86 /* MasterViewController.xib in Resources */,
 				E212DF561AA68E2600A26E86 /* background_image.jpg in Resources */,
@@ -1684,6 +1708,7 @@
 				E261A0A418DFA0E5004913AE /* InfoPlist.strings in Resources */,
 				E261A0A518DFA0E5004913AE /* MasterViewController.xib in Resources */,
 				E2F5691618EE8897005C68ED /* GERDefault~iphone.png in Resources */,
+				E24207791ACA207C00DB7678 /* 3.png in Resources */,
 				E261A0A618DFA0E5004913AE /* LoginViewController.xib in Resources */,
 				E261A0A718DFA0E5004913AE /* License.txt in Resources */,
 				E261A0A818DFA0E5004913AE /* camera.png in Resources */,
@@ -1707,6 +1732,7 @@
 				E261A0B018DFA0E5004913AE /* incomplete@2x.png in Resources */,
 				E2F5691A18EE894D005C68ED /* background-640x1136.png in Resources */,
 				E2E635DE18F37B0A00B39E83 /* background-640x960_copy.png in Resources */,
+				E242076C1ACA1FEA00DB7678 /* 1.png in Resources */,
 				E261A0B118DFA0E5004913AE /* InfoPlist.strings in Resources */,
 				E261A0B218DFA0E5004913AE /* MasterViewController.xib in Resources */,
 				E261A0B318DFA0E5004913AE /* background_image.jpg in Resources */,
@@ -1737,6 +1763,7 @@
 				E2A2AD681A9E9058002E9F26 /* InfoPlist.strings in Resources */,
 				E2A2AD691A9E9058002E9F26 /* MasterViewController.xib in Resources */,
 				E2A2AD6A1A9E9058002E9F26 /* GERDefault~iphone.png in Resources */,
+				E242077B1ACA207C00DB7678 /* 3.png in Resources */,
 				E2A2AD6B1A9E9058002E9F26 /* LoginViewController.xib in Resources */,
 				E2A2AD6C1A9E9058002E9F26 /* License.txt in Resources */,
 				E2A2AD6D1A9E9058002E9F26 /* camera.png in Resources */,
@@ -1760,6 +1787,7 @@
 				E2A2AD7F1A9E9058002E9F26 /* incomplete@2x.png in Resources */,
 				E2A2AD801A9E9058002E9F26 /* background-640x1136.png in Resources */,
 				E2A2AD811A9E9058002E9F26 /* background-640x960_copy.png in Resources */,
+				E242076E1ACA1FEA00DB7678 /* 1.png in Resources */,
 				E2A2AD821A9E9058002E9F26 /* InfoPlist.strings in Resources */,
 				E2A2AD831A9E9058002E9F26 /* MasterViewController.xib in Resources */,
 				E2A2AD841A9E9058002E9F26 /* background_image.jpg in Resources */,
@@ -2793,8 +2821,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = Warrumbungle;
-				PROVISIONING_PROFILE = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
+				PROVISIONING_PROFILE = "54e1269a-e4df-4187-9aec-6545ef8c4df7";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "54e1269a-e4df-4187-9aec-6545ef8c4df7";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -2821,9 +2849,9 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = Warrumbungle;
-				PROVISIONING_PROFILE = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
-				"PROVISIONING_PROFILE[sdk=*]" = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
+				PROVISIONING_PROFILE = "54e1269a-e4df-4187-9aec-6545ef8c4df7";
+				"PROVISIONING_PROFILE[sdk=*]" = "54e1269a-e4df-4187-9aec-6545ef8c4df7";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "54e1269a-e4df-4187-9aec-6545ef8c4df7";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
@@ -2850,8 +2878,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = Warrumbungle;
-				PROVISIONING_PROFILE = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "3710e4db-e3b7-4fcf-9e32-10b44c56ee33";
+				PROVISIONING_PROFILE = "54e1269a-e4df-4187-9aec-6545ef8c4df7";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "54e1269a-e4df-4187-9aec-6545ef8c4df7";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

@@ -206,11 +206,14 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 		private ViewSavedRecordsActivity fragment;
 		private Preferences prefs;
 		private int userId;
+        private final boolean noSpecies;
 		
 		public RecordAdapter(ViewSavedRecordsActivity fragment, List<RecordView> records, int userId) {
 			super(fragment.getActivity(), R.layout.saved_records_layout, R.id.record_description_species);
 			this.userId = userId;
+            this.noSpecies = fragment.getResources().getBoolean(R.bool.no_species);
 			prefs = new Preferences(fragment.getActivity());
+
 			setNotifyOnChange(false);
 			add(null);
 			
@@ -236,7 +239,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 				View row = super.getView(position, convertView, parent);
 				SavedRecordHolder viewHolder = (SavedRecordHolder) row.getTag();
 				if (viewHolder == null) {
-					viewHolder = new SavedRecordHolder(row);
+					viewHolder = new SavedRecordHolder(row, noSpecies);
 					viewHolder.checkbox.setOnClickListener(fragment);
 					row.setTag(viewHolder);
 					
@@ -268,7 +271,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 				}
 				else {
 					helpText = buildHelpText("Records will be uploaded automatically then deleted when the phone is connected to a data network.\n" +
-							"Uploaded records can be can be edited using the ");
+							"Uploaded records can be edited using the ");
 				}
 			}
 			else {
@@ -436,7 +439,7 @@ public class ViewSavedRecordsActivity extends SherlockListFragment implements Ac
 	}
 	
 	private void showDraftsError() {
-		Toast.makeText(getActivity(), "Draft records cannot be uploaded.", Toast.LENGTH_LONG).show();
+		Toast.makeText(getActivity(), R.string.drafts_error, Toast.LENGTH_LONG).show();
 	}
 
 

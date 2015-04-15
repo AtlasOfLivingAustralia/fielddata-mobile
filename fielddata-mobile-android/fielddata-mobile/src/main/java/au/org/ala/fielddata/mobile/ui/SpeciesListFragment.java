@@ -134,7 +134,7 @@ public class SpeciesListFragment extends SherlockListFragment implements LoaderC
     public static class SpeciesAdapter extends ResourceCursorAdapter {
 
     	private Context ctx;
-    	
+
 		public SpeciesAdapter(Context context, int layout, Cursor c) {
 			super(context, layout, c, 0);	
 			ctx = context;

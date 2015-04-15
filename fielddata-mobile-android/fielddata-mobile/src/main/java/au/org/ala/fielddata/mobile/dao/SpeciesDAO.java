@@ -27,6 +27,7 @@ import android.util.Log;
 import au.org.ala.fielddata.mobile.model.Species;
 import au.org.ala.fielddata.mobile.model.SpeciesGroup;
 import au.org.ala.fielddata.mobile.model.Survey;
+import au.org.ala.fielddata.mobile.nrmplus.R;
 
 public class SpeciesDAO extends GenericDAO<Species> {
 
@@ -84,8 +85,11 @@ public class SpeciesDAO extends GenericDAO<Species> {
 			"parent_group_id INTEGER)";
     public static final String SPECIES_GROUP_NAME_COLUMN_NAME = "name";
 
+    private final boolean noGroupsOnSearch;
+
     public SpeciesDAO(Context ctx) {
 		super(ctx);
+        noGroupsOnSearch = ctx.getResources().getBoolean(R.bool.no_species_groups_on_search);
 	}
 
 	protected Species map(SQLiteDatabase db, Cursor result, Class<Species> modelClass) {
@@ -228,22 +232,29 @@ public class SpeciesDAO extends GenericDAO<Species> {
 	
 	public Cursor loadSpecies() {
 
-        String query = "SELECT s._id, s."+SCIENTIFIC_NAME_COLUMN_NAME+", s."+COMMON_NAME_COLUMN_NAME+
-                    ", s."+IMAGE_URL_COLUMN_NAME+", g.name"+
-                    " from "+SPECIES_TABLE+" s left outer join "+SPECIES_GROUP_TABLE+
-                    " g on s."+SPECIES_GROUP_COLUMN_NAME+"=g.server_id order by g.name, s."+COMMON_NAME_COLUMN_NAME;
+        String query = "SELECT DISTINCT s._id, s."+SCIENTIFIC_NAME_COLUMN_NAME+", s."+COMMON_NAME_COLUMN_NAME+
+                ", s."+IMAGE_URL_COLUMN_NAME;
+        if (noGroupsOnSearch)
+            query += ", 'All Species' as name from "+SPECIES_TABLE+" s order by s."+
+                COMMON_NAME_COLUMN_NAME;
+        else
+            query += ",g.name from "+SPECIES_TABLE+" s left outer join "+SPECIES_GROUP_TABLE+
+                    " g on s."+SPECIES_GROUP_COLUMN_NAME+"=g.server_id order by g.name,s."+COMMON_NAME_COLUMN_NAME;
 
 		return helper.getReadableDatabase().rawQuery(query, null);
 	}
 
     public Cursor searchSpecies(String queryString) {
 
-        String query = "SELECT s._id, s."+SCIENTIFIC_NAME_COLUMN_NAME+", s."+COMMON_NAME_COLUMN_NAME+
-                ", s."+IMAGE_URL_COLUMN_NAME+", g.name"+
-                " from "+SPECIES_TABLE+" s left outer join "+SPECIES_GROUP_TABLE+
-                " g on s."+SPECIES_GROUP_COLUMN_NAME+"=g.server_id "+
-                " where s."+SCIENTIFIC_NAME_COLUMN_NAME+" like ? or s."+COMMON_NAME_COLUMN_NAME+" like ?"+
-                " order by g.name, s."+COMMON_NAME_COLUMN_NAME;
+        String query = "SELECT DISTINCT s._id, s."+SCIENTIFIC_NAME_COLUMN_NAME+", s."+COMMON_NAME_COLUMN_NAME+
+                ", s."+IMAGE_URL_COLUMN_NAME;
+        String where = " where s."+SCIENTIFIC_NAME_COLUMN_NAME+" like ? or s."+COMMON_NAME_COLUMN_NAME+" like ?";
+        if (noGroupsOnSearch)
+            query += ",'Matching Species' as name from "+SPECIES_TABLE+" s"+where+" order by s."+
+                    COMMON_NAME_COLUMN_NAME;
+        else
+            query += ",g.name from "+SPECIES_TABLE+" s left outer join "+SPECIES_GROUP_TABLE+
+                    " g on s."+SPECIES_GROUP_COLUMN_NAME+"=g.server_id"+where+" order by g.name,s."+COMMON_NAME_COLUMN_NAME;
 
         StringBuffer like = new StringBuffer();
         like.append("%").append(queryString).append("%");
